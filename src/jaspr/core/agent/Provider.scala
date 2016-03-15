@@ -7,7 +7,7 @@ import scala.collection.mutable
 /**
  * Created by phil on 15/03/16.
  */
-trait Provider extends Agent {
+trait Provider extends Agent with Properties {
 
   val currentServices: mutable.ListBuffer[Service]
 

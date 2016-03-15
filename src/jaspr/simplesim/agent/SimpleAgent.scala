@@ -1,7 +1,7 @@
 package jaspr.simplesim.agent
 
 import jaspr.core.Simulation
-import jaspr.core.agent.{Client, Provider}
+import jaspr.core.agent.{Property, Client, Provider}
 import jaspr.core.service.{TrustAssessment, ClientContext, ServiceRequest, Service}
 import jaspr.simplesim.service.SimpleService
 import jaspr.utilities.Chooser
@@ -26,7 +26,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   override def receiveService(service: Service): Unit = {
-    currentUtility += 1d
+    currentUtility += service.request.end - service.end
     jaspr.debug("RECEIVE:: ", service)
   }
 
@@ -37,7 +37,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override def generateComposition(context: ClientContext): TrustAssessment = {
     new TrustAssessment(
-      new ServiceRequest(this, Chooser.choose(simulation.network.providers), context.round, 0),
+      new ServiceRequest(this, Chooser.choose(simulation.network.providers), context.round, 1),
       0d
     )
   }
@@ -50,7 +50,15 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
     true
   }
 
-  override def affectService(service: Service): Unit = {}
+  override def affectService(service: Service): Unit = {
+    service.duration += properties.getOrElse(Property("QOS"), 0d).toInt
+  }
 
   override val currentServices: mutable.ListBuffer[Service] = new mutable.ListBuffer[Service]
+
+  override def properties: Map[Property, Double] = Map(
+    Property("QOS") -> Chooser.randomDouble(0,3)
+  )
+
+  override def advertProperties: Map[Property, AnyVal] = Map()
 }
