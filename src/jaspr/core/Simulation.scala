@@ -44,7 +44,7 @@ abstract class Simulation(val config: Configuration) {
 
   def run(): List[Result] = {
     while (round <= config.numRounds) {
-      round += 1
+      currentRound += 1
       jaspr.debug("\n------ ROUND "+round+" ------")
       results = act() :: results
     }
