@@ -5,7 +5,7 @@ import jaspr.utilities.Chooser
 /**
  * Created by phil on 15/03/16.
  */
-abstract class Configuration {
+trait Configuration {
 
   def newSimulation(): Simulation
 
@@ -13,7 +13,7 @@ abstract class Configuration {
   val numRounds: Int
 }
 
-abstract class MultiConfiguration {
+trait MultiConfiguration {
 
   val directComparison: Boolean = true
   val _seed = Chooser.randomInt(0, Int.MaxValue)
