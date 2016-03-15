@@ -1,6 +1,6 @@
 package jaspr.core
 
-import jaspr.core.agent.Agent
+import jaspr.core.agent.{Provider, Client, Agent}
 
 /**
  * Created by phil on 15/03/16.
@@ -8,5 +8,7 @@ import jaspr.core.agent.Agent
 abstract class Network {
 
   def utility(): Double
-  def agents(): Iterable[Agent]
+  def agents: Seq[Agent]
+  def clients: Seq[Client]
+  def providers: Seq[Provider]
 }

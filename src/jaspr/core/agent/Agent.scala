@@ -8,6 +8,8 @@ import jaspr.utilities.{NamedEntity, Tickable}
  */
 abstract class Agent extends NamedEntity with Tickable {
 
+  def utility: Double
+
   /** simulation that this agent is in */
   val simulation: Simulation
   val config: Configuration = simulation.config
