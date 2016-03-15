@@ -1,7 +1,6 @@
 package jaspr.core
 
 import jaspr.core.results.{Result, Results}
-import jaspr.results.Result
 import jaspr.utilities.Chooser
 
 /**
