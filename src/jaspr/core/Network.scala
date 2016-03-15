@@ -7,6 +7,8 @@ import jaspr.core.agent.{Provider, Client, Agent}
  */
 abstract class Network {
 
+  val simulation: Simulation
+
   def utility(): Double
   def agents: Seq[Agent]
   def clients: Seq[Client]
