@@ -38,12 +38,12 @@ class Results {
     val x = (for ((config,results) <- results) yield {
       results.map(_.map(funch).reverse.mkString(",")).mkString(config.toString+": ", "\n"+config.toString+": ", "")
     }).mkString("", "\n", "")
-    new PrintWriter(filename) { write(x); close }
+    new PrintWriter(filename) { write(x); close() }
   }
 
   def saveConfig(filename: String, config: Configuration, funch: Result => Double) = {
     val x = results.getOrElse(config, List()).map(_.map(funch).reverse.mkString(",")).mkString(config.toString+": ", "\n"+config.toString+": ", "")
-    new PrintWriter(filename) { write(x); close }
+    new PrintWriter(filename) { write(x); close() }
   }
 
   def average(results: Seq[Seq[Result]], funch: Result => Double): Seq[Double] = {

@@ -23,7 +23,7 @@ trait NamedEntity {
   val id: Int = NamedEntity.nextIndex(this)
   val name: String = id.toString
 
-  override def toString(): String = {
+  override def toString: String = {
     this.getClass.getSimpleName + name
   }
 }

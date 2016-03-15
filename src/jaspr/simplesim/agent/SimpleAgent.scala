@@ -26,6 +26,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   override def receiveService(service: Service): Unit = {
+    currentUtility += 1d
     jaspr.debug("RECEIVE:: ", service)
   }
 
