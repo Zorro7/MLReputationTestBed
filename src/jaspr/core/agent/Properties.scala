@@ -6,6 +6,10 @@ package jaspr.core.agent
 trait Properties {
 
   def properties: Map[Property, Double]
+}
+
+trait AdvertProperties extends Properties {
+
   def advertProperties: Map[Property, AnyVal]
 }
 

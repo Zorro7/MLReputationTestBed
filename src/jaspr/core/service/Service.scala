@@ -1,12 +1,12 @@
 package jaspr.core.service
 
-import jaspr.core.agent.{Client, Provider}
+import jaspr.core.agent.Properties
 import jaspr.utilities.NamedEntity
 
 /**
  * Created by phil on 15/03/16.
  */
-abstract class Service extends NamedEntity {
+abstract class Service extends NamedEntity with Properties {
 
   val request: ServiceRequest
 

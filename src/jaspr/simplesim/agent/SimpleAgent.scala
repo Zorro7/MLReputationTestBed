@@ -26,7 +26,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   override def receiveService(service: Service): Unit = {
-    currentUtility += service.request.end - service.end
+    currentUtility += service.properties.values.sum
     jaspr.debug("RECEIVE:: ", service)
   }
 
@@ -45,13 +45,13 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
 
   override def receiveRequest(request: ServiceRequest): Boolean = {
-    val service = new SimpleService(request)
+    val service = new SimpleService(request, properties)
     currentServices += service
     true
   }
 
   override def affectService(service: Service): Unit = {
-    service.duration += properties.getOrElse(Property("QOS"), 0d).toInt
+    
   }
 
   override val currentServices: mutable.ListBuffer[Service] = new mutable.ListBuffer[Service]

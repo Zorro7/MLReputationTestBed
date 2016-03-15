@@ -1,11 +1,14 @@
 package jaspr.simplesim.service
 
+import jaspr.core.agent.Property
 import jaspr.core.service.{ServiceContext, ServiceRequest, Service}
 
 /**
  * Created by phil on 15/03/16.
  */
-class SimpleService(override val request: ServiceRequest) extends Service {
+class SimpleService(override val request: ServiceRequest,
+                    override val properties: Map[Property, Double]
+                     ) extends Service {
 
   override val serviceContext: ServiceContext = new ServiceContext
 
