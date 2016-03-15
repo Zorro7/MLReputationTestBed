@@ -9,27 +9,27 @@ import jaspr.utilities.Chooser
  */
 
 
-object Simulation extends App {
+object Simulation {
 
-  val multiConfig = new MultiConfiguration
+  def apply(multiConfig: MultiConfiguration) {
+    val results: Results = new Results
 
-  val results: Results = new Results
-
-  for ((config,configIndex) <- multiConfig.configs.zipWithIndex) {
-    for (simulationIndex <- 0 until config.numSimulations) {
-      val simulationSeed = multiConfig.seed(configIndex, simulationIndex)
-      Chooser.setSeed(simulationSeed)
-      println("\n\n----- CONFIG "+configIndex+" ("+config+"), SIMULATION "+simulationIndex+", seed: "+simulationSeed+" -----")
-      val simulation = config.newSimulation()
-      results.record(config, simulation.run())
+    for ((config, configIndex) <- multiConfig.configs.zipWithIndex) {
+      for (simulationIndex <- 0 until config.numSimulations) {
+        val simulationSeed = multiConfig.seed(configIndex, simulationIndex)
+        Chooser.setSeed(simulationSeed)
+        println("\n\n----- CONFIG " + configIndex + " (" + config + "), SIMULATION " + simulationIndex + ", seed: " + simulationSeed + " -----")
+        val simulation = config.newSimulation()
+        results.record(config, simulation.run())
+      }
+      results.saveConfig(config.toString + ".res", config, _.totalUtility)
     }
-    results.saveConfig(config.toString+".res", config, _.totalUtility)
-  }
 
-  println("\n---\n")
-  results.printAll(_.totalUtility)
-  results.printAverage(_.totalUtility)
-  println(results.results.keys.mkString("\t"))
+    println("\n---\n")
+    results.printAll(_.totalUtility)
+    results.printAverage(_.totalUtility)
+    println(results.results.keys.mkString("\t"))
+  }
 }
 
 
