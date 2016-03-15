@@ -13,7 +13,7 @@ abstract class Configuration {
   val numRounds: Int
 }
 
-class MultiConfiguration {
+abstract class MultiConfiguration {
 
   val directComparison: Boolean = true
   val _seed = Chooser.randomInt(0, Int.MaxValue)
@@ -22,5 +22,5 @@ class MultiConfiguration {
     else _seed + configIndex + simulationIndex*configs.size //looks random but unique and covers [seed,seed+numConfigs*numSimulations]
   }
 
-  val configs: Seq[Configuration] = Nil
+  val configs: Seq[Configuration]
 }
