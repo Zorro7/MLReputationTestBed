@@ -1,0 +1,14 @@
+package jaspr.core.agent
+
+import jaspr.core.{Configuration, Simulation}
+import jaspr.utilities.{NamedEntity, Tickable}
+
+/**
+ * Created by phil on 26/01/16.
+ */
+abstract class Agent extends NamedEntity with Tickable {
+
+  /** simulation that this agent is in */
+  val simulation: Simulation
+  val config: Configuration = simulation.config
+}
