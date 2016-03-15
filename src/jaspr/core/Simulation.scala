@@ -33,12 +33,13 @@ object Simulation extends App {
 }
 
 
-abstract class Simulation(val config: Configuration) {
+abstract class Simulation {
 
+  val config: Configuration
+  val network: Network
+  
   private var currentRound = 0
   def round = currentRound
-
-  val network: Network
 
   private var results: List[Result] = Nil
 
