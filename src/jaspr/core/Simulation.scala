@@ -1,6 +1,7 @@
 package jaspr.core
 
 import jaspr.core.results.{Result, Results}
+import jaspr.results.Result
 import jaspr.utilities.Chooser
 
 /**
@@ -39,5 +40,16 @@ abstract class Simulation(val config: Configuration) {
 
   val network: Network
 
-  def run(): Seq[Result]
+  private var results: List[Result] = Nil
+
+  def run(): List[Result] = {
+    while (round <= config.numRounds) {
+      round += 1
+      jaspr.debug("\n------ ROUND "+round+" ------")
+      results = act() :: results
+    }
+    results
+  }
+
+  def act(): Result
 }
