@@ -12,7 +12,7 @@ abstract class Service extends NamedEntity {
 
   var start = request.start
   var duration = request.duration
-  val serviceContext: ServiceContext = new ServiceContext
+  val serviceContext: ServiceContext
 
   def end: Int = start + duration
 
