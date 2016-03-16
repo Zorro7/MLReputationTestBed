@@ -6,6 +6,7 @@ import jaspr.core.provenance.Record
 import jaspr.core.service.{TrustAssessment, ClientContext, ServiceRequest, Service}
 import jaspr.simplesim.provenance.SimpleRecord
 import jaspr.simplesim.service.SimpleService
+import jaspr.simplesim.strategy.NoStrategy
 import jaspr.utilities.Chooser
 
 import scala.collection.mutable
@@ -24,7 +25,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   override def generateContext(): ClientContext = {
-    new ClientContext(this, simulation.round)
+    new ClientContext(this, simulation.round, Property("QOS", Chooser.randomDouble(0,3)) :: Nil)
   }
 
   override def receiveService(service: Service): Unit = {
@@ -39,18 +40,8 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   override def generateComposition(context: ClientContext): TrustAssessment = {
-    new TrustAssessment(
-      new ServiceRequest(
-        this,
-        Chooser.choose(simulation.network.providers),
-        context.round,
-        1,
-        Property("QOS", Chooser.randomDouble(0,3)) :: Nil
-      ),
-      0d
-    )
+    config.strategy.assessReputation(simulation.network, context)
   }
-
 
   override def receiveRequest(request: ServiceRequest): Boolean = {
     val service = new SimpleService(request, properties)
@@ -58,9 +49,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
     true
   }
 
-  override def affectService(service: Service): Unit = {
-    
-  }
+  override def affectService(service: Service): Unit = {}
 
   override val currentServices: mutable.ListBuffer[Service] = new mutable.ListBuffer[Service]
 

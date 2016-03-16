@@ -1,5 +1,6 @@
 package jaspr.core
 
+import jaspr.core.strategy.Strategy
 import jaspr.utilities.Chooser
 
 /**
@@ -11,6 +12,12 @@ trait Configuration {
 
   val numSimulations: Int
   val numRounds: Int
+
+  val strategy: Strategy
+
+  override def toString: String = {
+    strategy.toString
+  }
 }
 
 trait MultiConfiguration {
