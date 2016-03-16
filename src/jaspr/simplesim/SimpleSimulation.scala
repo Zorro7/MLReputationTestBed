@@ -7,7 +7,7 @@ import jaspr.core.results.Result
  * Created by phil on 15/03/16.
  */
 object SimpleSimulation extends App {
-  Simulation(new SimpleConfiguration)
+  Simulation(new SimpleMultiConfiguration)
 }
 
 class SimpleSimulation(override val config: SimpleConfiguration) extends Simulation {
