@@ -1,12 +1,13 @@
 package jaspr.core.agent
 
+import jaspr.core.provenance.Provenance
 import jaspr.core.{Configuration, Simulation}
 import jaspr.utilities.{NamedEntity, Tickable}
 
 /**
  * Created by phil on 26/01/16.
  */
-abstract class Agent extends NamedEntity with Tickable {
+abstract class Agent extends NamedEntity with Tickable with Provenance {
 
   def utility: Double
 
