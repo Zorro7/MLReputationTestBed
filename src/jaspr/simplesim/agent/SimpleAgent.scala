@@ -53,7 +53,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override val currentServices: mutable.ListBuffer[Service] = new mutable.ListBuffer[Service]
 
-  override def properties: Map[String,Property] =
+  override val properties: Map[String,Property] =
     Property("QOS", Chooser.randomDouble(0,3)) ::
     Nil
 
