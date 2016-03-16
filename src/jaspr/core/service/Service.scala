@@ -27,6 +27,7 @@ abstract class Service extends NamedEntity with Properties {
 
   def isComplete(currentRound: Int): Boolean
   def canStart(currentRound: Int): Boolean
+  def utility(): Double
 
   def tryEndService(currentRound: Int): Boolean = {
     if (!delivered && isComplete(currentRound)) {

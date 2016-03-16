@@ -26,7 +26,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   override def receiveService(service: Service): Unit = {
-    currentUtility += service.properties.values.sum
+    currentUtility += service.utility()
     jaspr.debug("RECEIVE:: ", service)
   }
 
@@ -42,7 +42,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
         Chooser.choose(simulation.network.providers),
         context.round,
         1,
-        Map(Property("QOS") -> Chooser.randomDouble(0,3))
+        Property("QOS", Chooser.randomDouble(0,3)) :: Nil
       ),
       0d
     )
@@ -61,9 +61,9 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override val currentServices: mutable.ListBuffer[Service] = new mutable.ListBuffer[Service]
 
-  override def properties: Map[Property, Double] = Map(
-    Property("QOS") -> Chooser.randomDouble(0,3)
-  )
+  override def properties: Seq[Property] =
+    Property("QOS", Chooser.randomDouble(0,3)) ::
+    Nil
 
-  override def advertProperties: Map[Property, AnyVal] = Map()
+  override def advertProperties: Seq[Property] = Nil
 }

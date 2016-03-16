@@ -5,15 +5,16 @@ package jaspr.core.agent
  */
 trait Properties {
 
-  def properties: Map[String, Property]
+  def properties: Seq[Property]
 }
 
 trait AdvertProperties extends Properties {
 
-  def advertProperties: Map[String, Property]
+  def advertProperties: Seq[Property]
 }
 
 
-case class Property(name: String) {
+case class Property(name: String, value: Double) {
+
 
 }
