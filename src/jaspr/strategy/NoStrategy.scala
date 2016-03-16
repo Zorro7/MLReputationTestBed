@@ -1,4 +1,4 @@
-package jaspr.simplesim.strategy
+package jaspr.strategy
 
 import jaspr.core.Network
 import jaspr.core.service.{TrustAssessment, ServiceRequest, ClientContext}

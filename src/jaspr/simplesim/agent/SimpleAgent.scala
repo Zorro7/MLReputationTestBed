@@ -6,7 +6,7 @@ import jaspr.core.provenance.Record
 import jaspr.core.service.{TrustAssessment, ClientContext, ServiceRequest, Service}
 import jaspr.simplesim.provenance.SimpleRecord
 import jaspr.simplesim.service.SimpleService
-import jaspr.simplesim.strategy.NoStrategy
+import jaspr.strategy.NoStrategy
 import jaspr.utilities.Chooser
 
 import scala.collection.mutable
