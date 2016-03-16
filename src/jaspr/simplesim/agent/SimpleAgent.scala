@@ -2,7 +2,9 @@ package jaspr.simplesim.agent
 
 import jaspr.core.Simulation
 import jaspr.core.agent.{Property, Client, Provider}
+import jaspr.core.provenance.Record
 import jaspr.core.service.{TrustAssessment, ClientContext, ServiceRequest, Service}
+import jaspr.simplesim.provenance.SimpleRecord
 import jaspr.simplesim.service.SimpleService
 import jaspr.utilities.Chooser
 
@@ -26,6 +28,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   override def receiveService(service: Service): Unit = {
+    recordProvenance(new SimpleRecord(service))
     currentUtility += service.utility()
     jaspr.debug("RECEIVE:: ", service)
   }
@@ -66,4 +69,18 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
     Nil
 
   override def advertProperties: Map[String,Property] = Map()
+
+
+
+
+  override val memoryLimit: Int = 50
+
+  override def getProvenance[T <: Record]: Iterable[T] = {
+    provenance.map(_.asInstanceOf[T])
+  }
+
+  override def gatherProvenance[T <: Record](): Iterable[T] = {
+    simulation.network.agents.withFilter(_ != this).flatMap(_.getProvenance)
+  }
+
 }
