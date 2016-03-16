@@ -21,6 +21,12 @@ class SimpleService(override val request: ServiceRequest,
   }
 
   override def utility(): Double = {
-    Math.max(0, request.properties.values.map(_.doubleValue).sum - properties.values.map(_.doubleValue).sum)
+    val requested = request.properties.values.map(_.doubleValue).sum
+    val received = properties.values.map(_.doubleValue).sum
+    if (requested < received) {
+      requested
+    } else {
+      0
+    }
   }
 }
