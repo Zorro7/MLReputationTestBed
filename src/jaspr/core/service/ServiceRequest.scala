@@ -10,7 +10,7 @@ class ServiceRequest(val client: Client,
                      val provider: Provider,
                      val start: Int,
                      val duration: Int,
-                     override val properties: Seq[Property]
+                     override val properties: Map[String,Property]
                       ) extends NamedEntity with Properties {
 
   def end: Int = start + duration

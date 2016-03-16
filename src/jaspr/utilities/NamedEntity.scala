@@ -1,7 +1,7 @@
 package jaspr.utilities
 
 import scala.collection.mutable
-
+import scala.language.implicitConversions
 /**
  * Created by phil on 26/01/16.
  */
@@ -14,6 +14,10 @@ object NamedEntity {
     val x = indexes.getOrElse(ne.getClass, 0) + 1
     indexes.put(ne.getClass, x)
     x
+  }
+
+  implicit def toMap[T <: NamedEntity](nes: List[T]): Map[String,T] = {
+    nes.map(x => x.name -> x).toMap
   }
 }
 

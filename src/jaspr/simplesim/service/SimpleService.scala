@@ -7,7 +7,7 @@ import jaspr.core.service.{ServiceContext, ServiceRequest, Service}
  * Created by phil on 15/03/16.
  */
 class SimpleService(override val request: ServiceRequest,
-                    override val properties: Seq[Property]
+                    override val properties: Map[String,Property]
                      ) extends Service {
 
   override val serviceContext: ServiceContext = new ServiceContext
@@ -21,6 +21,6 @@ class SimpleService(override val request: ServiceRequest,
   }
 
   override def utility(): Double = {
-    Math.max(0, request.properties.map(_.value).sum - properties.map(_.value).sum)
+    Math.max(0, request.properties.values.map(_.doubleValue).sum - properties.values.map(_.doubleValue).sum)
   }
 }
