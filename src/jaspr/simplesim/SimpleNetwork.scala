@@ -3,6 +3,7 @@ package jaspr.simplesim
 import jaspr.core.agent.{Agent, Client, Provider}
 import jaspr.core.{Network}
 import jaspr.simplesim.agent.SimpleAgent
+import jaspr.utilities.Chooser
 
 /**
  * Created by phil on 15/03/16.

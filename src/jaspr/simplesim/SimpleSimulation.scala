@@ -15,7 +15,10 @@ class SimpleSimulation(override val config: SimpleConfiguration) extends Simulat
   override val network: Network = new SimpleNetwork(this)
 
   override def act(): Result = {
-    for (agent <- network.agents) {
+    for (agent <- network.clients) {
+      agent.tick()
+    }
+    for (agent <- network.providers) {
       agent.tick()
     }
     new Result(this)

@@ -1,6 +1,7 @@
 package jaspr.strategy
 
 import jaspr.core.Network
+import jaspr.core.agent.Provider
 import jaspr.core.provenance.{ServiceRecord, Record}
 import jaspr.core.service.{TrustAssessment, ServiceRequest, ClientContext}
 import jaspr.core.strategy.{Exploration, NoExploration, StrategyInit, Strategy}
@@ -9,32 +10,51 @@ import jaspr.core.strategy.{Exploration, NoExploration, StrategyInit, Strategy}
  * Created by phil on 16/03/16.
  */
 
-class FireStrategyInit(val directRecords: Iterable[ServiceRecord],
-                       val witnessRecords: Iterable[ServiceRecord]
+
+class Rating(val provider: Provider, val rating: Double)
+
+class FireStrategyInit(val directRecords: Seq[Rating],
+                       val witnessRecords: Seq[Rating]
+//                        val directRecords: Map[Provider,Iterable[Double]],
+//                       val witnessRecords: Map[Provider,Iterable[Double]]
                         ) extends StrategyInit
 
 class Fire extends Strategy with Exploration {
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
-    new FireStrategyInit(context.client.getProvenance, context.client.gatherProvenance())
+    val direct = context.client.getProvenance[ServiceRecord].map(x =>
+      new Rating(x.service.request.provider, x.service.utility())
+    )
+    val witness = context.client.gatherProvenance[ServiceRecord].map(x =>
+      new Rating(x.service.request.provider, x.service.utility())
+    )
+//    val direct = context.client.getProvenance[ServiceRecord].groupBy(
+//      x => x.service.request.provider
+//    ).mapValues(_.map(_.service.utility()))
+//    val witness = context.client.gatherProvenance[ServiceRecord]().groupBy(
+//      x => x.service.request.provider
+//    ).mapValues(_.map(_.service.utility()))
+
+    new FireStrategyInit(direct, witness)
   }
 
   override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init: FireStrategyInit = baseInit.asInstanceOf[FireStrategyInit]
-    val directRecords = init.directRecords.filter(
-      _.service.request.provider == request.provider
-    )
-    val direct = directRecords.map(_.service.utility()).sum / directRecords.size
-    val witnessRecords = init.witnessRecords.filter(
-      _.service.request.provider == request.provider
-    )
-    val witness = witnessRecords.map(_.service.utility()).sum / witnessRecords.size
+
+    val directRecords = init.directRecords.withFilter(_.provider == request.provider).map(_.rating)
+    val witnessRecords = init.witnessRecords.filter(_.provider == request.provider).map(_.rating)
+
+//    val directRecords = init.directRecords.getOrElse(request.provider, Nil)
+//    val witnessRecords = init.witnessRecords.getOrElse(request.provider, Nil)
+    val direct = directRecords.sum / directRecords.size
+    val witness = witnessRecords.sum / witnessRecords.size
+
     new TrustAssessment(request, direct + witness)
   }
 
   override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
     network.providers.map(
-      new ServiceRequest(context.client, _, context.round, 1, context.properties)
+      new ServiceRequest(context.client, _, context.round, 0, context.properties)
     )
   }
 

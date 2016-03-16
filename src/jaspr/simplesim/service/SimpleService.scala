@@ -26,7 +26,7 @@ class SimpleService(override val request: ServiceRequest,
     if (requested < received) {
       requested
     } else {
-      0
+      0d
     }
   }
 }

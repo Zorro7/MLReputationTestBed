@@ -17,7 +17,7 @@ trait Provenance {
     jaspr.debug("RECORD: ", this, record, provenance.size)
   }
 
-  def getProvenance[T <: Record]: Iterable[T]
-  def gatherProvenance[T <: Record](): Iterable[T]
+  def getProvenance[T <: Record]: Seq[T]
+  def gatherProvenance[T <: Record](): Seq[T]
 
 }
