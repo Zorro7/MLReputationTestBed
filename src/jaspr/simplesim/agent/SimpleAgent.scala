@@ -37,11 +37,16 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override def generateComposition(context: ClientContext): TrustAssessment = {
     new TrustAssessment(
-      new ServiceRequest(this, Chooser.choose(simulation.network.providers), context.round, 1),
+      new ServiceRequest(
+        this,
+        Chooser.choose(simulation.network.providers),
+        context.round,
+        1,
+        Map(Property("QOS") -> Chooser.randomDouble(0,3))
+      ),
       0d
     )
   }
-
 
 
   override def receiveRequest(request: ServiceRequest): Boolean = {
