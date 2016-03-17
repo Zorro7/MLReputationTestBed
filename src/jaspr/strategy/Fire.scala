@@ -15,8 +15,6 @@ class Rating(val provider: Provider, val rating: Double)
 
 class FireStrategyInit(val directRecords: Seq[Rating],
                        val witnessRecords: Seq[Rating]
-//                        val directRecords: Map[Provider,Iterable[Double]],
-//                       val witnessRecords: Map[Provider,Iterable[Double]]
                         ) extends StrategyInit
 
 class Fire extends Strategy with Exploration {
@@ -28,12 +26,6 @@ class Fire extends Strategy with Exploration {
     val witness = context.client.gatherProvenance[ServiceRecord].map(x =>
       new Rating(x.service.request.provider, x.service.utility())
     )
-//    val direct = context.client.getProvenance[ServiceRecord].groupBy(
-//      x => x.service.request.provider
-//    ).mapValues(_.map(_.service.utility()))
-//    val witness = context.client.gatherProvenance[ServiceRecord]().groupBy(
-//      x => x.service.request.provider
-//    ).mapValues(_.map(_.service.utility()))
 
     new FireStrategyInit(direct, witness)
   }
@@ -44,8 +36,6 @@ class Fire extends Strategy with Exploration {
     val directRecords = init.directRecords.withFilter(_.provider == request.provider).map(_.rating)
     val witnessRecords = init.witnessRecords.filter(_.provider == request.provider).map(_.rating)
 
-//    val directRecords = init.directRecords.getOrElse(request.provider, Nil)
-//    val witnessRecords = init.witnessRecords.getOrElse(request.provider, Nil)
     val direct = directRecords.sum / directRecords.size
     val witness = witnessRecords.sum / witnessRecords.size
 
