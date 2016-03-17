@@ -44,7 +44,7 @@ class Fire extends Strategy with Exploration {
 
   override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
     network.providers.map(
-      new ServiceRequest(context.client, _, context.round, 1, new Payload, context.market)
+      new ServiceRequest(context.client, _, context.round, 1, context.payload, context.market)
     )
   }
 

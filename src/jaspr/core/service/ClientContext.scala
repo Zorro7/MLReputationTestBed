@@ -8,5 +8,6 @@ import jaspr.utilities.NamedEntity
  */
 class ClientContext(val client: Client,
                     val round: Int,
+                    val payload: Payload,
                     val market: Market
                      ) extends NamedEntity
