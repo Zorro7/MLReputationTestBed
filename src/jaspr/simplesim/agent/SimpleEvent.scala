@@ -1,0 +1,15 @@
+package jaspr.simplesim.agent
+
+import jaspr.core.agent.{Provider, Event}
+import jaspr.core.service.Service
+
+
+/**
+ * Created by phil on 17/03/16.
+ */
+case class SimpleEvent(override val name: String, providers: Seq[Provider]) extends Event {
+
+  override def affect(service: Service): Unit = {}
+
+  override def affect(provider: Provider): Unit = {}
+}
