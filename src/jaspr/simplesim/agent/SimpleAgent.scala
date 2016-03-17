@@ -3,7 +3,7 @@ package jaspr.simplesim.agent
 import jaspr.core.Simulation
 import jaspr.core.agent.{Property, Client, Provider}
 import jaspr.core.provenance.Record
-import jaspr.core.service.{TrustAssessment, ClientContext, ServiceRequest, Service}
+import jaspr.core.service._
 import jaspr.simplesim.provenance.SimpleRecord
 import jaspr.simplesim.service.SimpleService
 import jaspr.strategy.NoStrategy
@@ -29,7 +29,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override def generateContext(): ClientContext = {
     new ClientContext(
-      this, simulation.round, simulation.network.markets.head
+      this, simulation.round, new Payload, simulation.network.markets.head
     )
   }
 
