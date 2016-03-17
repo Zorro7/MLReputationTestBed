@@ -23,7 +23,7 @@ class Fire extends Strategy with Exploration {
     val direct = context.client.getProvenance[ServiceRecord].map(x =>
       new Rating(x.service.request.provider, x.service.utility())
     )
-    val witness = context.client.gatherProvenance[ServiceRecord].map(x =>
+    val witness = context.client.gatherProvenance[ServiceRecord]().map(x =>
       new Rating(x.service.request.provider, x.service.utility())
     )
 

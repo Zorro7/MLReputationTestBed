@@ -19,7 +19,7 @@ trait AdvertProperties extends Properties {
 
 case class Property(override val name: String, value: AnyVal) extends NamedEntity {
 
-  def floatValue: Double = value.asInstanceOf[Float]
+  def floatValue: Float = value.asInstanceOf[Float]
   def doubleValue: Double = value.asInstanceOf[Double]
   def byteValue: Byte = value.asInstanceOf[Byte]
   def shortValue: Short = value.asInstanceOf[Short]
