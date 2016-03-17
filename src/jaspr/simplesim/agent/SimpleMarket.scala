@@ -10,12 +10,13 @@ import jaspr.core.service.Service
 class SimpleMarket(override val simulation: Simulation) extends Market {
 
   override def deliver(service: Service): Double = {
-    val requested = service.request.properties.values.map(_.doubleValue).sum
-    val received = service.properties.values.map(_.doubleValue).sum
-    if (requested < received) {
-      requested
+    val requested = service.request.duration
+    val received = service.duration
+    println(requested, received)
+    if (requested >= received) {
+      1
     } else {
-      0d
+      0
     }
   }
 

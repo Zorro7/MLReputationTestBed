@@ -9,9 +9,9 @@ import jaspr.core.agent._
  */
 class ACMENetwork(val simulation: ACMESimulation) extends Network {
 
-  override def utility(): Double = ???
+  override def utility(): Double = clients.map(_.utility).sum
 
-  override def events(): Seq[Event] = ???
+  override def events(): Seq[Event] = Nil
 
   override def agents: Seq[Agent] = clients ++ providers
 

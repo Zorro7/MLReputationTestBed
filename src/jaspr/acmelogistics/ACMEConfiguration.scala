@@ -21,16 +21,13 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
   val memoryLimit = 100
 
   val numClients = 1
-  val numShippers = 3
-  val numRefineries = 3
+  val numShippers = 0
+  val numRefineries = 0
   val numMines = 3
 
 
   def clientContext(network: Network, client: Client, round: Int): ClientContext = {
-    new ClientContext(client, round, network.markets.head,
-      Property("GoodQuality", Chooser.randomDouble(0, 1)) ::
-        Property("GoodQuantity", Chooser.randomDouble(0, 1)) :: Nil
-    )
+    new ClientContext(client, round, network.markets.head)
   }
 
   def properties(agent: Agent): Map[String,Property] = {

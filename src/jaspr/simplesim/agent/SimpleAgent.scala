@@ -29,12 +29,12 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override def generateContext(): ClientContext = {
     new ClientContext(
-      this, simulation.round, simulation.network.markets.head, Property("QOS", Chooser.randomDouble(0,3)) :: Nil
+      this, simulation.round, simulation.network.markets.head
     )
   }
 
   override def receiveService(service: Service): Unit = {
-    recordProvenance(new SimpleRecord(service, service.properties))
+    recordProvenance(new SimpleRecord(service))
     currentUtility += service.utility()
     jaspr.debug("RECEIVE:: ", service)
   }
@@ -49,15 +49,17 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   override def receiveRequest(request: ServiceRequest): Boolean = {
-    val service = new SimpleService(request, properties)
+    val service = new SimpleService(request)
     currentServices += service
     true
   }
 
-  override def affectService(service: Service): Unit = {}
+  override def affectService(service: Service): Unit = {
+    service.duration += properties.values.map(_.intValue).sum
+  }
 
   override val properties: Map[String,Property] =
-    Property("QOS", Chooser.randomDouble(0,3)) ::
+    Property("Timeliness", Chooser.randomInt(0,2)) ::
     Nil
 
   override def advertProperties: Map[String,Property] = Map()

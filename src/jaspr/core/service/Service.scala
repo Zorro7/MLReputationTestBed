@@ -6,7 +6,7 @@ import jaspr.utilities.NamedEntity
 /**
  * Created by phil on 15/03/16.
  */
-abstract class Service extends NamedEntity with Properties {
+abstract class Service extends NamedEntity {
 
   val request: ServiceRequest
 
@@ -35,7 +35,7 @@ abstract class Service extends NamedEntity with Properties {
       duration = currentRound - start
       _utility = request.market.deliver(this)
       delivered = true
-      jaspr.debug("ENDED: ", this)
+      jaspr.debug("ENDED: ", utility(), this)
       true
     } else {
       false

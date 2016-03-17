@@ -19,10 +19,8 @@ class ACME(val simulation: ACMESimulation) extends Client {
     context
   }
 
-
-
   override def receiveService(service: Service): Unit = {
-    jaspr.debug("RECEIVE: ", this, service)
+    jaspr.debug("RECEIVE: ", service)
     val assessment: TrustAssessment = trustAssessments.remove(service.request) match {
       case Some(x) =>
         val gain = service.utility()
@@ -34,7 +32,10 @@ class ACME(val simulation: ACMESimulation) extends Client {
     recordProvenance(new ACMERecord(service, assessment))
   }
 
-  override def makeRequest(assessment: TrustAssessment): Unit = ???
+  override def makeRequest(assessment: TrustAssessment): Unit = {
+    jaspr.debug("REQUEST: ", assessment.request)
+    assessment.request.provider.receiveRequest(assessment.request)
+  }
 
   override def generateComposition(context: ClientContext): TrustAssessment = {
     config.strategy.assessReputation(simulation.network, context)

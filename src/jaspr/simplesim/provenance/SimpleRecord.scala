@@ -8,6 +8,4 @@ import jaspr.core.service.Service
 /**
  * Created by phil on 16/03/16.
  */
-class SimpleRecord(override val service: Service,
-                   override val properties: Map[String,Property]
-                    ) extends ServiceRecord with RatingsRecord
+class SimpleRecord(override val service: Service) extends ServiceRecord

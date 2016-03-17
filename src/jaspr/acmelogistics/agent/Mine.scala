@@ -11,7 +11,7 @@ import jaspr.core.service.{ServiceRequest, Service}
  */
 class Mine(val simulation: ACMESimulation) extends Provider {
   override def receiveRequest(request: ServiceRequest): Boolean = {
-    val service = new ACMEService(request, this.properties)
+    val service = new ACMEService(request)
     jaspr.debug("CREATE: ", request, service)
     currentServices += service
     true

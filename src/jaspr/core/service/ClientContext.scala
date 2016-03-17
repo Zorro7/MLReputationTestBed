@@ -1,6 +1,6 @@
 package jaspr.core.service
 
-import jaspr.core.agent.{Market, Properties, Property, Client}
+import jaspr.core.agent.{Market, Client}
 import jaspr.utilities.NamedEntity
 
 /**
@@ -8,6 +8,5 @@ import jaspr.utilities.NamedEntity
  */
 class ClientContext(val client: Client,
                     val round: Int,
-                    val market: Market,
-                    override val properties: Map[String,Property]
-                     ) extends NamedEntity with Properties
+                    val market: Market
+                     ) extends NamedEntity
