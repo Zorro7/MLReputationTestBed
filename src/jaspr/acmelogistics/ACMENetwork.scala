@@ -14,7 +14,7 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
 
   override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
     network.providers.map(
-      new ServiceRequest(context.client, _, context.round, 1, context.payload, context.market)
+      new ServiceRequest(context.client, _, context.round, 1, context.payload, context.market, Nil)
     )
   }
 
