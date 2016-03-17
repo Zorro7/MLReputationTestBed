@@ -1,8 +1,8 @@
 package jaspr.simplesim
 
-import jaspr.core.agent.Client
-import jaspr.core.{Network, Simulation}
+import jaspr.core.{Simulation}
 import jaspr.core.results.Result
+import jaspr.utilities.Chooser
 
 /**
  * Created by phil on 15/03/16.
@@ -17,13 +17,13 @@ class SimpleSimulation(override val config: SimpleConfiguration) extends Simulat
 
   override def act(): Result = {
     for (agent <- network.clients) {
-      agent.tick()
+      Chooser.ifHappens(0.1)(agent.clientTick())()
     }
     for (event <- network.events()) {
       event.tick()
     }
     for (agent <- network.providers) {
-      agent.tick()
+      agent.providerTick()
     }
     new Result(this)
   }
