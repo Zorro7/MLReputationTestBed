@@ -3,13 +3,14 @@ package jaspr.core.agent
 import jaspr.core.service.{ServiceRequest, Service}
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 /**
  * Created by phil on 15/03/16.
  */
 trait Provider extends Agent with AdvertProperties {
 
-  val currentServices: mutable.ListBuffer[Service]
+  val currentServices: mutable.ListBuffer[Service] = new ListBuffer[Service]
 
   def tick(): Unit = {
     jaspr.debug("TICK (Provider): ", this)
