@@ -1,26 +1,28 @@
 package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
-import jaspr.core.Simulation
+import jaspr.acmelogistics.service.ACMEService
 import jaspr.core.agent.{Property, Provider}
 import jaspr.core.provenance.Record
 import jaspr.core.service.{ServiceRequest, Service}
-
-import scala.collection.mutable.ListBuffer
 
 /**
  * Created by phil on 17/03/16.
  */
 class Mine(val simulation: ACMESimulation) extends Provider {
-  override def receiveRequest(request: ServiceRequest): Boolean = ???
+  override def receiveRequest(request: ServiceRequest): Boolean = {
+    val service = new ACMEService(request, this.properties)
+    jaspr.debug("CREATE: ", request, service)
+    currentServices += service
+    true
+  }
 
-  override def affectService(service: Service): Unit = ???
+  override def affectService(service: Service): Unit = {}
 
   override def utility: Double = ???
 
-  override def advertProperties: Map[String, Property] = ???
-
-  override def properties: Map[String, Property] = ???
+  override val properties: Map[String, Property] = simulation.config.properties(this)
+  override val advertProperties: Map[String, Property] = simulation.config.adverts(this)
 
   override def gatherProvenance[T <: Record](): Seq[T] = ???
 
