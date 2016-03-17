@@ -26,6 +26,23 @@ trait Exploration extends Strategy {
   }
 }
 
+trait BanditExploration extends Strategy {
+
+  val explorationProbability: Double
+
+  def select(orderedAssessments: Seq[TrustAssessment]): TrustAssessment = {
+    if (orderedAssessments.size == 1) {
+      orderedAssessments.head
+    } else {
+      Chooser.ifHappens(explorationProbability)(
+        Chooser.choose(orderedAssessments.drop(1))
+        )(
+        orderedAssessments.head
+      )
+    }
+  }
+}
+
 trait NoExploration extends Strategy {
 
   def select(orderedAssessments: Seq[TrustAssessment]): TrustAssessment = {
