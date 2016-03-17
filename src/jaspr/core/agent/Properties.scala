@@ -1,7 +1,6 @@
 package jaspr.core.agent
 
 import jaspr.utilities.NamedEntity
-import scala.language.implicitConversions
 
 /**
  * Created by phil on 15/03/16.
@@ -17,7 +16,7 @@ trait AdvertProperties extends Properties {
   def advertProperties: Map[String,Property]
 }
 
-case class Property(override val name: String, value: AnyVal) extends NamedEntity {
+case class Property(override val name: String, var value: AnyVal) extends NamedEntity {
 
   def floatValue: Float = value.asInstanceOf[Float]
   def doubleValue: Double = value.asInstanceOf[Double]

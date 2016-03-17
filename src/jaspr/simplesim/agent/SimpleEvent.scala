@@ -9,7 +9,12 @@ import jaspr.core.service.Service
  */
 case class SimpleEvent(override val name: String, providers: Seq[Provider]) extends Event {
 
-  override def affect(service: Service): Unit = {}
+  override def affect(service: Service): Unit = {
+    service.duration = service.duration + 1
+    service.properties.values.foreach(x => x.value = x.doubleValue / 2)
+  }
 
-  override def affect(provider: Provider): Unit = {}
+  override def affect(provider: Provider): Unit = {
+//    provider.properties.values.foreach(x => x.value = x.doubleValue * 2)
+  }
 }

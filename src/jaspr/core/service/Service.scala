@@ -1,6 +1,6 @@
 package jaspr.core.service
 
-import jaspr.core.agent.Properties
+import jaspr.core.agent.{Property, Properties}
 import jaspr.utilities.NamedEntity
 
 /**

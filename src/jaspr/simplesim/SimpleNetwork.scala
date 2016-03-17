@@ -18,6 +18,6 @@ class SimpleNetwork(val simulation: SimpleSimulation) extends Network {
   override val providers: Seq[SimpleAgent] = agents.map(_.asInstanceOf[SimpleAgent])
 
   override def events(): Seq[Event] = {
-    SimpleEvent("Event", Chooser.sample(providers, 2)) :: Nil
+    Chooser.ifHappens(0.1)(SimpleEvent("Event", Chooser.sample(providers, 2)) :: Nil)(Nil)
   }
 }
