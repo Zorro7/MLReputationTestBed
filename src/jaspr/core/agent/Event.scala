@@ -16,6 +16,7 @@ trait Event extends NamedEntity with Tickable {
       affect(provider)
       for (service <- provider.currentServices) {
         affect(service)
+        service.serviceContext.addEvent(this)
       }
     }
   }
