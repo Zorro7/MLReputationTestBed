@@ -28,7 +28,9 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   def clientTick() = super[Client].tick()
 
   override def generateContext(): ClientContext = {
-    new ClientContext(this, simulation.round, Property("QOS", Chooser.randomDouble(0,3)) :: Nil)
+    new ClientContext(
+      this, simulation.round, simulation.network.markets.head, Property("QOS", Chooser.randomDouble(0,3)) :: Nil
+    )
   }
 
   override def receiveService(service: Service): Unit = {

@@ -1,8 +1,8 @@
 package jaspr.acmelogistics
 
-import jaspr.acmelogistics.agent.{Mine, Refinery, Shipper, ACME}
+import jaspr.acmelogistics.agent._
 import jaspr.core.Network
-import jaspr.core.agent.{Event, Agent, Client, Provider}
+import jaspr.core.agent._
 
 /**
  * Created by phil on 17/03/16.
@@ -15,6 +15,7 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
 
   override def agents: Seq[Agent] = clients ++ providers
 
+  override val markets: Seq[Market] = new ACMEMarket(simulation) :: Nil
   override val clients: Seq[Client] = List.fill(simulation.config.numClients)(
     new ACME(simulation)
   )

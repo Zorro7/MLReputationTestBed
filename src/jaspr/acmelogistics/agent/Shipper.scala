@@ -1,12 +1,9 @@
 package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
-import jaspr.core.Simulation
 import jaspr.core.agent.Property
 import jaspr.core.provenance.Record
 import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
-
-import scala.collection.mutable.ListBuffer
 
 /**
  * Created by phil on 17/03/16.

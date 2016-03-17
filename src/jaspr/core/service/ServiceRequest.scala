@@ -1,6 +1,6 @@
 package jaspr.core.service
 
-import jaspr.core.agent.{Property, Properties, Client, Provider}
+import jaspr.core.agent._
 import jaspr.utilities.NamedEntity
 
 /**
@@ -10,6 +10,7 @@ class ServiceRequest(val client: Client,
                      val provider: Provider,
                      val start: Int,
                      val duration: Int,
+                     val market: Market,
                      override val properties: Map[String,Property]
                       ) extends NamedEntity with Properties {
 

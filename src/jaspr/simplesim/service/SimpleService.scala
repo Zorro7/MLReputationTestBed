@@ -19,14 +19,4 @@ class SimpleService(override val request: ServiceRequest,
   override def canStart(currentRound: Int): Boolean = {
     !isDelivered && !isStarted && currentRound >= start
   }
-
-  override def utility(): Double = {
-    val requested = request.properties.values.map(_.doubleValue).sum
-    val received = properties.values.map(_.doubleValue).sum
-    if (requested < received) {
-      requested
-    } else {
-      0d
-    }
-  }
 }

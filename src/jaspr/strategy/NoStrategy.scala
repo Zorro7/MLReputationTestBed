@@ -20,7 +20,7 @@ class NoStrategy extends Strategy with NoExploration {
 
   override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
     network.providers.map(
-      new ServiceRequest(context.client, _, context.round, 1, context.properties)
+      new ServiceRequest(context.client, _, context.round, 1, context.market, context.properties)
     )
   }
 }

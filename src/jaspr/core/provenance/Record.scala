@@ -14,7 +14,7 @@ trait ServiceRecord extends Record {
 }
 
 trait TrustAssessmentRecord extends Record {
-  val trustAssessment: TrustAssessment
+  val assessment: TrustAssessment
 }
 
 trait RatingsRecord extends Record with Properties

@@ -27,11 +27,13 @@ abstract class Service extends NamedEntity with Properties {
 
   def isComplete(currentRound: Int): Boolean
   def canStart(currentRound: Int): Boolean
-  def utility(): Double
+  private var _utility: Double = 0d
+  def utility(): Double = _utility
 
   def tryEndService(currentRound: Int): Boolean = {
     if (!delivered && isComplete(currentRound)) {
       duration = currentRound - start
+      _utility = request.market.deliver(this)
       delivered = true
       jaspr.debug("ENDED: ", this)
       true
