@@ -3,6 +3,7 @@ package jaspr.acmelogistics
 import jaspr.acmelogistics.agent._
 import jaspr.core.Network
 import jaspr.core.agent._
+import jaspr.core.service.{ServiceRequest, ClientContext}
 
 /**
  * Created by phil on 17/03/16.
@@ -10,6 +11,12 @@ import jaspr.core.agent._
 class ACMENetwork(val simulation: ACMESimulation) extends Network {
 
   override def utility(): Double = clients.map(_.utility).sum
+
+  override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
+    network.providers.map(
+      new ServiceRequest(context.client, _, context.round, 1, context.payload, context.market)
+    )
+  }
 
   override def events(): Seq[Event] = Nil
 

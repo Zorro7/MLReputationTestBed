@@ -1,6 +1,7 @@
 package jaspr.simplesim
 
 import jaspr.core.agent._
+import jaspr.core.service.{ServiceRequest, ClientContext}
 import jaspr.core.{Network}
 import jaspr.simplesim.agent.{SimpleMarket, SimpleEvent, SimpleAgent}
 import jaspr.utilities.Chooser
@@ -21,5 +22,11 @@ class SimpleNetwork(val simulation: SimpleSimulation) extends Network {
 
   override def events(): Seq[Event] = {
     Chooser.ifHappens(0.1)(SimpleEvent("Event", Chooser.sample(providers, 2)) :: Nil)(Nil)
+  }
+
+  override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
+    network.providers.map(
+      new ServiceRequest(context.client, _, context.round, 1, context.payload, context.market)
+    )
   }
 }

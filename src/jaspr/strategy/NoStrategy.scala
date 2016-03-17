@@ -18,9 +18,4 @@ class NoStrategy extends Strategy with NoExploration {
     new TrustAssessment(request, Chooser.randomDouble(0,1))
   }
 
-  override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
-    network.providers.map(
-      new ServiceRequest(context.client, _, context.round, 1, context.payload, context.market)
-    )
-  }
 }
