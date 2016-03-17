@@ -10,6 +10,7 @@ abstract class Service extends NamedEntity {
 
   val request: ServiceRequest
 
+  var payload = request.payload
   var start = request.start
   var duration = request.duration
   val serviceContext: ServiceContext

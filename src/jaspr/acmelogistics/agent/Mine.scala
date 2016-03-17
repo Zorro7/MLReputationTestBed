@@ -1,7 +1,7 @@
 package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
-import jaspr.acmelogistics.service.ACMEService
+import jaspr.acmelogistics.service.{GoodPayload, ACMEService}
 import jaspr.core.agent.{Property, Provider}
 import jaspr.core.provenance.Record
 import jaspr.core.service.{ServiceRequest, Service}

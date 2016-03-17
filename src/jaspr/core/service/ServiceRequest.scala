@@ -10,6 +10,7 @@ class ServiceRequest(val client: Client,
                      val provider: Provider,
                      val start: Int,
                      val duration: Int,
+                     val payload: Payload,
                      val market: Market
                       ) extends NamedEntity {
 

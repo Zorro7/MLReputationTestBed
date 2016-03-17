@@ -18,3 +18,10 @@ class ACMEService(override val request: ServiceRequest) extends Service {
 
   override val serviceContext: ServiceContext = new ServiceContext
 }
+
+
+trait GoodPayload {
+
+  val quality: Double
+  val quantity: Double
+}

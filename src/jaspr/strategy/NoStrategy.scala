@@ -1,7 +1,7 @@
 package jaspr.strategy
 
 import jaspr.core.Network
-import jaspr.core.service.{TrustAssessment, ServiceRequest, ClientContext}
+import jaspr.core.service.{Payload, TrustAssessment, ServiceRequest, ClientContext}
 import jaspr.core.strategy.{NoExploration, StrategyInit, Strategy}
 import jaspr.utilities.Chooser
 
@@ -20,7 +20,7 @@ class NoStrategy extends Strategy with NoExploration {
 
   override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
     network.providers.map(
-      new ServiceRequest(context.client, _, context.round, 1, context.market)
+      new ServiceRequest(context.client, _, context.round, 1, new Payload, context.market)
     )
   }
 }

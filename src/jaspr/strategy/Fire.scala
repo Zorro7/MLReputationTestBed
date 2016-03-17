@@ -3,7 +3,7 @@ package jaspr.strategy
 import jaspr.core.Network
 import jaspr.core.agent.Provider
 import jaspr.core.provenance.{ServiceRecord, Record}
-import jaspr.core.service.{TrustAssessment, ServiceRequest, ClientContext}
+import jaspr.core.service.{Payload, TrustAssessment, ServiceRequest, ClientContext}
 import jaspr.core.strategy.{Exploration, NoExploration, StrategyInit, Strategy}
 
 /**
@@ -44,7 +44,7 @@ class Fire extends Strategy with Exploration {
 
   override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
     network.providers.map(
-      new ServiceRequest(context.client, _, context.round, 1, context.market)
+      new ServiceRequest(context.client, _, context.round, 1, new Payload, context.market)
     )
   }
 
