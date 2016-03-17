@@ -22,10 +22,12 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
   val memoryLimit = 100
 
   val numClients = 1
-  val numShippers = 0
+  val numShippers = 3
   val numRefineries = 0
   val numMines = 3
+  val numCompositions = 10
 
+  val defaultServiceDuration = 1
 
   def clientContext(network: Network, client: Client, round: Int): ClientContext = {
     new ClientContext(

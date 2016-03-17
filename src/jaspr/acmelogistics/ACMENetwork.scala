@@ -4,6 +4,9 @@ import jaspr.acmelogistics.agent._
 import jaspr.core.Network
 import jaspr.core.agent._
 import jaspr.core.service.{ServiceRequest, ClientContext}
+import jaspr.utilities.Chooser
+
+import scala.annotation.tailrec
 
 /**
  * Created by phil on 17/03/16.
@@ -12,10 +15,42 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
 
   override def utility(): Double = clients.map(_.utility).sum
 
+  def providerCompositions: Iterable[Seq[Provider]] = {
+    List.fill(simulation.config.numCompositions)(
+//      Chooser.choose(this.refineries) ::
+        Chooser.choose(this.shippers) ::
+        Chooser.choose(this.mines) :: Nil
+    ).distinct
+  }
+
   override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
-    network.providers.map(
-      new ServiceRequest(context.client, _, context.round, 1, context.payload, context.market, Nil)
-    )
+    @tailrec
+    def createComposition(ps: Seq[Provider],
+                          context: ClientContext,
+                          acc: Seq[ServiceRequest] = Nil,
+                          depth: Int = 0): ServiceRequest = {
+      if (ps.isEmpty) acc.head
+      else {
+        val client =
+          if (ps.size == 1) context.client
+          else ps.drop(1).head.asInstanceOf[Client]
+        createComposition(
+          ps.drop(1), context,
+          new ServiceRequest(
+            client, ps.head,
+            context.round+depth*simulation.config.defaultServiceDuration,
+            simulation.config.defaultServiceDuration,
+            context.payload,
+            markets.head,
+            acc
+          ) :: Nil,
+          depth+1
+        )
+      }
+    }
+    providerCompositions.map(x => {
+      createComposition(x.reverse, context)
+    }).toSeq
   }
 
   override def events(): Seq[Event] = Nil
