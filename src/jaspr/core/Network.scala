@@ -1,6 +1,6 @@
 package jaspr.core
 
-import jaspr.core.agent.{Provider, Client, Agent}
+import jaspr.core.agent.{Event, Provider, Client, Agent}
 
 /**
  * Created by phil on 15/03/16.
@@ -13,4 +13,5 @@ abstract class Network {
   def agents: Seq[Agent]
   def clients: Seq[Client]
   def providers: Seq[Provider]
+  def events(): Seq[Event]
 }

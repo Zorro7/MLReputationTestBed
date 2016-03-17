@@ -1,8 +1,8 @@
 package jaspr.simplesim
 
-import jaspr.core.agent.{Agent, Client, Provider}
+import jaspr.core.agent.{Event, Agent, Client, Provider}
 import jaspr.core.{Network}
-import jaspr.simplesim.agent.SimpleAgent
+import jaspr.simplesim.agent.{SimpleEvent, SimpleAgent}
 import jaspr.utilities.Chooser
 
 /**
@@ -16,4 +16,8 @@ class SimpleNetwork(val simulation: SimpleSimulation) extends Network {
 
   override val clients: Seq[Client] = agents.map(_.asInstanceOf[SimpleAgent])
   override val providers: Seq[Provider] = agents.map(_.asInstanceOf[SimpleAgent])
+
+  override def events(): Seq[Event] = {
+    SimpleEvent("Event", Chooser.sample(providers, 2)) :: Nil
+  }
 }
