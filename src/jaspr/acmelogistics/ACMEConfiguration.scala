@@ -7,7 +7,8 @@ import jaspr.core.agent.{Client, Properties, Agent, Property}
 import jaspr.core.service.{ClientContext}
 import jaspr.core.{Network, MultiConfiguration, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
-import jaspr.strategy.{Fire, NoStrategy}
+import jaspr.strategy.NoStrategy
+import jaspr.strategy.fire.Fire
 import jaspr.utilities.{Chooser}
 
 /**

@@ -1,10 +1,13 @@
 package jaspr.strategy
 
-import jaspr.core.agent.Provider
+import jaspr.core.agent.{Client, Provider}
 
 /**
  * Created by phil on 16/03/16.
  */
 
 
-class Rating(val provider: Provider, val rating: Double)
+class Rating(val client: Client, val provider: Provider, val rating: Double) {
+
+  def success: Boolean = rating > 0d
+}

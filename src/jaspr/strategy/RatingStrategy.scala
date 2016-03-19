@@ -24,6 +24,7 @@ abstract class RatingStrategy extends Strategy {
   def toRatings(records: Seq[Record]): Seq[Rating] = {
     records.map(x =>
       new Rating(
+        x.asInstanceOf[ServiceRecord].service.request.client,
         x.asInstanceOf[ServiceRecord].service.request.provider,
         x.asInstanceOf[RatingRecord].rating
       )

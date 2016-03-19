@@ -1,8 +1,9 @@
-package jaspr.strategy
+package jaspr.strategy.fire
 
 import jaspr.core.agent.Provider
-import jaspr.core.service.{TrustAssessment, ServiceRequest}
+import jaspr.core.service.{ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{Exploration, StrategyInit}
+import jaspr.strategy.{Rating, RatingStrategy, RatingStrategyInit}
 
 
 class Fire extends RatingStrategy with Exploration {
