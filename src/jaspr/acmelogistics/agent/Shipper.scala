@@ -2,7 +2,7 @@ package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.GoodPayload
-import jaspr.core.provenance.Record
+import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{Service, TrustAssessment}
 
 /**
@@ -30,7 +30,7 @@ class Shipper(simulation: ACMESimulation) extends Subprovider(simulation) {
 
   override def utility: Double = ???
 
-  override def getProvenance[T <: Record]: Seq[T] = ???
+  override def getProvenance[T <: Record](agent: Provenance): Seq[T] = provenance.map(_.asInstanceOf[T])
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 }

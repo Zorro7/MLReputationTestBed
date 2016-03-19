@@ -17,5 +17,5 @@ class ServiceContext extends NamedEntity with Provenance {
 
   override val memoryLimit: Int = Int.MaxValue
 
-  override def getProvenance[T <: Record]: Seq[T] =  provenance.map(_.asInstanceOf[T])
+  override def getProvenance[T <: Record](agent: Provenance): Seq[T] =  provenance.map(_.asInstanceOf[T])
 }

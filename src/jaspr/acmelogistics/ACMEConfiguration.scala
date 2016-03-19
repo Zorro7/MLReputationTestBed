@@ -64,7 +64,7 @@ class ACMEMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
   override lazy val configs: Seq[Configuration] =
-//    new ACMEConfiguration(new Fire) ::
+    new ACMEConfiguration(new Fire) ::
       new ACMEConfiguration(new NoStrategy) ::
       Nil
 }

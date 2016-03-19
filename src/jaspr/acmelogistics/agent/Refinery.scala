@@ -4,7 +4,7 @@ import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.Simulation
 import jaspr.core.agent.Property
-import jaspr.core.provenance.Record
+import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
 
 import scala.collection.mutable.ListBuffer
@@ -36,7 +36,7 @@ class Refinery(simulation: ACMESimulation) extends Subprovider(simulation) {
 
   override def utility: Double = ???
 
-  override def getProvenance[T <: Record]: Seq[T] = ???
+  override def getProvenance[T <: Record](agent: Provenance): Seq[T] = provenance.map(_.asInstanceOf[T])
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 }

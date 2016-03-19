@@ -3,6 +3,8 @@ package jaspr.core.service
 import jaspr.core.agent._
 import jaspr.utilities.NamedEntity
 
+import scala.annotation.tailrec
+
 /**
  * Created by phil on 15/03/16.
  */
@@ -16,6 +18,15 @@ class ServiceRequest(val client: Client,
                      val market: Market,
                      val dependencies: Seq[ServiceRequest] = Nil
                       ) extends NamedEntity {
+
+  def flatten(): Seq[ServiceRequest] = {
+    @tailrec
+    def flatten(curr: List[ServiceRequest], acc: List[ServiceRequest]): Seq[ServiceRequest] = {
+      if (curr.isEmpty) acc
+      else flatten(curr.tail ++ curr.head.dependencies, curr.head :: acc)
+    }
+    flatten(this :: Nil, Nil)
+  }
 
   def end: Int = start + duration
 

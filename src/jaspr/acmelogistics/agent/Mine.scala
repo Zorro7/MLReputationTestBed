@@ -3,7 +3,7 @@ package jaspr.acmelogistics.agent
 import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.{GoodPayload, ACMEService}
 import jaspr.core.agent.{Property, Provider}
-import jaspr.core.provenance.Record
+import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{ServiceRequest, Service}
 
 /**
@@ -31,7 +31,7 @@ class Mine(val simulation: ACMESimulation) extends Provider {
   override val properties: Map[String, Property] = simulation.config.properties(this)
   override val advertProperties: Map[String, Property] = simulation.config.adverts(this)
 
-  override def getProvenance[T <: Record]: Seq[T] = ???
+  override def getProvenance[T <: Record](agent: Provenance): Seq[T] = provenance.map(_.asInstanceOf[T])
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 }

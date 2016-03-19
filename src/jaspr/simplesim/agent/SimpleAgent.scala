@@ -2,7 +2,7 @@ package jaspr.simplesim.agent
 
 import jaspr.core.Simulation
 import jaspr.core.agent.{Property, Client, Provider}
-import jaspr.core.provenance.Record
+import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service._
 import jaspr.simplesim.provenance.SimpleRecord
 import jaspr.simplesim.service.SimpleService
@@ -69,7 +69,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override val memoryLimit: Int = 50
 
-  override protected def getProvenance[T <: Record]: Seq[T] = {
+  override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {
     provenance.map(_.asInstanceOf[T])
   }
 

@@ -3,7 +3,7 @@ package jaspr.acmelogistics.agent
 import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.ACMERecord
 import jaspr.core.agent.Client
-import jaspr.core.provenance.{ServiceRecord, Record}
+import jaspr.core.provenance.{Provenance, ServiceRecord, Record}
 import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
 
 import scala.collection.mutable
@@ -43,9 +43,7 @@ class ACME(override val simulation: ACMESimulation) extends Client {
 
   var utility: Double = 0d
 
-  override def getProvenance[T <: Record]: Seq[T] = {
-    provenance.map(_.asInstanceOf[T])
-  }
+  override def getProvenance[T <: Record](agent: Provenance): Seq[T] = provenance.map(_.asInstanceOf[T])
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 }
