@@ -35,13 +35,14 @@ class Fire extends Strategy with Exploration {
 
     val requestScores = request.flatten().map(x => fire(x.provider, init.directRecords, init.witnessRecords))
 
+    println(requestScores)
     new TrustAssessment(request, requestScores.sum)
   }
 
   def fire(provider: Provider, directRecords: Seq[Rating], witnessRecords: Seq[Rating]) = {
     val direct = directRecords.withFilter(_.provider == provider).map(_.rating)
     val witness = witnessRecords.filter(_.provider == provider).map(_.rating)
-    direct.sum / direct.size + witness.sum / witness.size
+    direct.sum / (direct.size+1) + witness.sum / (witness.size+1)
   }
 
   override val explorationProbability: Double = 0.2
