@@ -39,15 +39,15 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
   def properties(agent: Agent): Map[String,Property] = {
     agent match {
       case _: Shipper =>
-        Property("Timeliness", Chooser.randomDouble(-3,1)) ::
+        Property("Timeliness", Chooser.randomInt(-3,1)) ::
         //        Property("Capacity") -> Chooser.randomDouble(-1,1),
         Property("Competence", Chooser.randomDouble(-1, 1)) :: Nil
       case _: Refinery =>
-        Property("Rate", Chooser.randomDouble(-3,1)) ::
+        Property("Rate", Chooser.randomInt(-3,1)) ::
         Property("MetalPurity", Chooser.randomDouble(-1,1)) ::
         Property("OrePurityReq", Chooser.randomDouble(-1,1)) :: Nil
       case _: Mine =>
-        Property("Rate", Chooser.randomDouble(-3,1)) ::
+        Property("Rate", Chooser.randomInt(-3,1)) ::
         Property("OreWetness",  Chooser.randomDouble(-1,1)) ::
         Property("OrePurity", Chooser.randomDouble(-1,1)) :: Nil
       case _ => Map[String,Property]()

@@ -1,17 +1,30 @@
 package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
-import jaspr.core.agent.Property
+import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.provenance.Record
-import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
+import jaspr.core.service.{Service, TrustAssessment}
 
 /**
  * Created by phil on 17/03/16.
  */
 class Shipper(simulation: ACMESimulation) extends Subprovider(simulation) {
-  override def affectService(performing: Service, received: Service): Unit = {}
+  def affectService(service: Service): Unit = {
+    properties.foreach(p => p._1 match {
+      case "Competence" =>
+        service.payload = service.payload.asInstanceOf[GoodPayload].copy(
+          quantity = service.payload.asInstanceOf[GoodPayload].quantity + p._2.doubleValue
+        )
+      case "Timeliness" => service.duration = Math.round(service.duration - p._2.intValue)
+      case "Capacity" => //performing.good = performing.good.copy(quantity = performing.good.quantity + p._2)
+    })
+    jaspr.debug("AFFECT: ", service)
+  }
 
-  override def affectService(service: Service): Unit = {}
+  def affectService(performing: Service, received: Service): Unit = {
+    performing.payload = received.payload
+    jaspr.debug("AFFECT: ", received, performing)
+  }
 
   override def makeRequest(assessment: TrustAssessment): Unit = ???
 

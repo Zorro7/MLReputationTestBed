@@ -3,7 +3,7 @@ package jaspr.acmelogistics.agent
 import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.{GoodPayload, ACMEService}
 import jaspr.core.agent.{Property, Provider}
-import jaspr.core.provenance.{Property, Record}
+import jaspr.core.provenance.Record
 import jaspr.core.service.{ServiceRequest, Service}
 
 /**
@@ -17,7 +17,14 @@ class Mine(val simulation: ACMESimulation) extends Provider {
     true
   }
 
-  override def affectService(service: Service): Unit = {}
+  override def affectService(service: Service): Unit = {
+    properties.foreach(p => p._1 match {
+      case "OrePurity" => service.payload = service.payload.asInstanceOf[GoodPayload].copy(quality = p._2.doubleValue)
+      case "OreWetness" => // nothing?
+      case "Rate" => service.duration = Math.round(service.duration - p._2.intValue)
+    })
+    jaspr.debug("AFFECTED: ", service)
+  }
 
   override def utility: Double = ???
 
