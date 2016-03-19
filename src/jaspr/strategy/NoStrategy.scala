@@ -15,7 +15,6 @@ class NoStrategy extends Strategy with NoExploration {
   }
 
   override def computeAssessment(init: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    println(request+" DEPENDENCIES  " +request.dependencies)
     new TrustAssessment(request, Chooser.randomDouble(0,1))
   }
 

@@ -23,7 +23,7 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
 
   val numClients = 1
   val numShippers = 3
-  val numRefineries = 0
+  val numRefineries = 3
   val numMines = 3
   val numCompositions = 10
 

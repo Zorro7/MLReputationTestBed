@@ -1,9 +1,8 @@
 package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
-import jaspr.acmelogistics.service.{SubproviderRecord, ACMERecord, ACMEService}
+import jaspr.acmelogistics.service.{SubproviderRecord, ACMEService}
 import jaspr.core.agent.{Provider, Client}
-import jaspr.core.provenance.ServiceRecord
 import jaspr.core.service.{Service, ServiceRequest, TrustAssessment, ClientContext}
 
 import scala.collection.mutable
