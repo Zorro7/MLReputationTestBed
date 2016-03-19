@@ -3,7 +3,7 @@ package jaspr.acmelogistics
 import jaspr.acmelogistics.agent._
 import jaspr.core.Network
 import jaspr.core.agent._
-import jaspr.core.service.{ServiceRequest, ClientContext}
+import jaspr.core.service.{Service, ServiceRequest, ClientContext}
 import jaspr.utilities.Chooser
 
 import scala.annotation.tailrec
@@ -53,7 +53,9 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
     }).toSeq
   }
 
-  override def events(): Seq[Event] = Nil
+  override def events(): Seq[Event] = new ACMEEvent(
+      Chooser.sample(providers, Chooser.randomInt(0,5))
+    ) :: Nil
 
   override def agents: Seq[Agent] = clients ++ providers
 
