@@ -1,5 +1,7 @@
 package jaspr.core.provenance
 
+import jaspr.core.agent.Agent
+
 /**
  * Created by phil on 16/03/16.
  */
@@ -14,6 +16,6 @@ trait Provenance {
     jaspr.debug("RECORD: ", this, record, provenance.size)
   }
 
-  def getProvenance[T <: Record]: Seq[T]
-  def gatherProvenance[T <: Record](): Seq[T]
+  def getProvenance[T <: Record](agent: Agent): Seq[T] = getProvenance[T]
+  protected def getProvenance[T <: Record]: Seq[T]
 }

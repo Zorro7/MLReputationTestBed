@@ -11,7 +11,7 @@ import scala.collection.mutable
 /**
  * Created by phil on 17/03/16.
  */
-class ACME(val simulation: ACMESimulation) extends Client {
+class ACME(override val simulation: ACMESimulation) extends Client {
 
   override def generateContext(): ClientContext = {
     val context = simulation.config.clientContext(simulation.network, this, simulation.round)
@@ -45,10 +45,6 @@ class ACME(val simulation: ACMESimulation) extends Client {
 
   override def getProvenance[T <: Record]: Seq[T] = {
     provenance.map(_.asInstanceOf[T])
-  }
-
-  override def gatherProvenance[T <: Record](): Seq[T] = {
-    simulation.network.agents.withFilter(_ != this).flatMap(x => x.getProvenance[T])
   }
 
   override val memoryLimit: Int = simulation.config.memoryLimit

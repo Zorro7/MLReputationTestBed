@@ -1,6 +1,7 @@
 package jaspr.core
 
 import jaspr.core.agent._
+import jaspr.core.provenance.Record
 import jaspr.core.service.{ClientContext, ServiceRequest}
 
 /**
@@ -16,5 +17,8 @@ abstract class Network {
   def clients: Seq[Client]
   def providers: Seq[Provider]
   def events(): Seq[Event]
+  def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
+    agents.withFilter(_ != this).flatMap(_.getProvenance[T](agent))
+  }
   def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest]
 }

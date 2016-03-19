@@ -69,12 +69,8 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override val memoryLimit: Int = 50
 
-  override def getProvenance[T <: Record]: Seq[T] = {
+  override protected def getProvenance[T <: Record]: Seq[T] = {
     provenance.map(_.asInstanceOf[T])
-  }
-
-  override def gatherProvenance[T <: Record](): Seq[T] = {
-    simulation.network.agents.withFilter(_ != this).flatMap(_.getProvenance)
   }
 
 }

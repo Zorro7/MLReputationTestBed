@@ -8,7 +8,7 @@ import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientConte
 /**
  * Created by phil on 17/03/16.
  */
-class Shipper(val simulation: ACMESimulation) extends Subprovider {
+class Shipper(simulation: ACMESimulation) extends Subprovider(simulation) {
   override def affectService(performing: Service, received: Service): Unit = ???
 
   override def affectService(service: Service): Unit = ???
@@ -20,8 +20,6 @@ class Shipper(val simulation: ACMESimulation) extends Subprovider {
   override def advertProperties: Map[String, Property] = ???
 
   override def properties: Map[String, Property] = ???
-
-  override def gatherProvenance[T <: Record](): Seq[T] = ???
 
   override def getProvenance[T <: Record]: Seq[T] = ???
 

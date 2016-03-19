@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 /**
  * Created by phil on 17/03/16.
  */
-class Refinery(val simulation: ACMESimulation) extends Subprovider {
+class Refinery(simulation: ACMESimulation) extends Subprovider(simulation) {
   override def receiveRequest(request: ServiceRequest): Boolean = ???
 
   override def affectService(service: Service): Unit = ???
@@ -29,8 +29,6 @@ class Refinery(val simulation: ACMESimulation) extends Subprovider {
   override def generateComposition(context: ClientContext): TrustAssessment = ???
 
   override def properties: Map[String, Property] = ???
-
-  override def gatherProvenance[T <: Record](): Seq[T] = ???
 
   override def getProvenance[T <: Record]: Seq[T] = ???
 

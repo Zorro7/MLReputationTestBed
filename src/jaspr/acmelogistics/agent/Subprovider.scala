@@ -1,5 +1,6 @@
 package jaspr.acmelogistics.agent
 
+import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.{SubproviderRecord, ACMERecord, ACMEService}
 import jaspr.core.agent.{Provider, Client}
 import jaspr.core.provenance.ServiceRecord
@@ -10,7 +11,7 @@ import scala.collection.mutable
 /**
  * Created by phil on 17/03/16.
  */
-abstract class Subprovider extends Client with Provider {
+abstract class Subprovider(override val simulation: ACMESimulation) extends Client with Provider {
 
   override def tick(): Unit = {
     super[Provider].tick()
@@ -49,6 +50,6 @@ abstract class Subprovider extends Client with Provider {
 
   def affectService(performing: Service, received: Service): Unit
 
-  override val memoryLimit: Int = _
+  override val memoryLimit: Int = simulation.config.memoryLimit
 
 }

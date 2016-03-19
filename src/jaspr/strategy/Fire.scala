@@ -20,10 +20,10 @@ class FireStrategyInit(val directRecords: Seq[Rating],
 class Fire extends Strategy with Exploration {
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
-    val direct = context.client.getProvenance[ServiceRecord].map(x =>
+    val direct = context.client.getProvenance[ServiceRecord](context.client).map(x =>
       new Rating(x.service.request.provider, x.service.utility())
     )
-    val witness = context.client.gatherProvenance[ServiceRecord]().map(x =>
+    val witness = network.gatherProvenance[ServiceRecord](context.client).map(x =>
       new Rating(x.service.request.provider, x.service.utility())
     )
 
@@ -33,7 +33,7 @@ class Fire extends Strategy with Exploration {
   override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init: FireStrategyInit = baseInit.asInstanceOf[FireStrategyInit]
 
-    val directRecords = init.directRecords.withFilter(_.provider == request.provider).map(_.rating)
+    val directRecords = init.directRecords.withFilter(_.provider ==  request.provider).map(_.rating)
     val witnessRecords = init.witnessRecords.filter(_.provider == request.provider).map(_.rating)
 
     val direct = directRecords.sum / directRecords.size
