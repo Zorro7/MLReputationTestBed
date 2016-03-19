@@ -20,9 +20,13 @@ trait Provider extends Agent with AdvertProperties {
 
   def tryStartServices(): Unit  = {
     for (service <- currentServices) {
-      if (service.tryStartService(simulation.round)) {
-        affectService(service)
-      }
+      tryStartService(service)
+    }
+  }
+
+  def tryStartService(service: Service): Unit = {
+    if (service.tryStartService(simulation.round)) {
+      affectService(service)
     }
   }
 

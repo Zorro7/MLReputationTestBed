@@ -9,3 +9,5 @@ import jaspr.core.service.{TrustAssessment, Service}
 class ACMERecord(override val service: Service,
                  override val assessment: TrustAssessment
                   ) extends ServiceRecord with TrustAssessmentRecord
+
+class SubproviderRecord(override val service: Service) extends ServiceRecord

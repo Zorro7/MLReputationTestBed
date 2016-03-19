@@ -9,21 +9,15 @@ import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientConte
  * Created by phil on 17/03/16.
  */
 class Shipper(val simulation: ACMESimulation) extends Subprovider {
-  override def receiveRequest(request: ServiceRequest): Boolean = ???
+  override def affectService(performing: Service, received: Service): Unit = ???
 
   override def affectService(service: Service): Unit = ???
+
+  override def makeRequest(assessment: TrustAssessment): Unit = ???
 
   override def utility: Double = ???
 
   override def advertProperties: Map[String, Property] = ???
-
-  override def receiveService(service: Service): Unit = ???
-
-  override def generateContext(): ClientContext = ???
-
-  override def makeRequest(assessment: TrustAssessment): Unit = ???
-
-  override def generateComposition(context: ClientContext): TrustAssessment = ???
 
   override def properties: Map[String, Property] = ???
 

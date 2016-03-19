@@ -35,4 +35,6 @@ class Refinery(val simulation: ACMESimulation) extends Subprovider {
   override def getProvenance[T <: Record]: Seq[T] = ???
 
   override val memoryLimit: Int = simulation.config.memoryLimit
+
+  override def affectService(performing: Service, received: Service): Unit = ???
 }
