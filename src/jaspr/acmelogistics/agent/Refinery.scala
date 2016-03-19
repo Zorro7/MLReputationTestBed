@@ -20,10 +20,6 @@ class Refinery(simulation: ACMESimulation) extends Subprovider(simulation) {
 
   override def utility: Double = ???
 
-  override def advertProperties: Map[String, Property] = ???
-
-  override def properties: Map[String, Property] = ???
-
   override def getProvenance[T <: Record]: Seq[T] = ???
 
   override val memoryLimit: Int = simulation.config.memoryLimit
