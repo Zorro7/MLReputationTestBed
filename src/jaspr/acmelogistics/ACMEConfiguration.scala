@@ -1,5 +1,6 @@
 package jaspr.acmelogistics
 
+import jaspr.acmelogistics.ACMEConfiguration
 import jaspr.acmelogistics.agent.{Mine, Refinery, Shipper}
 import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.agent.{Client, Properties, Agent, Property}
@@ -12,19 +13,29 @@ import jaspr.utilities.{Chooser}
 /**
  * Created by phil on 17/03/16.
  */
+
+class ACMEMultiConfiguration extends MultiConfiguration {
+  override val directComparison = true
+
+  override lazy val configs: Seq[Configuration] =
+    new ACMEConfiguration(new Fire) ::
+//      new ACMEConfiguration(new NoStrategy) ::
+      Nil
+}
+
 class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
 
   override def newSimulation(): Simulation = new ACMESimulation(this)
 
   override val numSimulations: Int = 1
-  override val numRounds: Int = 10
+  override val numRounds: Int = 250
 
   val memoryLimit = 100
 
   val numClients = 1
-  val numShippers = 3
-  val numRefineries = 3
-  val numMines = 3
+  val numShippers = 10
+  val numRefineries = 10
+  val numMines = 10
   val numCompositions = 10
 
   val defaultServiceDuration = 1
@@ -60,11 +71,3 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
   }
 }
 
-class ACMEMultiConfiguration extends MultiConfiguration {
-  override val directComparison = true
-
-  override lazy val configs: Seq[Configuration] =
-    new ACMEConfiguration(new Fire) ::
-      new ACMEConfiguration(new NoStrategy) ::
-      Nil
-}

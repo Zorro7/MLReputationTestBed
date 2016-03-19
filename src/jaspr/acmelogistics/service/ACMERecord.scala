@@ -1,6 +1,6 @@
 package jaspr.acmelogistics.service
 
-import jaspr.core.provenance.{TrustAssessmentRecord, ServiceRecord}
+import jaspr.core.provenance.{RatingRecord, TrustAssessmentRecord, ServiceRecord}
 import jaspr.core.service.{TrustAssessment, Service}
 
 /**
@@ -8,6 +8,10 @@ import jaspr.core.service.{TrustAssessment, Service}
  */
 class ACMERecord(override val service: Service,
                  override val assessment: TrustAssessment
-                  ) extends ServiceRecord with TrustAssessmentRecord
+                  ) extends ServiceRecord with TrustAssessmentRecord with RatingRecord {
+  def rating: Double = service.utility()
+}
 
-class SubproviderRecord(override val service: Service) extends ServiceRecord
+class SubproviderRecord(override val service: Service) extends ServiceRecord with RatingRecord {
+  def rating: Double = service.utility()
+}

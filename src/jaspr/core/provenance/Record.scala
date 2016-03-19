@@ -17,4 +17,6 @@ trait TrustAssessmentRecord extends Record {
   val assessment: TrustAssessment
 }
 
-trait RatingsRecord extends Record with Properties
+trait RatingRecord extends Record {
+  def rating: Double
+}
