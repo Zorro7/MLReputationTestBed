@@ -1,24 +1,19 @@
 package jaspr.strategy.fire
 
-import jaspr.core.agent.Provider
-import jaspr.core.service.{ServiceRequest, TrustAssessment}
+import jaspr.core.service.{TrustAssessment, ServiceRequest}
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.strategy.{Rating, RatingStrategy, RatingStrategyInit}
+import jaspr.strategy.{CompositionStrategy, RatingStrategy, RatingStrategyInit}
 
 
-class Fire extends RatingStrategy with Exploration {
-
-  override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    val init: RatingStrategyInit = baseInit.asInstanceOf[RatingStrategyInit]
-    val requestScores = request.flatten().map(x => fire(x.provider, init.directRecords, init.witnessRecords))
-    new TrustAssessment(request, requestScores.sum)
-  }
-
-  def fire(provider: Provider, directRecords: Seq[Rating], witnessRecords: Seq[Rating]) = {
-    val direct = directRecords.withFilter(_.provider == provider).map(_.rating)
-    val witness = witnessRecords.filter(_.provider == provider).map(_.rating)
-    direct.sum / (direct.size+1) + witness.sum / (witness.size+1)
-  }
+class Fire extends RatingStrategy with CompositionStrategy with Exploration {
 
   override val explorationProbability: Double = 0.2
+
+  def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
+    val init = baseInit.asInstanceOf[RatingStrategyInit]
+    val direct = init.directRecords.withFilter(_.provider == request.provider).map(_.rating)
+    val witness = init.witnessRecords.filter(_.provider == request.provider).map(_.rating)
+    val result = direct.sum / (direct.size+1) + witness.sum / (witness.size+1)
+    new TrustAssessment(request, result)
+  }
 }

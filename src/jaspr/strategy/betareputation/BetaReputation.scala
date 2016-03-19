@@ -2,17 +2,17 @@ package jaspr.strategy.betareputation
 
 import jaspr.core.service.{ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.strategy.{RatingStrategy, RatingStrategyInit}
+import jaspr.strategy.{CompositionStrategy, RatingStrategy, RatingStrategyInit}
 
 /**
  * Created by phil on 19/03/16.
  */
-class BetaReputation extends RatingStrategy with Exploration with BetaCore {
+class BetaReputation extends RatingStrategy with CompositionStrategy with Exploration with BetaCore {
   override val explorationProbability: Double = 0.2
   val eps: Double = 0.1
   val confidenceThreshold: Double = 1d
 
-  override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
+  override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[RatingStrategyInit]
 
     val interactionTrust = makeBetaDistribution(init.directRecords.filter(_.provider == request.provider).map(_.success))
@@ -28,7 +28,7 @@ class BetaReputation extends RatingStrategy with Exploration with BetaCore {
 
     val combinedOpinions = getCombinedOpinions(interactionTrust, opinions.values)
 
-    val overallTrustValue = combinedOpinions.expected
+    val overallTrustValue = combinedOpinions.expected()
 
     new TrustAssessment(request, overallTrustValue)
   }

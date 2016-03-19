@@ -8,6 +8,7 @@ import jaspr.core.service.{ClientContext}
 import jaspr.core.{Network, MultiConfiguration, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
 import jaspr.strategy.NoStrategy
+import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.fire.Fire
 import jaspr.utilities.{Chooser}
 
@@ -20,7 +21,9 @@ class ACMEMultiConfiguration extends MultiConfiguration {
 
   override lazy val configs: Seq[Configuration] =
     new ACMEConfiguration(new Fire) ::
-//      new ACMEConfiguration(new NoStrategy) ::
+    new ACMEConfiguration(new Travos) ::
+  new ACMEConfiguration(new BetaReputation)::
+      new ACMEConfiguration(new NoStrategy) ::
       Nil
 }
 
