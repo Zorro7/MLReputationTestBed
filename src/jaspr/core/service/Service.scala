@@ -54,7 +54,7 @@ abstract class Service extends NamedEntity {
   }
 
   override def toString: String = {
-    super.toString+"["+request.client+","+request.provider+","+start+","+duration+"]"
+    super.toString+"["+request.client+","+request.provider+","+start+","+duration+","+payload+"]"
   }
 
 }

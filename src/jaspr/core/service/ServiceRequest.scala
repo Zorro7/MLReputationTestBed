@@ -20,6 +20,6 @@ class ServiceRequest(val client: Client,
   def end: Int = start + duration
 
   override def toString: String = {
-    super.toString+"["+client+","+provider+","+start+","+duration+"]"
+    super.toString+"["+client+","+provider+","+start+","+duration+","+payload+"]"
   }
 }

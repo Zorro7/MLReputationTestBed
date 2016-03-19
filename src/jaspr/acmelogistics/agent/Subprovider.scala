@@ -14,7 +14,6 @@ abstract class Subprovider(override val simulation: ACMESimulation) extends Clie
 
   override def tick(): Unit = {
     super[Provider].tick()
-
   }
 
   def generateContext(): ClientContext = ???
