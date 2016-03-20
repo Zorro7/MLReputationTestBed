@@ -9,4 +9,5 @@ case class GoodPayload(quality: Double, quantity: Double) extends Payload {
 
 
 
+  override def toString: String = quality+"x"+quantity
 }

@@ -22,7 +22,7 @@ class ACMEMarket(val simulation: Simulation) extends Market {
 
     val deliveredValue = deliveredPayload.quality*deliveredPayload.quantity
     val fines: Double =
-      penalizeTime(service.request.end, service.end, service.request.start) +
+      penalizeTime(service.request.end, service.end, service.request.flatten().last.start) +
         penalizeGood(requestPayload, deliveredPayload)
     deliveredValue - deliveredValue*fines
   }

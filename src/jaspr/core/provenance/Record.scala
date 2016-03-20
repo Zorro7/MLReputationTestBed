@@ -1,6 +1,5 @@
 package jaspr.core.provenance
 
-import jaspr.core.agent.Properties
 import jaspr.core.service.{Service, TrustAssessment}
 import jaspr.utilities.NamedEntity
 

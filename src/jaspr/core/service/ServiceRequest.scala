@@ -30,6 +30,33 @@ class ServiceRequest(val client: Client,
 
   def end: Int = start + duration
 
+  private var delivered = false
+  private var started = false
+  def isDelivered = {
+    delivered
+  }
+  def isStarted = {
+    started
+  }
+
+  def tryEndService(service: Service, currentRound: Int): Boolean = {
+    if (!delivered && service.isComplete(currentRound)) {
+      delivered = true
+      true
+    } else {
+      false
+    }
+  }
+
+  def tryStartService(service: Service, currentRound: Int) = {
+    if (!started && service.canStart(currentRound)) {
+      started = true
+      true
+    } else {
+      false
+    }
+  }
+
   override def toString: String = {
     super.toString+"["+client+","+provider+","+start+","+duration+","+payload+"]"
   }

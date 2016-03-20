@@ -13,6 +13,8 @@ class SimpleService(override val request: ServiceRequest) extends Service {
     !isDelivered && isStarted && currentRound >= end
   }
 
+  override def dependenciesSatisfied = true
+
   override def canStart(currentRound: Int): Boolean = {
     !isDelivered && !isStarted && currentRound >= start
   }

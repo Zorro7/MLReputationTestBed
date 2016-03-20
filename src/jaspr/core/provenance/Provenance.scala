@@ -6,6 +6,7 @@ package jaspr.core.provenance
 trait Provenance {
 
   val memoryLimit: Int
+  def provenanceEmpty = provenance.isEmpty
 
   protected var provenance: List[Record] = Nil
 

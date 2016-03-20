@@ -17,7 +17,7 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
 
   def providerCompositions: Iterable[Seq[Provider]] = {
     List.fill(simulation.config.numCompositions)(
-      Chooser.choose(this.refineries) ::
+//      Chooser.choose(this.refineries) ::
         Chooser.choose(this.shippers) ::
         Chooser.choose(this.mines) :: Nil
     ).distinct
@@ -53,9 +53,11 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
     }).toSeq
   }
 
-  override def events(): Seq[Event] = new ACMEEvent(
-      Chooser.sample(providers, Chooser.randomInt(0,5))
-    ) :: Nil
+//  override def events(): Seq[Event] = new ACMEEvent(
+//      Chooser.sample(providers, Chooser.randomInt(0,5))
+//    ) :: Nil
+
+  def events = Nil
 
   override def agents: Seq[Agent] = clients ++ providers
 

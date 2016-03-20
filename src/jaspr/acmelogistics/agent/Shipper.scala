@@ -9,7 +9,7 @@ import jaspr.core.service.{Service, TrustAssessment}
  * Created by phil on 17/03/16.
  */
 class Shipper(simulation: ACMESimulation) extends Subprovider(simulation) {
-  def affectService(service: Service): Unit = {
+  override def affectService(service: Service): Unit = {
     properties.foreach(p => p._1 match {
       case "Competence" =>
         service.payload = service.payload.asInstanceOf[GoodPayload].copy(
@@ -21,7 +21,7 @@ class Shipper(simulation: ACMESimulation) extends Subprovider(simulation) {
     jaspr.debug("AFFECT: ", service)
   }
 
-  def affectService(performing: Service, received: Service): Unit = {
+  override def affectService(performing: Service, received: Service): Unit = {
     performing.payload = received.payload
     jaspr.debug("AFFECT: ", received, performing)
   }

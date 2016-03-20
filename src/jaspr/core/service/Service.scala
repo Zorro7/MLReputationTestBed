@@ -16,25 +16,23 @@ abstract class Service extends NamedEntity {
 
   def end: Int = start + duration
 
-  private var delivered = false
-  private var started = false
   def isDelivered = {
-    delivered
+    request.isDelivered
   }
   def isStarted = {
-    started
+    request.isStarted
   }
 
   def isComplete(currentRound: Int): Boolean
   def canStart(currentRound: Int): Boolean
+  def dependenciesSatisfied: Boolean
   private var _utility: Double = 0d
   def utility(): Double = _utility
 
   def tryEndService(currentRound: Int): Boolean = {
-    if (!delivered && isComplete(currentRound)) {
+    if (request.tryEndService(this, currentRound)) {
       duration = currentRound - start
       _utility = request.market.deliver(this)
-      delivered = true
       jaspr.debug("ENDED: ", utility(), this)
       true
     } else {
@@ -43,9 +41,8 @@ abstract class Service extends NamedEntity {
   }
 
   def tryStartService(currentRound: Int): Boolean = {
-    if (!started && canStart(currentRound)) {
+    if (request.tryStartService(this, currentRound)) {
       start = currentRound
-      started = true
       jaspr.debug("STARTED: ", this)
       true
     } else {
