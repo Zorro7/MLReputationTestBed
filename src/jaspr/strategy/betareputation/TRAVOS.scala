@@ -13,7 +13,7 @@ import jaspr.utilities.BetaDistribution
  */
 class Travos extends RatingStrategy with CompositionStrategy with Exploration with BetaCore with TravosCore {
 
-  val explorationProbability = 0.2
+  val explorationProbability = 0.1
   val numBins = 5
   val confidenceThreshold = 1
   val eps = 0.1
@@ -24,6 +24,7 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
         new Rating(
           x.asInstanceOf[ServiceRecord].service.request.client,
           x.asInstanceOf[ServiceRecord].service.request.provider,
+          x.asInstanceOf[ServiceRecord].service.end,
           x.asInstanceOf[RatingRecord].rating
         ) with BetaOpinions {
           override val opinions: List[(Agent,BetaDistribution)] =
@@ -35,6 +36,7 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
       )
     val witness = toRatings(network.gatherProvenance(context.client))
     new TravosInit(
+      context,
       direct,
       witness,
       getObservations(direct)

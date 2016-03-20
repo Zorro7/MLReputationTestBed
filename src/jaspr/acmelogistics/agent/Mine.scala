@@ -21,7 +21,7 @@ class Mine(val simulation: ACMESimulation) extends Provider {
     properties.foreach(p => p._1 match {
       case "OrePurity" => service.payload = service.payload.asInstanceOf[GoodPayload].copy(quality = p._2.doubleValue)
       case "OreWetness" => // nothing?
-      case "Rate" => service.duration = Math.round(service.duration - p._2.intValue)
+      case "Rate" => service.duration = Math.round(service.duration - p._2.doubleValue).toInt
     })
     jaspr.debug("AFFECTED: ", service)
   }

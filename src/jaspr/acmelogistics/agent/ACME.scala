@@ -24,7 +24,7 @@ class ACME(override val simulation: ACMESimulation) extends Client {
     val assessment: TrustAssessment = trustAssessments.remove(service.request) match {
       case Some(x) =>
         val gain = service.utility()
-        jaspr.debug(10, "UTILITY: ", simulation.round.toString, this, utility, gain)
+        jaspr.debug(10, "UTILITY: ", simulation.round, this, utility, gain)
         utility += gain
         x
       case None => throw new Exception("Request "+service.request+" not found.")

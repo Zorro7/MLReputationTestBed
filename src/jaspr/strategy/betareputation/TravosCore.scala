@@ -2,6 +2,7 @@ package jaspr.strategy.betareputation
 
 import jaspr.core.agent.Agent
 import jaspr.core.provenance.TrustAssessmentRecord
+import jaspr.core.service.ClientContext
 import jaspr.strategy.{RatingStrategyInit, Rating}
 import jaspr.utilities.BetaDistribution
 
@@ -14,10 +15,11 @@ trait TravosCore extends BetaCore {
     val opinions: List[(Agent, BetaDistribution)]
   }
 
-  class TravosInit(directRecords: Seq[Rating],
+  class TravosInit(context: ClientContext,
+                   directRecords: Seq[Rating],
                    witnessRecords: Seq[Rating],
                    val observations: Map[Agent, Seq[(Boolean, BetaDistribution)]]
-                  ) extends RatingStrategyInit(directRecords, witnessRecords)
+                  ) extends RatingStrategyInit(context, directRecords, witnessRecords)
 
   def weightOpinion(opinion: BetaDistribution,
                     observations: Seq[(Boolean, BetaDistribution)],

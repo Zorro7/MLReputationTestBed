@@ -26,7 +26,7 @@ class Refinery(simulation: ACMESimulation) extends Subprovider(simulation) {
   override def affectService(service: Service): Unit = {
     properties.foreach(p => p._1 match {
       case "MetalPurity" => service.payload = service.payload.asInstanceOf[GoodPayload].copy(quality = p._2.doubleValue)
-      case "Rate" => service.duration = Math.round(service.duration - p._2.intValue)
+      case "Rate" => service.duration = Math.round(service.duration - p._2.doubleValue).toInt
       case "OrePurityReq" => //handled in affectService(Service, Service)
     })
     jaspr.debug("AFFECT: ", service)

@@ -11,11 +11,16 @@ import jaspr.utilities.Chooser
 class NoStrategy extends Strategy with NoExploration {
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
-    new StrategyInit
+    new StrategyInit(context)
   }
 
-  override def computeAssessment(init: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    new TrustAssessment(request, Chooser.randomDouble(0,1))
+  override def computeAssessment(init: StrategyInit, request: ServiceRequest): TrustAssessment = ???
+
+  override def rank(init: StrategyInit, requests: Seq[ServiceRequest]): Seq[TrustAssessment] = {
+    val assessments = new TrustAssessment(Chooser.choose(requests), 1) :: Nil
+    Chooser.shuffle(assessments).sortBy(x =>
+      if (x.trustValue.isNaN) Double.MinValue else x.trustValue
+    ).reverse
   }
 
 }

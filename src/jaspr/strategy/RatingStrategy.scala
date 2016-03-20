@@ -9,16 +9,17 @@ import jaspr.core.strategy.{StrategyInit, Strategy}
  * Created by phil on 19/03/16.
  */
 
-class RatingStrategyInit(val directRecords: Seq[Rating],
+class RatingStrategyInit(context: ClientContext,
+                         val directRecords: Seq[Rating],
                          val witnessRecords: Seq[Rating]
-                           ) extends StrategyInit
+                           ) extends StrategyInit(context)
 
 abstract class RatingStrategy extends Strategy {
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val direct = toRatings(context.client.getProvenance(context.client))
     val witness = toRatings(network.gatherProvenance(context.client))
-    new RatingStrategyInit(direct, witness)
+    new RatingStrategyInit(context, direct, witness)
   }
 
   def toRatings(records: Seq[Record]): Seq[Rating] = {
@@ -26,6 +27,7 @@ abstract class RatingStrategy extends Strategy {
       new Rating(
         x.asInstanceOf[ServiceRecord].service.request.client,
         x.asInstanceOf[ServiceRecord].service.request.provider,
+        x.asInstanceOf[ServiceRecord].service.end,
         x.asInstanceOf[RatingRecord].rating
       )
     )

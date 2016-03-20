@@ -1,19 +1,19 @@
 package jaspr.strategy.ipaw
 
-import jaspr.acmelogistics.service.{SubproviderRecord, GoodPayload}
+import jaspr.acmelogistics.service.{GoodPayload, SubproviderRecord}
 import jaspr.core.Network
 import jaspr.core.agent.Provider
-import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
-import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
-import jaspr.core.strategy.{StrategyInit, Exploration, Strategy}
-import weka.classifiers.{Classifier, AbstractClassifier}
+import jaspr.core.provenance.{RatingRecord, ServiceRecord}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
+import weka.classifiers.{AbstractClassifier, Classifier}
 
 import scala.collection.mutable
 
 /**
  * Created by phil on 19/03/16.
  */
-class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration with IpawCore {
+class Ipaw_bk(learner: Classifier, disc: Boolean) extends Strategy with Exploration with IpawCore {
 
   override val explorationProbability: Double = 0.1
 
@@ -25,8 +25,7 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
 
   def meanFunch(x: RatingRecord): Double = x.rating
   def startFunch(x: ServiceRecord): Double = (x.service.start - x.service.request.start).toDouble
-  def endFunch(x: ServiceRecord): Double =
-    (x.service.end - x.service.request.end).toDouble / (x.service.request.end - x.service.request.start).toDouble
+  def endFunch(x: ServiceRecord): Double = (x.service.end - x.service.request.end).toDouble
   def qualityFunch(x: ServiceRecord): Double =
     x.service.payload.asInstanceOf[GoodPayload].quality - x.service.request.payload.asInstanceOf[GoodPayload].quality
   def quantityFunch(x: ServiceRecord): Double =
@@ -35,73 +34,88 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val records: Seq[ServiceRecord with RatingRecord] = network.gatherProvenance(context.client)
 
-    val models: Seq[Seq[IpawModel]] =
-      if (records.nonEmpty) {
-        val requests: Seq[ServiceRequest] = records.head.service.request.flatten()
+    
 
-        val baseModels: Seq[IpawModel] =
-          buildBaseModel(records.filter(_.service.request.provider.getClass == requests.head.provider.getClass), endFunch) ::
-          buildBaseModel(records.filter(_.service.request.provider.getClass == requests.head.provider.getClass), qualityFunch) ::
-          buildBaseModel(records.filter(_.service.request.provider.getClass == requests.head.provider.getClass), quantityFunch) ::
-          Nil
+    val baseModel =
+//          buildBaseModel(records, meanFunch) ::
+    //      buildBaseModel(records, startFunch) ::
+//      buildBaseModel(records, endFunch) ::
+        buildBaseModel(records, qualityFunch) ::
+        buildBaseModel(records, quantityFunch) ::
+        Nil
+    val topModel =
+//          buildTopModel(records, meanFunch) ::
+    //      buildTopModel(records, startFunch) ::
+//      buildTopModel(records, endFunch) ::
+        buildTopModel(records, qualityFunch) ::
+        buildTopModel(records, quantityFunch) ::
+        Nil
 
-        val topModels: Seq[Seq[IpawModel]] =
-          requests.drop(1).map(request =>
-            buildTopModel(records.filter(_.service.request.provider.getClass == request.provider.getClass), endFunch) ::
-            buildTopModel(records.filter(_.service.request.provider.getClass == request.provider.getClass), qualityFunch) ::
-            buildTopModel(records.filter(_.service.request.provider.getClass == request.provider.getClass), quantityFunch) ::
-            Nil
-          )
+//    if (baseModel.head != null) {
+//      println(baseModel.head.train)
+//      println(baseModel.head.model)
+//    }
+//    if (topModel.head != null) {
+//      println(topModel.head.train)
+//      println(topModel.head.model)
+//    }
 
-        baseModels :: topModels.toList
-    } else Nil
-
-    new IpawInit(context, records, models)
+    new IpawInit2(context, records, baseModel, topModel)
   }
 
   override def computeAssessment(superInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    val init = superInit.asInstanceOf[IpawInit]
-
-    if (init.models.isEmpty) return new TrustAssessment(request, 0d)
+    val init = superInit.asInstanceOf[IpawInit2]
 
     var requests = request.flatten()
+    println(requests)
 
     var currentPreds =
-      if (init.models.head.forall(_ != null)) {
-        val test =
+      if (init.baseModel.forall(_ != null)) {
+        val mineTest =
           makeBaseRow(requests.head) ++
             requests.head.provider.asInstanceOf[Provider].advertProperties.values.map(_.value).toList
-        init.models.head.map(predict(_, test))
+        println(requests.head, mineTest)
+        init.baseModel.map(predict(_, mineTest))
       } else {
-        init.models.head.map(x => Double.NaN)
+        init.baseModel.map(x => Double.NaN)
       }
 
     var preds: List[Double] = currentPreds.toList
 
-    for ((model,request) <- init.models.drop(1) zip requests.drop(1)) {
+    for (request <- requests.drop(1)) {
+
       currentPreds =
-        if (model.forall(_ != null)) {
-          val test =
+        if (init.topModel.forall(_ != null)) {
+          val shipTest =
             makeBaseRow(request) ++
               currentPreds ++
               request.provider.asInstanceOf[Provider].advertProperties.values.map(_.value).toList
-          model.map(predict(_, test))
+//          println(init.topModel.head.train)
+//          println(shipTest)
+          println(request, shipTest, currentPreds)
+          init.topModel.map(predict(_, shipTest))
         } else {
-          model.map(x => Double.NaN)
+          init.topModel.map(x => Double.NaN)
         }
       preds = currentPreds.toList ++ preds
     }
 
-//        println(preds.filterNot(_.isNaN).sum, currentPreds.filterNot(_.isNaN).sum,
-//                  currentPreds.filterNot(_.isNaN), preds.filterNot(_.isNaN))
+        println(preds.filterNot(_.isNaN).sum, currentPreds.filterNot(_.isNaN).sum,
+                  currentPreds.filterNot(_.isNaN), preds.filterNot(_.isNaN))
 
     new TrustAssessment(request, currentPreds.filter(!_.isNaN).sum)
   }
 
+
+
+
+
+
+
   def makeBaseRow(request: ServiceRequest): List[Any] = {
     makeRow(0d,
       //    mineR.start.toDouble,
-      request.duration.toDouble,
+//      request.duration.toDouble,
       request.payload.asInstanceOf[GoodPayload].quality,
       request.payload.asInstanceOf[GoodPayload].quantity
     )
@@ -116,7 +130,7 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
         makeRow(
           labelfunch(x),
           //          x.request.start.toDouble,
-          x.service.request.duration.toDouble,
+//          x.service.request.duration.toDouble,
           x.service.request.payload.asInstanceOf[GoodPayload].quality,
           x.service.request.payload.asInstanceOf[GoodPayload].quantity
         ) ++ x.service.request.provider.advertProperties.values.map(_.value).toList
@@ -134,12 +148,12 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
         makeRow(
           labelfunch(x),
           //          x.request.start.toDouble,
-          x.service.request.duration.toDouble,
+//          x.service.request.duration.toDouble,
           x.service.request.payload.asInstanceOf[GoodPayload].quality,
           x.service.request.payload.asInstanceOf[GoodPayload].quantity
 //          ,meanFunch(dependency)
           //          , startFunch(mineDependency)
-          ,endFunch(dependency)
+//          ,endFunch(dependency)
           ,qualityFunch(dependency),
           quantityFunch(dependency)
         ) ++ x.service.request.provider.advertProperties.values.map(_.value).toList

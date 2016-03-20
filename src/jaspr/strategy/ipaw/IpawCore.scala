@@ -2,7 +2,8 @@ package jaspr.strategy.ipaw
 
 import java.util.ArrayList
 
-import jaspr.core.provenance.ServiceRecord
+import jaspr.acmelogistics.service.ACMERecord
+import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.ClientContext
 import jaspr.core.strategy.StrategyInit
 import jaspr.utilities.Discretization
@@ -19,19 +20,27 @@ trait IpawCore extends Discretization {
   val classIndex: Int = 0 // DO NOT CHANGE THIS (LOOK AT MAKEROW)
 
   val discreteClass: Boolean
-  override val upper: Double = 5
+  override val upper: Double = 1d
   override val numBins: Int = 10
-  override val lower: Double = -5
+  override val lower: Double = -1d
 
 
-  class IpawModel(val model: Classifier, val attVals: Iterable[mutable.Map[Any, Double]], val train: Instances)
+  class IpawModel(val model: Classifier, val attVals: Iterable[mutable.Map[Any, Double]], val train: Instances) {
+    override def toString: String = model.toString
+  }
 
-  class IpawInit(
-                  val clientContext: ClientContext,
-                  val records: Seq[ServiceRecord],
+  class IpawInit2(
+                  context: ClientContext,
+                  val directRecords: Seq[ServiceRecord with RatingRecord],
                   val baseModel: Seq[IpawModel],
                   val topModel: Seq[IpawModel]
-                  ) extends StrategyInit
+                  ) extends StrategyInit(context)
+
+  class IpawInit(
+                   context: ClientContext,
+                   val directRecords: Seq[ServiceRecord with RatingRecord],
+                   val models: Seq[Seq[IpawModel]]
+                   ) extends StrategyInit(context)
 
 
   def lookup[T](map: mutable.Map[T,Double], item: T): Double = {

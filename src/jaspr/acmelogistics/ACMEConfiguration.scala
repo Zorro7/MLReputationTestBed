@@ -10,9 +10,10 @@ import jaspr.core.strategy.Strategy
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.fire.Fire
-import jaspr.strategy.ipaw.Ipaw
+import jaspr.strategy.ipaw.{RecordFire, Ipaw}
 import jaspr.utilities.{Chooser}
 import weka.classifiers.functions.LinearRegression
+import weka.classifiers.rules.OneR
 import weka.classifiers.trees.J48
 
 /**
@@ -22,13 +23,17 @@ import weka.classifiers.trees.J48
 class ACMEMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
+  override val _seed = 100
+
   override lazy val configs: Seq[Configuration] =
     new ACMEConfiguration(new NoStrategy) ::
-      new ACMEConfiguration(new Fire) ::
+    new ACMEConfiguration(new RecordFire) ::
+//      new ACMEConfiguration(new Fire) ::
 //    new ACMEConfiguration(new Travos) ::
-//  new ACMEConfiguration(new BetaReputation)::
-//      new ACMEConfiguration(new Ipaw(new J48, true)) ::
-      new ACMEConfiguration(new Ipaw(new LinearRegression, false)) ::
+//    new ACMEConfiguration(new BetaReputation)::
+//    new ACMEConfiguration(new Ipaw(new J48, true)) ::
+    new ACMEConfiguration(new Ipaw(new LinearRegression, false)) ::
+//    new ACMEConfiguration(new Ipaw(new OneR, true)) ::
       Nil
 }
 
@@ -42,10 +47,10 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
   val memoryLimit = 100
 
   val numClients = 1
-  val numShippers = 10
-  val numRefineries = 10
-  val numMines = 10
-  val numCompositions = 10
+  val numShippers = 100
+  val numRefineries = 100
+  val numMines = 100
+  val numCompositions = 50
 
   val defaultServiceDuration = 5
 
@@ -61,8 +66,8 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
     agent match {
       case _: Shipper =>
         Property("Timeliness", Chooser.randomDouble(-1,1)) ::
-        Property("Capacity", Chooser.randomDouble(-1,1)) ::
-        Property("Competence", Chooser.randomDouble(-1, 1)) :: Nil
+        Property("Competence", Chooser.randomDouble(-1, 1)) ::
+        Property("Capacity", Chooser.randomDouble(-1,1)) :: Nil
       case _: Refinery =>
         Property("Rate", Chooser.randomDouble(-1,1)) ::
         Property("MetalPurity", Chooser.randomDouble(-1,1)) ::
@@ -77,8 +82,9 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
 
   def adverts(agent: Agent with Properties): Map[String,Property] = {
     //    rawProperties.mapValues(x => x + Chooser.randomDouble(-1.5,1.5)) //todo make this more something.
-//    agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
-    agent.properties
+    agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
+//    agent.properties
+//    Map()
 //    new Property("agentid", agent.id) :: Nil
   }
 }

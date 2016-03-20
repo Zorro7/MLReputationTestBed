@@ -7,7 +7,7 @@ import jaspr.core.agent.{Client, Provider}
  */
 
 
-class Rating(val client: Client, val provider: Provider, val rating: Double) {
+class Rating(val client: Client, val provider: Provider, val round: Int, val rating: Double) {
 
   def success: Boolean = rating > 0d
 }

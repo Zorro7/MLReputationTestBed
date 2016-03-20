@@ -15,7 +15,7 @@ class Shipper(simulation: ACMESimulation) extends Subprovider(simulation) {
         service.payload = service.payload.asInstanceOf[GoodPayload].copy(
           quantity = service.payload.asInstanceOf[GoodPayload].quantity + p._2.doubleValue
         )
-      case "Timeliness" => service.duration = Math.round(service.duration - p._2.intValue)
+      case "Timeliness" => service.duration = Math.round(service.duration - p._2.doubleValue).toInt
       case "Capacity" => //performing.good = performing.good.copy(quantity = performing.good.quantity + p._2)
     })
     jaspr.debug("AFFECT: ", service)
