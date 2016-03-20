@@ -2,12 +2,12 @@ package jaspr.strategy.ipaw
 
 import java.util.ArrayList
 
-import jaspr.acmelogistics.service.ACMERecord
+import jaspr.acmelogistics.service.{GoodPayload, ACMERecord}
 import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.ClientContext
 import jaspr.core.strategy.StrategyInit
 import jaspr.utilities.Discretization
-import weka.classifiers.Classifier
+import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.core.{Attribute, DenseInstance, Instance, Instances}
 
 import scala.collection.mutable
@@ -19,10 +19,24 @@ import scala.collection.JavaConversions._
 trait IpawCore extends Discretization {
   val classIndex: Int = 0 // DO NOT CHANGE THIS (LOOK AT MAKEROW)
 
+  val baseLearner: Classifier
   val discreteClass: Boolean
   override val upper: Double = 1d
   override val numBins: Int = 10
   override val lower: Double = -1d
+
+
+
+
+  def meanFunch(x: RatingRecord): Double = x.rating
+  def startFunch(x: ServiceRecord): Double = (x.service.start - x.service.request.start).toDouble
+  def endFunch(x: ServiceRecord): Double =
+    (x.service.end - x.service.request.end).toDouble / (x.service.request.end - x.service.request.start).toDouble
+  def qualityFunch(x: ServiceRecord): Double =
+    x.service.payload.asInstanceOf[GoodPayload].quality - x.service.request.payload.asInstanceOf[GoodPayload].quality
+  def quantityFunch(x: ServiceRecord): Double =
+    x.service.payload.asInstanceOf[GoodPayload].quantity - x.service.request.payload.asInstanceOf[GoodPayload].quantity
+
 
 
   class IpawModel(val model: Classifier, val attVals: Iterable[mutable.Map[Any, Double]], val train: Instances) {
@@ -37,9 +51,10 @@ trait IpawCore extends Discretization {
                   ) extends StrategyInit(context)
 
   class IpawInit(
-                   context: ClientContext,
-                   val directRecords: Seq[ServiceRecord with RatingRecord],
-                   val models: Seq[Seq[IpawModel]]
+                 context: ClientContext,
+                 val directRecords: Seq[ServiceRecord with RatingRecord],
+                 val models: Seq[Seq[IpawModel]],
+                 val eventLikelihoods: Map[String,Double]
                    ) extends StrategyInit(context)
 
 
@@ -112,5 +127,32 @@ trait IpawCore extends Discretization {
     directTrain.setClassIndex(classIndex)
     doubleRows.foreach(r => directTrain.add(new DenseInstance(1d, r.toArray)))
     directTrain
+  }
+
+  def build(trainRows: Iterable[List[Any]]): IpawModel = {
+    if (trainRows.nonEmpty) {
+      val attVals: Iterable[mutable.Map[Any, Double]] = List.fill(trainRows.head.size)(mutable.Map[Any, Double]())
+      val doubleRows = convertRowsToDouble(trainRows, attVals)
+      val atts = makeAtts(trainRows.head, attVals)
+      val train = makeInstances(atts, doubleRows)
+      val model = AbstractClassifier.makeCopy(baseLearner)
+      model.buildClassifier(train)
+      //      println(train)
+      //      println(model)
+      new IpawModel(model, attVals, train)
+    } else {
+      null
+    }
+  }
+
+  def predicts(model: IpawModel, testRows: Iterable[List[Any]], events: Map[String,Double]): Double = {
+    testRows.map(x => predict(model, x) * events.getOrElse(x(1).toString, 1d)).sum / testRows.size.toDouble
+  }
+
+  def predict(model: IpawModel, testRow: List[Any]): Double = {
+    //    val queries = convertRowsToInstances(testRows, model.attVals, model.train)
+    //    queries.map(x => model.model.classifyInstance(x))
+    val x = convertRowToInstance(testRow, model.attVals, model.train)
+    model.model.classifyInstance(x)
   }
 }

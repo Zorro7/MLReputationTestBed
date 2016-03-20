@@ -23,14 +23,6 @@ class Ipaw_bk(learner: Classifier, disc: Boolean) extends Strategy with Explorat
   val discreteClass: Boolean = disc
 
 
-  def meanFunch(x: RatingRecord): Double = x.rating
-  def startFunch(x: ServiceRecord): Double = (x.service.start - x.service.request.start).toDouble
-  def endFunch(x: ServiceRecord): Double = (x.service.end - x.service.request.end).toDouble
-  def qualityFunch(x: ServiceRecord): Double =
-    x.service.payload.asInstanceOf[GoodPayload].quality - x.service.request.payload.asInstanceOf[GoodPayload].quality
-  def quantityFunch(x: ServiceRecord): Double =
-    x.service.payload.asInstanceOf[GoodPayload].quantity - x.service.request.payload.asInstanceOf[GoodPayload].quantity
-
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val records: Seq[ServiceRecord with RatingRecord] = network.gatherProvenance(context.client)
 
@@ -162,27 +154,5 @@ class Ipaw_bk(learner: Classifier, disc: Boolean) extends Strategy with Explorat
   }
 
 
-  def build(trainRows: Iterable[List[Any]]): IpawModel = {
-    if (trainRows.nonEmpty) {
-      val attVals: Iterable[mutable.Map[Any, Double]] = List.fill(trainRows.head.size)(mutable.Map[Any, Double]())
-      val doubleRows = convertRowsToDouble(trainRows, attVals)
-      val atts = makeAtts(trainRows.head, attVals)
-      val train = makeInstances(atts, doubleRows)
-      val model = AbstractClassifier.makeCopy(baseLearner)
-      model.buildClassifier(train)
-      //      println(train)
-      //      println(model)
-      new IpawModel(model, attVals, train)
-    } else {
-      null
-    }
-  }
-
-  def predict(model: IpawModel, testRow: List[Any]): Double = {
-    //    val queries = convertRowsToInstances(testRows, model.attVals, model.train)
-    //    queries.map(x => model.model.classifyInstance(x))
-    val x = convertRowToInstance(testRow, model.attVals, model.train)
-    model.model.classifyInstance(x)
-  }
 
 }

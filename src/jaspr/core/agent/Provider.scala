@@ -33,6 +33,7 @@ trait Provider extends Agent with AdvertProperties {
   def tryDeliverServices(): Unit = {
     for (service <- currentServices) {
       if (service.tryEndService(simulation.round)) {
+        currentServices -= service
         service.request.client.receiveService(service)
       }
     }

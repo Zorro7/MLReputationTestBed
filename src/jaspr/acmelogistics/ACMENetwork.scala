@@ -53,11 +53,12 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
     }).toSeq
   }
 
-//  override def events(): Seq[Event] = new ACMEEvent(
-//      Chooser.sample(providers, Chooser.randomInt(0,5))
-//    ) :: Nil
-
-  def events = Nil
+  override def events(): Seq[Event] =
+    Chooser.ifHappens(0.05)(
+      new ACMEEvent(
+        Chooser.sample(providers, Chooser.randomInt(0, agents.size/4))
+      ) :: Nil
+    )(Nil)
 
   override def agents: Seq[Agent] = clients ++ providers
 
@@ -79,9 +80,5 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
   var mines: List[Mine] = List.fill(simulation.config.numMines)(
     new Mine(simulation)
   )
-
-  println(shippers mkString "\n")
-  println(refineries mkString "\n")
-  println(mines mkString "\n")
 
 }

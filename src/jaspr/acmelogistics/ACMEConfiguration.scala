@@ -10,7 +10,7 @@ import jaspr.core.strategy.Strategy
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.fire.Fire
-import jaspr.strategy.ipaw.{RecordFire, Ipaw}
+import jaspr.strategy.ipaw.{IpawEvents, RecordFire, Ipaw}
 import jaspr.utilities.{Chooser}
 import weka.classifiers.functions.LinearRegression
 import weka.classifiers.rules.OneR
@@ -23,16 +23,17 @@ import weka.classifiers.trees.J48
 class ACMEMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
-  override val _seed = 100
+  override val _seed = 1000
 
   override lazy val configs: Seq[Configuration] =
-    new ACMEConfiguration(new NoStrategy) ::
-    new ACMEConfiguration(new RecordFire) ::
+//    new ACMEConfiguration(new NoStrategy) ::
+//    new ACMEConfiguration(new RecordFire) ::
 //      new ACMEConfiguration(new Fire) ::
 //    new ACMEConfiguration(new Travos) ::
 //    new ACMEConfiguration(new BetaReputation)::
 //    new ACMEConfiguration(new Ipaw(new J48, true)) ::
     new ACMEConfiguration(new Ipaw(new LinearRegression, false)) ::
+    new ACMEConfiguration(new IpawEvents(new LinearRegression, false)) ::
 //    new ACMEConfiguration(new Ipaw(new OneR, true)) ::
       Nil
 }
@@ -47,9 +48,9 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
   val memoryLimit = 100
 
   val numClients = 1
-  val numShippers = 100
-  val numRefineries = 100
-  val numMines = 100
+  val numShippers = 50
+  val numRefineries = 50
+  val numMines = 50
   val numCompositions = 50
 
   val defaultServiceDuration = 5

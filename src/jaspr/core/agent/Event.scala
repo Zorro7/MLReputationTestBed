@@ -14,6 +14,7 @@ trait Event extends NamedEntity with Tickable {
     jaspr.debug("EVENT:: ", name, providers)
     for (provider <- providers) {
       affect(provider)
+      println("RECORDED: "+this+" "+provider+" "+provider.currentServices)
       for (service <- provider.currentServices) {
         affect(service)
         service.serviceContext.addEvent(this)
