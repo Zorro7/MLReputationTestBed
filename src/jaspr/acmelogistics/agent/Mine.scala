@@ -4,12 +4,14 @@ import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.{GoodPayload, ACMEService}
 import jaspr.core.agent.{Property, Provider}
 import jaspr.core.provenance.{Provenance, Record}
-import jaspr.core.service.{ServiceRequest, Service}
+import jaspr.core.service.{Payload, ServiceRequest, Service}
 
 /**
  * Created by phil on 17/03/16.
  */
 class Mine(val simulation: ACMESimulation) extends Provider {
+  override def capableOf(payload: Payload, duration: Int): Boolean = true
+
   override def receiveRequest(request: ServiceRequest): Boolean = {
     val service = new ACMEService(request)
     jaspr.debug("CREATE: ", request, service)

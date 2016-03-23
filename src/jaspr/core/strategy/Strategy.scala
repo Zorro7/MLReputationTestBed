@@ -18,7 +18,7 @@ abstract class Strategy {
   def select(orderedAssessments: Seq[TrustAssessment]): TrustAssessment
 
   def assessReputation(network: Network, context: ClientContext): TrustAssessment = {
-    val requests = network.possibleRequests(network, context)
+    val requests = network.possibleRequests(context)
     val init = initStrategy(network, context)
     val orderedProviders = rank(init, requests)
     select(orderedProviders)

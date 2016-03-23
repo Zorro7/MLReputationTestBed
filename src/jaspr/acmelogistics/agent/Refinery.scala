@@ -5,7 +5,7 @@ import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.Simulation
 import jaspr.core.agent.Property
 import jaspr.core.provenance.{Provenance, Record}
-import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
+import jaspr.core.service._
 
 import scala.collection.mutable.ListBuffer
 

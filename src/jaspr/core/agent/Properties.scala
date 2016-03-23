@@ -15,8 +15,8 @@ trait Properties {
   def property(key: String): Property = {
     properties.get(key).get
   }
-  val df = new DecimalFormat("0.00")
-  override def toString: String = super.toString+":"+properties.values.map(x => df.format(x.doubleValue)).toString
+//  val df = new DecimalFormat("0.00")
+//  override def toString: String = super.toString+":"+properties.values.map(x => df.format(x.doubleValue)).toString
 }
 
 trait AdvertProperties extends Properties {

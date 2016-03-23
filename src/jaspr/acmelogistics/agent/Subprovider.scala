@@ -3,7 +3,7 @@ package jaspr.acmelogistics.agent
 import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.{SubproviderRecord, ACMEService}
 import jaspr.core.agent.{Property, Provider, Client}
-import jaspr.core.service.{Service, ServiceRequest, TrustAssessment, ClientContext}
+import jaspr.core.service._
 
 import scala.collection.mutable
 
@@ -15,6 +15,8 @@ abstract class Subprovider(override val simulation: ACMESimulation) extends Clie
   override def tick(): Unit = {
     super[Provider].tick()
   }
+
+  override def capableOf(payload: Payload, duration: Int): Boolean = true
 
   def generateContext(): ClientContext = ???
   def generateComposition(context: ClientContext): TrustAssessment = ???

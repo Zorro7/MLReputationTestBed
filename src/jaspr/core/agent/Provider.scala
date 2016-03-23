@@ -1,6 +1,6 @@
 package jaspr.core.agent
 
-import jaspr.core.service.{ServiceRequest, Service}
+import jaspr.core.service.{Payload, ServiceRequest, Service}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -39,6 +39,7 @@ trait Provider extends Agent with AdvertProperties {
     }
   }
 
+  def capableOf(payload: Payload, duration: Int): Boolean
   def receiveRequest(request: ServiceRequest): Boolean
   def affectService(service: Service): Unit
 }

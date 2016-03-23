@@ -20,5 +20,5 @@ abstract class Network {
   def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
     agents.withFilter(_ != this).flatMap(_.getProvenance[T](agent))
   }
-  def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest]
+  def possibleRequests(context: ClientContext): Seq[ServiceRequest]
 }

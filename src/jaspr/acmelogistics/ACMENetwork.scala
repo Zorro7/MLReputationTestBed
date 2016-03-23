@@ -23,7 +23,7 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
     ).distinct
   }
 
-  override def possibleRequests(network: Network, context: ClientContext): Seq[ServiceRequest] = {
+  override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     @tailrec
     def createComposition(ps: Seq[Provider],
                           context: ClientContext,

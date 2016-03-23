@@ -15,6 +15,7 @@ import scala.collection.mutable
  * Created by phil on 15/03/16.
  */
 class SimpleAgent(override val simulation: Simulation) extends Client with Provider {
+  override def capableOf(payload: Payload, duration: Int): Boolean = true
 
   private var currentUtility: Double = 0d
   override def utility = currentUtility
