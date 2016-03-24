@@ -3,6 +3,7 @@ package jaspr.sellerssim.agent
 import jaspr.core.Simulation
 import jaspr.core.agent.Market
 import jaspr.core.service.Service
+import jaspr.sellerssim.service.ProductPayload
 
 /**
  * Created by phil on 23/03/16.
@@ -10,6 +11,7 @@ import jaspr.core.service.Service
 class SellerMarket(override val simulation: Simulation) extends Market {
 
   override def deliver(service: Service): Double = {
-    1d
+    val product = service.payload.asInstanceOf[ProductPayload]
+    product.quality.values.sum / product.quality.size.toDouble
   }
 }

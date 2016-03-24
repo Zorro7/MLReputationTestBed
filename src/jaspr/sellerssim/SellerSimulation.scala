@@ -2,6 +2,7 @@ package jaspr.sellerssim
 
 import jaspr.core.results.Result
 import jaspr.core.{Network, Simulation}
+import jaspr.utilities.Chooser
 
 /**
  * Created by phil on 21/03/16.
@@ -17,7 +18,9 @@ class SellerSimulation(val config: SellerConfiguration) extends Simulation {
 
   override def act(): Result = {
     for (client <- network.clients) {
-      client.tick()
+      Chooser.ifHappens(config.clientIncolvementLikelihood)(
+        client.tick()
+      )()
     }
 
     for (provider <- network.providers) {

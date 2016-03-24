@@ -34,7 +34,7 @@ class SellerNetwork(override val simulation: SellerSimulation) extends Network {
   }
 
   override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
-    clients.withFilter(_ != this).flatMap(_.getProvenance[T](agent))
+    clients.withFilter(_ != agent).flatMap(_.getProvenance[T](agent))
   }
 
   override def markets: Seq[Market] = new SellerMarket(simulation) :: Nil

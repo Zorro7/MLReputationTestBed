@@ -4,7 +4,7 @@ import jaspr.core.agent.Client
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{Service, TrustAssessment, ClientContext}
 import jaspr.sellerssim.SellerSimulation
-import jaspr.sellerssim.service.BuyerRecord
+import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
 
 /**
  * Created by phil on 21/03/16.
@@ -25,7 +25,7 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
         x
       case None => throw new Exception("Request "+service.request+" not found.")
     }
-    recordProvenance(new BuyerRecord(service, assessment))
+    recordProvenance(new BuyerRecord(service, assessment, service.payload.asInstanceOf[ProductPayload].quality))
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {

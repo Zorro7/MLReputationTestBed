@@ -4,16 +4,18 @@ import jaspr.core.agent.{Property, Provider}
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{Payload, ServiceRequest, Service}
 import jaspr.sellerssim.SellerSimulation
-import jaspr.sellerssim.service.SellerService
+import jaspr.sellerssim.service.{ProductPayload, SellerService}
 
 /**
  * Created by phil on 21/03/16.
  */
 class Seller(override val simulation: SellerSimulation) extends Provider {
 
-  val capabilities: Seq[Payload] = new Payload :: Nil
+  val capabilities: Seq[Payload] = simulation.config.capabilities(this)
 
-  override def capableOf(payload: Payload, duration: Int): Boolean = true
+  override def capableOf(payload: Payload, duration: Int): Boolean = {
+    capabilities.exists(x => x.name == payload.name)
+  }
 
   override def receiveRequest(request: ServiceRequest): Boolean = {
     val service = new SellerService(request)
@@ -21,7 +23,9 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
     true
   }
 
-  override def affectService(service: Service): Unit = {}
+  override def affectService(service: Service): Unit = {
+    service.payload.asInstanceOf[ProductPayload].quality = properties.mapValues(_.doubleValue)
+  }
 
   override def utility: Double = ???
 
@@ -29,7 +33,7 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 
-  override def advertProperties: Map[String, Property] = ???
+  override val properties: Map[String, Property] = simulation.config.properties(this)
+  override val advertProperties: Map[String, Property] = simulation.config.adverts(this)
 
-  override def properties: Map[String, Property] = ???
 }
