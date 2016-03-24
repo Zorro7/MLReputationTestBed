@@ -1,7 +1,7 @@
 package jaspr.sellerssim.agent
 
-import jaspr.core.agent.Client
-import jaspr.core.provenance.{Provenance, Record}
+import jaspr.core.agent.{Agent, Client}
+import jaspr.core.provenance.{RatingRecord, Provenance, Record}
 import jaspr.core.service.{Service, TrustAssessment, ClientContext}
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
@@ -41,10 +41,28 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
   override def utility: Double = _utility
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {
+    def changeRatings(ratings: Map[String,Double]) = {
+      ratings.mapValues( - _ )
+    }
+    def omitRecord(record: BuyerRecord, agent: Provenance): Boolean = {
+      false
+    }
     if (agent == this) {
       provenance.map(_.asInstanceOf[T])
     } else {
-      provenance.map(_.asInstanceOf[T]) // possibly lie
+      provenance.withFilter(
+        x => !omitRecord(x.asInstanceOf[BuyerRecord], agent)
+      ).map(x =>
+        x.asInstanceOf[BuyerRecord].copy(ratings = changeRatings(x.asInstanceOf[BuyerRecord].ratings)).asInstanceOf[T]
+      )
+//      provenanceStore.map(x => x.copy(x.trustAssessment, x.interaction.copyInteraction(
+//        ratings = x.interaction.ratings.mapValues(x =>
+//          if (liar && noisy) (ifHappens(Liariness)(-x)(x) + randomDouble(-Noisiness,Noisiness)) * excentricity
+//          else if (liar) ifHappens(Liariness)(-x)(x) * excentricity
+//          else if (noisy) (x + randomDouble(-Noisiness,Noisiness)) * excentricity
+//          else x * excentricity
+//        )
+//      ))).toList
     }
   }
 
