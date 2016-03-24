@@ -42,6 +42,9 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 
   val memoryLimit: Int = 100
 
+  val freakEventLikelihood = 0.1
+  val freakEventEffects = -1d
+
 
   def capabilities(provider: Provider): Seq[ProductPayload] = {
     Chooser.sample(simcapabilities, Chooser.randomInt(1, 5))

@@ -5,6 +5,7 @@ import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{Payload, ServiceRequest, Service}
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.{ProductPayload, SellerService}
+import jaspr.utilities.Chooser
 
 /**
  * Created by phil on 21/03/16.
@@ -24,7 +25,16 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
   }
 
   override def affectService(service: Service): Unit = {
-    service.payload.asInstanceOf[ProductPayload].quality = properties.mapValues(_.doubleValue)
+    Chooser.ifHappens(simulation.config.freakEventLikelihood)({
+      jaspr.debug("EVENT:: Storm: ", properties.mapValues(_.doubleValue),
+        properties.mapValues(x => (x.doubleValue + simulation.config.freakEventEffects) / 2d))
+      service.serviceContext.addEvent(new SellerEvent("Storm"))
+      service.payload.asInstanceOf[ProductPayload].quality =
+        properties.mapValues(x => (x.doubleValue + simulation.config.freakEventEffects) / 2d)
+    })({
+      jaspr.debug("NO EVENT::", properties.mapValues(_.doubleValue))
+      service.payload.asInstanceOf[ProductPayload].quality = properties.mapValues(_.doubleValue)
+    })
   }
 
   override def utility: Double = ???
