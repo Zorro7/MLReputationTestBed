@@ -5,6 +5,7 @@ import jaspr.core.service.{Payload, ClientContext}
 import jaspr.core.{MultiConfiguration, Network, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.service.ProductPayload
+import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.fire.Fire
 import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, Ipaw}
@@ -23,6 +24,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
   override lazy val configs: Seq[Configuration] =
       new SellerConfiguration(new NoStrategy) ::
         new SellerConfiguration(new Fire) ::
+        new SellerConfiguration(new Mlrs) ::
   //    new SellerConfiguration(new Travos) ::
   //    new SellerConfiguration(new BetaReputation)::
       Nil
@@ -33,8 +35,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 10
-  override val numRounds: Int = 500
+  override val numSimulations: Int = 1
+  override val numRounds: Int = 250
 
   val clientIncolvementLikelihood = 0.1
   val numClients: Int = 10
@@ -58,10 +60,10 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 
   def adverts(agent: Agent with Properties): Map[String,Property] = {
     //    rawProperties.mapValues(x => x + Chooser.randomDouble(-1.5,1.5)) //todo make this more something.
-    agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
+//    agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
     //    agent.properties
-    //    Map()
-    //    new Property("agentid", agent.id) :: Nil
+//        Map()
+        new Property("agentid", agent.id) :: Nil
   }
 
   val simcapabilities = new ProductPayload("giblet") :: Nil

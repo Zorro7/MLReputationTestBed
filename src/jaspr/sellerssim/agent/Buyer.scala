@@ -1,6 +1,6 @@
 package jaspr.sellerssim.agent
 
-import jaspr.core.agent.{Agent, Client}
+import jaspr.core.agent.{Event, Agent, Client}
 import jaspr.core.provenance.{RatingRecord, Provenance, Record}
 import jaspr.core.service.{Service, TrustAssessment, ClientContext}
 import jaspr.sellerssim.SellerSimulation
@@ -25,7 +25,15 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
         x
       case None => throw new Exception("Request "+service.request+" not found.")
     }
-    recordProvenance(new BuyerRecord(service, assessment, service.payload.asInstanceOf[ProductPayload].quality))
+    recordProvenance(new BuyerRecord(
+      service, assessment,
+      service.request.client, service.request.provider,
+      service.end, service.payload, service.serviceContext.events.headOption match {
+        case Some(x) => x
+        case None => new SellerEvent("NA")
+      },
+      service.payload.asInstanceOf[ProductPayload].quality)
+    )
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {
@@ -42,7 +50,7 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {
     def changeRatings(ratings: Map[String,Double]) = {
-      ratings.mapValues( - _ )
+      ratings//.mapValues( -_ )
     }
     def omitRecord(record: BuyerRecord, agent: Provenance): Boolean = {
       false
