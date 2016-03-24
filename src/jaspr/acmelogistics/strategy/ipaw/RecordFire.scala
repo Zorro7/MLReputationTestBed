@@ -1,4 +1,4 @@
-package jaspr.strategy.ipaw
+package jaspr.acmelogistics.strategy.ipaw
 
 import jaspr.acmelogistics.service.{SubproviderRecord, ACMERecord, GoodPayload}
 import jaspr.core.Network

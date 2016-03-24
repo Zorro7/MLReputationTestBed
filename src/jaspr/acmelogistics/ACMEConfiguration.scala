@@ -10,7 +10,7 @@ import jaspr.core.strategy.Strategy
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.fire.Fire
-import jaspr.strategy.ipaw.{IpawEvents, RecordFire, Ipaw}
+import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, RecordFire, Ipaw}
 import jaspr.utilities.{Chooser}
 import weka.classifiers.functions.LinearRegression
 import weka.classifiers.rules.OneR

@@ -1,28 +1,24 @@
-package jaspr.strategy.ipaw
+package jaspr.acmelogistics.strategy.ipaw
 
-import jaspr.acmelogistics.agent.ACMEEvent
-import jaspr.acmelogistics.service.{GoodPayload, SubproviderRecord}
+import jaspr.acmelogistics.service.{SubproviderRecord, GoodPayload}
 import jaspr.core.Network
 import jaspr.core.agent.Provider
-import jaspr.core.provenance.{RatingRecord, ServiceRecord}
-import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
-import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
-import jaspr.utilities.MultiRegression
-import weka.classifiers.Classifier
-
+import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
+import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
+import jaspr.core.strategy.{StrategyInit, Exploration, Strategy}
+import weka.classifiers.{Classifier, AbstractClassifier}
 /**
  * Created by phil on 19/03/16.
  */
-class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Exploration with IpawCore {
+class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration with IpawCore {
 
   override val explorationProbability: Double = 0.1
 
-  val baseLearner = new MultiRegression()
-  baseLearner.setBase(learner)
-  baseLearner.setSplitAttIndex(1)
+  val baseLearner = learner
   val discreteClass: Boolean = disc
 
   override val name = this.getClass.getSimpleName+"_"+baseLearner.getClass.getSimpleName
+
 
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
@@ -49,17 +45,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
         baseModels :: topModels.toList
     } else Nil
 
-    val eventLikelihoods =
-      records.groupBy(x =>
-        x.service.serviceContext.events.headOption match {
-          case Some(e) => e.getClass.getName
-          case None => ""
-        }
-      ).mapValues(_.size.toDouble / records.size)
-
-    println(eventLikelihoods)
-
-    new IpawInit(context, records, models, eventLikelihoods)
+    new IpawInit(context, records, models, Map())
   }
 
   override def computeAssessment(superInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
@@ -68,15 +54,13 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
     if (init.models.isEmpty) return new TrustAssessment(request, 0d)
 
     val requests = request.flatten()
-    val events = init.eventLikelihoods.keys.toList
 
     var currentPreds =
       if (init.models.head.forall(_ != null)) {
-        val test = events.map(event =>
-          makeBaseRow(requests.head, event) ++
+        val test =
+          makeBaseRow(requests.head) ++
             requests.head.provider.asInstanceOf[Provider].advertProperties.values.map(_.value).toList
-        )
-        init.models.head.map(predicts(_, test, init.eventLikelihoods))
+        init.models.head.map(predict(_, test))
       } else {
         init.models.head.map(x => Double.NaN)
       }
@@ -86,12 +70,11 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
     for ((model,request) <- init.models.drop(1) zip requests.drop(1)) {
       currentPreds =
         if (model.forall(_ != null)) {
-          val test = events.map(event =>
-            makeBaseRow(request, event) ++
+          val test =
+            makeBaseRow(request) ++
               currentPreds ++
               request.provider.asInstanceOf[Provider].advertProperties.values.map(_.value).toList
-          )
-          model.map(predicts(_, test, init.eventLikelihoods))
+          model.map(predict(_, test))
         } else {
           model.map(x => Double.NaN)
         }
@@ -104,8 +87,8 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
     new TrustAssessment(request, currentPreds.filter(!_.isNaN).sum)
   }
 
-  def makeBaseRow(request: ServiceRequest, event: String): List[Any] = {
-    makeRow(0d, event,
+  def makeBaseRow(request: ServiceRequest): List[Any] = {
+    makeRow(0d,
       //    mineR.start.toDouble,
       request.duration.toDouble,
       request.payload.asInstanceOf[GoodPayload].quality,
@@ -121,10 +104,6 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
       records.map(x => {
         makeRow(
           labelfunch(x),
-          x.service.serviceContext.events.headOption match {
-            case Some(e) => e.getClass.getName
-            case None => ""
-          },
           //          x.request.start.toDouble,
           x.service.request.duration.toDouble,
           x.service.request.payload.asInstanceOf[GoodPayload].quality,
@@ -143,10 +122,6 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
 //        println(x.service.payload , dependency.service.payload)
         makeRow(
           labelfunch(x),
-          x.service.serviceContext.events.headOption match {
-            case Some(e) => e.getClass.getName
-            case None => ""
-          },
           //          x.request.start.toDouble,
           x.service.request.duration.toDouble,
           x.service.request.payload.asInstanceOf[GoodPayload].quality,

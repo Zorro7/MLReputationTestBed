@@ -7,7 +7,7 @@ import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.fire.Fire
-import jaspr.strategy.ipaw.{IpawEvents, Ipaw}
+import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, Ipaw}
 import jaspr.utilities.Chooser
 import weka.classifiers.functions.LinearRegression
 
