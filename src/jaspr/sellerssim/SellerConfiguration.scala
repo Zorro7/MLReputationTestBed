@@ -7,6 +7,7 @@ import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
 import jaspr.strategy.NoStrategy
+import jaspr.strategy.blade.Blade
 import jaspr.strategy.fire.Fire
 import jaspr.strategy.habit.Habit
 import jaspr.utilities.Chooser
@@ -22,6 +23,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
 
   override lazy val configs: Seq[Configuration] =
   new SellerConfiguration(new Habit()) ::
+  new SellerConfiguration(new Blade()) ::
       new SellerConfiguration(new NoStrategy) ::
         new SellerConfiguration(new Fire) ::
         new SellerConfiguration(new Mlrs) ::
