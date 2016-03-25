@@ -70,18 +70,14 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       val imputationModel = AbstractClassifier.makeCopy(baseImputation)
       imputationModel.buildClassifier(imputationTrain)
 
-//      if (client.id == 10) {
-//        println(imputationTrain)
-//        println(imputationModel.asInstanceOf[LinearRegression].coefficients().toList)
-//      }
-
       val witnessRows =
-        if (imputationModel.isInstanceOf[LinearRegression] && imputationModel.asInstanceOf[LinearRegression].coefficients().count(_ != 0) == 1) {
+        if (imputationModel.isInstanceOf[LinearRegression] && (
+            imputationModel.asInstanceOf[LinearRegression].coefficients().count(_ != 0) == 1 ||
+            imputationModel.asInstanceOf[LinearRegression].coefficients().exists(_.isNaN))) {
           makeWitnessRows(witnessRatings)
         } else {
           makeWitnessRows(witnessRatings, imputationModel, imputationAttVals, imputationTrain)
         }
-//      val witnessRows =
       val witnessAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(witnessRows.head.size)(mutable.Map[Any, Double]())
       val doubleWitnessRows = convertRowsToDouble(witnessRows, witnessAttVals)
       val witnessAtts = makeAtts(witnessRows.head, witnessAttVals)
@@ -103,7 +99,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       imputationModel.classifyInstance(imputationQuery) ::
         r.client.id.toString ::
 //        r.provider.id.toString ::
-        r.service.id.toString :: // service identifier (client context)
+        r.service.payload.name :: // service identifier (client context)
 //        r.provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
 //        r.asInstanceOf[MlrsRating].freakEvent :: // mitigation (provider context)
         r.rating ::
@@ -116,7 +112,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       r.rating ::
         r.client.id.toString ::
 //        r.provider.id.toString ::
-        r.service.id.toString :: // service identifier (client context)
+        r.service.payload.name :: // service identifier (client context)
         //        r.provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
         //        r.asInstanceOf[MlrsRating].freakEvent :: // mitigation (provider context)
         r.rating ::
@@ -129,7 +125,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       0 ::
         r.client.id.toString :: // witness
 //        provider.id.toString :: // provider
-        init.context.payload.name ::  // service context
+        request.payload.name ::  // service context
 //        provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
 //        fe :: // mitigation
         r.rating ::
@@ -140,9 +136,9 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
 
   def makeImputationRows(directRatings: Seq[BuyerRecord]): Iterable[List[Any]] = {
     directRatings.map(x => {
-      (if (discreteClass) discretizeInt(x.rating.toDouble) else x.rating.toDouble) :: // target rating
+      (if (discreteClass) discretizeInt(x.rating) else x.rating) :: // target rating
 //        x.provider.id.toString :: // provider identifier
-        x.service.id.toString :: // service identifier (client context)
+        x.service.payload.name :: // service identifier (client context)
 //        x.provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
         x.provider.advertProperties.values.map(_.value).toList // provider features
     })
@@ -152,7 +148,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
 //    for (fe <- init.asInstanceOf[MlrsStrategyInit].freakEventLikelihood.keys) yield {
       0 ::
 //        witnessRating.provider.id.toString ::
-        witnessRating.service.id.toString ::
+        witnessRating.service.payload.name ::
 //        witnessRating.provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
         witnessRating.provider.advertProperties.values.map(_.value).toList
 //    }

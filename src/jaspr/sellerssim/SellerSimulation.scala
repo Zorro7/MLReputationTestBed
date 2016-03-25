@@ -15,7 +15,6 @@ class SellerSimulation(val config: SellerConfiguration) extends Simulation {
 
   override val network: Network = new SellerNetwork(this)
 
-
   override def act(): Result = {
     for (client <- network.clients) {
       Chooser.ifHappens(config.clientIncolvementLikelihood)(

@@ -8,9 +8,8 @@ import jaspr.sellerssim.service.ProductPayload
 import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.fire.Fire
-import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, Ipaw}
+import jaspr.strategy.habit.Habit
 import jaspr.utilities.Chooser
-import weka.classifiers.functions.LinearRegression
 
 /**
  * Created by phil on 21/03/16.
@@ -19,9 +18,10 @@ import weka.classifiers.functions.LinearRegression
 class SellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
-//  override val _seed = 1000
+  override val _seed = 218118262
 
   override lazy val configs: Seq[Configuration] =
+  new SellerConfiguration(new Habit()) ::
       new SellerConfiguration(new NoStrategy) ::
         new SellerConfiguration(new Fire) ::
         new SellerConfiguration(new Mlrs) ::
@@ -35,14 +35,14 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 1
-  override val numRounds: Int = 250
+  override val numSimulations: Int = 3
+  override val numRounds: Int = 100
 
   val clientIncolvementLikelihood = 0.1
   val numClients: Int = 10
   val numProviders: Int = 50
 
-  val memoryLimit: Int = 100
+  val memoryLimit: Int = 250
 
   val freakEventLikelihood = 0.1
   val freakEventEffects = -1d
@@ -59,10 +59,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
   def adverts(agent: Agent with Properties): Map[String,Property] = {
-    //    rawProperties.mapValues(x => x + Chooser.randomDouble(-1.5,1.5)) //todo make this more something.
+//        agent.properties.mapValues(x => Property(x.name, x.doubleValue + Chooser.randomDouble(-1.5,1.5))) //todo make this more something.
 //    agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
-    //    agent.properties
-//        Map()
         new Property("agentid", agent.id) :: Nil
   }
 

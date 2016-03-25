@@ -4,8 +4,12 @@ import jaspr.core.Network
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{StrategyInit, Exploration}
 import jaspr.strategy.CompositionStrategy
-import weka.classifiers.Classifier
-import weka.classifiers.functions.LinearRegression
+import jaspr.utilities.MultiRegression
+import weka.classifiers.bayes.NaiveBayes
+import weka.classifiers.rules.OneR
+import weka.classifiers.trees.J48
+import weka.classifiers.{AbstractClassifier, Classifier}
+import weka.classifiers.functions.{SMOreg, LinearRegression}
 
 /**
  * Created by phil on 24/03/16.
@@ -13,13 +17,16 @@ import weka.classifiers.functions.LinearRegression
 class Mlrs extends CompositionStrategy with Exploration with MlrsDirect with MlrsWitness {
   override val explorationProbability: Double = 0.1
 
-  override val discreteClass: Boolean = false
+  override val numBins = 5
+  override val discreteClass: Boolean = true
+  val baseLearner = new OneR
 
-  override def baseDirect: Classifier = new LinearRegression
+  override def baseDirect: Classifier = AbstractClassifier.makeCopy(baseLearner)
 
-  override def baseImputation: Classifier = new LinearRegression
-
-  override def baseWitness: Classifier = new LinearRegression
+  override def baseImputation: Classifier = AbstractClassifier.makeCopy(baseLearner)
+  override val baseWitness = new MultiRegression
+  baseWitness.setBase(AbstractClassifier.makeCopy(baseLearner))
+  baseWitness.setSplitAttIndex(1)
 
   override def compute(init: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val directTA = super[MlrsDirect].compute(init, request)

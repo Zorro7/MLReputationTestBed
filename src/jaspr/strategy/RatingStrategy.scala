@@ -14,7 +14,7 @@ class RatingStrategyInit(context: ClientContext,
                          val witnessRecords: Seq[Rating]
                            ) extends StrategyInit(context)
 
-abstract class RatingStrategy extends Strategy {
+trait RatingStrategy extends Strategy {
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val direct = toRatings(context.client.getProvenance(context.client))
