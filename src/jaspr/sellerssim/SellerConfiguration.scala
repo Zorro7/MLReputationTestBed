@@ -5,6 +5,7 @@ import jaspr.core.service.{Payload, ClientContext}
 import jaspr.core.{MultiConfiguration, Network, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.SellerConfiguration
+import jaspr.sellerssim.agent.Buyer
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
 import jaspr.strategy.NoStrategy
@@ -16,7 +17,8 @@ import jaspr.utilities.Chooser
 import weka.classifiers.Classifier
 import weka.classifiers.`lazy`.{KStar, IBk}
 import weka.classifiers.bayes.NaiveBayes
-import weka.classifiers.functions.SMO
+import weka.classifiers.bayes.net.search.fixed
+import weka.classifiers.functions.{MultilayerPerceptron, SMOreg, SMO}
 import weka.classifiers.rules.OneR
 import weka.classifiers.trees.{J48, RandomForest}
 
@@ -32,8 +34,8 @@ class SellerMultiConfiguration extends MultiConfiguration {
   override lazy val configs: Seq[Configuration] =
     new SellerConfiguration(new NoStrategy) ::
       new SellerConfiguration(new Fire) ::
-//      new SellerConfiguration(new BetaReputation)::
-//      new SellerConfiguration(new Travos) ::
+      new SellerConfiguration(new BetaReputation)::
+      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade()) ::
 //      new SellerConfiguration(new Habit(2)) ::
 //        new SellerConfiguration(new Habit(5)) ::
@@ -43,15 +45,16 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //        new SellerConfiguration(new Mlrs(new OneR, 5)) ::
 //        new SellerConfiguration(new Mlrs(new J48, 2)) ::
 //        new SellerConfiguration(new Mlrs(new J48, 5)) ::
-//        new SellerConfiguration(new Mlrs(new RandomForest, 2)) ::
+//        new SellerConfiguration(new Mlrs(new RandomForest, 0)) ::
 //        new SellerConfiguration(new Mlrs(new RandomForest, 5)) ::
 //        new SellerConfiguration(new Mlrs(new RandomForest, 10)) ::
 //        new SellerConfiguration(new Mlrs(new SMO, 2)) ::
+//        new SellerConfiguration(new Mlrs(new MultilayerPerceptron, 0)) ::
 //        new SellerConfiguration(new Mlrs(new SMO, 5)) ::
-//          new SellerConfiguration(new Mlrs(new IBk, 2)) ::
+//          new SellerConfiguration(new Mlrs(new IBk, 0)) ::
 //          new SellerConfiguration(new Mlrs(new IBk, 5)) ::
 //          new SellerConfiguration(new Mlrs(new IBk, 10)) ::
-//        new SellerConfiguration(new Mlrs(new KStar, 2)) ::
+        new SellerConfiguration(new Mlrs(new KStar, 0)) ::
 //        new SellerConfiguration(new Mlrs(new KStar, 5)) ::
 //        new SellerConfiguration(new Mlrs(new KStar, 10)) ::
   Nil
@@ -63,18 +66,18 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
   override val numSimulations: Int = 10
-  override val numRounds: Int = 250
+  override val numRounds: Int = 500
 
   val clientIncolvementLikelihood = 0.1
-  val numClients: Int = 50
-  val numProviders: Int = 50
+  val numClients: Int = 10
+  val numProviders: Int = 100
 
   val memoryLimit: Int = 100
 
   val freakEventLikelihood = 0.0
   def freakEventEffects = -1d
 
-  var simcapabilities = for (i <- 1 to 10) yield new ProductPayload(i.toString)
+  var simcapabilities = for (i <- 1 to 25) yield new ProductPayload(i.toString)
   def capabilities(provider: Provider): Seq[ProductPayload] = {
     var caps = Chooser.sample(simcapabilities, 5)
     caps = caps.map(_.copy(
@@ -107,4 +110,15 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
 
+  def changeRatings(agent: Buyer): Map[String,Double] => Map[String,Double] = {
+    def honest(ratings: Map[String,Double]) = ratings
+    def invert(ratings: Map[String,Double]) = ratings.mapValues(-_)
+    def random(ratings: Map[String,Double]) = ratings.mapValues(x => Chooser.randomDouble(-1,1))
+    def positive(ratings: Map[String,Double]) = ratings.mapValues(x => (x + 1) / 2) // normalizes the rating to between 0 and 1
+    def negative(ratings: Map[String,Double]) = ratings.mapValues(x => (x - 1) / 2) // normalizes the rating to between 0 and -1
+    choose(honest(_), invert(_), random(_), positive(_), negative(_))
+  }
+
+
+  def choose[V](stuff: V*): V = Chooser.choose(stuff)
 }

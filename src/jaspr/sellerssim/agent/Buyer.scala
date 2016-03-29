@@ -48,10 +48,9 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
   private var _utility: Double = 0d
   override def utility: Double = _utility
 
+  def changeRatings: Map[String,Double] => Map[String,Double] = simulation.config.changeRatings(this)
+
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {
-    def changeRatings(ratings: Map[String,Double]) = {
-      ratings//.mapValues( -_ )
-    }
     def omitRecord(record: BuyerRecord, agent: Provenance): Boolean = {
       false
     }
@@ -63,14 +62,6 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
       ).map(x =>
         x.asInstanceOf[BuyerRecord].copy(ratings = changeRatings(x.asInstanceOf[BuyerRecord].ratings)).asInstanceOf[T]
       )
-//      provenanceStore.map(x => x.copy(x.trustAssessment, x.interaction.copyInteraction(
-//        ratings = x.interaction.ratings.mapValues(x =>
-//          if (liar && noisy) (ifHappens(Liariness)(-x)(x) + randomDouble(-Noisiness,Noisiness)) * excentricity
-//          else if (liar) ifHappens(Liariness)(-x)(x) * excentricity
-//          else if (noisy) (x + randomDouble(-Noisiness,Noisiness)) * excentricity
-//          else x * excentricity
-//        )
-//      ))).toList
     }
   }
 

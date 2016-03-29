@@ -66,7 +66,7 @@ public class MultiRegression implements Classifier, Serializable {
             }
 //            System.out.print(trains[i].numInstances()+" ");
         }
-//        System.out.println();
+//        System.out.println(this);
     }
 
     @Override

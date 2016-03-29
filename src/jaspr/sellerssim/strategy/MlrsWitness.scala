@@ -39,7 +39,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
         if (discreteClass) preds.map(x => witnessTrain.classAttribute().value(x.toInt).toDouble)
         else preds
 
-      new TrustAssessment(request, if (predictions.isEmpty) 0d else predictions.sum)
+      new TrustAssessment(request, if (predictions.isEmpty) 0d else predictions.sum / predictions.size)
     }
   }
 
@@ -121,7 +121,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
   }
 
   def makeWitnessTestRows(init: MlrsInit, request: ServiceRequest, witnessRatings: Seq[BuyerRecord], fe: String): Iterable[List[Any]] = {
-    val ret = for (r <- witnessRatings.filter(x => x.provider == request.provider && x.service.payload.name == init.context.payload.name)) yield {
+    val ret = for (r <- witnessRatings.filter(x => x.provider == request.provider && x.service.payload.name == request.payload.name)) yield {
       0 ::
         r.client.id.toString :: // witness
 //        provider.id.toString :: // provider
