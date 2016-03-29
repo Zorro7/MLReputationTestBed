@@ -4,7 +4,7 @@
  */
 package object jaspr {
 
-  val debugLevel = 2340
+  val debugLevel = 50
 
   def debug(str: String, objs: Any*): Unit = {
     debug(5, str, objs:_*)

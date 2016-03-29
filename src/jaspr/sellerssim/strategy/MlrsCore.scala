@@ -19,7 +19,6 @@ trait MlrsCore extends Discretization {
 
   override val upper = 1d
   override val lower = -1d
-  override val numBins = 2
 
   val classIndex: Int = 0
   val discreteClass: Boolean

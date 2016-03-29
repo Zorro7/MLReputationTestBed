@@ -24,4 +24,7 @@ trait Discretization {
     else b
   }
 
+  def bound(value: Double, lower: Double, upper: Double) = {
+    Math.min(upper, Math.max(lower, value))
+  }
 }

@@ -96,12 +96,14 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
     for (r <- witnessRatings) yield {
       val imputationRow = makeImputationTestRow(r)
       val imputationQuery = convertRowToInstance(imputationRow, imputationAttVals, imputationTrain)
-      imputationModel.classifyInstance(imputationQuery) ::
+      val imputationResult = imputationModel.classifyInstance(imputationQuery)
+//      (if (discreteClass) imputationTrain.classAttribute().value(imputationResult.toInt).toDouble
+//      else imputationResult) ::
+      imputationResult ::
+//      (if (discreteClass) discretizeInt(r.rating) else r.rating) ::
         r.client.id.toString ::
 //        r.provider.id.toString ::
         r.service.payload.name :: // service identifier (client context)
-//        r.provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
-//        r.asInstanceOf[MlrsRating].freakEvent :: // mitigation (provider context)
         r.rating ::
         r.provider.advertProperties.values.map(_.value).toList
     }
@@ -109,12 +111,10 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
 
   def makeWitnessRows(witnessRatings: Seq[BuyerRecord]): Iterable[List[Any]] = {
     for (r <- witnessRatings) yield {
-      r.rating ::
+      (if (discreteClass) discretizeInt(r.rating) else r.rating) ::
         r.client.id.toString ::
 //        r.provider.id.toString ::
         r.service.payload.name :: // service identifier (client context)
-        //        r.provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
-        //        r.asInstanceOf[MlrsRating].freakEvent :: // mitigation (provider context)
         r.rating ::
         r.provider.advertProperties.values.map(_.value).toList
     }
@@ -126,10 +126,8 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
         r.client.id.toString :: // witness
 //        provider.id.toString :: // provider
         request.payload.name ::  // service context
-//        provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
-//        fe :: // mitigation
         r.rating ::
-          request.provider.advertProperties.values.map(_.value).toList
+        request.provider.advertProperties.values.map(_.value).toList
     }
     ret
   }
@@ -139,7 +137,6 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       (if (discreteClass) discretizeInt(x.rating) else x.rating) :: // target rating
 //        x.provider.id.toString :: // provider identifier
         x.service.payload.name :: // service identifier (client context)
-//        x.provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
         x.provider.advertProperties.values.map(_.value).toList // provider features
     })
   }
@@ -149,7 +146,6 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       0 ::
 //        witnessRating.provider.id.toString ::
         witnessRating.service.payload.name ::
-//        witnessRating.provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
         witnessRating.provider.advertProperties.values.map(_.value).toList
 //    }
   }

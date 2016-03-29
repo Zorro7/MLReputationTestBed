@@ -11,13 +11,14 @@ import jaspr.utilities.matrix.RowVector
 /**
  * Created by phil on 24/03/16.
  */
-class Habit extends CompositionStrategy with RatingStrategy with Exploration with HabitCore {
+class Habit(override val numBins: Int) extends CompositionStrategy with RatingStrategy with Exploration with HabitCore {
+
+  override val name: String = this.getClass.getSimpleName+"-"+numBins
 
   override val explorationProbability: Double = 0.1
 
   override val lower: Double = -1d
   override val upper: Double = 1d
-  override val numBins: Int = 2
 
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {

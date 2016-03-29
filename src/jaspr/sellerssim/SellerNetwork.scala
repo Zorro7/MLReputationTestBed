@@ -38,4 +38,6 @@ class SellerNetwork(override val simulation: SellerSimulation) extends Network {
   }
 
   override def markets: Seq[Market] = new SellerMarket(simulation) :: Nil
+
+  simulation.config.simcapabilities = simulation.config.simcapabilities.filterNot(c => providers.filter(x => x.capableOf(c, 0)).isEmpty)
 }

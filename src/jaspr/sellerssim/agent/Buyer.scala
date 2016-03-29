@@ -32,8 +32,8 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
         case Some(x) => x
         case None => new SellerEvent("NA")
       },
-      service.payload.asInstanceOf[ProductPayload].quality)
-    )
+      service.payload.asInstanceOf[ProductPayload].quality
+    ))
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {

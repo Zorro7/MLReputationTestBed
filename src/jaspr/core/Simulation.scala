@@ -17,7 +17,7 @@ object Simulation {
       for (simulationIndex <- 0 until config.numSimulations) {
         val simulationSeed = multiConfig.seed(configIndex, simulationIndex)
         Chooser.setSeed(simulationSeed)
-        println("\n\n----- CONFIG " + configIndex + " (" + config + "), SIMULATION " + simulationIndex + ", seed: " + simulationSeed + " -----")
+        jaspr.debug(1000, "\n\n----- CONFIG " + configIndex + " (" + config + "), SIMULATION " + simulationIndex + ", seed: " + simulationSeed + " -----")
         val simulation = config.newSimulation()
         results.record(config, simulation.run())
       }
@@ -45,7 +45,7 @@ abstract class Simulation {
   def run(): List[Result] = {
     while (round <= config.numRounds) {
       currentRound += 1
-      jaspr.debug("\n------ ROUND "+round+" ------")
+      jaspr.debug(100, "\n------ ROUND "+round+", Utility: "+network.utility()+" ------")
       results = act() :: results
     }
     results

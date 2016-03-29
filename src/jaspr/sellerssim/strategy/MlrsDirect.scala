@@ -73,7 +73,6 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
 //        x.provider.id.toString :: // provider identifier
         x.payload.name :: // service identifier (client context)
         x.event.name :: // mitigation (provider context)
-//        x.provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
         x.provider.advertProperties.values.map(_.value).toList // provider features
     })
   }
@@ -83,7 +82,6 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
 //      provider.id.toString ::
       request.payload.name ::
       event ::
-//        provider.asInstanceOf[OrganisationAgent].organisation.id.toString ::
       request.provider.advertProperties.values.map(_.value).toList
     )
   }

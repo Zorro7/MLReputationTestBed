@@ -31,4 +31,7 @@ object Chooser extends Random {
   def randomInt(minimum: Int, maximum: Int) =
     nextInt(maximum - minimum) + minimum
 
+  def bound(value: Double, lower: Double, upper: Double) = {
+    Math.min(upper, Math.max(lower, value))
+  }
 }

@@ -7,23 +7,25 @@ import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.MultiRegression
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.rules.OneR
-import weka.classifiers.trees.J48
+import weka.classifiers.trees.{RandomForest, J48}
 import weka.classifiers.{AbstractClassifier, Classifier}
-import weka.classifiers.functions.{SMOreg, LinearRegression}
+import weka.classifiers.functions._
 
 /**
  * Created by phil on 24/03/16.
  */
-class Mlrs extends CompositionStrategy with Exploration with MlrsDirect with MlrsWitness {
+class Mlrs(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrsDirect with MlrsWitness {
+
+  override val name = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+"-"+numBins
+
   override val explorationProbability: Double = 0.1
 
-  override val numBins = 5
-  override val discreteClass: Boolean = true
-  val baseLearner = new OneR
+  override val discreteClass: Boolean = if (numBins <= 1) false else true
 
   override def baseDirect: Classifier = AbstractClassifier.makeCopy(baseLearner)
 
   override def baseImputation: Classifier = AbstractClassifier.makeCopy(baseLearner)
+//  override def baseWitness: Classifier = AbstractClassifier.makeCopy(baseLearner)
   override val baseWitness = new MultiRegression
   baseWitness.setBase(AbstractClassifier.makeCopy(baseLearner))
   baseWitness.setSplitAttIndex(1)
@@ -41,5 +43,6 @@ class Mlrs extends CompositionStrategy with Exploration with MlrsDirect with Mlr
       super[MlrsWitness].initStrategy(network, context).asInstanceOf[MlrsWitnessInit]
     )
   }
+
 
 }

@@ -12,12 +12,6 @@ import jaspr.utilities.Chooser
  */
 class Seller(override val simulation: SellerSimulation) extends Provider {
 
-  val capabilities: Seq[Payload] = simulation.config.capabilities(this)
-
-  override def capableOf(payload: Payload, duration: Int): Boolean = {
-    capabilities.exists(x => x.name == payload.name)
-  }
-
   override def receiveRequest(request: ServiceRequest): Boolean = {
     val service = new SellerService(request)
     currentServices += service
@@ -25,16 +19,16 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
   }
 
   override def affectService(service: Service): Unit = {
-    Chooser.ifHappens(simulation.config.freakEventLikelihood)({
+    service.payload = capabilities.get(service.payload.name).get.copy()
+    if (Chooser.nextDouble() < simulation.config.freakEventLikelihood) {
       jaspr.debug("EVENT:: Storm: ", properties.mapValues(_.doubleValue),
         properties.mapValues(x => (x.doubleValue + simulation.config.freakEventEffects) / 2d))
       service.serviceContext.addEvent(new SellerEvent("Storm"))
-      service.payload.asInstanceOf[ProductPayload].quality =
-        properties.mapValues(x => (x.doubleValue + simulation.config.freakEventEffects) / 2d)
-    })({
-      jaspr.debug("NO EVENT::", properties.mapValues(_.doubleValue))
-      service.payload.asInstanceOf[ProductPayload].quality = properties.mapValues(_.doubleValue)
-    })
+      val payloadQuality = service.payload.asInstanceOf[ProductPayload].quality
+      service.payload = service.payload.asInstanceOf[ProductPayload].copy(
+        quality = payloadQuality.mapValues(x => Chooser.bound((x + simulation.config.freakEventEffects) / 2d, -1d, 1d))
+      )
+    }
   }
 
   override def utility: Double = ???
@@ -45,5 +39,10 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override val properties: Map[String, Property] = simulation.config.properties(this)
   override val advertProperties: Map[String, Property] = simulation.config.adverts(this)
+  val capabilities: Map[String,ProductPayload] = simulation.config.capabilities(this).toList
+
+  override def capableOf(payload: Payload, duration: Int): Boolean = {
+    capabilities.contains(payload.name)
+  }
 
 }
