@@ -28,7 +28,7 @@ trait AdvertProperties extends Properties {
   }
 }
 
-case class Property(override val name: String, var value: AnyVal) extends NamedEntity {
+case class Property(override val name: String, val value: AnyVal) extends NamedEntity {
 
   // todo consider implementing float byte Value etc.
 //  def floatValue: Float = value.asInstanceOf[Float]

@@ -30,7 +30,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //  override val _seed = 1
 
   override lazy val configs: Seq[Configuration] =
-//    new SellerConfiguration(new NoStrategy) ::
+    new SellerConfiguration(new NoStrategy) ::
       new SellerConfiguration(new Fire) ::
 //      new SellerConfiguration(new BetaReputation)::
 //      new SellerConfiguration(new Travos) ::
@@ -38,7 +38,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //      new SellerConfiguration(new Habit(2)) ::
 //        new SellerConfiguration(new Habit(5)) ::
 //        new SellerConfiguration(new Mlrs(new NaiveBayes, 2)) ::
-        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
+//        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 2)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 5)) ::
 //        new SellerConfiguration(new Mlrs(new J48, 2)) ::
@@ -62,34 +62,25 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 5
+  override val numSimulations: Int = 10
   override val numRounds: Int = 250
 
-  val clientIncolvementLikelihood = 1
-  val numClients: Int = 1
+  val clientIncolvementLikelihood = 0.1
+  val numClients: Int = 50
   val numProviders: Int = 50
 
   val memoryLimit: Int = 100
 
-  val freakEventLikelihood = 0.1
+  val freakEventLikelihood = 0.0
   def freakEventEffects = -1d
 
-  var simcapabilities = for (i <- 1 to 5) yield new ProductPayload(i.toString)
+  var simcapabilities = for (i <- 1 to 10) yield new ProductPayload(i.toString)
   def capabilities(provider: Provider): Seq[ProductPayload] = {
-//    var caps = simcapabilities
-    var caps = Chooser.sample(simcapabilities, 1)
+    var caps = Chooser.sample(simcapabilities, 5)
     caps = caps.map(_.copy(
-      quality = Map(
-        "Quality" -> Chooser.bound((
-//          provider.property("Quality").doubleValue +
-            Chooser.randomDouble(-1,1))/2, -1, 1),
-        "Timeliness" -> Chooser.bound((
-//          provider.property("Timeliness").doubleValue +
-            Chooser.randomDouble(-1,1))/2, -1, 1)
+      quality = provider.properties.map(x =>
+        x._1 -> Chooser.bound(x._2.doubleValue + Chooser.randomDouble(-1,1), -1, 1)
       )
-//        provider.properties.mapValues(x =>
-//        Chooser.bound(( Chooser.randomDouble(-1,1))/2, -1d, 1d)
-//      )
     ))
     caps
   }
@@ -97,12 +88,13 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   def clientContext(network: Network, client: Client, round: Int) = {
     new ClientContext(
       client, round,
-      Chooser.choose(simcapabilities).copy(),
+      Chooser.choose(simcapabilities),
       network.markets.head
     )
   }
 
   def properties(agent: Agent): Map[String,Property] = {
+//    Map()
     new Property("Quality", Chooser.randomDouble(-1,1)) ::
     new Property("Timeliness", Chooser.randomDouble(-1,1)) ::
     Nil

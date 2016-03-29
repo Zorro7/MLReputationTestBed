@@ -39,7 +39,7 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override val properties: Map[String, Property] = simulation.config.properties(this)
   override val advertProperties: Map[String, Property] = simulation.config.adverts(this)
-  val capabilities: Map[String,ProductPayload] = simulation.config.capabilities(this).toList
+  val capabilities: Map[String,ProductPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
 
   override def capableOf(payload: Payload, duration: Int): Boolean = {
     capabilities.contains(payload.name)

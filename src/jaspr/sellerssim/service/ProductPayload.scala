@@ -9,7 +9,7 @@ class ProductPayload(override val name: String, val quality: Map[String,Double] 
 
   override def toString(): String = name+" "+quality
 
-  def copy(name: String = name, quality: Map[String,Double] = this.quality) = {
+  def copy(name: String = this.name, quality: Map[String,Double] = this.quality) = {
     new ProductPayload(name, quality)
   }
 }
