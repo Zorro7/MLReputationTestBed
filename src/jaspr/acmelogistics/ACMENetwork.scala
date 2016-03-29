@@ -54,9 +54,9 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
   }
 
   override def events(): Seq[Event] =
-    Chooser.ifHappens(0.05)(
+    Chooser.ifHappens(0.1)(
       new ACMEEvent(
-        Chooser.sample(providers, Chooser.randomInt(0, agents.size/4))
+        Chooser.sample(providers, providers.size/10)
       ) :: Nil
     )(Nil)
 
@@ -67,7 +67,7 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
     new ACME(simulation)
   )
 
-  override def providers: Seq[Provider] = mines ++ shippers ++ refineries
+  override lazy val providers: Seq[Provider] = mines ++ shippers ++ refineries
 
   var shippers: List[Shipper] = List.fill(simulation.config.numShippers)(
     new Shipper(simulation)

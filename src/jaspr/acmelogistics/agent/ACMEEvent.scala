@@ -9,7 +9,9 @@ import jaspr.core.service.Service
 class ACMEEvent(override val providers: Seq[Provider]) extends Event {
 
   override def affect(service: Service): Unit = {
-    service.duration = service.duration + 1
+    service.duration = service.duration + 2
+//    val payload = service.payload.asInstanceOf[GoodPayload]
+//    service.payload = payload.copy(quantity = 0d)
   }
 
   override def affect(provider: Provider): Unit = {}

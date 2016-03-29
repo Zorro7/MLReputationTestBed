@@ -53,11 +53,9 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
       records.groupBy(x =>
         x.service.serviceContext.events.headOption match {
           case Some(e) => e.getClass.getName
-          case None => ""
+          case None => "NA"
         }
       ).mapValues(_.size.toDouble / records.size)
-
-    println(eventLikelihoods)
 
     new IpawInit(context, records, models, eventLikelihoods)
   }
@@ -123,7 +121,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
           labelfunch(x),
           x.service.serviceContext.events.headOption match {
             case Some(e) => e.getClass.getName
-            case None => ""
+            case None => "NA"
           },
           //          x.request.start.toDouble,
           x.service.request.duration.toDouble,
@@ -145,7 +143,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
           labelfunch(x),
           x.service.serviceContext.events.headOption match {
             case Some(e) => e.getClass.getName
-            case None => ""
+            case None => "NA"
           },
           //          x.request.start.toDouble,
           x.service.request.duration.toDouble,

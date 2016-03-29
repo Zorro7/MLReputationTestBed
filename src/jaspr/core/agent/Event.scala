@@ -11,10 +11,9 @@ trait Event extends NamedEntity with Tickable {
   val providers: Seq[Provider]
 
   def tick(): Unit = {
-    jaspr.debug("EVENT:: ", name, providers)
+    jaspr.debug("EVENT:: ", name, providers.map(_.currentServices.size).sum, providers)
     for (provider <- providers) {
       affect(provider)
-      println("RECORDED: "+this+" "+provider+" "+provider.currentServices)
       for (service <- provider.currentServices) {
         affect(service)
         service.serviceContext.addEvent(this)
