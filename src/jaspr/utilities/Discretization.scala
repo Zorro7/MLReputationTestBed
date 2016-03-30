@@ -3,28 +3,24 @@ package jaspr.utilities
 /**
   * Created by phil on 14/02/2016.
   */
+
 trait Discretization {
 
   val upper: Double
   val lower: Double
   val numBins: Int
 
-  lazy val discVals = Range.Double.inclusive(lower, upper, (upper-lower)/numBins).map(_.toString)
+  lazy val discVals = Range.Double(lower, upper, (upper-lower)/numBins).map(_.toString)
 
   def discretizeInt(x: Double): Int = {
-    val b = (((x-lower) / (upper - lower)) * numBins).toInt
-    if (b <= 0) 0
-    else if (b >= numBins) numBins
-    else b
+    discretizeDouble(x).toInt
   }
 
   def discretizeDouble(x: Double): Double = {
-    val b = (((x-lower) / (upper - lower)) * numBins).toInt
-    if (b >= numBins) numBins
-    else b
+    bound((((x-lower) / (upper - lower)) * numBins).toInt, 0, numBins-1)
   }
 
-  def bound(value: Double, lower: Double, upper: Double) = {
+  def bound(value: Double, lower: Double, upper: Double): Double = {
     Math.min(upper, Math.max(lower, value))
   }
 }
