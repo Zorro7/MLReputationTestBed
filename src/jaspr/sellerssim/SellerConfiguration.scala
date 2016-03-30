@@ -17,7 +17,6 @@ import jaspr.utilities.Chooser
 import weka.classifiers.Classifier
 import weka.classifiers.`lazy`.{KStar, IBk}
 import weka.classifiers.bayes.NaiveBayes
-import weka.classifiers.bayes.net.search.fixed
 import weka.classifiers.functions.{MultilayerPerceptron, SMOreg, SMO}
 import weka.classifiers.rules.OneR
 import weka.classifiers.trees.{J48, RandomForest}
@@ -32,9 +31,9 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //  override val _seed = 1
 
   override lazy val configs: Seq[Configuration] =
-//    new SellerConfiguration(new NoStrategy) ::
-//      new SellerConfiguration(new Fire) ::
-//      new SellerConfiguration(new MLFire) ::
+    new SellerConfiguration(new NoStrategy) ::
+      new SellerConfiguration(new Fire) ::
+      new SellerConfiguration(new MLFire) ::
 //      new SellerConfiguration(new BetaReputation)::
 //      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade()) ::

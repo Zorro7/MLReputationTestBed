@@ -23,7 +23,7 @@ trait MlrsCore extends Discretization {
   override val lower = -1d
 
   val classIndex: Int = 0
-  val discreteClass: Boolean
+  lazy val discreteClass: Boolean = if (numBins <= 1) false else true
 
   class MlrsModel(val model: Classifier,
                   val train: Instances,
@@ -32,7 +32,7 @@ trait MlrsCore extends Discretization {
 
   def makeMlrsModel[T <: Record](records: Seq[T], baseModel: Classifier,
                     makeTrainRows: Seq[T] => Iterable[Seq[Any]],
-                    makeWeights: Seq[T] => Iterable[Double] = (_: Seq[T])=>Nil) = {
+                    makeWeights: Seq[T] => Iterable[Double] = (_: Seq[T])=>Nil): MlrsModel = {
     val rows = makeTrainRows(records)
     val weights = makeWeights(records)
     val directAttVals: Iterable[mutable.Map[Any,Double]] = List.fill(rows.head.size)(mutable.Map[Any,Double]())
@@ -41,7 +41,6 @@ trait MlrsCore extends Discretization {
     val directTrain = makeInstances(atts, doubleRows, weights)
     val directModel = AbstractClassifier.makeCopy(baseModel)
     directModel.buildClassifier(directTrain)
-
     new MlrsModel(directModel, directTrain, directAttVals)
   }
 

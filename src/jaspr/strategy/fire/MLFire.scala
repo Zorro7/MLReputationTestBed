@@ -6,6 +6,7 @@ import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
 import jaspr.core.strategy.{StrategyInit, Exploration}
 import jaspr.sellerssim.strategy.MlrsCore
 import jaspr.strategy.{CompositionStrategy, RatingStrategy}
+import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.rules.OneR
 import scala.math._
 
@@ -14,8 +15,8 @@ import scala.math._
  */
 class MLFire extends RatingStrategy with CompositionStrategy with Exploration with MlrsCore {
 
-  override val discreteClass: Boolean = true
-  override val numBins: Int = 2
+  override val numBins: Int = 3
+
   val baseModel = new OneR
 
   override val explorationProbability: Double = 0.1
@@ -29,7 +30,7 @@ class MLFire extends RatingStrategy with CompositionStrategy with Exploration wi
     pow(E, -((currentRound - ratingRound) / RecencyScalingFactor))
   }
 
-class MLFireInit(context: ClientContext,
+  class MLFireInit(context: ClientContext,
                  val directModel: MlrsModel,
                  val witnessModel: MlrsModel
                   ) extends StrategyInit(context)

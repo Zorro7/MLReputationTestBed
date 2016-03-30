@@ -20,8 +20,6 @@ class Mlrs(val baseLearner: Classifier, override val numBins: Int) extends Compo
 
   override val explorationProbability: Double = 0.1
 
-  override val discreteClass: Boolean = if (numBins <= 1) false else true
-
   override def baseDirect: Classifier = AbstractClassifier.makeCopy(baseLearner)
 
   override def baseImputation: Classifier = AbstractClassifier.makeCopy(baseLearner)
