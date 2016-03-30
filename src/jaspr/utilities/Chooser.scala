@@ -6,6 +6,7 @@ import scala.util.Random
  * Created by phil on 27/01/16.
  */
 object Chooser extends Random {
+
   // Selects a random value from a list (throws exception IndexOutOfBoundsException if the list is empty)
   def choose[V](items: Seq[V]): V = items(nextInt(items.size))
 

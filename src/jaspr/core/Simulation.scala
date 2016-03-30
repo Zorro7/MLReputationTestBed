@@ -13,7 +13,7 @@ object Simulation {
   def apply(multiConfig: MultiConfiguration) {
     val results: Results = new Results
 
-    for ((config, configIndex) <- multiConfig.configs.zipWithIndex) {
+    for ((config, configIndex) <- multiConfig.configs.zipWithIndex.par) {
       for (simulationIndex <- 0 until config.numSimulations) {
         val simulationSeed = multiConfig.seed(configIndex, simulationIndex)
         Chooser.setSeed(simulationSeed)

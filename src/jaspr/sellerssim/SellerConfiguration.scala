@@ -4,7 +4,6 @@ import jaspr.core.agent._
 import jaspr.core.service.{Payload, ClientContext}
 import jaspr.core.{MultiConfiguration, Network, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
-import jaspr.sellerssim.SellerConfiguration
 import jaspr.sellerssim.agent.Buyer
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
@@ -66,7 +65,7 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
   override val numSimulations: Int = 10
-  override val numRounds: Int = 500
+  override val numRounds: Int = 5000
 
   val clientIncolvementLikelihood = 0.1
   val numClients: Int = 10

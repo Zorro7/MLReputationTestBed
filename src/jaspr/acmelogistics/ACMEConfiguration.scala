@@ -1,6 +1,5 @@
 package jaspr.acmelogistics
 
-import jaspr.acmelogistics.ACMEConfiguration
 import jaspr.acmelogistics.agent.{Mine, Refinery, Shipper}
 import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.agent.{Client, Properties, Agent, Property}

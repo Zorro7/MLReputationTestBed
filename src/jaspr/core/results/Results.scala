@@ -12,21 +12,23 @@ import scala.collection.mutable
  */
 class Results {
 
+  private[this] val lock = new Object()
+
   val results = new mutable.LinkedHashMap[Configuration, List[Seq[Result]]]()
   val df = new DecimalFormat("000.00")
 
-  def record(config: Configuration, simResult: Seq[Result]) = {
+  def record(config: Configuration, simResult: Seq[Result]) = lock.synchronized {
     results.put(config, simResult :: results.getOrElse(config, Nil))
   }
 
-  def printAll(funch: Result => Double) = {
+  def printAll(funch: Result => Double) = lock.synchronized {
     val x = (for ((config,results) <- results) yield {
       results.map(_.map(funch).reverse.mkString(",")).mkString(config.toString+": ", "\n"+config.toString+": ", "")
     }).mkString("", "\n", "")
     println(x)
   }
 
-  def printAverage(funch: Result => Double) = {
+  def printAverage(funch: Result => Double) = lock.synchronized {
     val x = results.keys.mkString("", "\t", "\n") +
       (for ((config,res) <- results) yield {
         average(res, funch).map(df.format)
@@ -34,14 +36,14 @@ class Results {
     println(x)
   }
 
-  def saveAll(filename: String, funch: Result => Double) = {
+  def saveAll(filename: String, funch: Result => Double) = lock.synchronized {
     val x = (for ((config,results) <- results) yield {
       results.map(_.map(funch).reverse.mkString(",")).mkString(config.toString+": ", "\n"+config.toString+": ", "")
     }).mkString("", "\n", "")
     new PrintWriter(filename) { write(x); close() }
   }
 
-  def saveConfig(filename: String, config: Configuration, funch: Result => Double) = {
+  def saveConfig(filename: String, config: Configuration, funch: Result => Double) = lock.synchronized {
     val x = results.getOrElse(config, List()).map(_.map(funch).reverse.mkString(",")).mkString(config.toString+": ", "\n"+config.toString+": ", "")
     new PrintWriter(filename) { write(x); close() }
   }
