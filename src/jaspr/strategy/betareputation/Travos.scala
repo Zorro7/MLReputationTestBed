@@ -20,16 +20,16 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
 
 
   override def initStrategy(network: Network, context: ClientContext) = {
-    val direct = context.client.getProvenance[Record](context.client).map(x =>
+    val direct = context.client.getProvenance[ServiceRecord with RatingRecord with TrustAssessmentRecord](context.client).map(x =>
         new Rating(
-          x.asInstanceOf[ServiceRecord].service.request.client,
-          x.asInstanceOf[ServiceRecord].service.request.provider,
-          x.asInstanceOf[ServiceRecord].service.end,
-          x.asInstanceOf[RatingRecord].rating
+          x.service.request.client,
+          x.service.request.provider,
+          x.service.end,
+          x.rating
         ) with BetaOpinions {
           override val opinions: List[(Agent,BetaDistribution)] =
-            x.asInstanceOf[TrustAssessmentRecord].assessment.asInstanceOf[TravosTrustAssessment]
-              .opinions.getOrElse(x.asInstanceOf[ServiceRecord].service.request, new BetaOpinions {
+            x.assessment.asInstanceOf[TravosTrustAssessment]
+              .opinions.getOrElse(x.service.request, new BetaOpinions {
               override val opinions: List[(Agent, BetaDistribution)] = Nil
             }).opinions
         }

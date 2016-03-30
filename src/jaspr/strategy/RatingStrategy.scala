@@ -22,13 +22,13 @@ trait RatingStrategy extends Strategy {
     new RatingStrategyInit(context, direct, witness)
   }
 
-  def toRatings(records: Seq[Record]): Seq[Rating] = {
+  def toRatings(records: Seq[ServiceRecord with RatingRecord]): Seq[Rating] = {
     records.map(x =>
       new Rating(
-        x.asInstanceOf[ServiceRecord].service.request.client,
-        x.asInstanceOf[ServiceRecord].service.request.provider,
-        x.asInstanceOf[ServiceRecord].service.end,
-        x.asInstanceOf[RatingRecord].rating
+        x.service.request.client,
+        x.service.request.provider,
+        x.service.end,
+        x.rating
       )
     )
   }
