@@ -24,28 +24,6 @@ trait MlrsCore extends Discretization {
   val discreteClass: Boolean
 
 
-  class MlrsDirectInit(context: ClientContext,
-                       val directModel: Classifier,
-                       val directTrain: Instances,
-                       val directAttVals: Iterable[mutable.Map[Any,Double]],
-                       val freakEventLikelihood: Map[String, Double]
-                        ) extends StrategyInit(context)
-
-  class MlrsWitnessInit(context: ClientContext,
-                        val witnessModel: Classifier,
-                        val witnessTrain: Instances,
-                        val witnessAttVals: Iterable[mutable.Map[Any,Double]],
-                        val witnessRatings: Seq[BuyerRecord],
-                        val freakEventLikelihood: Map[String, Double]
-                         ) extends StrategyInit(context)
-
-  class MlrsInit(context: ClientContext,
-                 val directInit: MlrsDirectInit,
-                 val witnessInit: MlrsWitnessInit
-                ) extends StrategyInit(context)
-
-
-
   def lookup[T](map: mutable.Map[T,Double], item: T): Double = {
     if (map.contains(item)) map(item)
     else {
