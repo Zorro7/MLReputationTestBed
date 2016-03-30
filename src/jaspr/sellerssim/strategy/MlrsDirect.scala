@@ -34,15 +34,16 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
       val directTrain = init.directInit.directTrain
       val directAttVals = init.directInit.directAttVals
 
-      val predictions = (for ((fe,p) <- init.directInit.freakEventLikelihood) yield {
-        val rows: Iterable[List[Any]] = makeDirectTestRows(init, request, fe)
-        val queries = convertRowsToInstances(rows, directAttVals, directTrain)
-        val preds = queries.map(q => directModel.classifyInstance(q))
-        val vals =
-          if (discreteClass) preds.map(x => directTrain.classAttribute().value(x.toInt).toDouble)
-          else preds
-        vals.map(_ * p)
-      }).flatten
+      val predictions =
+        for ((fe,p) <- init.directInit.freakEventLikelihood) yield {
+          val row = makeDirectTestRow(init, request, fe)
+          val query = convertRowToInstance(row, directAttVals, directTrain)
+          val pred = directModel.classifyInstance(query)
+          val result =
+            if (discreteClass) directTrain.classAttribute().value(pred.toInt).toDouble
+            else pred
+          result * p
+        }
       new TrustAssessment(request, predictions.sum/predictions.size)
     }
   }
@@ -54,29 +55,24 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
 
     if (directRecords.isEmpty) null
     else {
-      val model = makeMlrsModel(directRecords, baseDirect, makeDirectRows)
+      val model = makeMlrsModel(directRecords, baseDirect, makeDirectRow)
 
       new MlrsDirectInit(context, model.model, model.train, model.attVals, freakEventLikelihood)
     }
   }
 
 
-  def makeDirectRows(directRatings: Seq[BuyerRecord]): Iterable[Seq[Any]] = {
-    directRatings.map(x => {
-      (if (discreteClass) discretizeInt(x.rating) else x.rating) :: // target rating
-//        x.provider.id.toString :: // provider identifier
-        x.payload.name :: // service identifier (client context)
-        x.event.name :: // mitigation (provider context)
-        x.provider.advertProperties.values.map(_.value).toList // provider features
-    })
+  def makeDirectRow(record: BuyerRecord): Seq[Any] = {
+    (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
+      record.payload.name :: // service identifier (client context)
+      record.event.name :: // mitigation (provider context)
+      record.provider.advertProperties.values.map(_.value).toList // provider features
   }
 
-  def makeDirectTestRows(init: StrategyInit, request: ServiceRequest, event: String): Iterable[List[Any]] = {
-    List(0 ::
-//      provider.id.toString ::
+  def makeDirectTestRow(init: StrategyInit, request: ServiceRequest, event: String): Seq[Any] = {
+    0 ::
       request.payload.name ::
       event ::
       request.provider.advertProperties.values.map(_.value).toList
-    )
   }
 }

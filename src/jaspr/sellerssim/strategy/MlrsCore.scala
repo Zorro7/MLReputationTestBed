@@ -8,6 +8,7 @@ import jaspr.core.service.{ClientContext}
 import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.service.BuyerRecord
 import jaspr.utilities.Discretization
+import weka.classifiers.evaluation.{NumericPrediction, Prediction, NominalPrediction}
 import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.core.{Attribute, DenseInstance, Instance, Instances}
 
@@ -31,10 +32,10 @@ trait MlrsCore extends Discretization {
                    )
 
   def makeMlrsModel[T <: Record](records: Seq[T], baseModel: Classifier,
-                    makeTrainRows: Seq[T] => Iterable[Seq[Any]],
-                    makeWeights: Seq[T] => Iterable[Double] = (_: Seq[T])=>Nil): MlrsModel = {
-    val rows = makeTrainRows(records)
-    val weights = makeWeights(records)
+                    makeTrainRow: T => Seq[Any],
+                    makeWeight: T => Double = (_: T)=>1d): MlrsModel = {
+    val rows = records.map(makeTrainRow)
+    val weights = records.map(makeWeight)
     val directAttVals: Iterable[mutable.Map[Any,Double]] = List.fill(rows.head.size)(mutable.Map[Any,Double]())
     val doubleRows = convertRowsToDouble(rows, directAttVals)
     val atts = makeAtts(rows.head, directAttVals)
@@ -42,6 +43,16 @@ trait MlrsCore extends Discretization {
     val directModel = AbstractClassifier.makeCopy(baseModel)
     directModel.buildClassifier(directTrain)
     new MlrsModel(directModel, directTrain, directAttVals)
+  }
+
+  def evaluateMlrsModel[T <: Record](records: Seq[T], mlrsModel: MlrsModel,
+                                     makeTestRow: T => Seq[Any],
+                                     makeWeight: T => Double = (_: T)=>0d): Iterable[Prediction] = {
+    val rows = records.map(makeTestRow)
+    val weights = records.map(makeWeight)
+    val queries = convertRowsToInstances(rows, mlrsModel.attVals, mlrsModel.train)
+    if (discreteClass) queries.map(q => new NominalPrediction(q.classValue(), mlrsModel.model.distributionForInstance(q)))
+    else queries.map(q => new NumericPrediction(q.classValue(), mlrsModel.model.classifyInstance(q)))
   }
 
   def lookup[T](map: mutable.Map[T,Double], item: T): Double = {

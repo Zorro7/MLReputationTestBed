@@ -39,7 +39,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //      new SellerConfiguration(new Blade()) ::
 //      new SellerConfiguration(new Habit(2)) ::
 //        new SellerConfiguration(new Habit(5)) ::
-        new SellerConfiguration(new Mlrs(new NaiveBayes, 2)) ::
+//        new SellerConfiguration(new Mlrs(new NaiveBayes, 2)) ::
 //        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 2)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 5)) ::
@@ -70,7 +70,7 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 
   val clientIncolvementLikelihood = 0.1
   val numClients: Int = 10
-  val numProviders: Int = 100
+  val numProviders: Int = 500
 
   val memoryLimit: Int = 100
 

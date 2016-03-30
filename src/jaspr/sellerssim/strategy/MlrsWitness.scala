@@ -52,53 +52,43 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
 
     if (witnessRatings.isEmpty) null
     else if (directRatings.isEmpty) {
-      val model = makeMlrsModel(witnessRatings, baseWitness, makeWitnessRows(_: Seq[BuyerRecord]))
+      val model = makeMlrsModel(witnessRatings, baseWitness, makeWitnessRow(_: BuyerRecord))
       new MlrsWitnessInit(context, model.model, model.train, model.attVals, witnessRatings, freakEventLikelihood)
     } else {
-      val imputationModel = makeMlrsModel(directRatings, baseImputation, makeImputationRows)
+      val imputationModel = makeMlrsModel(directRatings, baseImputation, makeImputationRow)
       val model = makeMlrsModel(
         witnessRatings,
         baseWitness,
-        makeWitnessRows(_: Seq[BuyerRecord], imputationModel)
+        makeWitnessRow(_: BuyerRecord, imputationModel)
       )
       new MlrsWitnessInit(context, model.model, model.train, model.attVals, witnessRatings, freakEventLikelihood)
     }
   }
 
-  def makeWitnessRows(witnessRatings: Seq[BuyerRecord],
-                      imputationModel: MlrsModel): Iterable[List[Any]] = {
-    for (r <- witnessRatings) yield {
-      val imputationRow = makeImputationTestRow(r)
-      val imputationQuery = convertRowToInstance(imputationRow, imputationModel.attVals, imputationModel.train)
-      val imputationResult = imputationModel.model.classifyInstance(imputationQuery)
-//      (if (discreteClass) imputationTrain.classAttribute().value(imputationResult.toInt).toDouble
-//      else imputationResult) ::
-      imputationResult ::
-//      (if (discreteClass) discretizeInt(r.rating) else r.rating) ::
-        r.client.id.toString ::
-//        r.provider.id.toString ::
-        r.service.payload.name :: // service identifier (client context)
-        r.rating ::
-        r.provider.advertProperties.values.map(_.value).toList
-    }
+  def makeWitnessRow(r: BuyerRecord,
+                      imputationModel: MlrsModel): List[Any] = {
+    val imputationRow = makeImputationTestRow(r)
+    val imputationQuery = convertRowToInstance(imputationRow, imputationModel.attVals, imputationModel.train)
+    val imputationResult = imputationModel.model.classifyInstance(imputationQuery)
+    imputationResult ::
+      r.client.id.toString ::
+      r.service.payload.name :: // service identifier (client context)
+      r.rating ::
+      r.provider.advertProperties.values.map(_.value).toList
   }
 
-  def makeWitnessRows(witnessRatings: Seq[BuyerRecord]): Iterable[Seq[Any]] = {
-    for (r <- witnessRatings) yield {
-      (if (discreteClass) discretizeInt(r.rating) else r.rating) ::
-        r.client.id.toString ::
-//        r.provider.id.toString ::
-        r.service.payload.name :: // service identifier (client context)
-        r.rating ::
-        r.provider.advertProperties.values.map(_.value).toList
-    }
+  def makeWitnessRow(r: BuyerRecord): Seq[Any] = {
+    (if (discreteClass) discretizeInt(r.rating) else r.rating) ::
+      r.client.id.toString ::
+      r.service.payload.name :: // service identifier (client context)
+      r.rating ::
+      r.provider.advertProperties.values.map(_.value).toList
   }
 
   def makeWitnessTestRows(init: MlrsInit, request: ServiceRequest, witnessRatings: Seq[BuyerRecord], fe: String): Iterable[List[Any]] = {
     val ret = for (r <- witnessRatings.filter(x => x.provider == request.provider && x.service.payload.name == request.payload.name)) yield {
       0 ::
         r.client.id.toString :: // witness
-//        provider.id.toString :: // provider
         request.payload.name ::  // service context
         r.rating ::
         request.provider.advertProperties.values.map(_.value).toList
@@ -106,13 +96,10 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
     ret
   }
 
-  def makeImputationRows(directRatings: Seq[BuyerRecord]): Iterable[List[Any]] = {
-    directRatings.map(x => {
-      (if (discreteClass) discretizeInt(x.rating) else x.rating) :: // target rating
-//        x.provider.id.toString :: // provider identifier
-        x.service.payload.name :: // service identifier (client context)
-        x.provider.advertProperties.values.map(_.value).toList // provider features
-    })
+  def makeImputationRow(x: BuyerRecord): Seq[Any] = {
+    (if (discreteClass) discretizeInt(x.rating) else x.rating) :: // target rating
+      x.service.payload.name :: // service identifier (client context)
+      x.provider.advertProperties.values.map(_.value).toList // provider features
   }
 
   def makeImputationTestRow(witnessRating: BuyerRecord): List[Any] = {
