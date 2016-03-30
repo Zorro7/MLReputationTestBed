@@ -33,14 +33,14 @@ class SellerMultiConfiguration extends MultiConfiguration {
 
   override lazy val configs: Seq[Configuration] =
 //    new SellerConfiguration(new NoStrategy) ::
-      new SellerConfiguration(new Fire) ::
-      new SellerConfiguration(new MLFire) ::
+//      new SellerConfiguration(new Fire) ::
+//      new SellerConfiguration(new MLFire) ::
 //      new SellerConfiguration(new BetaReputation)::
 //      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade()) ::
 //      new SellerConfiguration(new Habit(2)) ::
 //        new SellerConfiguration(new Habit(5)) ::
-//        new SellerConfiguration(new Mlrs(new NaiveBayes, 2)) ::
+        new SellerConfiguration(new Mlrs(new NaiveBayes, 2)) ::
 //        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 2)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 5)) ::
@@ -66,7 +66,7 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 10
+  override val numSimulations: Int = 50
   override val numRounds: Int = 500
 
   val clientIncolvementLikelihood = 0.1
@@ -117,7 +117,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     def random(ratings: Map[String,Double]) = ratings.mapValues(x => Chooser.randomDouble(-1,1))
     def positive(ratings: Map[String,Double]) = ratings.mapValues(x => (x + 1) / 2) // normalizes the rating to between 0 and 1
     def negative(ratings: Map[String,Double]) = ratings.mapValues(x => (x - 1) / 2) // normalizes the rating to between 0 and -1
-    choose(honest(_), invert(_), random(_), positive(_), negative(_))
+//    choose(honest(_), invert(_), random(_), positive(_), negative(_))
+    honest
   }
 
 

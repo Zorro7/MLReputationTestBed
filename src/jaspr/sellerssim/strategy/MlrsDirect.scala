@@ -54,20 +54,14 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
 
     if (directRecords.isEmpty) null
     else {
-      val rows = makeDirectRows(directRecords)
-      val directAttVals: Iterable[mutable.Map[Any,Double]] = List.fill(rows.head.size)(mutable.Map[Any,Double]())
-      val doubleRows = convertRowsToDouble(rows, directAttVals)
-      val atts = makeAtts(rows.head, directAttVals)
-      val directTrain = makeInstances(atts, doubleRows)
-      val directModel = AbstractClassifier.makeCopy(baseDirect)
-      directModel.buildClassifier(directTrain)
+      val model = makeMlrsModel(directRecords, baseDirect, makeDirectRows)
 
-      new MlrsDirectInit(context, directModel, directTrain, directAttVals, freakEventLikelihood)
+      new MlrsDirectInit(context, model.model, model.train, model.attVals, freakEventLikelihood)
     }
   }
 
 
-  def makeDirectRows(directRatings: Seq[BuyerRecord]): Iterable[List[Any]] = {
+  def makeDirectRows(directRatings: Seq[BuyerRecord]): Iterable[Seq[Any]] = {
     directRatings.map(x => {
       (if (discreteClass) discretizeInt(x.rating) else x.rating) :: // target rating
 //        x.provider.id.toString :: // provider identifier

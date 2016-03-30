@@ -52,51 +52,25 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
 
     if (witnessRatings.isEmpty) null
     else if (directRatings.isEmpty) {
-      val witnessRows = makeWitnessRows(witnessRatings)
-      val witnessAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(witnessRows.head.size)(mutable.Map[Any, Double]())
-      val doubleWitnessRows = convertRowsToDouble(witnessRows, witnessAttVals)
-      val witnessAtts = makeAtts(witnessRows.head, witnessAttVals)
-      val witnessTrain = makeInstances(witnessAtts, doubleWitnessRows)
-      val witnessModel = AbstractClassifier.makeCopy(baseWitness)
-      witnessModel.buildClassifier(witnessTrain)
-
-      new MlrsWitnessInit(context, witnessModel, witnessTrain, witnessAttVals, witnessRatings, freakEventLikelihood)
+      val model = makeMlrsModel(witnessRatings, baseWitness, makeWitnessRows(_: Seq[BuyerRecord]))
+      new MlrsWitnessInit(context, model.model, model.train, model.attVals, witnessRatings, freakEventLikelihood)
     } else {
-      val imputationRows = makeImputationRows(directRatings)
-      val imputationAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(imputationRows.head.size)(mutable.Map[Any, Double]())
-      val doubleImputationRows = convertRowsToDouble(imputationRows, imputationAttVals)
-      val imputationAtts = makeAtts(imputationRows.head, imputationAttVals)
-      val imputationTrain = makeInstances(imputationAtts, doubleImputationRows)
-      val imputationModel = AbstractClassifier.makeCopy(baseImputation)
-      imputationModel.buildClassifier(imputationTrain)
-
-      val witnessRows =
-        if (imputationModel.isInstanceOf[LinearRegression] && (
-            imputationModel.asInstanceOf[LinearRegression].coefficients().count(_ != 0) == 1 ||
-            imputationModel.asInstanceOf[LinearRegression].coefficients().exists(_.isNaN))) {
-          makeWitnessRows(witnessRatings)
-        } else {
-          makeWitnessRows(witnessRatings, imputationModel, imputationAttVals, imputationTrain)
-        }
-      val witnessAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(witnessRows.head.size)(mutable.Map[Any, Double]())
-      val doubleWitnessRows = convertRowsToDouble(witnessRows, witnessAttVals)
-      val witnessAtts = makeAtts(witnessRows.head, witnessAttVals)
-      val witnessTrain = makeInstances(witnessAtts, doubleWitnessRows)
-      val witnessModel = AbstractClassifier.makeCopy(baseWitness)
-      witnessModel.buildClassifier(witnessTrain)
-
-      new MlrsWitnessInit(context, witnessModel, witnessTrain, witnessAttVals, witnessRatings, freakEventLikelihood)
+      val imputationModel = makeMlrsModel(directRatings, baseImputation, makeImputationRows)
+      val model = makeMlrsModel(
+        witnessRatings,
+        baseWitness,
+        makeWitnessRows(_: Seq[BuyerRecord], imputationModel)
+      )
+      new MlrsWitnessInit(context, model.model, model.train, model.attVals, witnessRatings, freakEventLikelihood)
     }
   }
 
   def makeWitnessRows(witnessRatings: Seq[BuyerRecord],
-                      imputationModel: Classifier,
-                      imputationAttVals: Iterable[mutable.Map[Any,Double]],
-                      imputationTrain: Instances): Iterable[List[Any]] = {
+                      imputationModel: MlrsModel): Iterable[List[Any]] = {
     for (r <- witnessRatings) yield {
       val imputationRow = makeImputationTestRow(r)
-      val imputationQuery = convertRowToInstance(imputationRow, imputationAttVals, imputationTrain)
-      val imputationResult = imputationModel.classifyInstance(imputationQuery)
+      val imputationQuery = convertRowToInstance(imputationRow, imputationModel.attVals, imputationModel.train)
+      val imputationResult = imputationModel.model.classifyInstance(imputationQuery)
 //      (if (discreteClass) imputationTrain.classAttribute().value(imputationResult.toInt).toDouble
 //      else imputationResult) ::
       imputationResult ::
@@ -109,7 +83,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
     }
   }
 
-  def makeWitnessRows(witnessRatings: Seq[BuyerRecord]): Iterable[List[Any]] = {
+  def makeWitnessRows(witnessRatings: Seq[BuyerRecord]): Iterable[Seq[Any]] = {
     for (r <- witnessRatings) yield {
       (if (discreteClass) discretizeInt(r.rating) else r.rating) ::
         r.client.id.toString ::

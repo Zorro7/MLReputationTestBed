@@ -3,6 +3,7 @@ package jaspr.sellerssim.strategy
 import java.util.ArrayList
 
 import jaspr.core.provenance.Record
+import jaspr.core.provenance.Record
 import jaspr.core.service.{ClientContext}
 import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.service.BuyerRecord
@@ -29,9 +30,9 @@ trait MlrsCore extends Discretization {
                   val attVals: Iterable[mutable.Map[Any,Double]]
                    )
 
-  def makeMlrsModel(records: Seq[Record], baseModel: Classifier,
-                    makeTrainRows: Seq[Record] => Iterable[Seq[Any]],
-                    makeWeights: Seq[Record] => Iterable[Double] = _=>Nil) = {
+  def makeMlrsModel[T <: Record](records: Seq[T], baseModel: Classifier,
+                    makeTrainRows: Seq[T] => Iterable[Seq[Any]],
+                    makeWeights: Seq[T] => Iterable[Double] = (_: Seq[T])=>Nil) = {
     val rows = makeTrainRows(records)
     val weights = makeWeights(records)
     val directAttVals: Iterable[mutable.Map[Any,Double]] = List.fill(rows.head.size)(mutable.Map[Any,Double]())

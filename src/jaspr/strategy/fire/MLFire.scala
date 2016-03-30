@@ -40,10 +40,10 @@ class MLFireInit(context: ClientContext,
 
     val directModel =
       if (direct.isEmpty) null
-      else makeMlrsModel(direct, baseModel, makeTrainRows, makeTrainWeights(context, _))
+      else makeMlrsModel(direct, baseModel, makeTrainRows, makeTrainWeights(context, _:Seq[Record]))
     val witnessModel =
       if (witness.isEmpty) null
-      else makeMlrsModel(witness, baseModel, makeTrainRows, makeTrainWeights(context, _))
+      else makeMlrsModel(witness, baseModel, makeTrainRows, makeTrainWeights(context, _:Seq[Record]))
 
     new MLFireInit(context, directModel, witnessModel)
   }
@@ -77,7 +77,8 @@ class MLFireInit(context: ClientContext,
   }
 
   def makeTrainWeights(context: ClientContext, records: Seq[Record]): Iterable[Double] = {
-    records.map(x => 1d / (context.round - x.asInstanceOf[ServiceRecord].service.end).toDouble)
+//    records.map(x => 1d / (context.round - x.asInstanceOf[ServiceRecord].service.end).toDouble)
+    records.map(x => weightRating(context.round, x.asInstanceOf[ServiceRecord].service.end))
 //    records.map(_ => 1d)
   }
 
