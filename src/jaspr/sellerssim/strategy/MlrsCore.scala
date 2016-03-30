@@ -33,24 +33,24 @@ trait MlrsCore extends Discretization {
 
   def makeMlrsModel[T <: Record](records: Seq[T], baseModel: Classifier,
                     makeTrainRow: T => Seq[Any],
-                    makeWeight: T => Double = (_: T)=>1d): MlrsModel = {
+                    makeWeight: T => Double = null): MlrsModel = {
     val rows = records.map(makeTrainRow)
-    val weights = records.map(makeWeight)
+    val weights = if (makeWeight == null) Nil else records.map(makeWeight)
     val directAttVals: Iterable[mutable.Map[Any,Double]] = List.fill(rows.head.size)(mutable.Map[Any,Double]())
     val doubleRows = convertRowsToDouble(rows, directAttVals)
     val atts = makeAtts(rows.head, directAttVals)
-    val directTrain = makeInstances(atts, doubleRows, weights)
+    val train = makeInstances(atts, doubleRows, weights)
     val directModel = AbstractClassifier.makeCopy(baseModel)
-    directModel.buildClassifier(directTrain)
-    new MlrsModel(directModel, directTrain, directAttVals)
+    directModel.buildClassifier(train)
+    new MlrsModel(directModel, train, directAttVals)
   }
 
   def evaluateMlrsModel[T <: Record](records: Seq[T], mlrsModel: MlrsModel,
                                      makeTestRow: T => Seq[Any],
-                                     makeWeight: T => Double = (_: T)=>0d): Iterable[Prediction] = {
+                                     makeWeight: T => Double = null): Iterable[Prediction] = {
     val rows = records.map(makeTestRow)
-    val weights = records.map(makeWeight)
-    val queries = convertRowsToInstances(rows, mlrsModel.attVals, mlrsModel.train)
+    val weights = if (makeWeight == null) Nil else records.map(makeWeight)
+    val queries = convertRowsToInstances(rows, mlrsModel.attVals, mlrsModel.train, weights)
     if (discreteClass) queries.map(q => new NominalPrediction(q.classValue(), mlrsModel.model.distributionForInstance(q)))
     else queries.map(q => new NumericPrediction(q.classValue(), mlrsModel.model.classifyInstance(q)))
   }
@@ -80,11 +80,12 @@ trait MlrsCore extends Discretization {
     }
   }
 
-  def convertRowsToInstances(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances): Iterable[Instance] = {
-    rows.map(convertRowToInstance(_, attVals, dataset))
+  def convertRowsToInstances(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances, weights: Iterable[Double] = Nil): Iterable[Instance] = {
+    if (weights.isEmpty) rows.map(convertRowToInstance(_, attVals, dataset))
+    else (rows zip weights).map(r => convertRowToInstance(r._1, attVals, dataset, r._2))
   }
 
-  def convertRowToInstance(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances): Instance = {
+  def convertRowToInstance(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances, weight: Double = 1d): Instance = {
     val inst = new DenseInstance(dataset.numAttributes())
     inst.setDataset(dataset)
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) {

@@ -65,7 +65,7 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 50
+  override val numSimulations: Int = 10
   override val numRounds: Int = 500
 
   val clientIncolvementLikelihood = 0.1
@@ -116,8 +116,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     def random(ratings: Map[String,Double]) = ratings.mapValues(x => Chooser.randomDouble(-1,1))
     def positive(ratings: Map[String,Double]) = ratings.mapValues(x => (x + 1) / 2) // normalizes the rating to between 0 and 1
     def negative(ratings: Map[String,Double]) = ratings.mapValues(x => (x - 1) / 2) // normalizes the rating to between 0 and -1
-//    choose(honest(_), invert(_), random(_), positive(_), negative(_))
-    honest
+    choose(honest(_), invert(_), random(_), positive(_), negative(_))
+//    honest
   }
 
 

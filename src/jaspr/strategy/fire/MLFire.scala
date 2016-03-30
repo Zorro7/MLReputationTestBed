@@ -6,6 +6,7 @@ import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
 import jaspr.core.strategy.{StrategyInit, Exploration}
 import jaspr.sellerssim.strategy.MlrsCore
 import jaspr.strategy.{CompositionStrategy, RatingStrategy}
+import jaspr.utilities.Dirichlet
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.rules.OneR
 import scala.math._
@@ -13,9 +14,9 @@ import scala.math._
 /**
  * Created by phil on 30/03/16.
  */
-class MLFire extends RatingStrategy with CompositionStrategy with Exploration with MlrsCore {
+class MLFire extends CompositionStrategy with Exploration with MlrsCore {
 
-  override val numBins: Int = 3
+  override val numBins: Int = 5
 
   val baseModel = new OneR
 
@@ -31,9 +32,9 @@ class MLFire extends RatingStrategy with CompositionStrategy with Exploration wi
   }
 
   class MLFireInit(context: ClientContext,
-                 val directModel: MlrsModel,
-                 val witnessModel: MlrsModel
-                  ) extends StrategyInit(context)
+                   val directModel: MlrsModel,
+                   val witnessModel: MlrsModel
+                    ) extends StrategyInit(context)
 
   override def initStrategy(network: Network, context: ClientContext) = {
     val direct = context.client.getProvenance(context.client)
@@ -57,27 +58,29 @@ class MLFire extends RatingStrategy with CompositionStrategy with Exploration wi
     val direct =
       if (init.directModel != null) {
         val directQuery = convertRowToInstance(testRow, init.directModel.attVals, init.directModel.train)
-        init.directModel.model.classifyInstance(directQuery)
+        val x = init.directModel.model.distributionForInstance(directQuery)
+        new Dirichlet(x).expval()
       } else 0d
     val witness =
       if (init.witnessModel != null) {
         val witnessQuery = convertRowToInstance(testRow, init.witnessModel.attVals, init.witnessModel.train)
-        init.witnessModel.model.classifyInstance(witnessQuery)
+        val x = init.witnessModel.model.distributionForInstance(witnessQuery)
+        new Dirichlet(x).expval()
       } else 0d
 
     new TrustAssessment(request, direct + witness)
+  }
+
+  def makeTrainWeight(context: ClientContext, record: ServiceRecord): Double = {
+//    1d / (context.round - record.asInstanceOf[ServiceRecord].service.end).toDouble
+    weightRating(record.service.end, context.round)
+//    1d
   }
 
   def makeTrainRows(record: ServiceRecord with RatingRecord): Seq[Any] = {
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
       record.service.request.provider.id.toString :: // provider identifier
       Nil
-  }
-
-  def makeTrainWeight(context: ClientContext, record: ServiceRecord): Double = {
-//    records.map(x => 1d / (context.round - x.asInstanceOf[ServiceRecord].service.end).toDouble)
-    weightRating(context.round, record.service.end)
-//    records.map(_ => 1d)
   }
 
   def makeTestRow(request: ServiceRequest): List[Any] = {
