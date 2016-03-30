@@ -18,9 +18,7 @@ class NoStrategy extends Strategy with NoExploration {
 
   override def rank(init: StrategyInit, requests: Seq[ServiceRequest]): Seq[TrustAssessment] = {
     val assessments = new TrustAssessment(Chooser.choose(requests), 1) :: Nil
-    Chooser.shuffle(assessments).sortBy(x =>
-      if (x.trustValue.isNaN) Double.MinValue else x.trustValue
-    ).reverse
+    Chooser.shuffle(assessments)
   }
 
 }

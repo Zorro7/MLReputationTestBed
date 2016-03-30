@@ -22,7 +22,8 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
 
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
-    val records: Seq[ServiceRecord with RatingRecord] = network.gatherProvenance(context.client)
+    val records: Seq[ServiceRecord with RatingRecord] =
+      context.client.getProvenance(context.client) ++ network.gatherProvenance(context.client)
 
     val models: Seq[Seq[IpawModel]] =
       if (records.nonEmpty) {

@@ -53,12 +53,7 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network {
     }).toSeq
   }
 
-  override def events(): Seq[Event] =
-    Chooser.ifHappens(0.1)(
-      new ACMEEvent(
-        Chooser.sample(providers, providers.size/10)
-      ) :: Nil
-    )(Nil)
+  override def events(): Seq[Event] = simulation.config.nextEvents(providers)
 
   override def agents: Seq[Agent] = clients ++ providers
 

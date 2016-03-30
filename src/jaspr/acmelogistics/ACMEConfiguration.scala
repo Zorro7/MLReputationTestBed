@@ -1,8 +1,8 @@
 package jaspr.acmelogistics
 
-import jaspr.acmelogistics.agent.{Mine, Refinery, Shipper}
+import jaspr.acmelogistics.agent.{ACMEEvent, Mine, Refinery, Shipper}
 import jaspr.acmelogistics.service.GoodPayload
-import jaspr.core.agent.{Client, Properties, Agent, Property}
+import jaspr.core.agent._
 import jaspr.core.service.ClientContext
 import jaspr.core.{Network, MultiConfiguration, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
@@ -21,13 +21,13 @@ import weka.classifiers.trees.J48
  */
 
 class ACMEMultiConfiguration extends MultiConfiguration {
-  override val directComparison = true
+  override val directComparison = false
 
 //  override val _seed = 1000
 
   override lazy val configs: Seq[Configuration] =
-//    new ACMEConfiguration(new NoStrategy) ::
-//    new ACMEConfiguration(new RecordFire) ::
+    new ACMEConfiguration(new NoStrategy) ::
+    new ACMEConfiguration(new RecordFire) ::
 //      new ACMEConfiguration(new Fire) ::
 //    new ACMEConfiguration(new Travos) ::
 //    new ACMEConfiguration(new BetaReputation)::
@@ -43,12 +43,12 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
 
   override def newSimulation(): Simulation = new ACMESimulation(this)
 
-  override val numSimulations: Int = 5
+  override val numSimulations: Int = 10
   override val numRounds: Int = 500
 
-  val memoryLimit = 100
+  val memoryLimit = 250
 
-  val numProviders = 25
+  val numProviders = 50
   val numClients = 1
   val numShippers = numProviders
   val numRefineries = numProviders
@@ -56,6 +56,17 @@ class ACMEConfiguration(override val strategy: Strategy) extends Configuration {
   val numCompositions = numProviders
 
   val defaultServiceDuration = 5
+
+  val eventProportion = 0.1
+  val eventLikelihood = 0.1
+
+  def nextEvents(providers: Seq[Provider]) = {
+    Chooser.ifHappens(eventLikelihood)(
+      new ACMEEvent(
+        Chooser.sample(providers, (providers.size*eventProportion).toInt)
+      ) :: Nil
+    )(Nil)
+  }
 
   def clientContext(network: Network, client: Client, round: Int): ClientContext = {
     new ClientContext(

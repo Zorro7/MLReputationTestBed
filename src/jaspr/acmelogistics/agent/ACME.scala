@@ -2,9 +2,11 @@ package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.ACMERecord
+import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, Ipaw}
 import jaspr.core.agent.Client
 import jaspr.core.provenance.{Provenance, ServiceRecord, Record}
 import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
+import weka.classifiers.functions.LinearRegression
 
 import scala.collection.mutable
 
@@ -33,11 +35,25 @@ class ACME(override val simulation: ACMESimulation) extends Client {
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {
-    jaspr.debug("REQUEST: ", assessment.request)
     assessment.request.provider.receiveRequest(assessment.request)
   }
 
   override def generateComposition(context: ClientContext): TrustAssessment = {
+//    val ipaw = new Ipaw(new LinearRegression, false)
+//    val ipawEvents = new IpawEvents(new LinearRegression, false)
+//
+//    val requests = simulation.network.possibleRequests(context)
+//    val ipawInit = ipaw.initStrategy(simulation.network, context)
+//    val eventsInit = ipawEvents.initStrategy(simulation.network, context)
+//    val ipawAss = ipaw.rank(ipawInit, requests).sortBy(_.request.toString)
+//    val eventsAss = ipawEvents.rank(eventsInit, requests).sortBy(_.request.toString)
+
+//    println(context.payload)
+//    for ((a,b) <- ipawAss zip eventsAss) {
+//      println(a+"\n\t"+b)
+//    }
+//    println()
+
     config.strategy.assessReputation(simulation.network, context)
   }
 

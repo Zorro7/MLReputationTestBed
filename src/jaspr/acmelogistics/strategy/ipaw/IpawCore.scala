@@ -25,9 +25,7 @@ trait IpawCore extends Discretization {
   override val upper: Double = 1d
   override val numBins: Int = 10
   override val lower: Double = -1d
-
-
-
+  
 
   def meanFunch(x: RatingRecord): Double = x.rating
   def startFunch(x: ServiceRecord): Double = (x.service.start - x.service.request.start).toDouble
@@ -146,7 +144,7 @@ trait IpawCore extends Discretization {
   }
 
   def predicts(model: IpawModel, testRows: Iterable[List[Any]], events: Map[String,Double]): Double = {
-    val x = testRows.map(x => predict(model, x) * events.getOrElse(x(1).toString, 1d))
+    val x = testRows.map(x => predict(model, x) * events.getOrElse(x(1).toString, 0d))
     x.sum / testRows.size.toDouble
   }
 
