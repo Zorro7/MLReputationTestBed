@@ -11,7 +11,7 @@ import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.blade.Blade
-import jaspr.strategy.fire.Fire
+import jaspr.strategy.fire.{MLFire, Fire}
 import jaspr.strategy.habit.Habit
 import jaspr.utilities.Chooser
 import weka.classifiers.Classifier
@@ -32,10 +32,11 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //  override val _seed = 1
 
   override lazy val configs: Seq[Configuration] =
-    new SellerConfiguration(new NoStrategy) ::
+//    new SellerConfiguration(new NoStrategy) ::
       new SellerConfiguration(new Fire) ::
-      new SellerConfiguration(new BetaReputation)::
-      new SellerConfiguration(new Travos) ::
+      new SellerConfiguration(new MLFire) ::
+//      new SellerConfiguration(new BetaReputation)::
+//      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade()) ::
 //      new SellerConfiguration(new Habit(2)) ::
 //        new SellerConfiguration(new Habit(5)) ::
@@ -54,7 +55,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //          new SellerConfiguration(new Mlrs(new IBk, 0)) ::
 //          new SellerConfiguration(new Mlrs(new IBk, 5)) ::
 //          new SellerConfiguration(new Mlrs(new IBk, 10)) ::
-        new SellerConfiguration(new Mlrs(new KStar, 0)) ::
+//        new SellerConfiguration(new Mlrs(new KStar, 0)) ::
 //        new SellerConfiguration(new Mlrs(new KStar, 5)) ::
 //        new SellerConfiguration(new Mlrs(new KStar, 10)) ::
   Nil

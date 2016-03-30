@@ -2,11 +2,12 @@ package jaspr.sellerssim.strategy
 
 import java.util.ArrayList
 
+import jaspr.core.provenance.Record
 import jaspr.core.service.{ClientContext}
 import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.service.BuyerRecord
 import jaspr.utilities.Discretization
-import weka.classifiers.Classifier
+import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.core.{Attribute, DenseInstance, Instance, Instances}
 
 import scala.collection.JavaConversions._
@@ -23,6 +24,25 @@ trait MlrsCore extends Discretization {
   val classIndex: Int = 0
   val discreteClass: Boolean
 
+  class MlrsModel(val model: Classifier,
+                  val train: Instances,
+                  val attVals: Iterable[mutable.Map[Any,Double]]
+                   )
+
+  def makeMlrsModel(records: Seq[Record], baseModel: Classifier,
+                    makeTrainRows: Seq[Record] => Iterable[Seq[Any]],
+                    makeWeights: Seq[Record] => Iterable[Double] = _=>Nil) = {
+    val rows = makeTrainRows(records)
+    val weights = makeWeights(records)
+    val directAttVals: Iterable[mutable.Map[Any,Double]] = List.fill(rows.head.size)(mutable.Map[Any,Double]())
+    val doubleRows = convertRowsToDouble(rows, directAttVals)
+    val atts = makeAtts(rows.head, directAttVals)
+    val directTrain = makeInstances(atts, doubleRows, weights)
+    val directModel = AbstractClassifier.makeCopy(baseModel)
+    directModel.buildClassifier(directTrain)
+
+    new MlrsModel(directModel, directTrain, directAttVals)
+  }
 
   def lookup[T](map: mutable.Map[T,Double], item: T): Double = {
     if (map.contains(item)) map(item)
@@ -32,13 +52,13 @@ trait MlrsCore extends Discretization {
     }
   }
 
-  def convertRowsToDouble(rows: Iterable[List[Any]], attVals: Iterable[mutable.Map[Any,Double]]): Iterable[List[Double]] = {
+  def convertRowsToDouble(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any,Double]]): Iterable[Seq[Double]] = {
     for (row <- rows) yield {
       convertRowToDouble(row, attVals)
     }
   }
 
-  def convertRowToDouble(row: List[Any], attVals: Iterable[mutable.Map[Any,Double]]): List[Double] = {
+  def convertRowToDouble(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]]): Seq[Double] = {
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) yield {
       item match {
         case x: Int => if (i == classIndex) x else lookup(vals, x)
@@ -49,10 +69,11 @@ trait MlrsCore extends Discretization {
     }
   }
 
-  def convertRowsToInstances(rows: Iterable[List[Any]], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances): Iterable[Instance] = {
+  def convertRowsToInstances(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances): Iterable[Instance] = {
     rows.map(convertRowToInstance(_, attVals, dataset))
   }
-  def convertRowToInstance(row: List[Any], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances): Instance = {
+
+  def convertRowToInstance(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances): Instance = {
     val inst = new DenseInstance(dataset.numAttributes())
     inst.setDataset(dataset)
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) {
@@ -69,7 +90,7 @@ trait MlrsCore extends Discretization {
     inst
   }
 
-  def makeAtts(row: List[Any], attVals: Iterable[mutable.Map[Any,Double]]): Iterable[Attribute] = {
+  def makeAtts(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]]): Iterable[Attribute] = {
     for (((item,vals),i) <- row.zip(attVals).zipWithIndex) yield {
       if (i==classIndex) if (discreteClass) new Attribute("target", discVals) else new Attribute("target")
       else {
@@ -83,10 +104,11 @@ trait MlrsCore extends Discretization {
     }
   }
 
-  def makeInstances(atts: Iterable[Attribute], doubleRows: Iterable[List[Double]]): Instances = {
+  def makeInstances(atts: Iterable[Attribute], doubleRows: Iterable[Seq[Double]], weights: Iterable[Double] = Nil): Instances = {
     val directTrain: Instances = new Instances("data", new ArrayList(atts), doubleRows.size)
     directTrain.setClassIndex(classIndex)
-    doubleRows.foreach(r => directTrain.add(new DenseInstance(1d, r.toArray)))
+    if (weights.isEmpty) doubleRows.foreach(r => directTrain.add(new DenseInstance(1d, r.toArray)))
+    else (doubleRows zip weights).foreach(r => directTrain.add(new DenseInstance(r._2, r._1.toArray)))
     directTrain
   }
 
