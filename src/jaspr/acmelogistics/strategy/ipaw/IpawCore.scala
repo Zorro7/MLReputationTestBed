@@ -147,7 +147,6 @@ trait IpawCore extends Discretization {
 
   def predicts(model: IpawModel, testRows: Iterable[List[Any]], events: Map[String,Double]): Double = {
     val x = testRows.map(x => predict(model, x) * events.getOrElse(x(1).toString, 1d))
-    println(events, x, x.sum / testRows.size.toDouble,testRows)
     x.sum / testRows.size.toDouble
   }
 
