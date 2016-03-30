@@ -1,5 +1,6 @@
 package jaspr.acmelogistics.strategy.ipaw
 
+import java.util
 import java.util.ArrayList
 
 import jaspr.acmelogistics.service.{GoodPayload, ACMERecord}
@@ -96,13 +97,12 @@ trait IpawCore extends Discretization {
     inst.setDataset(dataset)
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) {
       item match {
-        case x: Int => {
+        case x: Int =>
           if (i == classIndex) inst.setValue(i, x.toDouble)
           else inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue()))
-        }
         case x: Double => inst.setValue(i, x)
         case x: String => inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue()))
-        case whatever => throw new Exception("Unknown type to build attribute from: "+whatever.getClass())
+        case whatever => throw new Exception("Unknown type to build attribute from: "+whatever.getClass)
       }
     }
     inst
@@ -123,7 +123,7 @@ trait IpawCore extends Discretization {
   }
 
   def makeInstances(atts: Iterable[Attribute], doubleRows: Iterable[List[Double]]): Instances = {
-    val directTrain: Instances = new Instances("data", new ArrayList(atts), doubleRows.size)
+    val directTrain: Instances = new Instances("data", new util.ArrayList(atts), doubleRows.size)
     directTrain.setClassIndex(classIndex)
     doubleRows.foreach(r => directTrain.add(new DenseInstance(1d, r.toArray)))
     directTrain

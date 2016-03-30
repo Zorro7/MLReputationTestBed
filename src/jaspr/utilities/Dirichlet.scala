@@ -69,7 +69,7 @@ class Dirichlet(val alpha: RowVector, val domain: RowVector) {
     alpha.size
   }
 
-  override def toString(): String = {
+  override def toString: String = {
     alpha+", "+domain
   }
 }

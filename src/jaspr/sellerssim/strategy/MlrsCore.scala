@@ -1,10 +1,11 @@
 package jaspr.sellerssim.strategy
 
+import java.util
 import java.util.ArrayList
 
 import jaspr.core.provenance.Record
 import jaspr.core.provenance.Record
-import jaspr.core.service.{ClientContext}
+import jaspr.core.service.ClientContext
 import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.service.BuyerRecord
 import jaspr.utilities.Discretization
@@ -90,10 +91,9 @@ trait MlrsCore extends Discretization {
     inst.setDataset(dataset)
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) {
       item match {
-        case x: Int => {
+        case x: Int =>
           if (i == classIndex) inst.setValue(i, x.toDouble)
           else inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue))
-        }
         case x: Double => inst.setValue(i, x)
         case x: String => inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue))
         case whatever => throw new Exception("Unknown type to build attrbute from.")
@@ -117,7 +117,7 @@ trait MlrsCore extends Discretization {
   }
 
   def makeInstances(atts: Iterable[Attribute], doubleRows: Iterable[Seq[Double]], weights: Iterable[Double] = Nil): Instances = {
-    val directTrain: Instances = new Instances("data", new ArrayList(atts), doubleRows.size)
+    val directTrain: Instances = new Instances("data", new util.ArrayList(atts), doubleRows.size)
     directTrain.setClassIndex(classIndex)
     if (weights.isEmpty) doubleRows.foreach(r => directTrain.add(new DenseInstance(1d, r.toArray)))
     else (doubleRows zip weights).foreach(r => directTrain.add(new DenseInstance(r._2, r._1.toArray)))

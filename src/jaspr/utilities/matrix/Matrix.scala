@@ -1,5 +1,7 @@
 package jaspr.utilities.matrix
 
+import scala.language.implicitConversions
+
 /**
  * Created by phil on 29/10/15.
  */
@@ -63,11 +65,11 @@ class Matrix(val self: Seq[GenVector]) extends Seq[GenVector] {
     this.map(_ @^ a)
   }
 
-  def exp(): Matrix = {
-    this.map(_ exp)
+  def exp: Matrix = {
+    this.map(_.exp)
   }
-  def log(): Matrix = {
-    this.map(_ log)
+  def log: Matrix = {
+    this.map(_.log)
   }
 
   private def rows: Seq[RowVector] = self.map(new RowVector(_))

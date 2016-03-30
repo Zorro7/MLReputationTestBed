@@ -19,7 +19,7 @@ public class MultiRegression implements Classifier, Serializable {
 
     private String[] splitValues;
     private Classifier[] models;
-    public Instances[] trains;
+    private Instances[] trains;
     private int splitAttIndex = 1;
 
     public void setBase(Classifier base) {

@@ -4,14 +4,14 @@ import jaspr.acmelogistics.ACMEConfiguration
 import jaspr.acmelogistics.agent.{Mine, Refinery, Shipper}
 import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.agent.{Client, Properties, Agent, Property}
-import jaspr.core.service.{ClientContext}
+import jaspr.core.service.ClientContext
 import jaspr.core.{Network, MultiConfiguration, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.fire.Fire
 import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, RecordFire, Ipaw}
-import jaspr.utilities.{Chooser}
+import jaspr.utilities.Chooser
 import weka.classifiers.`lazy`.KStar
 import weka.classifiers.functions.LinearRegression
 import weka.classifiers.rules.OneR

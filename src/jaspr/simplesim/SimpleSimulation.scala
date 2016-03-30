@@ -1,6 +1,6 @@
 package jaspr.simplesim
 
-import jaspr.core.{Simulation}
+import jaspr.core.Simulation
 import jaspr.core.results.Result
 import jaspr.utilities.Chooser
 

@@ -7,7 +7,7 @@ import jaspr.core.service.Payload
  */
 class ProductPayload(override val name: String, val quality: Map[String,Double] = Map()) extends Payload {
 
-  override def toString(): String = name+" "+quality
+  override def toString: String = name+" "+quality
 
   def copy(name: String = this.name, quality: Map[String,Double] = this.quality) = {
     new ProductPayload(name, quality)

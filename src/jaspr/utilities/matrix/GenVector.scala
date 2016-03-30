@@ -45,11 +45,11 @@ class GenVector(val self: Seq[Double]) extends Seq[Double] {
     this.map(Math.pow(_, a))
   }
 
-  def exp(): GenVector = {
-    this.map(Math.exp(_))
+  def exp: GenVector = {
+    this.map(Math.exp)
   }
-  def log(): GenVector = {
-    this.map(Math.log(_))
+  def log: GenVector = {
+    this.map(Math.log)
   }
 
   override def length: Int = self.length
