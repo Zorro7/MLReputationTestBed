@@ -20,6 +20,14 @@ trait Discretization {
     bound((((x-lower) / (upper - lower)) * numBins).toInt, 0, numBins-1)
   }
 
+  def undiscretize(x: Int): Double = {
+    x*(upper - lower)/numBins+lower
+  }
+
+  def undiscretize(x: Double): Double = {
+    x*(upper - lower)/numBins+lower
+  }
+
   def bound(value: Double, lower: Double, upper: Double): Double = {
     Math.min(upper, Math.max(lower, value))
   }

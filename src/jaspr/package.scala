@@ -4,7 +4,7 @@
  */
 package object jaspr {
 
-  val numThreads = 4
+  val parallel = false
   val debugLevel = 500
 
   def debug(str: String, objs: Any*): Unit = {

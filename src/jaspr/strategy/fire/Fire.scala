@@ -1,6 +1,7 @@
 package jaspr.strategy.fire
 
-import jaspr.core.service.{TrustAssessment, ServiceRequest}
+import jaspr.core.Network
+import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.strategy.{CompositionStrategy, RatingStrategy, RatingStrategyInit}
 
@@ -20,6 +21,11 @@ class Fire extends RatingStrategy with CompositionStrategy with Exploration {
     pow(E, -((currentRound - ratingRound) / RecencyScalingFactor))
   }
 
+//  override def initStrategy(network: Network, context: ClientContext) = {
+//    val x = super.initStrategy(network, context)
+//    println(x.asInstanceOf[RatingStrategyInit].directRecords.map(_.provider).distinct)
+//    x
+//  }
   def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[RatingStrategyInit]
     val direct = init.directRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)

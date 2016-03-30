@@ -64,24 +64,25 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 10
-  override val numRounds: Int = 5000
+  override val numSimulations: Int = 25
+  override val numRounds: Int = 250
 
-  val clientIncolvementLikelihood = 0.1
-  val numClients: Int = 10
+  val clientIncolvementLikelihood = 1
+  val numClients: Int = 1
   val numProviders: Int = 500
 
-  val memoryLimit: Int = 100
+  val memoryLimit: Int = 500
 
   val freakEventLikelihood = 0.0
   def freakEventEffects = -1d
 
-  var simcapabilities = for (i <- 1 to 25) yield new ProductPayload(i.toString)
+  var simcapabilities = for (i <- 1 to 1) yield new ProductPayload(i.toString)
   def capabilities(provider: Provider): Seq[ProductPayload] = {
-    var caps = Chooser.sample(simcapabilities, 5)
+    var caps = Chooser.sample(simcapabilities, 1)
     caps = caps.map(_.copy(
       quality = provider.properties.map(x =>
-        x._1 -> Chooser.bound(x._2.doubleValue + Chooser.randomDouble(-1,1), -1, 1)
+//        x._1 -> Chooser.bound(x._2.doubleValue + Chooser.randomDouble(-1,1), -1, 1)
+        x._1 -> x._2.doubleValue
       )
     ))
     caps
@@ -115,8 +116,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     def random(ratings: Map[String,Double]) = ratings.mapValues(x => Chooser.randomDouble(-1,1))
     def positive(ratings: Map[String,Double]) = ratings.mapValues(x => (x + 1) / 2) // normalizes the rating to between 0 and 1
     def negative(ratings: Map[String,Double]) = ratings.mapValues(x => (x - 1) / 2) // normalizes the rating to between 0 and -1
-    choose(honest(_), invert(_), random(_), positive(_), negative(_))
-//    honest
+//    choose(honest(_), invert(_), random(_), positive(_), negative(_))
+    honest
   }
 
 

@@ -47,6 +47,7 @@ class MLFire extends CompositionStrategy with Exploration with MlrsCore {
       if (witness.isEmpty) null
       else makeMlrsModel(witness, baseModel, makeTrainRows, makeTrainWeight(context, _:ServiceRecord))
 
+    if (directModel != null) println(directModel.model)
     new MLFireInit(context, directModel, witnessModel)
   }
 
@@ -59,13 +60,13 @@ class MLFire extends CompositionStrategy with Exploration with MlrsCore {
       if (init.directModel != null) {
         val directQuery = convertRowToInstance(testRow, init.directModel.attVals, init.directModel.train)
         val x = init.directModel.model.distributionForInstance(directQuery)
-        new Dirichlet(x).expval()
+        undiscretize(new Dirichlet(x).expval())
       } else 0d
     val witness =
       if (init.witnessModel != null) {
         val witnessQuery = convertRowToInstance(testRow, init.witnessModel.attVals, init.witnessModel.train)
         val x = init.witnessModel.model.distributionForInstance(witnessQuery)
-        new Dirichlet(x).expval()
+        undiscretize(new Dirichlet(x).expval())
       } else 0d
 
     new TrustAssessment(request, direct + witness)
@@ -73,8 +74,8 @@ class MLFire extends CompositionStrategy with Exploration with MlrsCore {
 
   def makeTrainWeight(context: ClientContext, record: ServiceRecord): Double = {
 //    1d / (context.round - record.asInstanceOf[ServiceRecord].service.end).toDouble
-    weightRating(record.service.end, context.round)
-//    1d
+//    weightRating(record.service.end, context.round)
+    1d
   }
 
   def makeTrainRows(record: ServiceRecord with RatingRecord): Seq[Any] = {
