@@ -25,7 +25,7 @@ object Simulation {
       results.saveConfig(config.toString + ".res", config, _.totalUtility)
     }
 
-    println("\n---\n")
+    println("\n--- RESULTS ---\n")
     results.printAll(_.totalUtility)
     results.printAverage(_.totalUtility)
     println(results.results.keys.mkString("\t"))

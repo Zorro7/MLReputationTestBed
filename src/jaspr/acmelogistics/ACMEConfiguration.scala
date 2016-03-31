@@ -109,7 +109,7 @@ class ACMEConfiguration(override val strategy: Strategy,
       "eventLikelihood"->eventLikelihood,
       "eventDelay"->eventDelay,
       "adverts"->adverts
-    ).toString().replace(" ","")
+    ).toString().replace(" ","").replace("Map","")
   }
 
   override def newSimulation(): Simulation = new ACMESimulation(this)
