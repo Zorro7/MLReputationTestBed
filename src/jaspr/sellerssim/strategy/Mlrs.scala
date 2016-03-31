@@ -4,7 +4,7 @@ import jaspr.core.Network
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{StrategyInit, Exploration}
 import jaspr.strategy.CompositionStrategy
-import jaspr.utilities.MultiRegression
+import jaspr.utilities.weka.MultiRegression
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.rules.OneR
 import weka.classifiers.trees.{RandomForest, J48}

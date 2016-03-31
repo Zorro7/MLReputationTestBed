@@ -39,21 +39,6 @@ class ACME(override val simulation: ACMESimulation) extends Client {
   }
 
   override def generateComposition(context: ClientContext): TrustAssessment = {
-//    val ipaw = new Ipaw(new LinearRegression, false)
-//    val ipawEvents = new IpawEvents(new LinearRegression, false)
-//
-//    val requests = simulation.network.possibleRequests(context)
-//    val ipawInit = ipaw.initStrategy(simulation.network, context)
-//    val eventsInit = ipawEvents.initStrategy(simulation.network, context)
-//    val ipawAss = ipaw.rank(ipawInit, requests).sortBy(_.request.toString)
-//    val eventsAss = ipawEvents.rank(eventsInit, requests).sortBy(_.request.toString)
-
-//    println(context.payload)
-//    for ((a,b) <- ipawAss zip eventsAss) {
-//      println(a+"\n\t"+b)
-//    }
-//    println()
-
     config.strategy.assessReputation(simulation.network, context)
   }
 

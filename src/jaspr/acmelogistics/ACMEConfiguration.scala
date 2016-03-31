@@ -45,9 +45,21 @@ object ACMEMultiConfiguration extends App {
 
   val argsplt =
     if (args.size == 0) {
-      ("--strategy jaspr.strategy.NoStrategy,jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false) " +
-        "--numRounds 3 --numSimulations 2 --memoryLimit 100 --numProviders 25 --defaultServiceDuration 10 " +
-        "--eventProportion 1 --eventLikelihood 2 --eventDelay 2 --adverts false").split(" ")
+      ("--strategy " +
+        "jaspr.strategy.NoStrategy," +
+        "jaspr.acmelogistics.strategy.ipaw.RecordFire," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.trees.J48;true)," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.bayes.NaiveBayes;true)," +
+        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false)," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.rules.OneR;true)," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false)," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.rules.DecisionTable;false)," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.SMO;true)," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.lazy.KStar;false)," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.lazy.KStar;true)," +
+//        "jaspr.acmelogistics.strategy.ipaw.IpawEvents(weka.classifiers.lazy.KStar;true)" +
+        " --numRounds 500 --numSimulations 10 --memoryLimit 250 --numProviders 100 --defaultServiceDuration 5 " +
+        "--eventProportion 0 --eventLikelihood 0 --eventDelay 0 --adverts false").split(" ")
     } else args
 
   println(argsplt.toList)
@@ -68,9 +80,10 @@ case class ACMEMultiConfiguration(strategies: Seq[String] = Nil,
                                   eventProportion: Double = 0,
                                   eventLikelihood: Double = 0,
                                   eventDelay: Int = 0,
-                                  adverts: Boolean = true
+                                  adverts: Boolean = false
                                    ) extends MultiConfiguration {
-  override val directComparison = false
+
+  override val directComparison = true
 
 //  override val _seed = 1000
 
@@ -89,7 +102,7 @@ class ACMEConfiguration(override val strategy: Strategy,
                         val numRounds: Int = 250,
                         val numSimulations: Int = 1,
                         val memoryLimit: Int = 100,
-                        val numProviders: Int = 25,
+                        val numProviders: Int = 50,
                         val defaultServiceDuration: Int = 5,
                         val eventProportion: Double = 0,
                         val eventLikelihood: Double = 0,
@@ -98,18 +111,18 @@ class ACMEConfiguration(override val strategy: Strategy,
                           ) extends Configuration {
 
   override def toString: String = {
-    Map(
+    List(
       "strategy"->strategy,
-      "numRounds"->numRounds,
-      "numSimulations"->numSimulations,
-      "memoryLimit"->memoryLimit,
-      "numProviders"->numProviders,
-      "defaultServiceDuration"->defaultServiceDuration,
       "eventProportion"->eventProportion,
       "eventLikelihood"->eventLikelihood,
       "eventDelay"->eventDelay,
-      "adverts"->adverts
-    ).toString().replace(" ","").replace("Map","")
+      "adverts"->adverts,
+      "memoryLimit"->memoryLimit,
+      "numProviders"->numProviders,
+      "defaultServiceDuration"->defaultServiceDuration,
+      "numSimulations"->numSimulations,
+      "numRounds"->numRounds
+    ).map(x => x._1+"="+x._2).mkString(",").replace(" ","")
   }
 
   override def newSimulation(): Simulation = new ACMESimulation(this)
