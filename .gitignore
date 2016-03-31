@@ -1,6 +1,9 @@
 #### JASPR stuff ####
 *.res
 
+#### EXTRA ####
+*.MF
+
 #### joe made this: http://goel.io/joe
 
 #####=== Python ===#####
