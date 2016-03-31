@@ -18,11 +18,11 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
   override val explorationProbability: Double = 0.1
 
   val baseLearner = new MultiRegression()
-  baseLearner.setBase(learner)
+  baseLearner.setClassifier(learner)
   baseLearner.setSplitAttIndex(1)
   val discreteClass: Boolean = disc
 
-  override val name = this.getClass.getSimpleName+"_"+baseLearner.getBase().getClass.getSimpleName
+  override val name = this.getClass.getSimpleName+"_"+baseLearner.getClassifier().getClass.getSimpleName
 
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {

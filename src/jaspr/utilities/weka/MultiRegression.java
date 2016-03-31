@@ -2,6 +2,7 @@ package jaspr.utilities.weka;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
+import weka.classifiers.SingleClassifierEnhancer;
 import weka.classifiers.functions.LinearRegression;
 import weka.core.Capabilities;
 import weka.core.DenseInstance;
@@ -13,21 +14,19 @@ import java.io.Serializable;
 /**
  * Created by phil on 05/11/15.
  */
-public class MultiRegression implements Classifier, Serializable {
+public class MultiRegression extends SingleClassifierEnhancer implements Classifier, Serializable {
 
     public MultiRegression() {}
-
-    private Classifier base = new LinearRegression();
 
     private String[] splitValues;
     private Classifier[] models;
     private Instances[] trains;
     private int splitAttIndex = -1;
 
-    public void setBase(Classifier base) {
-        this.base = base;
+    @Override
+    public void setClassifier(Classifier base) {
+        this.m_Classifier = base;
     }
-    public Classifier getBase() { return this.base; }
     public void setSplitAttIndex(int index) {
         this.splitAttIndex = index;
     }
@@ -46,7 +45,7 @@ public class MultiRegression implements Classifier, Serializable {
 
 
         Instances data = new Instances(instances);
-        models = AbstractClassifier.makeCopies(base, data.attribute(splitAttIndex).numValues());
+        models = AbstractClassifier.makeCopies(this.m_Classifier, data.attribute(splitAttIndex).numValues());
         splitValues = new String[models.length];
         trains = new Instances[models.length];
 
@@ -103,6 +102,7 @@ public class MultiRegression implements Classifier, Serializable {
 
     @Override
     public String toString() {
+        if (models == null) return "MultiRegression&"+m_Classifier;
         StringBuilder ret = new StringBuilder();
         for (int i=0;i<models.length;i++) {
             ret.append(i).append(" ").append(splitValues[i]).append(":::\n")

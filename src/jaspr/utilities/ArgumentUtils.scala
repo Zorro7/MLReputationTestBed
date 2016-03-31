@@ -1,6 +1,6 @@
 package jaspr.utilities
 
-import weka.classifiers.AbstractClassifier
+import jaspr.utilities.weka.LearnerFactory
 
 import scala.util.Try
 
@@ -18,7 +18,7 @@ object ArgumentUtils {
               Try(arg.toLong.asInstanceOf[java.lang.Long]).getOrElse(
                 Try(arg.toShort.asInstanceOf[java.lang.Short]).getOrElse(
                   Try(arg.toByte.asInstanceOf[java.lang.Byte]).getOrElse(
-                    Try(AbstractClassifier.forName(arg, null)).getOrElse(
+                    Try(LearnerFactory.makeLearner(arg.split("&"), false)).getOrElse(
                       Try(Class.forName(arg)).getOrElse(arg)))))))))
   }
 }

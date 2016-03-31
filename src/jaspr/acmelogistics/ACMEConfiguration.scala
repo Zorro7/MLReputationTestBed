@@ -13,6 +13,7 @@ import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.fire.Fire
 import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, RecordFire, Ipaw}
 import jaspr.utilities.Chooser
+import jaspr.utilities.weka.LearnerFactory
 import org.apache.commons.beanutils.ConstructorUtils
 import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.classifiers.`lazy`.KStar
@@ -46,11 +47,12 @@ object ACMEMultiConfiguration extends App {
   val argsplt =
     if (args.size == 0) {
       ("--strategy " +
-        "jaspr.strategy.NoStrategy," +
-        "jaspr.acmelogistics.strategy.ipaw.RecordFire," +
+//        "jaspr.strategy.NoStrategy," +
+//        "jaspr.acmelogistics.strategy.ipaw.RecordFire," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.trees.J48;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.bayes.NaiveBayes;true)," +
-        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false)," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(jaspr.utilities.weka.MultiRegression&weka.classifiers.functions.LinearRegression;false)," +
+        "jaspr.acmelogistics.strategy.ipaw.IpawEvents(jaspr.utilities.weka.MultiRegression&weka.classifiers.functions.LinearRegression;false)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.rules.OneR;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.rules.DecisionTable;false)," +
@@ -83,7 +85,7 @@ case class ACMEMultiConfiguration(strategies: Seq[String] = Nil,
                                   adverts: Boolean = false
                                    ) extends MultiConfiguration {
 
-  override val directComparison = true
+  override val directComparison = false
 
 //  override val _seed = 1000
 

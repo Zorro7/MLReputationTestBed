@@ -25,7 +25,7 @@ class Mlrs(val baseLearner: Classifier, override val numBins: Int) extends Compo
   override def baseImputation: Classifier = AbstractClassifier.makeCopy(baseLearner)
 //  override def baseWitness: Classifier = AbstractClassifier.makeCopy(baseLearner)
   override val baseWitness = new MultiRegression
-  baseWitness.setBase(AbstractClassifier.makeCopy(baseLearner))
+  baseWitness.setClassifier(AbstractClassifier.makeCopy(baseLearner))
   baseWitness.setSplitAttIndex(1)
 
   override def compute(init: StrategyInit, request: ServiceRequest): TrustAssessment = {

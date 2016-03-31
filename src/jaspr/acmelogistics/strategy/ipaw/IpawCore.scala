@@ -30,8 +30,8 @@ trait IpawCore extends Discretization {
   def meanFunch(x: RatingRecord): Double = x.rating
   def startFunch(x: ServiceRecord): Double = (x.service.start - x.service.request.start).toDouble
   def endFunch(x: ServiceRecord): Double =
-//    (x.service.end - x.service.request.end).toDouble / x.service.request.duration.toDouble
-    x.service.request.duration / x.service.duration
+    x.service.request.duration.toDouble / x.service.duration.toDouble
+  //    (x.service.end - x.service.request.end).toDouble / x.service.request.duration.toDouble
   def qualityFunch(x: ServiceRecord): Double =
     x.service.payload.asInstanceOf[GoodPayload].quality - x.service.request.payload.asInstanceOf[GoodPayload].quality
   def quantityFunch(x: ServiceRecord): Double =
