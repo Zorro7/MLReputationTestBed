@@ -18,11 +18,11 @@ object Simulation {
       for (simulationIndex <- 0 until config.numSimulations) {
         val simulationSeed = multiConfig.seed(configIndex, simulationIndex)
         Chooser.setSeed(simulationSeed)
-        jaspr.debug(1000, "\n\n----- CONFIG " + configIndex + " (" + config + "), SIMULATION " + simulationIndex + ", seed: " + simulationSeed + " -----")
+        jaspr.debug(1000, "\n\n----- CONFIG " + configIndex+", SIMULATION " + simulationIndex + ", seed: " + simulationSeed + " (" + config + ") -----")
         val simulation = config.newSimulation()
         results.record(config, simulation.run())
       }
-      results.saveConfig(config.toString + ".res", config, _.totalUtility)
+//      results.saveConfig(config.toString + ".res", config, _.totalUtility)
     }
 
     println("\n--- RESULTS ---\n")
