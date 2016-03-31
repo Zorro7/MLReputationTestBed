@@ -31,45 +31,26 @@ import scala.collection.JavaConversions._
 object ACMEMultiConfiguration extends App {
 
   val parser = new scopt.OptionParser[ACMEMultiConfiguration]("ACMEConfiguration") {
-    opt[Seq[String]]("strategy") action {
-      (x,c) => c.copy(strategies = x)
-    }
-    opt[Int]("numRounds") required() action {
-      (x,c) => c.copy(numRounds = x)
-    }
-    opt[Int]("numSimulations") required() action {
-      (x,c) => c.copy(numSimulations = x)
-    }
-    opt[Int]("memoryLimit") required() action {
-      (x,c) => c.copy(memoryLimit = x)
-    }
-    opt[Int]("numProviders") required() action {
-      (x,c) => c.copy(numProviders = x)
-    }
-    opt[Int]("defaultServiceDuration") required() action {
-      (x,c) => c.copy(defaultServiceDuration = x)
-    }
-    opt[Double]("eventProportion") required() action {
-      (x,c) => c.copy(eventProportion = x)
-    }
-    opt[Double]("eventLikelihood") required() action {
-      (x,c) => c.copy(eventLikelihood = x)
-    }
-    opt[Int]("eventDelay") required() action {
-      (x,c) => c.copy(eventDelay = x)
-    }
-    opt[Boolean]("adverts") required() action{
-      (x,c) => c.copy(adverts = x)
-    }
+    opt[Seq[String]]("strategy") required() action {(x,c) => c.copy(strategies = x)}
+    opt[Int]("numRounds") required() action {(x,c) => c.copy(numRounds = x)}
+    opt[Int]("numSimulations") required() action {(x,c) => c.copy(numSimulations = x)}
+    opt[Int]("memoryLimit") required() action {(x,c) => c.copy(memoryLimit = x)}
+    opt[Int]("numProviders") required() action {(x,c) => c.copy(numProviders = x)}
+    opt[Int]("defaultServiceDuration") required() action {(x,c) => c.copy(defaultServiceDuration = x)}
+    opt[Double]("eventProportion") required() action {(x,c) => c.copy(eventProportion = x)}
+    opt[Double]("eventLikelihood") required() action {(x,c) => c.copy(eventLikelihood = x)}
+    opt[Int]("eventDelay") required() action {(x,c) => c.copy(eventDelay = x)}
+    opt[Boolean]("adverts") required() action{(x,c) => c.copy(adverts = x)}
   }
 
   val argsplt =
     if (args.size == 0) {
-      ("--strategy jaspr.strategy.NoStrategy,jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false) --numRounds 3 --numSimulations 2 " +
-        "--memoryLimit 100 --numProviders 25 --defaultServiceDuration 10 " +
-        "--eventProportion 1 --eventLikelihood 2 --eventDelay 2 " +
-        "--adverts false").split(" ")
+      ("--strategy jaspr.strategy.NoStrategy,jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false) " +
+        "--numRounds 3 --numSimulations 2 --memoryLimit 100 --numProviders 25 --defaultServiceDuration 10 " +
+        "--eventProportion 1 --eventLikelihood 2 --eventDelay 2 --adverts false").split(" ")
     } else args
+
+  println(argsplt.toList)
 
   parser.parse(argsplt, ACMEMultiConfiguration()) match {
     case Some(x) =>
@@ -117,11 +98,18 @@ class ACMEConfiguration(override val strategy: Strategy,
                           ) extends Configuration {
 
   override def toString: String = {
-    List(
-      strategy, numRounds, numSimulations,
-      memoryLimit, numProviders, defaultServiceDuration,
-      eventProportion, eventLikelihood, eventDelay, adverts
-    ).toString
+    Map(
+      "strategy"->strategy,
+      "numRounds"->numRounds,
+      "numSimulations"->numSimulations,
+      "memoryLimit"->memoryLimit,
+      "numProviders"->numProviders,
+      "defaultServiceDuration"->defaultServiceDuration,
+      "eventProportion"->eventProportion,
+      "eventLikelihood"->eventLikelihood,
+      "eventDelay"->eventDelay,
+      "adverts"->adverts
+    ).toString().replace(" ","")
   }
 
   override def newSimulation(): Simulation = new ACMESimulation(this)
