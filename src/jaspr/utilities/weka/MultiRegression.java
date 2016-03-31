@@ -1,4 +1,4 @@
-package jaspr.utilities;
+package jaspr.utilities.weka;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
@@ -15,16 +15,19 @@ import java.io.Serializable;
  */
 public class MultiRegression implements Classifier, Serializable {
 
+    public MultiRegression() {}
+
     private Classifier base = new LinearRegression();
 
     private String[] splitValues;
     private Classifier[] models;
     private Instances[] trains;
-    private int splitAttIndex = 1;
+    private int splitAttIndex = -1;
 
     public void setBase(Classifier base) {
         this.base = base;
     }
+    public Classifier getBase() { return this.base; }
     public void setSplitAttIndex(int index) {
         this.splitAttIndex = index;
     }
