@@ -2,11 +2,25 @@ package jaspr.core.strategy
 
 import jaspr.core.Network
 import jaspr.core.service.{ServiceRequest, TrustAssessment, ClientContext}
-import jaspr.utilities.Chooser
+import jaspr.utilities.{ArgumentUtils, Chooser}
+import org.apache.commons.beanutils.ConstructorUtils
 
 /**
  * Created by phil on 16/03/16.
  */
+
+object Strategy {
+  def forName(name: String): Strategy = {
+    if (name.contains("(")) {
+      val sname = name.substring(0, name.indexOf("("))
+      val sargs = name.substring(name.indexOf("(") + 1, name.indexOf(")")).split(";").toList
+      ConstructorUtils.invokeConstructor(Class.forName(sname), ArgumentUtils.convargs(sargs).toArray).asInstanceOf[Strategy]
+    } else {
+      Class.forName(name).newInstance().asInstanceOf[Strategy]
+    }
+  }
+}
+
 abstract class Strategy {
 
   val name: String = this.getClass.getSimpleName

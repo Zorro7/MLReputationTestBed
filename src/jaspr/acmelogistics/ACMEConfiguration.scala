@@ -1,30 +1,37 @@
 package jaspr.acmelogistics
 
+import java.lang.reflect.Constructor
+
 import jaspr.acmelogistics.agent.{ACMEEvent, Mine, Refinery, Shipper}
 import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.agent._
 import jaspr.core.service.ClientContext
 import jaspr.core.{Network, MultiConfiguration, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
-import jaspr.strategy.NoStrategy
+import jaspr.core.strategy.Strategy
 import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.fire.Fire
 import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, RecordFire, Ipaw}
 import jaspr.utilities.Chooser
+import org.apache.commons.beanutils.ConstructorUtils
+import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.classifiers.`lazy`.KStar
 import weka.classifiers.functions.LinearRegression
 import weka.classifiers.rules.OneR
 import weka.classifiers.trees.J48
+
+import scala.util.Try
+import scala.collection.JavaConversions._
 
 /**
  * Created by phil on 17/03/16.
  */
 
 
-object Configuration extends App {
+object ACMEMultiConfiguration extends App {
 
-  val parser = new scopt.OptionParser[ACMEMultiConfiguration]("") {
-    opt[Seq[String]]("strategy") action{
+  val parser = new scopt.OptionParser[ACMEMultiConfiguration]("ACMEConfiguration") {
+    opt[Seq[String]]("strategy") action {
       (x,c) => c.copy(strategies = x)
     }
     opt[Int]("numRounds") required() action {
@@ -57,16 +64,18 @@ object Configuration extends App {
   }
 
   val argsplt =
-    ("--strategy jaspr.strategy.NoStrategy,jaspr.acmelogistics.strategy.ipaw.RecordFire --numRounds 3 --numSimulations 2 " +
-      "--memoryLimit 100 --numProviders 25 --defaultServiceDuration 10 " +
-      "--eventProportion 1 --eventLikelihood 2 --eventDelay 2 " +
-      "--adverts false").split(" ")
+    if (args.size == 0) {
+      ("--strategy jaspr.strategy.NoStrategy,jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false) --numRounds 3 --numSimulations 2 " +
+        "--memoryLimit 100 --numProviders 25 --defaultServiceDuration 10 " +
+        "--eventProportion 1 --eventLikelihood 2 --eventDelay 2 " +
+        "--adverts false").split(" ")
+    } else args
+
   parser.parse(argsplt, ACMEMultiConfiguration()) match {
     case Some(x) =>
       Simulation(x)
     case None =>
   }
-
 }
 
 case class ACMEMultiConfiguration(strategies: Seq[String] = Nil,
@@ -85,12 +94,14 @@ case class ACMEMultiConfiguration(strategies: Seq[String] = Nil,
 //  override val _seed = 1000
 
   override lazy val configs: Seq[Configuration] =
-    strategies.map(x => new ACMEConfiguration(
-      Class.forName(x).newInstance().asInstanceOf[Strategy],
-      numRounds, numSimulations, memoryLimit,
-      numProviders, defaultServiceDuration, eventProportion,
-      eventLikelihood, eventDelay, adverts
-    ))
+    strategies.map(x => {
+      new ACMEConfiguration(
+        Strategy.forName(x), numRounds, numSimulations, memoryLimit,
+        numProviders, defaultServiceDuration, eventProportion,
+        eventLikelihood, eventDelay, adverts
+      )
+    })
+
 }
 
 class ACMEConfiguration(override val strategy: Strategy,
