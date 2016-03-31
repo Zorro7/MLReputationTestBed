@@ -7,7 +7,7 @@ import jaspr.core.agent.Provider
 import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
-import jaspr.utilities.MultiRegression
+import jaspr.utilities.weka.MultiRegression
 import weka.classifiers.Classifier
 
 /**
@@ -22,7 +22,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
   baseLearner.setSplitAttIndex(1)
   val discreteClass: Boolean = disc
 
-  override val name = this.getClass.getSimpleName+"_"+baseLearner.getClass.getSimpleName
+  override val name = this.getClass.getSimpleName+"_"+baseLearner.getBase().getClass.getSimpleName
 
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {

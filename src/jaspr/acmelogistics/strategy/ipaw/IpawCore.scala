@@ -23,14 +23,15 @@ trait IpawCore extends Discretization {
   val baseLearner: Classifier
   val discreteClass: Boolean
   override val upper: Double = 1d
-  override val numBins: Int = 10
+  override val numBins: Int = 5
   override val lower: Double = -1d
   
 
   def meanFunch(x: RatingRecord): Double = x.rating
   def startFunch(x: ServiceRecord): Double = (x.service.start - x.service.request.start).toDouble
   def endFunch(x: ServiceRecord): Double =
-    (x.service.end - x.service.request.end).toDouble / (x.service.request.end - x.service.request.start).toDouble
+//    (x.service.end - x.service.request.end).toDouble / x.service.request.duration.toDouble
+    x.service.request.duration / x.service.duration
   def qualityFunch(x: ServiceRecord): Double =
     x.service.payload.asInstanceOf[GoodPayload].quality - x.service.request.payload.asInstanceOf[GoodPayload].quality
   def quantityFunch(x: ServiceRecord): Double =
@@ -41,13 +42,6 @@ trait IpawCore extends Discretization {
   class IpawModel(val model: Classifier, val attVals: Iterable[mutable.Map[Any, Double]], val train: Instances) {
     override def toString: String = model.toString
   }
-
-  class IpawInit2(
-                  context: ClientContext,
-                  val directRecords: Seq[ServiceRecord with RatingRecord],
-                  val baseModel: Seq[IpawModel],
-                  val topModel: Seq[IpawModel]
-                  ) extends StrategyInit(context)
 
   class IpawInit(
                  context: ClientContext,

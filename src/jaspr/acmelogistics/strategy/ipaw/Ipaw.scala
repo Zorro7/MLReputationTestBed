@@ -6,6 +6,7 @@ import jaspr.core.agent.Provider
 import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
 import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
 import jaspr.core.strategy.{StrategyInit, Exploration, Strategy}
+import jaspr.utilities.weka.MultiRegression
 import weka.classifiers.{Classifier, AbstractClassifier}
 /**
  * Created by phil on 19/03/16.
@@ -18,8 +19,6 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
   val discreteClass: Boolean = disc
 
   override val name = this.getClass.getSimpleName+"_"+baseLearner.getClass.getSimpleName
-
-
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val records: Seq[ServiceRecord with RatingRecord] =
