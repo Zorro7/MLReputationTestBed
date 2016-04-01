@@ -1,5 +1,6 @@
 import parse
 import util
+from copy import copy
 
 
 def search(results, **kwargs):
@@ -23,13 +24,69 @@ def split(results, *keepsame):
 		ret[newkey].append(res)
 	return ret
 
+## Orderings is a list of tuples. The mapping should be from measurement_name -> comparison_operator (le, ge, lt, gt)
+## An ordered dict may be appropriate?
+## returns a.compare(b), True if a *comp* b, False otherwise.
+def compare(a, b, ndp, *orderings):
+	for o,c in orderings:
+		if c not in [le,ge,lt,gt]:
+			print "That is not a comparison operator", orderings
+			asdf
+	##if for all orderings a are 'better' than we have a winner (a)
+	#c(a, b) is equivalent to a *c* b
+	# print [(o,":",round(a[o],ndp),c.__name__,round(b[o],ndp),c(a[o], b[o])) for o,c in orderings]
+	for o,c in orderings:
+		if c(round(a[o],ndp), round(b[o],ndp)):
+			return True
+		elif round(a[o],ndp) != round(b[o],ndp):
+			break
+	return False
+
+def findbest(results, ndp, *orderings):
+	mx = results[0] ##init
+	for cand in results: ##for all candidates
+		if compare(cand, mx, ndp, *orderings):
+			mx = cand
+	return mx
+
+def findmean(results, *meanof):
+	avg = copy(results[0]) ##init
+	for m in meanof:
+		avg[m] = 0
+	for cand in results: ##for all candidates
+		for m in meanof:
+			avg[m] += cand[m]
+	for m in meanof:
+		avg[m] /= float(len(results))
+	return avg
 
 
-def loadprocessed(filename):
+def findstd(results, *stdof):
+	avg = findmean(results, *stdof) ##init
+	std = copy(results[0])
+	for m in stdof:
+		std[m] = 0
+	for cand in results: ##for all candidates
+		for m in stdof:
+			std[m] += (cand[m] - avg[m])**2
+	for m in stdof:
+		std[m] = (std[m]/float(len(results)))**0.5
+	return std
+
+def findstderr(results, *stdof):
+	stderr = findstd(results, *stdof)
+	for m in stdof:
+		stderr[m] = stderr[m]/(float(len(results))**0.5)
+	return stderr
+
+def loadprocessed(filename, num = -1):
 	results = []
 	with open(filename) as resF:
 		for line in resF:
-			results.append(util.longdic(line[:-1]))
+			results.append(util.numbers(util.longdic(line[:-1])))
+			num -= 1
+			if num == 0:
+				return results
 	return results
 
 if __name__ == "__main__":

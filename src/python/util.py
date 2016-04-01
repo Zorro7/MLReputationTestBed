@@ -10,3 +10,11 @@ def shortdic(dic):
 
 def longdic(dic):
 	return {x[:x.index("=")]:x[x.index("=")+1:] for x in dic.split(",")}
+
+def numbers(dic):
+	for k,v in dic.iteritems():
+		try:
+			dic[k] = float(v)
+		except:
+			pass
+	return dic
