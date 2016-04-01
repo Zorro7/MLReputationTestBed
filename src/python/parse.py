@@ -1,39 +1,17 @@
-
-
-
-def search(results, **kwargs):
-	ret = []
-	singlekwargs = {k:v for k,v in kwargs.iteritems() if not isinstance(v,list) and not isinstance(v,set)}
-	listkwargs = {k:set(v) for k,v in kwargs.iteritems() if k not in singlekwargs}
-	for res in results:
-		if all(res[key] == value for key,value in singlekwargs.iteritems()) and \
-					all(res[key] in value for key,value in listkwargs.iteritems()):
-			ret.append(res)
-	return ret
-
-def str(toprint, join='-'):
-	if isinstance(toprint,tuple):
-		return join.join([str(x) for x in toprint])
-	return __builtin__.str(toprint)
-
-def split(results, *keepsame):
-	ret = {}
-	for res in results:
-		# newkey = '-'.join([str(res[k]) for k in keepsame])
-		newkey = tuple(res[k] for k in keepsame)
-		if newkey not in ret:
-			ret[newkey] = []
-		ret[newkey].append(res)
-	return ret
-
+import __builtin__
+import os
+import sys
+import util
 
 def parseline(line):
 	splt = line.split(":")
 	res = {h:v for h,v in [x.split("=") for x in splt[0].split(",")]}
-	res["utility"] = [float(x) for x in splt[1].split(",")]
+	# res["utilities"] = [float(x) for x in splt[1].split(",")]
+	# res["utility"] = res["utilities"][-1]
+	res["utility"] = float(splt[1][splt[1].rindex(",")+1:])
 	return res
 
-def load(filename):
+def loadraw(filename):
 	with open(filename) as resF:
 		inresults = False
 		results = []
@@ -53,8 +31,15 @@ def load(filename):
 
 if __name__ == "__main__":
 
-	filename = "../../results/jobs.pbs.o35271-3705"
+	args = sys.argv[1:]
 
-	results = load(filename)
+	dirname = args[0]
+	results = []
+	for path,dirs,files in os.walk(dirname):
+		for filename in files:
+			print filename, "...",
+			results.extend(loadraw(path+"/"+filename))
+			print "done."
 
-	print len(results), results[0]
+	for res in results:
+		print util.shortdic(res)
