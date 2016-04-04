@@ -36,14 +36,14 @@ def aggregate(splt, funch, *meanof):
 
 if __name__ == "__main__":
 
-	filename = "../../ipaw.res"
+	filename = "../../res"
 	results = loadprocessed(filename)
 
-	results = split(results, "memoryLimit", "defaultServiceDuration")
+	results = split(results, "numProviders", "memoryLimit", "defaultServiceDuration")
 	print results.keys()
-	splt = {"all": results[(100.0,5.0)]}
+	splt = {"all": results[(100,500.0,5.0)]}
 	#["memoryLimit"], ["numProviders"],
-	splt = splitmany(splt, ["strategy"], ["numProviders"], ["eventProportion", "eventLikelihood", "eventDelay"])
+	splt = splitmany(splt, ["strategy"], ["eventLikelihood", "eventProportion", "eventDelay"])
 	mn = aggregate(splt, findmean, "utility")
 	sd = aggregate(splt, findstd, "utility")
 	sderr = aggregate(splt, findstderr, "utility")
