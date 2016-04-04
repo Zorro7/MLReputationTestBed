@@ -1,5 +1,6 @@
 #### JASPR stuff ####
 *.res
+results/**
 
 #### EXTRA ####
 *.MF
