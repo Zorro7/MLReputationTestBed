@@ -45,14 +45,15 @@ object ACMEMultiConfiguration extends App {
   }
 
   val argsplt =
-    if (args.size == 0) {
+    if (args.length == 0) {
       ("--strategy " +
 //        "jaspr.strategy.NoStrategy," +
-//        "jaspr.acmelogistics.strategy.ipaw.RecordFire," +
+        "jaspr.acmelogistics.strategy.ipaw.RecordFire," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.trees.J48;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.bayes.NaiveBayes;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(jaspr.utilities.weka.MultiRegression&weka.classifiers.functions.LinearRegression;false)," +
-        "jaspr.acmelogistics.strategy.ipaw.IpawEvents(jaspr.utilities.weka.MultiRegression&weka.classifiers.functions.LinearRegression;false)," +
+//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(jaspr.utilities.weka.MultiRegression&imweka.classifiers.functions.LinearRegression;false)," +
+        "jaspr.acmelogistics.strategy.ipaw.IpawSimple(jaspr.utilities.weka.MultiRegression&weka.classifiers.functions.LinearRegression;false)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.rules.OneR;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.rules.DecisionTable;false)," +
