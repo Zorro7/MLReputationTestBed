@@ -32,7 +32,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
   override lazy val configs: Seq[Configuration] =
     new SellerConfiguration(new NoStrategy) ::
       new SellerConfiguration(new Fire) ::
-      new SellerConfiguration(new MLFire) ::
+//      new SellerConfiguration(new MLFire) ::
 //      new SellerConfiguration(new BetaReputation)::
 //      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade()) ::

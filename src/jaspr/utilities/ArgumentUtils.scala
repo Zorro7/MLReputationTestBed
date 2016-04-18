@@ -1,6 +1,6 @@
 package jaspr.utilities
 
-import jaspr.utilities.weka.LearnerFactory
+import jaspr.weka.core.LearnerFactory
 
 import scala.util.Try
 

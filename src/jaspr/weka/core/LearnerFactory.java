@@ -1,5 +1,6 @@
-package jaspr.utilities.weka;
+package jaspr.weka.core;
 
+import jaspr.weka.classifiers.meta.ParamSelection;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.classifiers.MultipleClassifiersCombiner;

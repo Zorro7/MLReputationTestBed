@@ -20,7 +20,7 @@
  *
  */
 
-package jaspr.utilities.weka;
+package jaspr.weka.classifiers.meta;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.RandomizableSingleClassifierEnhancer;

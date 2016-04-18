@@ -6,7 +6,7 @@ import jaspr.core.agent.Provider
 import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
 import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
 import jaspr.core.strategy.{StrategyInit, Exploration, Strategy}
-import jaspr.utilities.weka.MultiRegression
+import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.{Classifier, AbstractClassifier}
 /**
  * Created by phil on 19/03/16.

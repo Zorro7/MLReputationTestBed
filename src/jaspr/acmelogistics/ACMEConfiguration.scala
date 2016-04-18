@@ -13,7 +13,7 @@ import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.fire.Fire
 import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, RecordFire, Ipaw}
 import jaspr.utilities.Chooser
-import jaspr.utilities.weka.LearnerFactory
+import jaspr.weka.core.LearnerFactory
 import org.apache.commons.beanutils.ConstructorUtils
 import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.classifiers.`lazy`.KStar

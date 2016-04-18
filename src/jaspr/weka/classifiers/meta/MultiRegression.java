@@ -1,4 +1,4 @@
-package jaspr.utilities.weka;
+package jaspr.weka.classifiers.meta;
 
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
