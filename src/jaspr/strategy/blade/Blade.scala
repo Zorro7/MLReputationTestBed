@@ -76,7 +76,7 @@ class Blade(override val numBins: Int) extends CompositionStrategy with RatingSt
 
     val postModel = new Dirichlet(likelihoods.foldLeft(priorModel.alpha)(_ @+ _), priorModel.domain)
 
-    new TrustAssessment(request, postModel.expval())
+    new TrustAssessment(init.context, request, postModel.expval())
   }
 
 

@@ -28,7 +28,7 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
     val init = baseInit.asInstanceOf[MlrsInit]
 
     if (init.directInit == null) {
-      new TrustAssessment(request, 0d)
+      new TrustAssessment(baseInit.context, request, 0d)
     } else {
       val directModel = init.directInit.directModel
       val directTrain = init.directInit.directTrain
@@ -44,7 +44,7 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
             else pred
           result * p
         }
-      new TrustAssessment(request, predictions.sum/predictions.size)
+      new TrustAssessment(baseInit.context, request, predictions.sum/predictions.size)
     }
   }
 

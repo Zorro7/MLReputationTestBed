@@ -32,7 +32,7 @@ class Mlrs(val baseLearner: Classifier, override val numBins: Int) extends Compo
     val directTA = super[MlrsDirect].compute(init, request)
     val witnessTA = super[MlrsWitness].compute(init, request)
 
-    new TrustAssessment(request, directTA.trustValue + witnessTA.trustValue)
+    new TrustAssessment(init.context, request, directTA.trustValue + witnessTA.trustValue)
   }
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {

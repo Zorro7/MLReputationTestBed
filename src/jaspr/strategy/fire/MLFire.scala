@@ -69,7 +69,7 @@ class MLFire extends CompositionStrategy with Exploration with MlrsCore {
         undiscretize(new Dirichlet(x).expval())
       } else 0d
 
-    new TrustAssessment(request, direct + witness)
+    new TrustAssessment(baseInit.context, request, direct + witness)
   }
 
   def makeTrainWeight(context: ClientContext, record: ServiceRecord): Double = {

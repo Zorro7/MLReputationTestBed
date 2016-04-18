@@ -43,7 +43,7 @@ class IpawSimple(learner: Classifier, disc: Boolean) extends Strategy with Explo
   override def computeAssessment(superInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = superInit.asInstanceOf[IpawInit]
 
-    if (init.models.isEmpty) return new TrustAssessment(request, 0d)
+    if (init.models.isEmpty) return new TrustAssessment(superInit.context, request, 0d)
 
     val requests = request.flatten()
 
@@ -61,7 +61,7 @@ class IpawSimple(learner: Classifier, disc: Boolean) extends Strategy with Explo
         }
       preds = currentPreds.toList ++ preds
     }
-    new TrustAssessment(request, preds.filter(!_.isNaN).sum)
+    new TrustAssessment(superInit.context, request, preds.filter(!_.isNaN).sum)
   }
 
   def makeBaseRow(request: ServiceRequest): List[Any] = {

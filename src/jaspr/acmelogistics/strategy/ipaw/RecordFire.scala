@@ -50,7 +50,7 @@ class RecordFire extends Strategy with CompositionStrategy with Exploration {
         trust(request, init.witnessRecords, init.context.round, qualityFunch) +
         trust(request, init.witnessRecords, init.context.round, quantityFunch)
 
-    new TrustAssessment(request, direct+witness)
+    new TrustAssessment(baseInit.context, request, direct+witness)
   }
 
   val interactionWeight: Double = 0.5

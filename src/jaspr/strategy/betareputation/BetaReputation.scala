@@ -30,6 +30,6 @@ class BetaReputation extends RatingStrategy with CompositionStrategy with Explor
 
     val overallTrustValue = combinedOpinions.expected()
 
-    new TrustAssessment(request, overallTrustValue)
+    new TrustAssessment(baseInit.context, request, overallTrustValue)
   }
 }

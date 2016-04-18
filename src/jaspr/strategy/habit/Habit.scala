@@ -46,7 +46,7 @@ class Habit(override val numBins: Int) extends CompositionStrategy with RatingSt
 
     val trustee = request.provider
 
-    if (directObs.isEmpty && repModels.isEmpty) return new TrustAssessment(request, 0d)
+    if (directObs.isEmpty && repModels.isEmpty) return new TrustAssessment(baseInit.context, request, 0d)
 
     // Generate mixture components by observing the direct observations for each trustee.
     val directComponent: Seq[Dirichlet] = trustees.map(x =>
@@ -85,7 +85,7 @@ class Habit(override val numBins: Int) extends CompositionStrategy with RatingSt
     val expval = (normWeights @* mixComponents.map(x => x.expval())).sum
     //    val stderr = (normWeights @* mixComponents.map(x => x.stderr())).sum
 
-    new TrustAssessment(request, expval)
+    new TrustAssessment(baseInit.context, request, expval)
   }
 
 }

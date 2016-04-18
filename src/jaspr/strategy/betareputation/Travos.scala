@@ -43,12 +43,12 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
     )
   }
 
-  class TravosTrustAssessment(request: ServiceRequest, trustValue: Double, val opinions: Map[ServiceRequest, BetaOpinions])
-    extends TrustAssessment(request, trustValue)
+  class TravosTrustAssessment(context: ClientContext, request: ServiceRequest, trustValue: Double, val opinions: Map[ServiceRequest, BetaOpinions])
+    extends TrustAssessment(context, request, trustValue)
 
   override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val requestScores: Seq[TravosTrustAssessment] = request.flatten().map(x => compute(baseInit, request))
-    new TravosTrustAssessment(request, requestScores.map(_.trustValue).sum, requestScores.flatMap(_.opinions).toMap)
+    new TravosTrustAssessment(baseInit.context, request, requestScores.map(_.trustValue).sum, requestScores.flatMap(_.opinions).toMap)
   }
 
 
@@ -82,7 +82,7 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
 
     val combinedOpinions = getCombinedOpinions(interactionTrust, weightedOpinions)
 
-    new TravosTrustAssessment(request, combinedOpinions.expected(), Map(request -> new BetaOpinions {
+    new TravosTrustAssessment(baseInit.context, request, combinedOpinions.expected(), Map(request -> new BetaOpinions {
       override val opinions: List[(Agent, BetaDistribution)] = witnessOpinions.toList
     }))
   }
