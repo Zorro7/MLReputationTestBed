@@ -11,11 +11,10 @@ import jaspr.utilities.matrix.{RowVector, Matrix}
 /**
  * Created by phil on 25/03/16.
  */
-class Blade extends CompositionStrategy with RatingStrategy with Exploration with BladeCore {
+class Blade(override val numBins: Int) extends CompositionStrategy with RatingStrategy with Exploration with BladeCore {
 
   override val explorationProbability: Double = 0.1
 
-  override val numBins: Int = 2
   override val lower: Double = -1d
   override val upper: Double = 1d
 
