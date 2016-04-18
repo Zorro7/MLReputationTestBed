@@ -27,19 +27,20 @@ import weka.classifiers.trees.{J48, RandomForest}
 class SellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
-//  override val _seed = 1
+  override val _seed = 1
 
   override lazy val configs: Seq[Configuration] =
-    new SellerConfiguration(new NoStrategy) ::
-      new SellerConfiguration(new Fire) ::
-//      new SellerConfiguration(new MLFire) ::
+//    new SellerConfiguration(new NoStrategy) ::
+//      new SellerConfiguration(new Fire) ::
+////      new SellerConfiguration(new MLFire) ::
 //      new SellerConfiguration(new BetaReputation)::
 //      new SellerConfiguration(new Travos) ::
-//      new SellerConfiguration(new Blade()) ::
+//      new SellerConfiguration(new Blade(2)) ::
+//      new SellerConfiguration(new Blade(5)) ::
 //      new SellerConfiguration(new Habit(2)) ::
 //        new SellerConfiguration(new Habit(5)) ::
 //        new SellerConfiguration(new Mlrs(new NaiveBayes, 2)) ::
-//        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
+        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 2)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 5)) ::
 //        new SellerConfiguration(new Mlrs(new J48, 2)) ::
@@ -64,21 +65,21 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 25
+  override val numSimulations: Int = 1
   override val numRounds: Int = 250
 
   val clientIncolvementLikelihood = 1
   val numClients: Int = 1
-  val numProviders: Int = 500
+  val numProviders: Int = 50
 
   val memoryLimit: Int = 500
 
   val freakEventLikelihood = 0.0
   def freakEventEffects = -1d
 
-  var simcapabilities = for (i <- 1 to 1) yield new ProductPayload(i.toString)
+  var simcapabilities = for (i <- 1 to 10) yield new ProductPayload(i.toString)
   def capabilities(provider: Provider): Seq[ProductPayload] = {
-    var caps = Chooser.sample(simcapabilities, 1)
+    var caps = Chooser.sample(simcapabilities, 3)
     caps = caps.map(_.copy(
       quality = provider.properties.map(x =>
 //        x._1 -> Chooser.bound(x._2.doubleValue + Chooser.randomDouble(-1,1), -1, 1)

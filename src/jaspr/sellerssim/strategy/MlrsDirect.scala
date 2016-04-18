@@ -57,6 +57,7 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
     else {
       val model = makeMlrsModel(directRecords, baseDirect, makeDirectRow)
 
+      println(model.train)
       new MlrsDirectInit(context, model.model, model.train, model.attVals, freakEventLikelihood)
     }
   }
