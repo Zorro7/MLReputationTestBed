@@ -36,28 +36,46 @@ def aggregate(splt, funch, *meanof):
 
 if __name__ == "__main__":
 
-	filename = "../../res"
+	filename = "../../results/ipaw.res"
 	results = loadprocessed(filename)
 
-	results = split(results, "numProviders", "memoryLimit", "defaultServiceDuration")
-	print results.keys()
-	splt = {"all": results[(100,500.0,5.0)]}
-	#["memoryLimit"], ["numProviders"],
-	splt = splitmany(splt, ["strategy"], ["eventLikelihood", "eventProportion", "eventDelay"])
-	mn = aggregate(splt, findmean, "utility")
-	sd = aggregate(splt, findstd, "utility")
-	sderr = aggregate(splt, findstderr, "utility")
-	print "---MEAN---"
-	print splttostr(mn, "utility")
-	print "---STD---"
-	print splttostr(sd, "utility")
-	print "---STDERR---"
-	print splttostr(sderr, "utility")
-	# print splttostr(sd, ["utility"])
-
+	# results = split(results, "numProviders", "memoryLimit", "defaultServiceDuration")
+	# print results.keys()
+	# splt = {"all": results[(100,500.0,5.0)]}
+	# #["memoryLimit"], ["numProviders"],
+	# splt = splitmany(splt, ["strategy"], ["eventLikelihood", "eventProportion", "eventDelay"])
 	# mn = aggregate(splt, findmean, "utility")
-	# for event in [(eventProportion,eventLikelihood,eventDelay) for eventProportion in [0.1,0.2,0.3] for eventLikelihood in [0.1] for eventDelay in [1]]:
-	# 	print splttostr(mn["all"][event], ["utility"])
+	# sd = aggregate(splt, findstd, "utility")
+	# sderr = aggregate(splt, findstderr, "utility")
+	# print "---MEAN---"
+	# print splttostr(mn, "utility")
+	# print "---STD---"
+	# print splttostr(sd, "utility")
+	# print "---STDERR---"
+	# print splttostr(sderr, "utility")
+
+
+	df = "{0:.1f}"
+
+	splt = split(results, "defaultServiceDuration")
+	index = (5.0,)
+	# splt = {"all": results}
+	# index = "all"
+	topspltkeys = ["numProviders", "memoryLimit", "defaultServiceDuration", "eventLikelihood", "eventProportion", "eventDelay"]
+	botspltkeys = ["strategy"]
+	scorename = "utility"
+	topsplt = split(splt[index], *topspltkeys)
+	for topkey,topval in sorted(topsplt.iteritems()):
+		botsplt = split(topval, *botspltkeys)
+		print topkey,
+		for botkey,botval in sorted(botsplt.iteritems()):
+			mn = findmean(botval, scorename)
+			print "\t", df.format(mn[scorename]).zfill(5),
+		print
+	print sorted(botsplt.keys())
+
+
+
 
 
 	# import anova
