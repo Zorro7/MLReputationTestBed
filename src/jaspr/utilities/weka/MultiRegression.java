@@ -66,9 +66,9 @@ public class MultiRegression extends SingleClassifierEnhancer implements Classif
                 models[i] = null;
                 trains[i] = null;
             }
-//            System.out.print(trains[i].numInstances()+" ");
+//            System.out.print(splitValues[i]+": "+trains[i].numInstances()+", ");
         }
-//        System.out.println(this);
+//        System.out.println();
     }
 
     @Override

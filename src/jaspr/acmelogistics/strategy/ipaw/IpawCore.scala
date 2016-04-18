@@ -138,8 +138,10 @@ trait IpawCore extends Discretization {
   }
 
   def predicts(model: IpawModel, testRows: Iterable[List[Any]], events: Map[String,Double]): Double = {
-    val x = testRows.map(x => predict(model, x) * events.getOrElse(x(1).toString, 0d))
-    x.sum / testRows.size.toDouble
+//    println(testRows.map(row => row(1)+": "+events.getOrElse(row(1).toString, 0d)))
+//    println(testRows.map(row => predict(model, row)+" * "+events.getOrElse(row(1).toString, 0d)))
+    val preds = testRows.map(row => predict(model, row) * events.getOrElse(row(1).toString, 0d))
+    preds.sum / testRows.size.toDouble
   }
 
   def predict(model: IpawModel, testRow: List[Any]): Double = {

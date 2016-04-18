@@ -81,8 +81,8 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
       preds = currentPreds.toList ++ preds
     }
 
-//        println(preds.filterNot(_.isNaN).sum, currentPreds.filterNot(_.isNaN).sum,
-//                  currentPreds.filterNot(_.isNaN), preds.filterNot(_.isNaN))
+//    println(preds.filterNot(_.isNaN).sum, currentPreds.filterNot(_.isNaN).sum,
+//      preds, currentPreds)
 
     new TrustAssessment(request, currentPreds.filter(!_.isNaN).sum)
   }

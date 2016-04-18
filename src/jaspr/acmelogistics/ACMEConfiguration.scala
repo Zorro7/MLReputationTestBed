@@ -48,21 +48,22 @@ object ACMEMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
 //        "jaspr.strategy.NoStrategy," +
-        "jaspr.acmelogistics.strategy.ipaw.RecordFire," +
+//        "jaspr.acmelogistics.strategy.ipaw.RecordFire," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.trees.J48;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.bayes.NaiveBayes;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(jaspr.utilities.weka.MultiRegression&weka.classifiers.functions.LinearRegression;false)," +
-//        "jaspr.acmelogistics.strategy.ipaw.Ipaw(jaspr.utilities.weka.MultiRegression&imweka.classifiers.functions.LinearRegression;false)," +
-        "jaspr.acmelogistics.strategy.ipaw.IpawSimple(jaspr.utilities.weka.MultiRegression&weka.classifiers.functions.LinearRegression;false)," +
+        "jaspr.acmelogistics.strategy.ipaw.Ipaw(jaspr.utilities.weka.MultiRegression&weka.classifiers.functions.LinearRegression;false)," +
+        "jaspr.acmelogistics.strategy.ipaw.IpawEvents(jaspr.utilities.weka.MultiRegression&weka.classifiers.functions.LinearRegression;false)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.rules.OneR;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.LinearRegression;false)," +
+//        "jaspr.acmelogistics.strategy.ipaw.IpawEvents(weka.classifiers.functions.LinearRegression;false)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.rules.DecisionTable;false)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.functions.SMO;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.lazy.KStar;false)," +
 //        "jaspr.acmelogistics.strategy.ipaw.Ipaw(weka.classifiers.lazy.KStar;true)," +
 //        "jaspr.acmelogistics.strategy.ipaw.IpawEvents(weka.classifiers.lazy.KStar;true)" +
-        " --numRounds 500 --numSimulations 10 --memoryLimit 250 --numProviders 100 --defaultServiceDuration 5 " +
-        "--eventProportion 0 --eventLikelihood 0 --eventDelay 0 --adverts false").split(" ")
+        " --numRounds 250 --numSimulations 10 --memoryLimit 250 --numProviders 100 --defaultServiceDuration 5 " +
+        "--eventProportion 0.25 --eventLikelihood 0.1 --eventDelay 3 --adverts false").split(" ")
     } else args
 
   println(argsplt.toList)
@@ -148,12 +149,13 @@ class ACMEConfiguration(override val strategy: Strategy,
 //  val eventLikelihood = 0.1
 //  val eventDelay: Int = 1
   def nextEvents(providers: Seq[Provider]) = {
-    Chooser.ifHappens(eventLikelihood)(
+    val x = Chooser.ifHappens(eventLikelihood)(
       new ACMEEvent(
         Chooser.sample(providers, (providers.size*eventProportion).toInt),
         eventDelay
       ) :: Nil
     )(Nil)
+    x
   }
 
   def clientContext(network: Network, client: Client, round: Int): ClientContext = {

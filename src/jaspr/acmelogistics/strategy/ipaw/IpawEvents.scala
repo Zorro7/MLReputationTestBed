@@ -58,6 +58,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
         }
       ).mapValues(_.size.toDouble / records.size)
 
+//    println(eventLikelihoods)
     new IpawInit(context, records, models, eventLikelihoods)
   }
 
@@ -98,7 +99,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
     }
 
 //        println(preds.filterNot(_.isNaN).sum, currentPreds.filterNot(_.isNaN).sum,
-//                  currentPreds.filterNot(_.isNaN), preds.filterNot(_.isNaN))
+//                  preds, currentPreds)
 
     new TrustAssessment(request, currentPreds.filter(!_.isNaN).sum)
   }
@@ -139,7 +140,6 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
     val train: Iterable[List[Any]] =
       records.withFilter(!_.service.serviceContext.provenanceEmpty).map(x => {
         val dependency: SubproviderRecord = x.service.serviceContext.getProvenance(x.service.serviceContext).head
-//        println(x.service.payload , dependency.service.payload)
         makeRow(
           labelfunch(x),
           x.service.serviceContext.events.headOption match {
