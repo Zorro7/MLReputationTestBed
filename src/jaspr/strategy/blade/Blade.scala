@@ -13,6 +13,8 @@ import jaspr.utilities.matrix.{RowVector, Matrix}
  */
 class Blade(override val numBins: Int) extends CompositionStrategy with RatingStrategy with Exploration with BladeCore {
 
+  override val name: String = this.getClass.getSimpleName+"-"+numBins
+
   override val explorationProbability: Double = 0.1
 
   override val lower: Double = -1d
