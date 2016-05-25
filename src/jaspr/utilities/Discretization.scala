@@ -9,8 +9,10 @@ trait Discretization {
   val upper: Double
   val lower: Double
   val numBins: Int
+  lazy val step: Double = (upper-lower) / numBins
 
-  lazy val discVals = Range.Double(lower, upper, (upper-lower)/numBins).map(_.toString)
+//  lazy val discVals: Seq[String] = Range.Double(lower, upper, step).map(_.toString)
+  lazy val discVals: Seq[String] = for (bin <- 0 until numBins) yield (lower + bin * step).toString
 
   def discretizeInt(x: Double): Int = {
     discretizeDouble(x).toInt
