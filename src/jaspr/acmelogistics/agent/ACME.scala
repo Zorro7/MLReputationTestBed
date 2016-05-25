@@ -47,4 +47,6 @@ class ACME(override val simulation: ACMESimulation) extends Client {
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = provenance.map(_.asInstanceOf[T])
 
   override val memoryLimit: Int = simulation.config.memoryLimit
+
+  override val preferences = ???
 }

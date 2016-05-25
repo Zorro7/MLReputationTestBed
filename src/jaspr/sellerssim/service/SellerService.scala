@@ -12,7 +12,6 @@ class SellerService(override val request: ServiceRequest) extends Service {
   override def canStart(currentRound: Int): Boolean = true
 
   override def isComplete(currentRound: Int): Boolean = {
-
     !isDelivered && currentRound >= end
   }
 

@@ -65,7 +65,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override def advertProperties: Map[String,Property] = Map()
 
-
+  override val preferences = ???
 
 
   override val memoryLimit: Int = 50

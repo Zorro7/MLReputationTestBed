@@ -32,8 +32,14 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
         case Some(x) => x
         case None => new SellerEvent("NA")
       },
-      service.payload.asInstanceOf[ProductPayload].quality
+      rateService(service)
     ))
+  }
+
+  def rateService(service: Service): Map[String,Double] = {
+    val received = service.payload.asInstanceOf[ProductPayload].quality
+    val wanted = service.request.payload.asInstanceOf[ProductPayload].quality
+    received.map(x => x._1 -> (x._2 - wanted.getOrElse(x._1, 0d)))
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {
@@ -66,4 +72,6 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
   }
 
   override val memoryLimit: Int = simulation.config.memoryLimit
+
+  override val preferences = simulation.config.properties(this)
 }

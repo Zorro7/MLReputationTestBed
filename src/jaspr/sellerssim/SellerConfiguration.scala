@@ -30,9 +30,9 @@ class SellerMultiConfiguration extends MultiConfiguration {
   override val _seed = 100
 
   override lazy val configs: Seq[Configuration] =
-    Range.inclusive(2,5).map(x => new SellerConfiguration(new Mlrs(new J48, x)))
+//    Range.inclusive(2,5).map(x => new SellerConfiguration(new Mlrs(new J48, x)))
 ////    new SellerConfiguration(new NoStrategy) ::
-//      new SellerConfiguration(new Fire) ::
+      new SellerConfiguration(new Fire) ::
 //////      new SellerConfiguration(new MLFire) ::
 //      new SellerConfiguration(new BetaReputation)::
 //      new SellerConfiguration(new Travos) ::
@@ -58,7 +58,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //        new SellerConfiguration(new Mlrs(new KStar, 0)) ::
 //        new SellerConfiguration(new Mlrs(new KStar, 5)) ::
 //        new SellerConfiguration(new Mlrs(new KStar, 10)) ::
-//  Nil
+  Nil
 }
 
 class SellerConfiguration(override val strategy: Strategy) extends Configuration {
@@ -66,11 +66,11 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 10
-  override val numRounds: Int = 250
+  override val numSimulations: Int = 1
+  override val numRounds: Int = 10
 
-  val clientIncolvementLikelihood = 0.1
-  val numClients: Int = 10
+  val clientIncolvementLikelihood = 1
+  val numClients: Int = 1
   val numProviders: Int = 50
 
   val memoryLimit: Int = 500
@@ -87,15 +87,17 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 //        x._1 -> x._2.doubleValue
       )
     ))
+    println(caps)
     caps
   }
 
   def clientContext(network: Network, client: Client, round: Int) = {
-    new ClientContext(
-      client, round,
-      Chooser.choose(simcapabilities),
-      network.markets.head
+    val cap = Chooser.choose(simcapabilities).copy(
+      quality = client.preferences.map(x =>
+        x._1 -> x._2.doubleValue
+      )
     )
+    new ClientContext(client, round, cap, network.markets.head)
   }
 
   def properties(agent: Agent): Map[String,Property] = {
