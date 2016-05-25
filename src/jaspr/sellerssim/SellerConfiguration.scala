@@ -27,24 +27,25 @@ import weka.classifiers.trees.{J48, RandomForest}
 class SellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
-  override val _seed = 1
+  override val _seed = 100
 
   override lazy val configs: Seq[Configuration] =
-//    new SellerConfiguration(new NoStrategy) ::
+    Range.inclusive(10,25).map(x => new SellerConfiguration(new Mlrs(new J48, x)))
+////    new SellerConfiguration(new NoStrategy) ::
 //      new SellerConfiguration(new Fire) ::
-////      new SellerConfiguration(new MLFire) ::
+//////      new SellerConfiguration(new MLFire) ::
 //      new SellerConfiguration(new BetaReputation)::
 //      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade(2)) ::
-//      new SellerConfiguration(new Blade(5)) ::
+//      new SellerConfiguration(new Blade(10)) ::
 //      new SellerConfiguration(new Habit(2)) ::
-//        new SellerConfiguration(new Habit(5)) ::
+//        new SellerConfiguration(new Habit(10)) ::
 //        new SellerConfiguration(new Mlrs(new NaiveBayes, 2)) ::
-        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
+//        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 2)) ::
 //        new SellerConfiguration(new Mlrs(new OneR, 5)) ::
 //        new SellerConfiguration(new Mlrs(new J48, 2)) ::
-//        new SellerConfiguration(new Mlrs(new J48, 5)) ::
+//        new SellerConfiguration(new Mlrs(new J48, 10)) ::
 //        new SellerConfiguration(new Mlrs(new RandomForest, 0)) ::
 //        new SellerConfiguration(new Mlrs(new RandomForest, 5)) ::
 //        new SellerConfiguration(new Mlrs(new RandomForest, 10)) ::
@@ -57,7 +58,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //        new SellerConfiguration(new Mlrs(new KStar, 0)) ::
 //        new SellerConfiguration(new Mlrs(new KStar, 5)) ::
 //        new SellerConfiguration(new Mlrs(new KStar, 10)) ::
-  Nil
+//  Nil
 }
 
 class SellerConfiguration(override val strategy: Strategy) extends Configuration {
@@ -65,7 +66,7 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 1
+  override val numSimulations: Int = 10
   override val numRounds: Int = 250
 
   val clientIncolvementLikelihood = 1
@@ -79,11 +80,11 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 
   var simcapabilities = for (i <- 1 to 10) yield new ProductPayload(i.toString)
   def capabilities(provider: Provider): Seq[ProductPayload] = {
-    var caps = Chooser.sample(simcapabilities, 3)
+    var caps = Chooser.sample(simcapabilities, 2)
     caps = caps.map(_.copy(
       quality = provider.properties.map(x =>
-//        x._1 -> Chooser.bound(x._2.doubleValue + Chooser.randomDouble(-1,1), -1, 1)
-        x._1 -> x._2.doubleValue
+        x._1 -> Chooser.bound(x._2.doubleValue + Chooser.randomDouble(-1,1), -1, 1)
+//        x._1 -> x._2.doubleValue
       )
     ))
     caps
