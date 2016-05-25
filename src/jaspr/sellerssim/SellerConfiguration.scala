@@ -121,7 +121,4 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 //    choose(honest(_), invert(_), random(_), positive(_), negative(_))
     honest
   }
-
-
-  def choose[V](stuff: V*): V = Chooser.choose(stuff)
 }
