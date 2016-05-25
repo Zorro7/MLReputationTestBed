@@ -8,7 +8,7 @@ import scala.annotation.tailrec
 /**
  * Created by phil on 16/03/16.
  */
-trait Exploration extends Strategy {
+trait RecursiveExploration extends Strategy {
 
   val explorationProbability: Double
 
@@ -26,7 +26,7 @@ trait Exploration extends Strategy {
   }
 }
 
-trait BanditExploration extends Strategy {
+trait Exploration extends Strategy {
 
   val explorationProbability: Double
 
