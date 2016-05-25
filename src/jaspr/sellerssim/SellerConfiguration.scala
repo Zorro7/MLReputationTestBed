@@ -30,7 +30,7 @@ class SellerMultiConfiguration extends MultiConfiguration {
   override val _seed = 100
 
   override lazy val configs: Seq[Configuration] =
-    Range.inclusive(10,25).map(x => new SellerConfiguration(new Mlrs(new J48, x)))
+    Range.inclusive(2,5).map(x => new SellerConfiguration(new Mlrs(new J48, x)))
 ////    new SellerConfiguration(new NoStrategy) ::
 //      new SellerConfiguration(new Fire) ::
 //////      new SellerConfiguration(new MLFire) ::
@@ -69,8 +69,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   override val numSimulations: Int = 10
   override val numRounds: Int = 250
 
-  val clientIncolvementLikelihood = 1
-  val numClients: Int = 1
+  val clientIncolvementLikelihood = 0.1
+  val numClients: Int = 10
   val numProviders: Int = 50
 
   val memoryLimit: Int = 500
