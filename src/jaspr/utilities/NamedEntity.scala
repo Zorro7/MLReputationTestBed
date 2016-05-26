@@ -1,5 +1,6 @@
 package jaspr.utilities
 
+import scala.collection.immutable.{TreeMap, SortedMap}
 import scala.collection.mutable
 import scala.language.implicitConversions
 /**
@@ -18,6 +19,9 @@ object NamedEntity {
 
   implicit def toMap[T <: NamedEntity](nes: List[T]): Map[String,T] = {
     nes.map(x => x.name -> x).toMap
+  }
+  implicit def toSortedMap[T <: NamedEntity](nes: List[T]): SortedMap[String,T] = {
+    TreeMap[String,T](nes.map(x => x.name -> x):_*)
   }
 }
 

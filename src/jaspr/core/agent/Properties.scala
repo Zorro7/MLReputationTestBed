@@ -4,13 +4,15 @@ import java.text.DecimalFormat
 
 import jaspr.utilities.NamedEntity
 
+import scala.collection.immutable.{SortedMap, TreeMap}
+
 /**
  * Created by phil on 15/03/16.
  */
 
 trait Properties {
 
-  def properties: Map[String,Property]
+  def properties: SortedMap[String,Property]
 
   def property(key: String): Property = {
     properties.get(key).get
@@ -21,7 +23,7 @@ trait Properties {
 
 trait AdvertProperties extends Properties {
 
-  def advertProperties: Map[String,Property]
+  def advertProperties: SortedMap[String,Property]
 
   def advert(key: String): Property = {
     advertProperties.get(key).get

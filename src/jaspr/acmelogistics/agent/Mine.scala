@@ -6,6 +6,8 @@ import jaspr.core.agent.{Property, Provider}
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{Payload, ServiceRequest, Service}
 
+import scala.collection.immutable.SortedMap
+
 /**
  * Created by phil on 17/03/16.
  */
@@ -30,8 +32,8 @@ class Mine(val simulation: ACMESimulation) extends Provider {
 
   override def utility: Double = ???
 
-  override val properties: Map[String, Property] = simulation.config.properties(this)
-  override val advertProperties: Map[String, Property] = simulation.config.adverts(this)
+  override val properties: SortedMap[String, Property] = simulation.config.properties(this)
+  override val advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = provenance.map(_.asInstanceOf[T])
 

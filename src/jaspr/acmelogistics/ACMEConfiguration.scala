@@ -21,6 +21,7 @@ import weka.classifiers.functions.LinearRegression
 import weka.classifiers.rules.OneR
 import weka.classifiers.trees.J48
 
+import scala.collection.immutable.{TreeMap, SortedMap}
 import scala.util.Try
 import scala.collection.JavaConversions._
 
@@ -166,7 +167,7 @@ class ACMEConfiguration(override val strategy: Strategy,
     )
   }
 
-  def properties(agent: Agent): Map[String,Property] = {
+  def properties(agent: Agent): SortedMap[String,Property] = {
     agent match {
       case _: Shipper =>
         Property("Timeliness", Chooser.randomDouble(-1,1)) ::
@@ -180,11 +181,11 @@ class ACMEConfiguration(override val strategy: Strategy,
         Property("Rate", Chooser.randomDouble(-1,1)) ::
         Property("OreWetness",  Chooser.randomDouble(0,1)) ::
         Property("OrePurity", Chooser.randomDouble(0,1)) :: Nil
-      case _ => Map[String,Property]()
+      case _ => TreeMap[String,Property]()
     }
   }
 
-  def adverts(agent: Agent with Properties): Map[String,Property] = {
+  def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
     if (adverts) agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
     else new Property("agentid", agent.id) :: Nil
     //    rawProperties.mapValues(x => x + Chooser.randomDouble(-1.5,1.5)) //todo make this more something.

@@ -9,6 +9,7 @@ import jaspr.simplesim.service.SimpleService
 import jaspr.strategy.NoStrategy
 import jaspr.utilities.Chooser
 
+import scala.collection.immutable.{TreeMap, SortedMap}
 import scala.collection.mutable
 
 /**
@@ -59,11 +60,11 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
     service.duration += properties.values.map(_.intValue).sum
   }
 
-  override val properties: Map[String,Property] =
+  override val properties: SortedMap[String,Property] =
     Property("Timeliness", Chooser.randomInt(0,2)) ::
     Nil
 
-  override def advertProperties: Map[String,Property] = Map()
+  override def advertProperties: SortedMap[String,Property] = TreeMap()
 
   override val preferences = ???
 

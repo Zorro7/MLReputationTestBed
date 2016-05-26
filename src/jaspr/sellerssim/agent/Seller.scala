@@ -7,6 +7,8 @@ import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.{ProductPayload, SellerService}
 import jaspr.utilities.Chooser
 
+import scala.collection.immutable.SortedMap
+
 /**
  * Created by phil on 21/03/16.
  */
@@ -37,8 +39,8 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 
-  override val properties: Map[String, Property] = simulation.config.properties(this)
-  override val advertProperties: Map[String, Property] = simulation.config.adverts(this)
+  override val properties: SortedMap[String, Property] = simulation.config.properties(this)
+  override val advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
   val capabilities: Map[String,ProductPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
 
   override def capableOf(payload: Payload, duration: Int): Boolean = {

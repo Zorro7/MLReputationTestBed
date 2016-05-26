@@ -20,6 +20,8 @@ import weka.classifiers.functions.{MultilayerPerceptron, SMOreg, SMO}
 import weka.classifiers.rules.OneR
 import weka.classifiers.trees.{J48, RandomForest}
 
+import scala.collection.immutable.SortedMap
+
 /**
  * Created by phil on 21/03/16.
  */
@@ -81,14 +83,14 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new ClientContext(client, round, cap, network.markets.head)
   }
 
-  def properties(agent: Agent): Map[String,Property] = {
+  def properties(agent: Agent): SortedMap[String,Property] = {
 //    Map()
     new Property("Quality", Chooser.randomDouble(-1,1)) ::
     new Property("Timeliness", Chooser.randomDouble(-1,1)) ::
     Nil
   }
 
-  def adverts(agent: Agent with Properties): Map[String,Property] = {
+  def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
 //        agent.properties.mapValues(x => Property(x.name, x.doubleValue + Chooser.randomDouble(-1.5,1.5))) //todo make this more something.
 //    agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
         new Property("agentid", agent.id) :: Nil

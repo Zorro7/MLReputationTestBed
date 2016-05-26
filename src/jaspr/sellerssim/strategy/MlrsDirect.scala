@@ -5,7 +5,7 @@ import jaspr.core.agent.Event
 import jaspr.core.provenance.{ServiceRecord, Record}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{StrategyInit, Exploration}
-import jaspr.sellerssim.service.BuyerRecord
+import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
 import jaspr.strategy.{Rating, CompositionStrategy}
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.functions.LinearRegression
@@ -64,8 +64,9 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
 
   def makeDirectRow(record: BuyerRecord): Seq[Any] = {
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
-      record.payload.name :: // service identifier (client context)
+      record.service.request.payload.name :: // service identifier (client context)
       record.event.name :: // mitigation (provider context)
+      record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       record.provider.advertProperties.values.map(_.value).toList // provider features
   }
 
@@ -73,6 +74,7 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
     0 ::
       request.payload.name ::
       event ::
+      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       request.provider.advertProperties.values.map(_.value).toList
   }
 }
