@@ -63,16 +63,6 @@ case class Property(override val name: String, value: AnyVal) extends NamedEntit
   }
 
   def intValue: Int = {
-    value match {
-      case x: Int => x.asInstanceOf[Int]
-      case x: Boolean => if (x.asInstanceOf[Boolean]) 1 else 0
-      case x: Double => x.asInstanceOf[Double].toInt
-      case x: Long => x.asInstanceOf[Long].toInt
-      case x: Float => x.asInstanceOf[Float].toInt
-      case x: Byte => x.asInstanceOf[Byte]
-      case x: Short => x.asInstanceOf[Short]
-      case x: Char => x.asInstanceOf[Char]
-
-    }
+    doubleValue.toInt
   }
 }
