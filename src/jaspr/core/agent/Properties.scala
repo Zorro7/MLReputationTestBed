@@ -37,16 +37,7 @@ case class Property(override val name: String, value: AnyVal) extends NamedEntit
 //  def longValue: Long = value.asInstanceOf[Long]
 //  def charValue: Char = value.asInstanceOf[Char]
   def booleanValue: Boolean = {
-    value match {
-      case x: Boolean => x.asInstanceOf[Boolean]
-      case x: Double => x.asInstanceOf[Double] > 0d
-      case x: Int => x.asInstanceOf[Int] > 0
-      case x: Long => x.asInstanceOf[Long] > 0
-      case x: Float => x.asInstanceOf[Float] > 0f
-      case x: Byte => x.asInstanceOf[Byte] > 0
-      case x: Short => x.asInstanceOf[Short] > 0
-      case x: Char => x.asInstanceOf[Char] > 0
-    }
+    doubleValue > 0
   }
 
   def doubleValue: Double = {
