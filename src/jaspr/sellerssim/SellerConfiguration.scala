@@ -29,19 +29,19 @@ import scala.collection.immutable.SortedMap
 class SellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
-  override val _seed = 1100
+//  override val _seed = 1100
 
   override lazy val configs: Seq[Configuration] =
     new SellerConfiguration(new NoStrategy) ::
-      new SellerConfiguration(new Fire) ::
-      new SellerConfiguration(new MLFire) ::
-      new SellerConfiguration(new BetaReputation)::
+//      new SellerConfiguration(new Fire) ::
+//      new SellerConfiguration(new MLFire) ::
+//      new SellerConfiguration(new BetaReputation)::
 //      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade(2)) ::
 //      new SellerConfiguration(new Blade(10)) ::
 //      new SellerConfiguration(new Habit(2)) ::
 //        new SellerConfiguration(new Habit(10)) ::
-        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
+//        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
   Nil
 }
 
@@ -50,11 +50,11 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 10
-  override val numRounds: Int = 200
+  override val numSimulations: Int = 100
+  override val numRounds: Int = 250
 
-  val clientIncolvementLikelihood = 1
-  val numClients: Int = 1
+  val clientIncolvementLikelihood = 0.1
+  val numClients: Int = 25
   val numProviders: Int = 50
 
   val memoryLimit: Int = 500
@@ -67,8 +67,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     var caps = Chooser.sample(simcapabilities, 2)
     caps = caps.map(_.copy(
       quality = provider.properties.map(x =>
-        x._1 -> Chooser.bound(x._2.doubleValue + Chooser.randomDouble(-1,1), -1, 1)
-//        x._1 -> x._2.doubleValue
+//        x._1 -> Chooser.bound(x._2.doubleValue + Chooser.randomDouble(-1,1), -1, 1)
+        x._1 -> x._2.doubleValue
       )
     ))
     caps
@@ -85,8 +85,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 
   def properties(agent: Agent): SortedMap[String,Property] = {
 //    Map()
-    new Property("Quality", Chooser.randomDouble(-1,1)) ::
-    new Property("Timeliness", Chooser.randomDouble(-1,1)) ::
+    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
+//    new Property("Timeliness", Chooser.randomDouble(-1,1)) ::
     Nil
   }
 

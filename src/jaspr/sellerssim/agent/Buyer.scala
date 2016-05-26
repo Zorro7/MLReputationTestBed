@@ -36,19 +36,16 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
     ))
   }
 
-  def sigmoid(x: Double) = 1d/(1d+Math.exp(Math.abs(-x)))
-
   def rateService(service: Service): Map[String,Double] = {
     val received = service.payload.asInstanceOf[ProductPayload].quality
     val wanted = service.request.payload.asInstanceOf[ProductPayload].quality
     val x = received.map(x => x._1 -> {
       val req = wanted.getOrElse(x._1, 0d)
 //      sigmoid(1d / Math.abs((x._2-req)+1d))
-      1d - Math.abs(x._2 - req)
+      val r = 1d - Math.abs(x._2 - req)
+//      println(x._2, req, r)
+      r
     })
-    println(wanted)
-    println(received)
-    println("\t"+x)
     x
   }
 

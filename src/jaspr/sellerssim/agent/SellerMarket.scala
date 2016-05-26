@@ -16,6 +16,8 @@ class SellerMarket(override val simulation: Simulation) extends Market {
 //    val delivered = deliveredProduct.quality.values.sum / deliveredProduct.quality.size.toDouble
 //    val requested = requestedProduct.quality.values.sum / requestedProduct.quality.size.toDouble
 //    delivered / (delivered + requested)
-    service.request.client.asInstanceOf[Buyer].rateService(service).values.sum / service.payload.asInstanceOf[ProductPayload].quality.size.toDouble
+    val u = service.request.client.asInstanceOf[Buyer].rateService(service).values.sum / service.payload.asInstanceOf[ProductPayload].quality.size.toDouble
+    println(u)
+    u
   }
 }
