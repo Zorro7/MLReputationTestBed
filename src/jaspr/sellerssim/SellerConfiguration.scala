@@ -29,7 +29,7 @@ import scala.collection.immutable.SortedMap
 class SellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
-  override val _seed = 100
+  override val _seed = 1100
 
   override lazy val configs: Seq[Configuration] =
     new SellerConfiguration(new NoStrategy) ::
@@ -51,7 +51,7 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
   override val numSimulations: Int = 10
-  override val numRounds: Int = 500
+  override val numRounds: Int = 200
 
   val clientIncolvementLikelihood = 1
   val numClients: Int = 1

@@ -11,10 +11,11 @@ import jaspr.sellerssim.service.ProductPayload
 class SellerMarket(override val simulation: Simulation) extends Market {
 
   override def deliver(service: Service): Double = {
-    val deliveredProduct = service.payload.asInstanceOf[ProductPayload]
-    val requestedProduct = service.request.payload.asInstanceOf[ProductPayload]
-    val delivered = deliveredProduct.quality.values.sum / deliveredProduct.quality.size.toDouble
-    val requested = requestedProduct.quality.values.sum / requestedProduct.quality.size.toDouble
-    delivered - requested
+//    val deliveredProduct = service.payload.asInstanceOf[ProductPayload]
+//    val requestedProduct = service.request.payload.asInstanceOf[ProductPayload]
+//    val delivered = deliveredProduct.quality.values.sum / deliveredProduct.quality.size.toDouble
+//    val requested = requestedProduct.quality.values.sum / requestedProduct.quality.size.toDouble
+//    delivered / (delivered + requested)
+    service.request.client.asInstanceOf[Buyer].rateService(service).values.sum / service.payload.asInstanceOf[ProductPayload].quality.size.toDouble
   }
 }
