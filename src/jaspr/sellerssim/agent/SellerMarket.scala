@@ -13,8 +13,6 @@ class SellerMarket(override val simulation: Simulation) extends Market {
   override def deliver(service: Service): Double = {
     val deliveredProduct = service.payload.asInstanceOf[ProductPayload]
     val requestedProduct = service.request.payload.asInstanceOf[ProductPayload]
-    println(deliveredProduct)
-    println("\t", requestedProduct)
     val delivered = deliveredProduct.quality.values.sum / deliveredProduct.quality.size.toDouble
     val requested = requestedProduct.quality.values.sum / requestedProduct.quality.size.toDouble
     delivered - requested

@@ -47,7 +47,6 @@ class MLFire extends CompositionStrategy with Exploration with MlrsCore {
       if (witness.isEmpty) null
       else makeMlrsModel(witness, baseModel, makeTrainRows, makeTrainWeight(context, _:ServiceRecord))
 
-    if (directModel != null) println(directModel.model)
     new MLFireInit(context, directModel, witnessModel)
   }
 
