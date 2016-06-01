@@ -29,11 +29,11 @@ import scala.collection.immutable.SortedMap
 class SellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
-//  override val _seed = 1100
+  override val _seed = 1100
 
   override lazy val configs: Seq[Configuration] =
     new SellerConfiguration(new NoStrategy) ::
-//      new SellerConfiguration(new Fire) ::
+      new SellerConfiguration(new Fire) ::
 //      new SellerConfiguration(new MLFire) ::
 //      new SellerConfiguration(new BetaReputation)::
 //      new SellerConfiguration(new Travos) ::
@@ -50,17 +50,18 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new SellerSimulation(this)
   }
 
-  override val numSimulations: Int = 100
-  override val numRounds: Int = 250
+  override val numSimulations: Int = 10
+  override val numRounds: Int = 100
+  val baseUtility = 2d/3d//2d/3d
 
-  val clientIncolvementLikelihood = 0.1
-  val numClients: Int = 25
-  val numProviders: Int = 50
+  val clientIncolvementLikelihood = 1
+  val numClients: Int = 1
+  val numProviders: Int = 10
 
   val memoryLimit: Int = 500
 
   val freakEventLikelihood = 0.0
-  def freakEventEffects = -1d
+  def freakEventEffects = 0
 
   var simcapabilities = for (i <- 1 to 10) yield new ProductPayload(i.toString)
   def capabilities(provider: Provider): Seq[ProductPayload] = {
@@ -86,7 +87,7 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   def properties(agent: Agent): SortedMap[String,Property] = {
 //    Map()
     new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
-//    new Property("Timeliness", Chooser.randomDouble(-1,1)) ::
+    new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
     Nil
   }
 

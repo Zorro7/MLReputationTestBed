@@ -17,7 +17,8 @@ class Fire extends RatingStrategy with CompositionStrategy with Exploration {
   val RecencyScalingFactor = -RecencyScalingPeriodToHalf / log(0.5)
 
   def weightRating(ratingRound: Int, currentRound: Int): Double = {
-    pow(E, -((currentRound - ratingRound) / RecencyScalingFactor))
+//    pow(E, -((currentRound - ratingRound) / RecencyScalingFactor))
+    1d
   }
 
 //  override def initStrategy(network: Network, context: ClientContext) = {
@@ -28,7 +29,7 @@ class Fire extends RatingStrategy with CompositionStrategy with Exploration {
   def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[RatingStrategyInit]
     val direct = init.directRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
-    val witness = init.witnessRecords.filter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
+    val witness = init.witnessRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
     val result = direct.sum / (direct.size+1) + witness.sum / (witness.size+1)
     new TrustAssessment(baseInit.context, request, result)
   }

@@ -41,9 +41,8 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
     val wanted = service.request.payload.asInstanceOf[ProductPayload].quality
     val x = received.map(x => x._1 -> {
       val req = wanted.getOrElse(x._1, 0d)
-//      sigmoid(1d / Math.abs((x._2-req)+1d))
-      val r = 1d - Math.abs(x._2 - req)
-//      println(x._2, req, r)
+      val r = simulation.config.baseUtility - Math.abs(x._2 - req)
+      println(x._1, r, simulation.config.baseUtility,Math.abs(x._2 - req),  x._2, req)
       r
     })
     x
