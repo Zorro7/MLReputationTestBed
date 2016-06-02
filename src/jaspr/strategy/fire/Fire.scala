@@ -7,8 +7,9 @@ import jaspr.strategy.{CompositionStrategy, RatingStrategy, RatingStrategyInit}
 import scala.math._
 
 
-class Fire extends RatingStrategy with CompositionStrategy with Exploration {
+class Fire(val witnessWeight: Double = 0.5) extends RatingStrategy with CompositionStrategy with Exploration {
 
+  override val name = this.getClass.getSimpleName+"-"+witnessWeight
   override val explorationProbability: Double = 0.1
 
   // In recency scaling, the number of rounds before an interaction rating should be half that of the current round
@@ -17,8 +18,7 @@ class Fire extends RatingStrategy with CompositionStrategy with Exploration {
   val RecencyScalingFactor = -RecencyScalingPeriodToHalf / log(0.5)
 
   def weightRating(ratingRound: Int, currentRound: Int): Double = {
-//    pow(E, -((currentRound - ratingRound) / RecencyScalingFactor))
-    1d
+    pow(E, -((currentRound - ratingRound) / RecencyScalingFactor))
   }
 
 //  override def initStrategy(network: Network, context: ClientContext) = {
@@ -30,7 +30,9 @@ class Fire extends RatingStrategy with CompositionStrategy with Exploration {
     val init = baseInit.asInstanceOf[RatingStrategyInit]
     val direct = init.directRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
     val witness = init.witnessRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
-    val result = direct.sum / (direct.size+1) + witness.sum / (witness.size+1)
+    val result =
+      (1-witnessWeight) * direct.sum / (direct.size+1) +
+      witnessWeight * witness.sum / (witness.size+1)
     new TrustAssessment(baseInit.context, request, result)
   }
 }

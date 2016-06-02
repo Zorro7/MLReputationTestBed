@@ -14,9 +14,10 @@ import scala.math._
 /**
  * Created by phil on 30/03/16.
  */
-class MLFire extends CompositionStrategy with Exploration with MlrsCore {
+class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with Exploration with MlrsCore {
 
-  override val numBins: Int = 5
+  override val name = this.getClass.getSimpleName+"-"+witnessWeight
+  override val numBins: Int = 10
 
   val baseModel = new OneR
 
@@ -26,10 +27,6 @@ class MLFire extends CompositionStrategy with Exploration with MlrsCore {
   val RecencyScalingPeriodToHalf = 5
   // FIRE's recency scaling factor for interaction ratings (lambda)
   val RecencyScalingFactor = -RecencyScalingPeriodToHalf / log(0.5)
-
-  def weightRating(ratingRound: Int, currentRound: Int): Double = {
-    pow(E, -((currentRound - ratingRound) / RecencyScalingFactor))
-  }
 
   class MLFireInit(context: ClientContext,
                    val directModel: MlrsModel,
@@ -68,7 +65,7 @@ class MLFire extends CompositionStrategy with Exploration with MlrsCore {
         undiscretize(new Dirichlet(x).expval())
       } else 0d
 
-    new TrustAssessment(baseInit.context, request, direct + witness)
+    new TrustAssessment(baseInit.context, request, (1-witnessWeight)*direct + witnessWeight*witness)
   }
 
   def makeTrainWeight(context: ClientContext, record: ServiceRecord): Double = {

@@ -20,7 +20,7 @@ import weka.classifiers.functions.{MultilayerPerceptron, SMOreg, SMO}
 import weka.classifiers.rules.OneR
 import weka.classifiers.trees.{J48, RandomForest}
 
-import scala.collection.immutable.SortedMap
+import scala.collection.immutable.{TreeMap, SortedMap}
 
 /**
  * Created by phil on 21/03/16.
@@ -29,14 +29,16 @@ import scala.collection.immutable.SortedMap
 class SellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
-  override val _seed = 1100
+//  override val _seed = 1100
 
   override lazy val configs: Seq[Configuration] =
     new SellerConfiguration(new NoStrategy) ::
       new SellerConfiguration(new Fire) ::
-//      new SellerConfiguration(new MLFire) ::
-//      new SellerConfiguration(new BetaReputation)::
-//      new SellerConfiguration(new Travos) ::
+      new SellerConfiguration(new Fire(0)) ::
+      new SellerConfiguration(new MLFire) ::
+      new SellerConfiguration(new MLFire(0)) ::
+      new SellerConfiguration(new BetaReputation)::
+      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade(2)) ::
 //      new SellerConfiguration(new Blade(10)) ::
 //      new SellerConfiguration(new Habit(2)) ::
@@ -51,11 +53,11 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
   override val numSimulations: Int = 10
-  override val numRounds: Int = 100
-  val baseUtility = 2d/3d//2d/3d
+  override val numRounds: Int = 500
+  val baseUtility = 2d/3d
 
-  val clientIncolvementLikelihood = 1
-  val numClients: Int = 1
+  val clientIncolvementLikelihood = 0.25
+  val numClients: Int = 10
   val numProviders: Int = 10
 
   val memoryLimit: Int = 500
@@ -85,10 +87,17 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
   def properties(agent: Agent): SortedMap[String,Property] = {
-//    Map()
+//    TreeMap()
     new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
     new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
     Nil
+  }
+
+  def preferences(agent: Client): SortedMap[String,Property] = {
+//    TreeMap()
+    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
+      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
+      Nil
   }
 
   def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
