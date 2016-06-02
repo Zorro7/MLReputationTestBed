@@ -42,7 +42,6 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
     val x = received.map(x => x._1 -> {
       val req = wanted.getOrElse(x._1, 0d)
       val r = simulation.config.baseUtility - Math.abs(x._2 - req)
-      println(x._1, r, simulation.config.baseUtility,Math.abs(x._2 - req),  x._2, req)
       r
     })
     x
@@ -79,5 +78,5 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 
-  override val preferences = simulation.config.properties(this)
+  override val preferences = simulation.config.preferences(this)
 }

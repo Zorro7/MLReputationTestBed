@@ -18,10 +18,7 @@ case class BuyerRecord(override val service: Service,
                   ratings: Map[String,Double]
                    ) extends Record with ServiceRecord with TrustAssessmentRecord with RatingRecord {
 
-  override def rating: Double = {
-    println(ratings, ratings.values.sum / ratings.size.toDouble)
-    ratings.values.sum / ratings.size.toDouble
-  }
+  override def rating: Double = ratings.values.sum / ratings.size.toDouble
 
   override def toString: String = List(
     client, provider, round, payload, event, ratings, rating
