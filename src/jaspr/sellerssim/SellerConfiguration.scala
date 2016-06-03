@@ -117,13 +117,5 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
 
-  def changeRatings(agent: Witness): Map[String,Double] => Map[String,Double] = {
-    def honest(ratings: Map[String,Double]) = ratings
-    def invert(ratings: Map[String,Double]) = ratings.mapValues(-_)
-    def random(ratings: Map[String,Double]) = ratings.mapValues(x => Chooser.randomDouble(-1,1))
-    def positive(ratings: Map[String,Double]) = ratings.mapValues(x => (x + 1) / 2) // normalizes the rating to between 0 and 1
-    def negative(ratings: Map[String,Double]) = ratings.mapValues(x => (x - 1) / 2) // normalizes the rating to between 0 and -1
-//    choose(honest(_), invert(_), random(_), positive(_), negative(_))
-    honest
-  }
+
 }
