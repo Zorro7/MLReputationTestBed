@@ -1,6 +1,6 @@
 package jaspr.sellerssim.agent
 
-import jaspr.core.agent.Client
+import jaspr.core.agent.{Provider, Client}
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.BuyerRecord
@@ -12,7 +12,7 @@ import jaspr.utilities.Chooser
 trait Witness extends Provenance {
 
   val simulation: SellerSimulation
-  def witnessModel: WitnessModel = simulation.config.witnessModel(this)
+  def witnessModel: WitnessModel = simulation.config.witnessModel(this, simulation.network)
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {
     if (agent == this) {
@@ -67,17 +67,20 @@ class RandomWitnessModel extends WitnessModel {
   def omitRecord(record: BuyerRecord, agent: Provenance) = false
 }
 
-class PromotionWitnessModel(val agentsToPromote: Seq[Seller]) extends WitnessModel {
+class PromotionWitnessModel(val agentsToPromote: Seq[Provider]) extends WitnessModel {
   def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
-    if (agentsToPromote.contains(agent)) ratings.mapValues(x => (x+1)/2)
+    if (agentsToPromote.contains(agent)) {
+      println("PRIMOTING")
+      ratings.mapValues(x => 1d)
+    }
     else ratings
   }
   def omitRecord(record: BuyerRecord, agent: Provenance) = false
 }
 
-class SlanderWitnessModel(val agentsToSlander: Seq[Seller]) extends WitnessModel {
+class SlanderWitnessModel(val agentsToSlander: Seq[Provider]) extends WitnessModel {
   def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
-    if (agentsToSlander.contains(agent)) ratings.mapValues(x => (x-1)/2)
+    if (agentsToSlander.contains(agent)) ratings.mapValues(x => -1d)
     else ratings
   }
   def omitRecord(record: BuyerRecord, agent: Provenance) = false

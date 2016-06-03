@@ -40,8 +40,11 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Witne
     val received = service.payload.asInstanceOf[ProductPayload].quality
     val wanted = service.request.payload.asInstanceOf[ProductPayload].quality
     val x = received.map(x => x._1 -> {
-      val req = wanted.getOrElse(x._1, 0d)
-      val r = simulation.config.baseUtility - Math.abs(x._2 - req)
+      val r = wanted.get(x._1) match {
+        case Some(req) => simulation.config.baseUtility - Math.abs(x._2 - req)
+        case None => simulation.config.baseUtility + x._2
+      }
+//      println(simulation.config.baseUtility, x._2,  r)
       r
     })
     x

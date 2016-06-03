@@ -4,7 +4,7 @@ import jaspr.core.agent._
 import jaspr.core.service.{Payload, ClientContext}
 import jaspr.core.{MultiConfiguration, Network, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
-import jaspr.sellerssim.agent.{HonestWitnessModel, Witness, Buyer}
+import jaspr.sellerssim.agent._
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
 import jaspr.strategy.NoStrategy
@@ -35,10 +35,10 @@ class SellerMultiConfiguration extends MultiConfiguration {
     new SellerConfiguration(new NoStrategy) ::
       new SellerConfiguration(new Fire) ::
       new SellerConfiguration(new Fire(0)) ::
-      new SellerConfiguration(new MLFire) ::
-      new SellerConfiguration(new MLFire(0)) ::
-      new SellerConfiguration(new BetaReputation)::
-      new SellerConfiguration(new Travos) ::
+//      new SellerConfiguration(new MLFire) ::
+//      new SellerConfiguration(new MLFire(0)) ::
+//      new SellerConfiguration(new BetaReputation)::
+//      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade(2)) ::
 //      new SellerConfiguration(new Blade(10)) ::
 //      new SellerConfiguration(new Habit(2)) ::
@@ -54,11 +54,11 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 
   override val numSimulations: Int = 10
   override val numRounds: Int = 500
-  val baseUtility = 2d/3d
+  val baseUtility = 0//2d/3d
 
-  val clientIncolvementLikelihood = 0.25
+  val clientIncolvementLikelihood = 0.1
   val numClients: Int = 10
-  val numProviders: Int = 10
+  val numProviders: Int = 50
 
   // Records older than this number of rounds are removed from provenance stores
   val memoryLimit: Int = 500
@@ -110,14 +110,27 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Buyer): SortedMap[String,Property] = {
-//    TreeMap()
-    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
-      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
-      Nil
+    TreeMap()
+//    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
+//      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
+//      Nil
   }
 
-  def witnessModel(witness: Witness) = {
-    new HonestWitnessModel
+  def witnessModel(witness: Witness, network: Network): WitnessModel = {
+    Chooser.ifHappens[WitnessModel](0)(
+      new HonestWitnessModel
+    )(
+      Chooser.choose(
+//        new PessimisticWitnessModel ::
+//          new OptimisticWitnessModel ::
+//          new NegationWitnessModel ::
+//          new RandomWitnessModel ::
+          new PromotionWitnessModel(Chooser.sample(network.providers, numProviders/5)) ::
+          new SlanderWitnessModel(Chooser.sample(network.providers, numProviders/5)) ::
+          Nil
+      )
+    )
+
   }
 
 }
