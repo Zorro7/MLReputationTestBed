@@ -4,7 +4,7 @@ import jaspr.core.agent._
 import jaspr.core.service.{Payload, ClientContext}
 import jaspr.core.{MultiConfiguration, Network, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
-import jaspr.sellerssim.agent.Buyer
+import jaspr.sellerssim.agent.{Witness, Buyer}
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
 import jaspr.strategy.NoStrategy
@@ -109,15 +109,15 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
-  def preferences(agent: Client): SortedMap[String,Property] = {
+  def preferences(agent: Buyer): SortedMap[String,Property] = {
 //    TreeMap()
     new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
       new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
       Nil
   }
 
-  
-  def changeRatings(agent: Buyer): Map[String,Double] => Map[String,Double] = {
+
+  def changeRatings(agent: Witness): Map[String,Double] => Map[String,Double] = {
     def honest(ratings: Map[String,Double]) = ratings
     def invert(ratings: Map[String,Double]) = ratings.mapValues(-_)
     def random(ratings: Map[String,Double]) = ratings.mapValues(x => Chooser.randomDouble(-1,1))

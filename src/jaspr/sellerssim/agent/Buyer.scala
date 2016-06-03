@@ -9,7 +9,7 @@ import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
 /**
  * Created by phil on 21/03/16.
  */
-class Buyer(override val simulation: SellerSimulation) extends Client {
+class Buyer(override val simulation: SellerSimulation) extends Client with Witness {
 
   override def generateContext(): ClientContext = {
     simulation.config.clientContext(simulation.network, this, simulation.round)
@@ -59,24 +59,8 @@ class Buyer(override val simulation: SellerSimulation) extends Client {
   private var _utility: Double = 0d
   override def utility: Double = _utility
 
-  def changeRatings: Map[String,Double] => Map[String,Double] = simulation.config.changeRatings(this)
-
-  override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {
-    def omitRecord(record: BuyerRecord, agent: Provenance): Boolean = {
-      false
-    }
-    if (agent == this) {
-      provenance.map(_.asInstanceOf[T])
-    } else {
-      provenance.withFilter(
-        x => !omitRecord(x.asInstanceOf[BuyerRecord], agent)
-      ).map(x =>
-        x.asInstanceOf[BuyerRecord].copy(ratings = changeRatings(x.asInstanceOf[BuyerRecord].ratings)).asInstanceOf[T]
-      )
-    }
-  }
-
   override val memoryLimit: Int = simulation.config.memoryLimit
 
   override val preferences = simulation.config.preferences(this)
 }
+
