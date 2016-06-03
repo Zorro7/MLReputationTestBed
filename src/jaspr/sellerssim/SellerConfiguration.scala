@@ -4,7 +4,7 @@ import jaspr.core.agent._
 import jaspr.core.service.{Payload, ClientContext}
 import jaspr.core.{MultiConfiguration, Network, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
-import jaspr.sellerssim.agent.{Witness, Buyer}
+import jaspr.sellerssim.agent.{HonestWitnessModel, Witness, Buyer}
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
 import jaspr.strategy.NoStrategy
@@ -116,6 +116,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
       Nil
   }
 
-
+  def witnessModel(witness: Witness) = {
+    new HonestWitnessModel
+  }
 
 }

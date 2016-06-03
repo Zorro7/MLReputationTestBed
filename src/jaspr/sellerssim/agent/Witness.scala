@@ -11,25 +11,30 @@ import jaspr.utilities.Chooser
  */
 trait Witness extends Provenance {
 
-  def changeRatings(agent: Provenance, ratings: Map[String,Double]): Map[String,Double] = {
-    ratings
-  }
-
-  def omitRecord(record: BuyerRecord, agent: Provenance): Boolean = {
-    false
-  }
+  val simulation: SellerSimulation
+  def witnessModel: WitnessModel = simulation.config.witnessModel(this)
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {
     if (agent == this) {
       provenance.map(_.asInstanceOf[T])
     } else {
       provenance.withFilter(
-        x => !omitRecord(x.asInstanceOf[BuyerRecord], agent)
+        x => !witnessModel.omitRecord(x.asInstanceOf[BuyerRecord], agent)
       ).map(x =>
         x.asInstanceOf[BuyerRecord].copy(
-          ratings = changeRatings(agent, x.asInstanceOf[BuyerRecord].ratings)
+          ratings = witnessModel.changeRatings(agent, x.asInstanceOf[BuyerRecord].ratings)
         ).asInstanceOf[T]
       )
     }
   }
+}
+
+trait WitnessModel {
+  def changeRatings(agent: Provenance, ratings: Map[String,Double]): Map[String,Double]
+  def omitRecord(record: BuyerRecord, agent: Provenance): Boolean
+}
+
+class HonestWitnessModel extends WitnessModel {
+  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = ratings
+  def omitRecord(record: BuyerRecord, agent: Provenance) = false
 }
