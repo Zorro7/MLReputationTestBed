@@ -19,69 +19,80 @@ trait Witness extends Provenance {
       provenance.map(_.asInstanceOf[T])
     } else {
       provenance.withFilter(
-        x => !witnessModel.omitRecord(x.asInstanceOf[BuyerRecord], agent)
-      ).map(x =>
-        x.asInstanceOf[BuyerRecord].copy(
-          ratings = witnessModel.changeRatings(agent, x.asInstanceOf[BuyerRecord].ratings)
-        ).asInstanceOf[T]
+        x => !witnessModel.omitRecord(x, agent)
+      ).map(
+        x => witnessModel.changeRecord(x, agent).asInstanceOf[T]
       )
     }
   }
 }
 
 trait WitnessModel {
-  def changeRatings(agent: Provenance, ratings: Map[String,Double]): Map[String,Double]
-  def omitRecord(record: BuyerRecord, agent: Provenance): Boolean
+  def changeRecord(record: Record, agent: Provenance): Record
+  def omitRecord(record: Record, agent: Provenance): Boolean
 }
 
 class HonestWitnessModel extends WitnessModel {
-  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = ratings
-  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+  def changeRecord(record: Record, agent: Provenance) = record
+  def omitRecord(record: Record, agent: Provenance) = false
 }
 
 class PessimisticWitnessModel extends WitnessModel {
-  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
-    ratings.mapValues(x => (x-1)/2)
+  def changeRecord(record: Record, agent: Provenance) = {
+    record.asInstanceOf[BuyerRecord].copy(
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x-1)/2)
+    )
   }
-  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+  def omitRecord(record: Record, agent: Provenance) = false
 }
 
 class OptimisticWitnessModel extends WitnessModel {
-  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
-    ratings.mapValues(x => (x+1)/2)
+  def changeRecord(record: Record, agent: Provenance) = {
+    record.asInstanceOf[BuyerRecord].copy(
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x-1)/2)
+    )
   }
-  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+  def omitRecord(record: Record, agent: Provenance) = false
 }
 
 class NegationWitnessModel extends WitnessModel {
-  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
-    ratings.mapValues(- _)
+  def changeRecord(record: Record, agent: Provenance) = {
+    record.asInstanceOf[BuyerRecord].copy(
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => -x)
+    )
   }
-  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+  def omitRecord(record: Record, agent: Provenance) = false
 }
 
 class RandomWitnessModel extends WitnessModel {
-  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
-    ratings.mapValues(x => Chooser.randomDouble(-1,1))
+  def changeRecord(record: Record, agent: Provenance) = {
+    record.asInstanceOf[BuyerRecord].copy(
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => Chooser.randomDouble(-1d,1d))
+    )
   }
-  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+  def omitRecord(record: Record, agent: Provenance) = false
 }
 
 class PromotionWitnessModel(val agentsToPromote: Seq[Provider]) extends WitnessModel {
-  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
-    if (agentsToPromote.contains(agent)) {
-      println("PRIMOTING")
-      ratings.mapValues(x => 1d)
+  def changeRecord(record: Record, agent: Provenance) = {
+    if (agentsToPromote.contains(record.asInstanceOf[BuyerRecord].provider)) {
+      record.asInstanceOf[BuyerRecord].copy(
+        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => 1d)
+      )
     }
-    else ratings
+    else record
   }
-  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+  def omitRecord(record: Record, agent: Provenance) = false
 }
 
-class SlanderWitnessModel(val agentsToSlander: Seq[Provider]) extends WitnessModel {
-  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
-    if (agentsToSlander.contains(agent)) ratings.mapValues(x => -1d)
-    else ratings
+class SlanderWitnessModel(val agentsToPromote: Seq[Provider]) extends WitnessModel {
+  def changeRecord(record: Record, agent: Provenance) = {
+    if (agentsToPromote.contains(record.asInstanceOf[BuyerRecord].provider)) {
+      record.asInstanceOf[BuyerRecord].copy(
+        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => -1d)
+      )
+    }
+    else record
   }
-  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+  def omitRecord(record: Record, agent: Provenance) = false
 }
