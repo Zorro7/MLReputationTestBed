@@ -38,3 +38,47 @@ class HonestWitnessModel extends WitnessModel {
   def changeRatings(agent: Provenance, ratings: Map[String,Double]) = ratings
   def omitRecord(record: BuyerRecord, agent: Provenance) = false
 }
+
+class PessimisticWitnessModel extends WitnessModel {
+  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
+    ratings.mapValues(x => (x-1)/2)
+  }
+  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+}
+
+class OptimisticWitnessModel extends WitnessModel {
+  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
+    ratings.mapValues(x => (x+1)/2)
+  }
+  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+}
+
+class NegationWitnessModel extends WitnessModel {
+  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
+    ratings.mapValues(- _)
+  }
+  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+}
+
+class RandomWitnessModel extends WitnessModel {
+  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
+    ratings.mapValues(x => Chooser.randomDouble(-1,1))
+  }
+  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+}
+
+class PromotionWitnessModel(val agentsToPromote: Seq[Seller]) extends WitnessModel {
+  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
+    if (agentsToPromote.contains(agent)) ratings.mapValues(x => (x+1)/2)
+    else ratings
+  }
+  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+}
+
+class SlanderWitnessModel(val agentsToSlander: Seq[Seller]) extends WitnessModel {
+  def changeRatings(agent: Provenance, ratings: Map[String,Double]) = {
+    if (agentsToSlander.contains(agent)) ratings.mapValues(x => (x-1)/2)
+    else ratings
+  }
+  def omitRecord(record: BuyerRecord, agent: Provenance) = false
+}
