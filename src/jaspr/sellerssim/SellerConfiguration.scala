@@ -60,12 +60,17 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   val numClients: Int = 10
   val numProviders: Int = 10
 
+  // Records older than this number of rounds are removed from provenance stores
   val memoryLimit: Int = 500
 
+  // Liklihood that a given service is affected by a freak event.
   val freakEventLikelihood = 0.0
+  // Change to service attributes if it is affected by a freak event ((x + simulation.config.freakEventEffects) / 2d).
   def freakEventEffects = 0
 
+  // Services that exist in the simulation
   var simcapabilities = for (i <- 1 to 10) yield new ProductPayload(i.toString)
+  // Services that a given provider is capable of providing - and with associated performance properties.
   def capabilities(provider: Provider): Seq[ProductPayload] = {
     var caps = Chooser.sample(simcapabilities, 2)
     caps = caps.map(_.copy(
@@ -77,6 +82,22 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     caps
   }
 
+  // Properties of a provider agent
+  def properties(agent: Agent): SortedMap[String,Property] = {
+    //    TreeMap()
+    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
+      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
+      Nil
+  }
+
+  def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
+    //        agent.properties.mapValues(x => Property(x.name, x.doubleValue + Chooser.randomDouble(-1.5,1.5))) //todo make this more something.
+    //    agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
+    new Property("agentid", agent.id) :: Nil
+  }
+
+
+  // Context generation with required ppayload
   def clientContext(network: Network, client: Client, round: Int) = {
     val cap = Chooser.choose(simcapabilities).copy(
       quality = client.preferences.map(x =>
@@ -86,13 +107,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
     new ClientContext(client, round, cap, network.markets.head)
   }
 
-  def properties(agent: Agent): SortedMap[String,Property] = {
-//    TreeMap()
-    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
-    new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
-    Nil
-  }
-
+  // Agent preferences - the qualities of a Payload that they want to have.
+  // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Client): SortedMap[String,Property] = {
 //    TreeMap()
     new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
@@ -100,13 +116,7 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
       Nil
   }
 
-  def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
-//        agent.properties.mapValues(x => Property(x.name, x.doubleValue + Chooser.randomDouble(-1.5,1.5))) //todo make this more something.
-//    agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
-        new Property("agentid", agent.id) :: Nil
-  }
-
-
+  
   def changeRatings(agent: Buyer): Map[String,Double] => Map[String,Double] = {
     def honest(ratings: Map[String,Double]) = ratings
     def invert(ratings: Map[String,Double]) = ratings.mapValues(-_)
