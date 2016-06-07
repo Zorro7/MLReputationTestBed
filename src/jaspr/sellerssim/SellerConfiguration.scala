@@ -35,10 +35,10 @@ class SellerMultiConfiguration extends MultiConfiguration {
     new SellerConfiguration(new NoStrategy) ::
       new SellerConfiguration(new Fire) ::
       new SellerConfiguration(new Fire(0)) ::
-//      new SellerConfiguration(new MLFire) ::
-//      new SellerConfiguration(new MLFire(0)) ::
-//      new SellerConfiguration(new BetaReputation)::
-//      new SellerConfiguration(new Travos) ::
+      new SellerConfiguration(new MLFire) ::
+      new SellerConfiguration(new MLFire(0)) ::
+      new SellerConfiguration(new BetaReputation)::
+      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade(2)) ::
 //      new SellerConfiguration(new Blade(10)) ::
 //      new SellerConfiguration(new Habit(2)) ::
@@ -54,7 +54,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 
   override val numSimulations: Int = 10
   override val numRounds: Int = 500
-  val baseUtility = 0//2d/3d
+  // Basic utility gained in each interaction (0 if absolute service properties are used and 2/3 if preferences are used (Like this so random strategy has E[U]=0).
+  val baseUtility = if (preferences(null).isEmpty) 0d else 2d/3d
 
   val clientIncolvementLikelihood = 0.1
   val numClients: Int = 10
@@ -110,14 +111,14 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Buyer): SortedMap[String,Property] = {
-    TreeMap()
-//    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
-//      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
-//      Nil
+//    TreeMap()
+    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
+      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
+      Nil
   }
 
   def witnessModel(witness: Witness, network: Network): WitnessModel = {
-    Chooser.ifHappens[WitnessModel](0)(
+    Chooser.ifHappens[WitnessModel](1)(
       new HonestWitnessModel
     )(
       Chooser.choose(
@@ -125,8 +126,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 //          new OptimisticWitnessModel ::
 //          new NegationWitnessModel ::
 //          new RandomWitnessModel ::
-          new PromotionWitnessModel(Chooser.sample(network.providers, numProviders/5)) ::
-          new SlanderWitnessModel(Chooser.sample(network.providers, numProviders/5)) ::
+//          new PromotionWitnessModel(Chooser.sample(network.providers, numProviders/10)) ::
+//          new SlanderWitnessModel(Chooser.sample(network.providers, numProviders/10)) ::
           Nil
       )
     )

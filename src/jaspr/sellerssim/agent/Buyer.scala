@@ -44,7 +44,6 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Witne
         case Some(req) => simulation.config.baseUtility - Math.abs(x._2 - req)
         case None => simulation.config.baseUtility + x._2
       }
-//      println(simulation.config.baseUtility, x._2,  r)
       r
     })
     x
