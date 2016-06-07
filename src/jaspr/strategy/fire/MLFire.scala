@@ -40,7 +40,7 @@ class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with E
       else makeMlrsModel(direct, baseModel, makeTrainRows, makeTrainWeight(context, _:ServiceRecord))
 
     val witnessModel =
-      if (witnessWeight <= 0d) null
+      if (witnessWeight == 0d) null
       else {
         val witness = network.gatherProvenance(context.client)
         if (witness.isEmpty) null
