@@ -16,7 +16,7 @@ import weka.classifiers.functions._
  */
 class Mlrs(val baseLearner: Classifier, override val numBins: Int, val witnessWeight: Double = 0.5d) extends CompositionStrategy with Exploration with MlrsDirect with MlrsWitness {
 
-  override val name = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+"-"+numBins
+  override val name = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+"-"+numBins+"-"+witnessWeight
 
   override val explorationProbability: Double = 0.1
 
