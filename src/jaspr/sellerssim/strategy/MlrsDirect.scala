@@ -51,12 +51,10 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val directRecords = context.client.getProvenance[BuyerRecord](context.client)
 
-    val freakEventLikelihood = directRecords.groupBy(_.event.name).mapValues(_.size / directRecords.size.toDouble)
-
     if (directRecords.isEmpty) null
     else {
       val model = makeMlrsModel(directRecords, baseDirect, makeDirectRow)
-
+      val freakEventLikelihood = directRecords.groupBy(_.event.name).mapValues(_.size / directRecords.size.toDouble)
       new MlrsDirectInit(context, model.model, model.train, model.attVals, freakEventLikelihood)
     }
   }
@@ -70,10 +68,10 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
       record.provider.advertProperties.values.map(_.value).toList // provider features
   }
 
-  def makeDirectTestRow(init: StrategyInit, request: ServiceRequest, event: String): Seq[Any] = {
+  def makeDirectTestRow(init: StrategyInit, request: ServiceRequest, eventName: String): Seq[Any] = {
     0 ::
       request.payload.name ::
-      event ::
+      eventName ::
       request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       request.provider.advertProperties.values.map(_.value).toList
   }
