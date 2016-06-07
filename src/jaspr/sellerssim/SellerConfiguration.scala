@@ -31,6 +31,10 @@ class SellerMultiConfiguration extends MultiConfiguration {
 
 //  override val _seed = 1100
 
+  val bayes = new NaiveBayes
+//  bayes.setUseSupervisedDiscretization(true)
+  bayes.setUseKernelEstimator(true)
+
   override lazy val configs: Seq[Configuration] =
     new SellerConfiguration(new NoStrategy) ::
       new SellerConfiguration(new Fire) ::
@@ -43,7 +47,9 @@ class SellerMultiConfiguration extends MultiConfiguration {
 //      new SellerConfiguration(new Blade(10)) ::
 //      new SellerConfiguration(new Habit(2)) ::
 //        new SellerConfiguration(new Habit(10)) ::
-//        new SellerConfiguration(new Mlrs(new NaiveBayes, 5)) ::
+      new SellerConfiguration(new Mlrs(bayes, 10)) ::
+      new SellerConfiguration(new Mlrs(bayes, 10, 0)) ::
+//      new SellerConfiguration(new Mlrs(new J48, 10)) ::
   Nil
 }
 
@@ -53,16 +59,16 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
   override val numSimulations: Int = 10
-  override val numRounds: Int = 500
+  override val numRounds: Int = 2500
   // Basic utility gained in each interaction (0 if absolute service properties are used and 2/3 if preferences are used (Like this so random strategy has E[U]=0).
   val baseUtility = if (preferences(null).isEmpty) 0d else 2d/3d
 
-  val clientIncolvementLikelihood = 0.1
+  val clientIncolvementLikelihood = 0.25
   val numClients: Int = 10
   val numProviders: Int = 50
 
   // Records older than this number of rounds are removed from provenance stores
-  val memoryLimit: Int = 500
+  val memoryLimit: Int = 1000
 
   // Liklihood that a given service is affected by a freak event.
   val freakEventLikelihood = 0.0
