@@ -14,7 +14,7 @@ import weka.classifiers.functions._
 /**
  * Created by phil on 24/03/16.
  */
-class Mlrs(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrsDirect with MlrsWitness {
+class Mlrs(val baseLearner: Classifier, override val numBins: Int, val witnessWeight: Double = 0.5d) extends CompositionStrategy with Exploration with MlrsDirect with MlrsWitness {
 
   override val name = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+"-"+numBins
 
@@ -30,15 +30,17 @@ class Mlrs(val baseLearner: Classifier, override val numBins: Int) extends Compo
 
   override def compute(init: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val directTA = super[MlrsDirect].compute(init, request)
-    val witnessTA = super[MlrsWitness].compute(init, request)
+    val witnessTA =
+      if (witnessWeight <= 0) new TrustAssessment(init.context, request, 0d)
+      else super[MlrsWitness].compute(init, request)
 
-    new TrustAssessment(init.context, request, directTA.trustValue + witnessTA.trustValue)
+    new TrustAssessment(init.context, request, (1-witnessWeight)*directTA.trustValue + witnessWeight*witnessTA.trustValue)
   }
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     new MlrsInit(context,
       super[MlrsDirect].initStrategy(network, context).asInstanceOf[MlrsDirectInit],
-      super[MlrsWitness].initStrategy(network, context).asInstanceOf[MlrsWitnessInit]
+      if (witnessWeight != 0d) super[MlrsWitness].initStrategy(network, context).asInstanceOf[MlrsWitnessInit] else null
     )
   }
 
