@@ -29,7 +29,9 @@ class Fire(val witnessWeight: Double = 0.5) extends RatingStrategy with Composit
   def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[RatingStrategyInit]
     val direct = init.directRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
-    val witness = init.witnessRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
+    val witness =
+      if (witnessWeight <= 0d) Nil
+      else init.witnessRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
     val result =
       (1-witnessWeight) * direct.sum / (direct.size+1) +
       witnessWeight * witness.sum / (witness.size+1)

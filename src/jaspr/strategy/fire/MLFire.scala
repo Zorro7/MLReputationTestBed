@@ -35,14 +35,17 @@ class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with E
 
   override def initStrategy(network: Network, context: ClientContext) = {
     val direct = context.client.getProvenance(context.client)
-    val witness = network.gatherProvenance(context.client)
-
     val directModel =
       if (direct.isEmpty) null
       else makeMlrsModel(direct, baseModel, makeTrainRows, makeTrainWeight(context, _:ServiceRecord))
+
     val witnessModel =
-      if (witness.isEmpty) null
-      else makeMlrsModel(witness, baseModel, makeTrainRows, makeTrainWeight(context, _:ServiceRecord))
+      if (witnessWeight <= 0d) null
+      else {
+        val witness = network.gatherProvenance(context.client)
+        if (witness.isEmpty) null
+        else makeMlrsModel(witness, baseModel, makeTrainRows, makeTrainWeight(context, _:ServiceRecord))
+      }
 
     new MLFireInit(context, directModel, witnessModel)
   }
