@@ -38,6 +38,7 @@ object SellerMultiConfiguration extends App {
     opt[Int]("numClients") required() action {(x,c) => c.copy(numClients = x)}
     opt[Int]("numProviders") required() action {(x,c) => c.copy(numProviders = x)}
     opt[Double]("eventLikelihood") required() action {(x,c) => c.copy(eventLikelihood = x)}
+    opt[Double]("eventEffects") required() action {(x,c) => c.copy(eventEffects = x)}
   }
 
   val argsplt =
@@ -58,7 +59,7 @@ object SellerMultiConfiguration extends App {
                 "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
         " --numRounds 1000 --numSimulations 10 --memoryLimit 1000 --clientInvolvementLikelihood 0.1 " +
         "--numClients 10 --numProviders 100 " +
-        "--eventLikelihood 0").split(" ")
+        "--eventLikelihood 0 --eventEffects 0").split(" ")
     } else args
 
   println(argsplt.toList)
@@ -79,7 +80,8 @@ case class SellerMultiConfiguration(
                                memoryLimit: Int = 100,
                                numClients: Int = 10,
                                numProviders: Int = 25,
-                               eventLikelihood: Double = 0
+                               eventLikelihood: Double = 0,
+                               eventEffects: Double = 0
                                 ) extends MultiConfiguration {
   override val directComparison = false
 
