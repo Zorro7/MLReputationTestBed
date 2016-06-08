@@ -38,17 +38,17 @@ class SellerMultiConfiguration extends MultiConfiguration {
   override lazy val configs: Seq[Configuration] =
     new SellerConfiguration(new NoStrategy) ::
       new SellerConfiguration(new Fire) ::
-      new SellerConfiguration(new Fire(0)) ::
-      new SellerConfiguration(new MLFire) ::
-      new SellerConfiguration(new MLFire(0)) ::
-      new SellerConfiguration(new BetaReputation)::
-      new SellerConfiguration(new Travos) ::
+//      new SellerConfiguration(new Fire(0)) ::
+//      new SellerConfiguration(new MLFire) ::
+//      new SellerConfiguration(new MLFire(0)) ::
+//      new SellerConfiguration(new BetaReputation)::
+//      new SellerConfiguration(new Travos) ::
 //      new SellerConfiguration(new Blade(2)) ::
 //      new SellerConfiguration(new Blade(10)) ::
 //      new SellerConfiguration(new Habit(2)) ::
 //        new SellerConfiguration(new Habit(10)) ::
-      new SellerConfiguration(new Mlrs(bayes, 10)) ::
-      new SellerConfiguration(new Mlrs(bayes, 10, 0)) ::
+      new SellerConfiguration(new Mlrs(bayes, 10, useAdvertProperties = true)) ::
+      new SellerConfiguration(new Mlrs(bayes, 10, useAdvertProperties = false)) ::
 //      new SellerConfiguration(new Mlrs(new J48, 10)) ::
   Nil
 }
@@ -59,11 +59,11 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
   }
 
   override val numSimulations: Int = 10
-  override val numRounds: Int = 2500
+  override val numRounds: Int = 1000
   // Basic utility gained in each interaction (0 if absolute service properties are used and 2/3 if preferences are used (Like this so random strategy has E[U]=0).
   val baseUtility = if (preferences(null).isEmpty) 0d else 2d/3d
 
-  val clientIncolvementLikelihood = 0.25
+  val clientIncolvementLikelihood = 0.1
   val numClients: Int = 10
   val numProviders: Int = 50
 
@@ -99,8 +99,8 @@ class SellerConfiguration(override val strategy: Strategy) extends Configuration
 
   def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
     //        agent.properties.mapValues(x => Property(x.name, x.doubleValue + Chooser.randomDouble(-1.5,1.5))) //todo make this more something.
-    //    agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
-    new Property("agentid", agent.id) :: Nil
+        agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
+//    new Property("agentid", agent.id) :: Nil
   }
 
 

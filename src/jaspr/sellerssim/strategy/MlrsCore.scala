@@ -3,6 +3,7 @@ package jaspr.sellerssim.strategy
 import java.util
 import java.util.ArrayList
 
+import jaspr.core.agent.Provider
 import jaspr.core.provenance.Record
 import jaspr.core.provenance.Record
 import jaspr.core.service.ClientContext

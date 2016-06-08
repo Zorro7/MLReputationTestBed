@@ -1,7 +1,7 @@
 package jaspr.sellerssim.strategy
 
 import jaspr.core.Network
-import jaspr.core.agent.Event
+import jaspr.core.agent.{Provider, Event}
 import jaspr.core.provenance.{ServiceRecord, Record}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{StrategyInit, Exploration}
@@ -65,7 +65,7 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
       record.service.request.payload.name :: // service identifier (client context)
       record.event.name :: // mitigation (provider context)
       record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-      record.provider.advertProperties.values.map(_.value).toList // provider features
+      adverts(record.service.request.provider)
   }
 
   def makeDirectTestRow(init: StrategyInit, request: ServiceRequest, eventName: String): Seq[Any] = {
@@ -73,6 +73,9 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
       request.payload.name ::
       eventName ::
       request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-      request.provider.advertProperties.values.map(_.value).toList
+      adverts(request.provider)
   }
+
+  def adverts(provider: Provider): List[Any]
+  val useAdvertProperties: Boolean = true
 }

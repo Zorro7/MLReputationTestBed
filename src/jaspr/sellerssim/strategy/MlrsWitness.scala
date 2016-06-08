@@ -1,6 +1,7 @@
 package jaspr.sellerssim.strategy
 
 import jaspr.core.Network
+import jaspr.core.agent.Provider
 import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
 import jaspr.core.strategy.{StrategyInit, Exploration}
 import jaspr.sellerssim.service.BuyerRecord
@@ -99,18 +100,17 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
   def makeImputationRow(x: BuyerRecord): Seq[Any] = {
     (if (discreteClass) discretizeInt(x.rating) else x.rating) :: // target rating
       x.service.payload.name :: // service identifier (client context)
-      x.provider.advertProperties.values.map(_.value).toList // provider features
+      adverts(x.provider)
   }
 
   def makeImputationTestRow(witnessRating: BuyerRecord): List[Any] = {
-//    for (fe <- init.asInstanceOf[MlrsStrategyInit].freakEventLikelihood.keys) yield {
       0 ::
-//        witnessRating.provider.id.toString ::
         witnessRating.service.payload.name ::
-        witnessRating.provider.advertProperties.values.map(_.value).toList
-//    }
+        adverts(witnessRating.provider)
   }
 
+  def adverts(provider: Provider): List[Any]
+  val useAdvertProperties: Boolean = true
 
 
 }
