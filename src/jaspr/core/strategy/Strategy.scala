@@ -10,6 +10,11 @@ import org.apache.commons.beanutils.ConstructorUtils
  */
 
 object Strategy {
+  /**
+    *
+    * @param name The strategy to instantiate with full path and contructor arguments separated by a ';'.
+    * @return
+    */
   def forName(name: String): Strategy = {
     if (name.contains("(")) {
       val sname = name.substring(0, name.indexOf("("))
