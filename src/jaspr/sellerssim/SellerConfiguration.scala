@@ -122,7 +122,8 @@ class SellerConfiguration(override val strategy: Strategy,
                           val memoryLimit: Int = 100,
                           val numClients: Int = 50,
                           val numProviders: Int = 50,
-                          val eventLikelihood: Double = 0
+                          val eventLikelihood: Double = 0,
+                          val eventEffects: Double = 0
                            ) extends Configuration {
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
@@ -131,13 +132,6 @@ class SellerConfiguration(override val strategy: Strategy,
   // Basic utility gained in each interaction (0 if absolute service properties are used and 2/3 if preferences are used (Like this so random strategy has E[U]=0).
   val baseUtility = if (preferences(null).isEmpty) 0d else 2d/3d
 
-
-
-
-  // Liklihood that a given service is affected by a freak event.
-  val freakEventLikelihood = 0.0
-  // Change to service attributes if it is affected by a freak event ((x + simulation.config.freakEventEffects) / 2d).
-  def freakEventEffects = 0
 
   // Services that exist in the simulation
   var simcapabilities = for (i <- 1 to 10) yield new ProductPayload(i.toString)
