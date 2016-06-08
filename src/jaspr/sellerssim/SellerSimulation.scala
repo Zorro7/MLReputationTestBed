@@ -40,7 +40,7 @@ class SellerSimulation(val config: SellerConfiguration) extends Simulation {
 
   override def act(): Result = {
     for (client <- network.clients) {
-      Chooser.ifHappens(config.clientIncolvementLikelihood)(
+      Chooser.ifHappens(config.clientInvolvementLikelihood)(
         client.tick()
       )()
     }
