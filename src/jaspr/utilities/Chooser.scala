@@ -5,10 +5,23 @@ import scala.util.Random
 /**
  * Created by phil on 27/01/16.
  */
+
 object Chooser extends Random {
 
   // Selects a random value from a list (throws exception IndexOutOfBoundsException if the list is empty)
   def choose[V](items: Seq[V]): V = items(nextInt(items.size))
+
+  def choose[V](items: Seq[V], likelihoods: Seq[Double]): V = {
+    assert(items.size == likelihoods.size)
+    val pIter = likelihoods.iterator
+    val iIter = items.iterator
+    var cum = randomDouble(0,likelihoods.sum) - pIter.next()
+    while (cum > 0) {
+      cum -= pIter.next()
+      iIter.next()
+    }
+    iIter.next()
+  }
 
   def sample[V](all: Seq[V], num: Int): Seq[V] = shuffle(all).take(num)
 
