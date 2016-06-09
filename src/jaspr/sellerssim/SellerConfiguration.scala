@@ -39,6 +39,14 @@ object SellerMultiConfiguration extends App {
     opt[Int]("numProviders") required() action {(x,c) => c.copy(numProviders = x)}
     opt[Double]("eventLikelihood") required() action {(x,c) => c.copy(eventLikelihood = x)}
     opt[Double]("eventEffects") required() action {(x,c) => c.copy(eventEffects = x)}
+    opt[Double]("honestWitnessLikelihood") required() action {(x,c) => c.copy(honestWitnessLikelihood = x)}
+    opt[Double]("pessimisticWitnessLikelihood") required() action {(x,c) => c.copy(pessimisticWitnessLikelihood = x)}
+    opt[Double]("negationWitnessLikelihood") required() action {(x,c) => c.copy(negationWitnessLikelihood = x)}
+    opt[Double]("randomWitnessLikelihood") required() action {(x,c) => c.copy(randomWitnessLikelihood = x)}
+    opt[Double]("promotionWitnessLikelihood") required() action {(x,c) => c.copy(promotionWitnessLikelihood = x)}
+    opt[Double]("slanderWitnessLikelihood") required() action {(x,c) => c.copy(slanderWitnessLikelihood = x)}
+    opt[Int]("providersToPromote") required() action {(x,c) => c.copy(providersToPromote = x)}
+    opt[Int]("providersToSlander") required() action {(x,c) => c.copy(providersToSlander = x)}
   }
 
   val argsplt =
@@ -46,27 +54,26 @@ object SellerMultiConfiguration extends App {
       ("--strategy " +
                 "jaspr.strategy.NoStrategy," +
                 "jaspr.strategy.fire.Fire(0.5)," +
-                "jaspr.strategy.fire.Fire(0.0)," +
-                "jaspr.strategy.fire.MLFire(0.5)," +
-                "jaspr.strategy.fire.MLFire(0.0)," +
-                "jaspr.strategy.betareputation.BetaReputation," +
-                "jaspr.strategy.betareputation.Travos," +
-//                "jaspr.strategy.blade.Blade(2)," +
-                "jaspr.strategy.habit.Habit(2)," +
-                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
-                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," +
-                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true)," +
-                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
+//                "jaspr.strategy.fire.Fire(0.0)," +
+//                "jaspr.strategy.fire.MLFire(0.5)," +
+//                "jaspr.strategy.fire.MLFire(0.0)," +
+//                "jaspr.strategy.betareputation.BetaReputation," +
+//                "jaspr.strategy.betareputation.Travos," +
+////                "jaspr.strategy.blade.Blade(2)," +
+//                "jaspr.strategy.habit.Habit(2)," +
+//                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
+//                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," +
+//                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true)," +
+//                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
         " --numRounds 1000 --numSimulations 10 --memoryLimit 1000 --clientInvolvementLikelihood 0.1 " +
         "--numClients 10 --numProviders 100 " +
         "--eventLikelihood 0 --eventEffects 0").split(" ")
     } else args
-
-  println(argsplt.toList)
-
+  
   parser.parse(argsplt, SellerMultiConfiguration()) match {
     case Some(x) =>
-      Simulation(x)
+      println(x.honestWitnessLikelihood)
+//      Simulation(x)
     case None =>
   }
 }
@@ -81,7 +88,15 @@ case class SellerMultiConfiguration(
                                numClients: Int = 10,
                                numProviders: Int = 25,
                                eventLikelihood: Double = 0,
-                               eventEffects: Double = 0
+                               eventEffects: Double = 0,
+                               honestWitnessLikelihood: Double = 0.1,
+                               pessimisticWitnessLikelihood: Double = 0.1,
+                               negationWitnessLikelihood: Double = 0.1,
+                               randomWitnessLikelihood: Double = 0.1,
+                               promotionWitnessLikelihood: Double = 0.1,
+                               slanderWitnessLikelihood: Double = 0.1,
+                               providersToPromote: Int = 5,
+                               providersToSlander: Int = 5
                                 ) extends MultiConfiguration {
   override val directComparison = false
 
@@ -95,26 +110,6 @@ case class SellerMultiConfiguration(
       )
     })
 
-  val bayes = new NaiveBayes
-//  bayes.setUseSupervisedDiscretization(true)
-  bayes.setUseKernelEstimator(true)
-
-//  override lazy val configs: Seq[Configuration] =
-//    new SellerConfiguration(new NoStrategy) ::
-//      new SellerConfiguration(new Fire) ::
-////      new SellerConfiguration(new Fire(0)) ::
-////      new SellerConfiguration(new MLFire) ::
-////      new SellerConfiguration(new MLFire(0)) ::
-////      new SellerConfiguration(new BetaReputation)::
-//      new SellerConfiguration(new Travos) ::
-////      new SellerConfiguration(new Blade(2)) ::
-////      new SellerConfiguration(new Blade(10)) ::
-////      new SellerConfiguration(new Habit(2)) ::
-////        new SellerConfiguration(new Habit(10)) ::
-//      new SellerConfiguration(new Mlrs(bayes, 10, useAdvertProperties = false)) ::
-//      new SellerConfiguration(new Mlrs(bayes, 10, useAdvertProperties = true)) ::
-////      new SellerConfiguration(new Mlrs(new J48, 10)) ::
-//  Nil
 }
 
 class SellerConfiguration(override val strategy: Strategy,
@@ -125,7 +120,15 @@ class SellerConfiguration(override val strategy: Strategy,
                           val numClients: Int = 50,
                           val numProviders: Int = 50,
                           val eventLikelihood: Double = 0,
-                          val eventEffects: Double = 0
+                          val eventEffects: Double = 0,
+                          val honestWitnessLikelihood: Double = 0.1,
+                          val pessimisticWitnessLikelihood: Double = 0.1,
+                          val negationWitnessLikelihood: Double = 0.1,
+                          val randomWitnessLikelihood: Double = 0.1,
+                          val promotionWitnessLikelihood: Double = 0.1,
+                          val slanderWitnessLikelihood: Double = 0.1,
+                          val providersToPromote: Int = 0,
+                          val providersToSlander: Int = 0
                            ) extends Configuration {
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
@@ -188,20 +191,38 @@ class SellerConfiguration(override val strategy: Strategy,
       Nil
   }
 
+
   def witnessModel(witness: Witness, network: Network): WitnessModel = {
-    Chooser.ifHappens[WitnessModel](1)(
-      new HonestWitnessModel
-    )(
-      Chooser.choose(
-//        new PessimisticWitnessModel ::
+    Chooser.choose(
+      new HonestWitnessModel ::
+        new PessimisticWitnessModel ::
+        new NegationWitnessModel ::
+        new RandomWitnessModel ::
+        new PromotionWitnessModel(Chooser.sample(network.providers, providersToPromote)) ::
+        new SlanderWitnessModel(Chooser.sample(network.providers, providersToSlander)) ::
+        Nil,
+      honestWitnessLikelihood ::
+        pessimisticWitnessLikelihood ::
+        negationWitnessLikelihood ::
+        randomWitnessLikelihood ::
+        promotionWitnessLikelihood ::
+        slanderWitnessLikelihood ::
+        Nil
+    )
+//    Chooser.ifHappens[WitnessModel](honestLikelihood)(
+//      new HonestWitnessModel
+//    )(
+//      Chooser.choose(
+//        Chooser.ifHappens(pessimisticLikelihood)(new PessimisticWitnessModel :: Nil)(Nil) ++ Nil
+//          ::
 //          new OptimisticWitnessModel ::
 //          new NegationWitnessModel ::
 //          new RandomWitnessModel ::
 //          new PromotionWitnessModel(Chooser.sample(network.providers, numProviders/10)) ::
 //          new SlanderWitnessModel(Chooser.sample(network.providers, numProviders/10)) ::
-          Nil
-      )
-    )
+//          Nil
+//      )
+//    )
 
   }
 
