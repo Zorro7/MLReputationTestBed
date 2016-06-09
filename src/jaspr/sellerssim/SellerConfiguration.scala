@@ -45,8 +45,8 @@ object SellerMultiConfiguration extends App {
     opt[Double]("randomWitnessLikelihood") required() action {(x,c) => c.copy(randomWitnessLikelihood = x)}
     opt[Double]("promotionWitnessLikelihood") required() action {(x,c) => c.copy(promotionWitnessLikelihood = x)}
     opt[Double]("slanderWitnessLikelihood") required() action {(x,c) => c.copy(slanderWitnessLikelihood = x)}
-    opt[Int]("providersToPromote") required() action {(x,c) => c.copy(providersToPromote = x)}
-    opt[Int]("providersToSlander") required() action {(x,c) => c.copy(providersToSlander = x)}
+    opt[Double]("providersToPromote") required() action {(x,c) => c.copy(providersToPromote = x)}
+    opt[Double]("providersToSlander") required() action {(x,c) => c.copy(providersToSlander = x)}
   }
 
   val argsplt =
@@ -67,13 +67,17 @@ object SellerMultiConfiguration extends App {
 //                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
         " --numRounds 1000 --numSimulations 10 --memoryLimit 1000 --clientInvolvementLikelihood 0.1 " +
         "--numClients 10 --numProviders 100 " +
-        "--eventLikelihood 0 --eventEffects 0").split(" ")
+        "--eventLikelihood 0 --eventEffects 0 " +
+        "--honestWitnessLikelihood 0.9 --pessimisticWitnessLikelihood 0.2 --negationWitnessLikelihood 0.2 " +
+        "--randomWitnessLikelihood 0.2 --promotionWitnessLikelihood 0.2 --slanderWitnessLikelihood 0.2 " +
+        "--providersToPromote 0.2 --providersToSlander 0.2").split(" ")
     } else args
-  
+
+  println(argsplt.toList mkString("["," ","]"))
+
   parser.parse(argsplt, SellerMultiConfiguration()) match {
     case Some(x) =>
-      println(x.honestWitnessLikelihood)
-//      Simulation(x)
+      Simulation(x)
     case None =>
   }
 }
@@ -95,8 +99,8 @@ case class SellerMultiConfiguration(
                                randomWitnessLikelihood: Double = 0.1,
                                promotionWitnessLikelihood: Double = 0.1,
                                slanderWitnessLikelihood: Double = 0.1,
-                               providersToPromote: Int = 5,
-                               providersToSlander: Int = 5
+                               providersToPromote: Double = 0.1,
+                               providersToSlander: Double = 0.1
                                 ) extends MultiConfiguration {
   override val directComparison = false
 
@@ -106,7 +110,10 @@ case class SellerMultiConfiguration(
     strategies.map(x => {
       new SellerConfiguration(
         Strategy.forName(x), numRounds, numSimulations, clientInvolvementLikelihood, memoryLimit,
-        numClients, numProviders, eventLikelihood
+        numClients, numProviders, eventLikelihood,
+        honestWitnessLikelihood, pessimisticWitnessLikelihood, negationWitnessLikelihood,
+        randomWitnessLikelihood, promotionWitnessLikelihood, slanderWitnessLikelihood,
+        providersToPromote, providersToSlander
       )
     })
 
@@ -127,8 +134,8 @@ class SellerConfiguration(override val strategy: Strategy,
                           val randomWitnessLikelihood: Double = 0.1,
                           val promotionWitnessLikelihood: Double = 0.1,
                           val slanderWitnessLikelihood: Double = 0.1,
-                          val providersToPromote: Int = 0,
-                          val providersToSlander: Int = 0
+                          val providersToPromote: Double = 0.1,
+                          val providersToSlander: Double = 0.1
                            ) extends Configuration {
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
@@ -198,8 +205,8 @@ class SellerConfiguration(override val strategy: Strategy,
         new PessimisticWitnessModel ::
         new NegationWitnessModel ::
         new RandomWitnessModel ::
-        new PromotionWitnessModel(Chooser.sample(network.providers, providersToPromote)) ::
-        new SlanderWitnessModel(Chooser.sample(network.providers, providersToSlander)) ::
+        new PromotionWitnessModel(Chooser.sample(network.providers, (providersToPromote*numProviders).toInt)) ::
+        new SlanderWitnessModel(Chooser.sample(network.providers, (providersToSlander*numProviders).toInt)) ::
         Nil,
       honestWitnessLikelihood ::
         pessimisticWitnessLikelihood ::
