@@ -1,4 +1,5 @@
 import sys
+from copy import copy
 
 def makecommands(base, args):
 	if len(args) == 1:
@@ -15,7 +16,7 @@ def makecommands(base, args):
 
 def makearg(ns, v):
 	if isinstance(v, dict):
-		return ''.join(makecommands("", v))[1:]
+		return ''.join(makecommands("", copy(v)))[1:]
 	elif isinstance(v, list):
 		return ''.join(["--"+str(n)+" '"+str(vn)+"'" for n,vn in zip(ns.split(","),v)])
 	else:

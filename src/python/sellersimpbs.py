@@ -2,7 +2,7 @@ from makepbs import *
 from functools import partial
 
 
-witLikelihoodLevels = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+witLikelihoodLevels = [0,0.1,0.3,0.5]
 
 witdics = [x for level in witLikelihoodLevels for x in
 	[{"honestWitnessLikelihood": 1-level, "pessimisticWitnessLikelihood": level,
@@ -50,13 +50,17 @@ cmdargs = {
         "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," \
         "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true)," \
         "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true),",
-    "numRounds": [1000],
+    "numRounds": [250],
 	"numSimulations": 25,
-	"memoryLimit": [100,200,500],
-	"clientInvolvementLikelihood": [0.01,0.05,0.1,0.2],
-    "numClients,numProviders": [10,25,50,100],
+	"memoryLimit": [100],
+	"clientInvolvementLikelihood": [0.1,0.2],
+    "numClients": [10,25],
+    "numProviders": [10,25,50],
 	"eventLikelihood": 0,
 	"eventEffects": 0,
+        "numSimCapabilities": [1,5,10],
+        "numProviderCapabilities": [1,5,10],
+        "numTerms": [1,5],
 	"wit": witdics
 }
 
