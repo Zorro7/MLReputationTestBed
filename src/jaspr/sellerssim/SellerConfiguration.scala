@@ -55,13 +55,17 @@ object SellerMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-//        "jaspr.strategy.NoStrategy," +
+        "jaspr.strategy.NoStrategy," +
+//        "jaspr.sellerssim.strategy.general.BasicML," +
+//        "jaspr.sellerssim.strategy.general.FireLike," +
+//        "jaspr.sellerssim.strategy.general.BasicContext," +
+        "jaspr.sellerssim.strategy.general.TravosLike" +
 //        "jaspr.strategy.fire.Fire(0.5)," +
 //        "jaspr.strategy.fire.Fire(0.0)," +
 //        "jaspr.strategy.fire.MLFire(0.5),jaspr.strategy.fire.MLFire(0.0)," +
 //        "jaspr.strategy.betareputation.BetaReputation," +
-        "jaspr.strategy.betareputation.MLTravos_provider," +
-        "jaspr.strategy.betareputation.Travos,"+
+//        "jaspr.strategy.betareputation.MLTravos_provider," +
+//        "jaspr.strategy.betareputation.Travos,"+
         //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
