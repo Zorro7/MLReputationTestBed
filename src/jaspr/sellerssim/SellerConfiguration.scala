@@ -60,7 +60,7 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.strategy.fire.Fire(0.0)," +
 //        "jaspr.strategy.fire.MLFire(0.5),jaspr.strategy.fire.MLFire(0.0)," +
 //        "jaspr.strategy.betareputation.BetaReputation," +
-        "jaspr.strategy.betareputation.MLTravos," +
+        "jaspr.strategy.betareputation.MLTravos_provider," +
         "jaspr.strategy.betareputation.Travos,"+
         //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
