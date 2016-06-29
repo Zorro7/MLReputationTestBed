@@ -43,9 +43,6 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
     )
   }
 
-  class TravosTrustAssessment(context: ClientContext, request: ServiceRequest, trustValue: Double, val opinions: Map[ServiceRequest, BetaOpinions])
-    extends TrustAssessment(context, request, trustValue)
-
   override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val requestScores: Seq[TravosTrustAssessment] = request.flatten().map(x => compute(baseInit, request))
     new TravosTrustAssessment(baseInit.context, request, requestScores.map(_.trustValue).sum, requestScores.flatMap(_.opinions).toMap)

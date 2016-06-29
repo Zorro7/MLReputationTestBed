@@ -79,11 +79,12 @@ class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with E
 
   def makeTrainRows(record: ServiceRecord with RatingRecord): Seq[Any] = {
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
+      record.service.request.end ::
       record.service.request.provider.id.toString :: // provider identifier
       Nil
   }
 
   def makeTestRow(request: ServiceRequest): List[Any] = {
-    0d :: request.provider.id.toString :: Nil
+    0d :: request.start :: request.provider.id.toString :: Nil
   }
 }

@@ -37,6 +37,9 @@ object SellerMultiConfiguration extends App {
     opt[Int]("memoryLimit") required() action {(x,c) => c.copy(memoryLimit = x)}
     opt[Int]("numClients") required() action {(x,c) => c.copy(numClients = x)}
     opt[Int]("numProviders") required() action {(x,c) => c.copy(numProviders = x)}
+    opt[Int]("numSimCapabilities") required() action {(x,c) => c.copy(numSimCapabilities = x)}
+    opt[Int]("numProviderCapabilities") required() action {(x,c) => c.copy(numProviderCapabilities = x)}
+    opt[Int]("numTerms") required() action {(x,c) => c.copy(numTerms = x)}
     opt[Double]("eventLikelihood") required() action {(x,c) => c.copy(eventLikelihood = x)}
     opt[Double]("eventEffects") required() action {(x,c) => c.copy(eventEffects = x)}
     opt[Double]("honestWitnessLikelihood") required() action {(x,c) => c.copy(honestWitnessLikelihood = x)}
@@ -52,32 +55,37 @@ object SellerMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-                "jaspr.strategy.NoStrategy," +
-                "jaspr.strategy.fire.Fire(0.5)," +
-//                "jaspr.strategy.fire.Fire(0.0)," +
-//                "jaspr.strategy.fire.MLFire(0.5)," +
-//                "jaspr.strategy.fire.MLFire(0.0)," +
-//                "jaspr.strategy.betareputation.BetaReputation," +
-//                "jaspr.strategy.betareputation.Travos," +
-////                "jaspr.strategy.blade.Blade(2)," +
-//                "jaspr.strategy.habit.Habit(2)," +
-//                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
-//                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," +
-//                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true)," +
-//                "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
-        " --numRounds 1000 --numSimulations 10 --memoryLimit 1000 --clientInvolvementLikelihood 0.1 " +
-        "--numClients 10 --numProviders 100 " +
-        "--eventLikelihood 0 --eventEffects 0 " +
-        "--honestWitnessLikelihood 0.9 --pessimisticWitnessLikelihood 0.2 --negationWitnessLikelihood 0.2 " +
-        "--randomWitnessLikelihood 0.2 --promotionWitnessLikelihood 0.2 --slanderWitnessLikelihood 0.2 " +
-        "--providersToPromote 0.2 --providersToSlander 0.2").split(" ")
+//        "jaspr.strategy.NoStrategy," +
+//        "jaspr.strategy.fire.Fire(0.5)," +
+//        "jaspr.strategy.fire.Fire(0.0)," +
+//        "jaspr.strategy.fire.MLFire(0.5),jaspr.strategy.fire.MLFire(0.0)," +
+//        "jaspr.strategy.betareputation.BetaReputation," +
+        "jaspr.strategy.betareputation.MLTravos," +
+        "jaspr.strategy.betareputation.Travos,"+
+        //        "jaspr.strategy.blade.Blade(2)," +
+//        "jaspr.strategy.habit.Habit(2),"+
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," +
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true),"+
+// jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
+        " --numSimulations 5 " +
+        "--honestWitnessLikelihood 0.5 " +
+        "--pessimisticWitnessLikelihood 0.1 " +
+        "--randomWitnessLikelihood 0.1 " +
+        "--negationWitnessLikelihood 0.1 " +
+        "--promotionWitnessLikelihood 0.1 --slanderWitnessLikelihood 0.1 " +
+        "--providersToPromote 0.1 --providersToSlander 0.1 " +
+        "--numClients 5 --numProviders 20 --eventLikelihood 0 --clientInvolvementLikelihood 1" +
+        " --eventEffects 0 --numRounds 200 --memoryLimit 100 " +
+        "--numSimCapabilities 5 --numProviderCapabilities 10 --numTerms 5").split(" ")
     } else args
 
   println(argsplt.toList mkString("["," ","]"))
 
   parser.parse(argsplt, SellerMultiConfiguration()) match {
     case Some(x) =>
-      Simulation(x)
+      val results = Simulation(x)
+      results.printChange(0,-1, _.recordsStored)
     case None =>
   }
 }
@@ -91,6 +99,9 @@ case class SellerMultiConfiguration(
                                memoryLimit: Int = 100,
                                numClients: Int = 10,
                                numProviders: Int = 25,
+                               numSimCapabilities: Int = 10,
+                               numProviderCapabilities: Int = 5,
+                               numTerms: Int = 2,
                                eventLikelihood: Double = 0,
                                eventEffects: Double = 0,
                                honestWitnessLikelihood: Double = 0.1,
@@ -104,13 +115,15 @@ case class SellerMultiConfiguration(
                                 ) extends MultiConfiguration {
   override val directComparison = false
 
+  override val resultStart: Int = -memoryLimit
+  override val resultEnd: Int = -1
   //  override val _seed = 1000
 
   override lazy val configs: Seq[Configuration] =
     strategies.map(x => {
       new SellerConfiguration(
         Strategy.forName(x), numRounds, numSimulations, clientInvolvementLikelihood, memoryLimit,
-        numClients, numProviders, eventLikelihood,
+        numClients, numProviders, numSimCapabilities, numProviderCapabilities, numTerms, eventLikelihood,
         honestWitnessLikelihood, pessimisticWitnessLikelihood, negationWitnessLikelihood,
         randomWitnessLikelihood, promotionWitnessLikelihood, slanderWitnessLikelihood,
         providersToPromote, providersToSlander
@@ -126,6 +139,9 @@ class SellerConfiguration(override val strategy: Strategy,
                           val memoryLimit: Int = 100,
                           val numClients: Int = 50,
                           val numProviders: Int = 50,
+                          val numSimCapabilities: Int = 10,
+                          val numProviderCapabilities: Int = 5,
+                          val numTerms: Int = 2,
                           val eventLikelihood: Double = 0,
                           val eventEffects: Double = 0,
                           val honestWitnessLikelihood: Double = 0.1,
@@ -146,10 +162,10 @@ class SellerConfiguration(override val strategy: Strategy,
 
 
   // Services that exist in the simulation
-  var simcapabilities = for (i <- 1 to 10) yield new ProductPayload(i.toString)
+  var simcapabilities = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
   // Services that a given provider is capable of providing - and with associated performance properties.
   def capabilities(provider: Provider): Seq[ProductPayload] = {
-    var caps = Chooser.sample(simcapabilities, 2)
+    var caps = Chooser.sample(simcapabilities, numProviderCapabilities)
     caps = caps.map(_.copy(
       quality = provider.properties.map(x =>
         x._1 -> addNoise(x._2.doubleValue)
@@ -160,16 +176,19 @@ class SellerConfiguration(override val strategy: Strategy,
   }
 
   def addNoise(x: Double): Double = {
-    Chooser.bound(x * Chooser.randomDouble(0.5,2), -1, 1)
-//    Chooser.bound(x * Chooser.randomDouble(-2,2), -1, 1)
+//    Chooser.bound(x * Chooser.randomDouble(0.5,2), -1, 1)
+    Chooser.bound(x + Chooser.randomDouble(-0.5,0.5), -1, 1)
   }
 
   // Properties of a provider agent
   def properties(agent: Agent): SortedMap[String,Property] = {
     //    TreeMap()
-    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
-      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
-      Nil
+//    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
+//      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
+//      new Property("a", Chooser.randomDouble(-1d,1d)) ::
+//      new Property("b", Chooser.randomDouble(-1d,1d)) ::
+//      new Property("c", Chooser.randomDouble(-1d,1d)) ::
+    (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
   }
 
   def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
@@ -193,9 +212,13 @@ class SellerConfiguration(override val strategy: Strategy,
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Buyer): SortedMap[String,Property] = {
 //    TreeMap()
-    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
-      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
-      Nil
+//    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
+//      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
+//      new Property("a", Chooser.randomDouble(-1d,1d)) ::
+//      new Property("b", Chooser.randomDouble(-1d,1d)) ::
+//      new Property("c", Chooser.randomDouble(-1d,1d)) ::
+// Nil
+    (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
   }
 
 

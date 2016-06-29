@@ -10,7 +10,7 @@ import jaspr.utilities.Chooser
 
 object Simulation {
 
-  def apply(multiConfig: MultiConfiguration) {
+  def apply(multiConfig: MultiConfiguration): Results = {
     val results: Results = new Results
 
     val iter = if (jaspr.parallel) multiConfig.configs.zipWithIndex.par else multiConfig.configs.zipWithIndex
@@ -29,6 +29,8 @@ object Simulation {
     results.printAll(_.totalUtility)
     results.printAverage(_.totalUtility)
     println(results.results.keys.mkString("\t"))
+    results.printChange(multiConfig.resultStart, multiConfig.resultEnd, _.totalUtility)
+    results
   }
 }
 

@@ -9,7 +9,7 @@ import jaspr.utilities.Chooser
  * Created by phil on 21/03/16.
  */
 object SellerSimulation extends App {
-  Simulation(new SellerMultiConfiguration)
+  val results = Simulation(new SellerMultiConfiguration)
 
 
 //  def sigmoid(x: Double) = x/(1d+Math.exp(Math.abs(x)))

@@ -2,7 +2,7 @@ package jaspr.strategy.betareputation
 
 import jaspr.core.agent.Agent
 import jaspr.core.provenance.TrustAssessmentRecord
-import jaspr.core.service.ClientContext
+import jaspr.core.service.{TrustAssessment, ServiceRequest, ClientContext}
 import jaspr.strategy.{RatingStrategyInit, Rating}
 import jaspr.utilities.BetaDistribution
 
@@ -14,6 +14,9 @@ trait TravosCore extends BetaCore {
   trait BetaOpinions {
     val opinions: List[(Agent, BetaDistribution)]
   }
+
+  class TravosTrustAssessment(context: ClientContext, request: ServiceRequest, trustValue: Double, val opinions: Map[ServiceRequest, BetaOpinions])
+    extends TrustAssessment(context, request, trustValue)
 
   class TravosInit(context: ClientContext,
                    directRecords: Seq[Rating],

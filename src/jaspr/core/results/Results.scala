@@ -52,10 +52,22 @@ class Results {
     val tmp = results.map(_.map(funch))
     tmp.transpose.map(_.sum / tmp.size.toDouble).reverse
   }
+
+  def printChange(start: Int, end: Int, funch: Result => Double) = {
+    val x =
+      for ((config,res) <- results) yield {
+        res.map(r =>
+          funch(r(if (end >= 0) r.size-1-end else -end))
+            -funch(r(if (start >= 0) r.size-1-start else -start))
+        ).sum / res.size
+      }
+    println(x.map(df.format).mkString("", "\t\t", "\n"))
+  }
 }
 
 class Result(simulation: Simulation) {
 
   val round = simulation.round
   val totalUtility: Double = simulation.network.utility()
+  val recordsStored: Double = simulation.network.clients.map(x => x.getProvenance(x).size).sum / simulation.network.clients.size.toDouble
 }

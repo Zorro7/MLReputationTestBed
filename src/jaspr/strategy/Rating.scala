@@ -1,6 +1,7 @@
 package jaspr.strategy
 
 import jaspr.core.agent.{Client, Provider}
+import jaspr.core.provenance.Record
 
 /**
  * Created by phil on 16/03/16.

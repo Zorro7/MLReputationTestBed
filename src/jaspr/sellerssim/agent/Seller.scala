@@ -35,7 +35,7 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override def utility: Double = ???
 
-  override def getProvenance[T <: Record](agent: Provenance): Seq[T] = ???
+  override def getProvenance[T <: Record](agent: Provenance): Seq[T] = Nil
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 

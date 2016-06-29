@@ -28,5 +28,7 @@ trait MultiConfiguration {
     else _seed + configIndex + simulationIndex*configs.size //looks random but unique and covers [seed,seed+numConfigs*numSimulations]
   }
 
+  val resultStart: Int = 0
+  val resultEnd: Int = -1
   val configs: Seq[Configuration]
 }
