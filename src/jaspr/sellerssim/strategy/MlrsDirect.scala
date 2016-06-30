@@ -38,14 +38,14 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
         for ((fe,p) <- init.directInit.freakEventLikelihood) yield {
           val row = makeDirectTestRow(init, request, fe)
           val query = convertRowToInstance(row, directAttVals, directTrain)
-          val pred = directModel.classifyInstance(query)
           val result =
-            if (discreteClass) {
+            if (discreteClass && numBins <= 2) {
               val dist = directModel.distributionForInstance(query)
               dist.zipWithIndex.map(x => x._1 * directTrain.classAttribute().value(x._2).toDouble).sum
-//              directTrain.classAttribute().value(pred.toInt).toDouble
-            }
-            else pred
+            } else if (discreteClass) {
+              val pred = directModel.classifyInstance(query)
+              directTrain.classAttribute().value(pred.toInt).toDouble
+            } else directModel.classifyInstance(query)
           result * p
         }
       new TrustAssessment(baseInit.context, request, predictions.sum/predictions.size)
