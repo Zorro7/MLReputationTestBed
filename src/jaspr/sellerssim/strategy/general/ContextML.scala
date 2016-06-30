@@ -37,6 +37,6 @@ class FireLikeContext extends ContextML {
   override val baseStrategy = new FireLike
 }
 
-class TravosLikeContext extends ContextML {
-  override val baseStrategy = new TravosLike
-}
+//class TravosLikeContext extends ContextML {
+//  override val baseStrategy = new TravosLike
+//}

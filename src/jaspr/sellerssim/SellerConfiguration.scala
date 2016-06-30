@@ -56,12 +56,13 @@ object SellerMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
         "jaspr.strategy.NoStrategy," +
-        "jaspr.sellerssim.strategy.general.BasicML," +
-        "jaspr.sellerssim.strategy.general.FireLike," +
-        "jaspr.sellerssim.strategy.general.BasicContext," +
-        "jaspr.sellerssim.strategy.general.FireLikeContext," +
-        "jaspr.sellerssim.strategy.general.BasicStereotype," +
-        "jaspr.sellerssim.strategy.general.FireLikeStereotype," +
+//        "jaspr.sellerssim.strategy.general.BasicML," +
+//        "jaspr.sellerssim.strategy.general.FireLike," +
+//        "jaspr.sellerssim.strategy.general.BasicContext," +
+//        "jaspr.sellerssim.strategy.general.FireLikeContext," +
+//        "jaspr.sellerssim.strategy.general.BasicStereotype," +
+//        "jaspr.sellerssim.strategy.general.FireLikeStereotype," +
+//        "jaspr.sellerssim.strategy.general.TravosLikeSlim," +
 //        "jaspr.sellerssim.strategy.general.TravosLike" +
 //        "jaspr.strategy.fire.Fire(0.5)," +
 //        "jaspr.strategy.fire.Fire(0.0)," +
@@ -70,11 +71,12 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.strategy.betareputation.MLTravos_provider," +
 //        "jaspr.strategy.betareputation.Travos,"+
         //        "jaspr.strategy.blade.Blade(2)," +
-//        "jaspr.strategy.habit.Habit(2),"+
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
+        "jaspr.strategy.habit.Habit(2),"+
+        "jaspr.strategy.habit.Habit(10),"+
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;2;0.5;false)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true),"+
-// jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
         " --numSimulations 5 " +
         "--honestWitnessLikelihood 0.5 " +
         "--pessimisticWitnessLikelihood 0.1 " +
@@ -82,8 +84,8 @@ object SellerMultiConfiguration extends App {
         "--negationWitnessLikelihood 0.1 " +
         "--promotionWitnessLikelihood 0.1 --slanderWitnessLikelihood 0.1 " +
         "--providersToPromote 0.1 --providersToSlander 0.1 " +
-        "--numClients 5 --numProviders 20 --eventLikelihood 0 --clientInvolvementLikelihood 1" +
-        " --eventEffects 0 --numRounds 200 --memoryLimit 100 " +
+        "--numClients 25 --numProviders 10 --eventLikelihood 0 --clientInvolvementLikelihood 0.1" +
+        " --eventEffects 0 --numRounds 1000 --memoryLimit 100 " +
         "--numSimCapabilities 5 --numProviderCapabilities 10 --numTerms 5").split(" ")
     } else args
 

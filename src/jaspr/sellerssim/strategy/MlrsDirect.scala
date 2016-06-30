@@ -40,7 +40,11 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
           val query = convertRowToInstance(row, directAttVals, directTrain)
           val pred = directModel.classifyInstance(query)
           val result =
-            if (discreteClass) directTrain.classAttribute().value(pred.toInt).toDouble
+            if (discreteClass) {
+              val dist = directModel.distributionForInstance(query)
+              dist.zipWithIndex.map(x => x._1 * directTrain.classAttribute().value(x._2).toDouble).sum
+//              directTrain.classAttribute().value(pred.toInt).toDouble
+            }
             else pred
           result * p
         }

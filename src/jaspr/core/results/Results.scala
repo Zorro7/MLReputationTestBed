@@ -61,7 +61,7 @@ class Results {
             -funch(r(if (start >= 0) r.size-1-start else -start))
         ).sum / res.size
       }
-    println(x.map(df.format).mkString("", "\t\t", "\n"))
+    println(x.map(df.format).mkString("", "\t\t", ""))
   }
 }
 

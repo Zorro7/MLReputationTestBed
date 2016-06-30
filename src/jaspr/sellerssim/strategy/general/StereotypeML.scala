@@ -41,6 +41,6 @@ class FireLikeStereotype extends StereotypeML {
   override val baseStrategy = new FireLike
 }
 
-class TravosLikeStereotype extends StereotypeML {
-  override val baseStrategy = new TravosLike
-}
+//class TravosLikeStereotype extends StereotypeML {
+//  override val baseStrategy = new TravosLike
+//}

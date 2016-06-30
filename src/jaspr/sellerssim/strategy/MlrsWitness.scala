@@ -37,7 +37,11 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       val queries = convertRowsToInstances(rows, witnessAttVals, witnessTrain)
       val preds = queries.map(q => witnessModel.classifyInstance(q))
       val predictions =
-        if (discreteClass) preds.map(x => witnessTrain.classAttribute().value(x.toInt).toDouble)
+        if (discreteClass) {
+          val dists = queries.map(q => witnessModel.distributionForInstance(q))
+          dists.map(dist => dist.zipWithIndex.map(x => x._1 * witnessTrain.classAttribute().value(x._2).toDouble).sum)
+          //             preds.map(x => witnessTrain.classAttribute().value(x.toInt).toDouble)
+        }
         else preds
 
       new TrustAssessment(baseInit.context, request, if (predictions.isEmpty) 0d else predictions.sum / predictions.size)

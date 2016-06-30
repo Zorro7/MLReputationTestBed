@@ -92,7 +92,12 @@ public class MultiRegression extends SingleClassifierEnhancer implements Classif
     public double[] distributionForInstance(Instance instance) throws Exception {
         Instance copy = new DenseInstance(instance);
         copy.deleteAttributeAt(splitAttIndex);
-        return models[(int)instance.value(splitAttIndex)].distributionForInstance(copy);
+        copy.setDataset(trains[(int)instance.value(splitAttIndex)]);
+        if (models[(int)instance.value(splitAttIndex)] != null) {
+            return models[(int) instance.value(splitAttIndex)].distributionForInstance(copy);
+        } else {
+            return new double[instance.numClasses()];
+        }
     }
 
     @Override
