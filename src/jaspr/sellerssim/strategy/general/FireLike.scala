@@ -4,11 +4,12 @@ import jaspr.core.Network
 import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.strategy.StrategyInit
+import weka.classifiers.Classifier
 
 /**
  * Created by phil on 29/06/16.
  */
-class FireLike extends SingleModelStrategy {
+class FireLike(override val baseLearner: Classifier, override val numBins: Int) extends SingleModelStrategy {
   override def getRecords(network: Network, context: ClientContext): Seq[Record] = {
     context.client.getProvenance(context.client) ++ network.gatherProvenance(context.client)
   }

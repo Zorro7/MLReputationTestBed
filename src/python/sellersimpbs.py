@@ -35,32 +35,47 @@ witdics = [x for level in witLikelihoodLevels for x in
 	"providersToPromote": 0.25, "providersToSlander": 0.25}]
 	]
 
+
+
 cmdargs = {
 	"strategy":
-		"jaspr.strategy.NoStrategy," \
+		["jaspr.strategy.NoStrategy," \
         "jaspr.strategy.fire.Fire(0.5)," \
         "jaspr.strategy.fire.Fire(0.0)," \
-        "jaspr.strategy.fire.MLFire(0.5)," \
-        "jaspr.strategy.fire.MLFire(0.0)," \
         "jaspr.strategy.betareputation.BetaReputation," \
         "jaspr.strategy.betareputation.Travos," \
-        "jaspr.strategy.blade.Blade(2)," \
-        "jaspr.strategy.habit.Habit(2)," \
+		"jaspr.strategy.blade.Blade(2)," \
+        "jaspr.strategy.habit.Habit(2),",
+        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.J48;2)," \
+        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.J48;2)," \
+        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2)," \
+        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.bayes.NaiveBayes;2)," \
+        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.J48;10)," \
+        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.J48;10)," \
+        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;10)," \
+        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.bayes.NaiveBayes;10)," \
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;2;0.5;false)," \
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;2;0.0;false)," \
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true)," \
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true)," \
         "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," \
         "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," \
         "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true)," \
         "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true),",
-    "numRounds": [250],
-	"numSimulations": 25,
+		# "jaspr.strategy.blade.Blade(10)," \
+        # "jaspr.strategy.habit.Habit(10),",
+		],
+	"numRounds": [1000],
+	"numSimulations": 10,
 	"memoryLimit": [100],
-	"clientInvolvementLikelihood": [0.1,0.2],
-    "numClients": [10,25],
-    "numProviders": [10,25,50],
+	"clientInvolvementLikelihood": [0.1],
+	"numClients": [10,25,50],
+	"numProviders": [10,25,50],
 	"eventLikelihood": 0,
 	"eventEffects": 0,
-        "numSimCapabilities": [1,5,10],
-        "numProviderCapabilities": [1,5,10],
-        "numTerms": [1,5],
+	"numSimCapabilities": [1,5],
+	"numProviderCapabilities": [1,5],
+	"numTerms": [1,5],
 	"wit": witdics
 }
 

@@ -15,9 +15,8 @@ import weka.classifiers.bayes.NaiveBayes
 trait SingleModelStrategy extends CompositionStrategy with Exploration with MlrsCore {
 
   override val explorationProbability: Double = 0.1
-  override val numBins: Int = 10
 
-  val baseLearner: Classifier = new NaiveBayes
+  val baseLearner: Classifier
 
   class BasicInit(context: ClientContext,
                   val trustModel: Option[MlrsModel]

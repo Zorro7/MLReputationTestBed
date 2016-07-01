@@ -14,12 +14,10 @@ import weka.classifiers.bayes.NaiveBayes
 /**
  * Created by phil on 30/06/16.
  */
-class HabitLike extends CompositionStrategy with Exploration with MlrsCore {
+class HabitLike(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrsCore {
 
   override val explorationProbability: Double = 0.1
-  override val numBins: Int = 2
 
-  val baseLearner: Classifier = new NaiveBayes
 
   class HabitLikeInit(context: ClientContext,
                        val trustModel: Option[MlrsModel],

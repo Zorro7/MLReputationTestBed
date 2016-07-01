@@ -5,6 +5,7 @@ import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.service.ProductPayload
+import weka.classifiers.Classifier
 
 /**
  * Created by phil on 29/06/16.
@@ -29,12 +30,12 @@ trait ContextML extends SingleModelStrategy {
   }
 }
 
-class BasicContext extends ContextML {
-  override val baseStrategy = new BasicML
+class BasicContext(override val baseLearner: Classifier, override val numBins: Int) extends ContextML {
+  override val baseStrategy = new BasicML(baseLearner, numBins)
 }
 
-class FireLikeContext extends ContextML {
-  override val baseStrategy = new FireLike
+class FireLikeContext(override val baseLearner: Classifier, override val numBins: Int) extends ContextML {
+  override val baseStrategy = new FireLike(baseLearner, numBins)
 }
 
 //class TravosLikeContext extends ContextML {

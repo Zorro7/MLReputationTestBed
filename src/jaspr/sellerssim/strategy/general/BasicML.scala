@@ -5,11 +5,12 @@ import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.service.ProductPayload
+import weka.classifiers.Classifier
 
 /**
  * Created by phil on 29/06/16.
  */
-class BasicML extends SingleModelStrategy {
+class BasicML(override val baseLearner: Classifier, override val numBins: Int) extends SingleModelStrategy {
 
 //
 //  = {

@@ -5,6 +5,7 @@ import jaspr.core.agent.Provider
 import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
 import jaspr.core.service.{ServiceRequest, ClientContext}
 import jaspr.core.strategy.StrategyInit
+import weka.classifiers.Classifier
 
 /**
  * Created by phil on 30/06/16.
@@ -33,12 +34,12 @@ trait StereotypeML extends SingleModelStrategy {
   }
 }
 
-class BasicStereotype extends StereotypeML {
-  override val baseStrategy = new BasicML
+class BasicStereotype(override val baseLearner: Classifier, override val numBins: Int) extends StereotypeML {
+  override val baseStrategy = new BasicML(baseLearner, numBins)
 }
 
-class FireLikeStereotype extends StereotypeML {
-  override val baseStrategy = new FireLike
+class FireLikeStereotype(override val baseLearner: Classifier, override val numBins: Int) extends StereotypeML {
+  override val baseStrategy = new FireLike(baseLearner, numBins)
 }
 
 //class TravosLikeStereotype extends StereotypeML {

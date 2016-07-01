@@ -15,12 +15,9 @@ import weka.classifiers.bayes.NaiveBayes
 /**
  * Created by phil on 29/06/16.
  */
-class TravosLike extends CompositionStrategy with Exploration with MlrsCore {
+class TravosLike(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrsCore {
 
   override val explorationProbability: Double = 0.1
-  override val numBins: Int = 2
-
-  val baseLearner: Classifier = new NaiveBayes
 
   class TravosLikeInit(context: ClientContext,
                        val trustModel: Option[MlrsModel],
