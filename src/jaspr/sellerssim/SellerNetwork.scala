@@ -5,6 +5,7 @@ import jaspr.core.Network
 import jaspr.core.agent._
 import jaspr.core.service.{ServiceRequest, ClientContext}
 import jaspr.sellerssim.agent.{SellerMarket, Seller, Buyer}
+import jaspr.utilities.Chooser
 
 /**
  * Created by phil on 21/03/16.
@@ -26,15 +27,21 @@ class SellerNetwork(override val simulation: SellerSimulation) extends Network {
   )
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
-    providers.withFilter(_.capableOf(context.payload, 0)).map(x =>
+    val p = providers.withFilter(
+      _.capableOf(context.payload, 0)// && Chooser.nextDouble() < simulation.config.clientInvolvementLikelihood
+    ).map(x =>
       new ServiceRequest(
         context.client, x, simulation.round, 0, context.payload, context.market
       )
     )
+    if (p.isEmpty) possibleRequests(context)
+    else p
   }
 
   override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
-    clients.withFilter(_ != agent).flatMap(_.getProvenance[T](agent))
+    clients.withFilter(
+      _ != agent && Chooser.nextDouble() < simulation.config.witnessRequestLikelihood
+    ).flatMap(_.getProvenance[T](agent))
   }
 
   override def markets: Seq[Market] = new SellerMarket(simulation) :: Nil

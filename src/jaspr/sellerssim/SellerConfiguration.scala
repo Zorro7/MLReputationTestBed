@@ -50,6 +50,7 @@ object SellerMultiConfiguration extends App {
     opt[Double]("slanderWitnessLikelihood") required() action {(x,c) => c.copy(slanderWitnessLikelihood = x)}
     opt[Double]("providersToPromote") required() action {(x,c) => c.copy(providersToPromote = x)}
     opt[Double]("providersToSlander") required() action {(x,c) => c.copy(providersToSlander = x)}
+    opt[Double]("witnessRequestLikelihood") required() action {(x,c) => c.copy(witnessRequestLikelihood = x)}
   }
 
   val argsplt =
@@ -71,11 +72,11 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.strategy.betareputation.MLTravos_provider," +
 //        "jaspr.strategy.betareputation.Travos,"+
         //        "jaspr.strategy.blade.Blade(2)," +
-        "jaspr.strategy.habit.Habit(2),"+
-        "jaspr.strategy.habit.Habit(10),"+
-        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;2;0.5;false)," +
+//        "jaspr.strategy.habit.Habit(2),"+
+//        "jaspr.strategy.habit.Habit(10),"+
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," +
-        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true),"+
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
         " --numSimulations 5 " +
         "--honestWitnessLikelihood 0.5 " +
@@ -84,9 +85,10 @@ object SellerMultiConfiguration extends App {
         "--negationWitnessLikelihood 0.1 " +
         "--promotionWitnessLikelihood 0.1 --slanderWitnessLikelihood 0.1 " +
         "--providersToPromote 0.1 --providersToSlander 0.1 " +
-        "--numClients 25 --numProviders 10 --eventLikelihood 0 --clientInvolvementLikelihood 0.1" +
+        "--numClients 100 --numProviders 100 --eventLikelihood 0 --clientInvolvementLikelihood 0.1" +
         " --eventEffects 0 --numRounds 1000 --memoryLimit 100 " +
-        "--numSimCapabilities 5 --numProviderCapabilities 10 --numTerms 5").split(" ")
+        "--numSimCapabilities 25 --numProviderCapabilities 5 --numTerms 5" +
+        " --witnessRequestLikelihood 0.1").split(" ")
     } else args
 
   println(argsplt.toList mkString("["," ","]"))
@@ -105,6 +107,7 @@ case class SellerMultiConfiguration(
                                numRounds: Int = 250,
                                numSimulations: Int = 1,
                                clientInvolvementLikelihood: Double = 0.01,
+                               witnessRequestLikelihood: Double = 0.1,
                                memoryLimit: Int = 100,
                                numClients: Int = 10,
                                numProviders: Int = 25,
@@ -131,7 +134,7 @@ case class SellerMultiConfiguration(
   override lazy val configs: Seq[Configuration] =
     strategies.map(x => {
       new SellerConfiguration(
-        Strategy.forName(x), numRounds, numSimulations, clientInvolvementLikelihood, memoryLimit,
+        Strategy.forName(x), numRounds, numSimulations, clientInvolvementLikelihood, witnessRequestLikelihood, memoryLimit,
         numClients, numProviders, numSimCapabilities, numProviderCapabilities, numTerms, eventLikelihood,
         honestWitnessLikelihood, pessimisticWitnessLikelihood, negationWitnessLikelihood,
         randomWitnessLikelihood, promotionWitnessLikelihood, slanderWitnessLikelihood,
@@ -145,6 +148,7 @@ class SellerConfiguration(override val strategy: Strategy,
                           override val numRounds: Int = 250,
                           override val numSimulations: Int = 1,
                           val clientInvolvementLikelihood: Double = 0.01,
+                          val witnessRequestLikelihood: Double = 0.1,
                           val memoryLimit: Int = 100,
                           val numClients: Int = 50,
                           val numProviders: Int = 50,
