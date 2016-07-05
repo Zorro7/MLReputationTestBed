@@ -44,6 +44,7 @@ object SellerMultiConfiguration extends App {
     opt[Double]("eventEffects") required() action {(x,c) => c.copy(eventEffects = x)}
     opt[Double]("honestWitnessLikelihood") required() action {(x,c) => c.copy(honestWitnessLikelihood = x)}
     opt[Double]("pessimisticWitnessLikelihood") required() action {(x,c) => c.copy(pessimisticWitnessLikelihood = x)}
+    opt[Double]("optimisticWitnessLikelihood") required() action {(x,c) => c.copy(optimisticWitnessLikelihood = x)}
     opt[Double]("negationWitnessLikelihood") required() action {(x,c) => c.copy(negationWitnessLikelihood = x)}
     opt[Double]("randomWitnessLikelihood") required() action {(x,c) => c.copy(randomWitnessLikelihood = x)}
     opt[Double]("promotionWitnessLikelihood") required() action {(x,c) => c.copy(promotionWitnessLikelihood = x)}
@@ -73,14 +74,14 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.strategy.betareputation.Travos,"+
         //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
-//        "jaspr.strategy.habit.Habit(10),"+
-        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
+        "jaspr.strategy.habit.Habit(10),"+
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," +
-        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true),"+
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true),"+
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
         " --numSimulations 5 " +
         "--honestWitnessLikelihood 0.5 " +
-        "--pessimisticWitnessLikelihood 0.1 " +
+        "--pessimisticWitnessLikelihood 0.1 --optimisticWitnessLikelihood 0.2 " +
         "--randomWitnessLikelihood 0.1 " +
         "--negationWitnessLikelihood 0.1 " +
         "--promotionWitnessLikelihood 0.1 --slanderWitnessLikelihood 0.1 " +
@@ -118,6 +119,7 @@ case class SellerMultiConfiguration(
                                eventEffects: Double = 0,
                                honestWitnessLikelihood: Double = 0.1,
                                pessimisticWitnessLikelihood: Double = 0.1,
+                               optimisticWitnessLikelihood: Double = 0.1,
                                negationWitnessLikelihood: Double = 0.1,
                                randomWitnessLikelihood: Double = 0.1,
                                promotionWitnessLikelihood: Double = 0.1,
@@ -136,7 +138,7 @@ case class SellerMultiConfiguration(
       new SellerConfiguration(
         Strategy.forName(x), numRounds, numSimulations, clientInvolvementLikelihood, witnessRequestLikelihood, memoryLimit,
         numClients, numProviders, numSimCapabilities, numProviderCapabilities, numTerms, eventLikelihood,
-        honestWitnessLikelihood, pessimisticWitnessLikelihood, negationWitnessLikelihood,
+        honestWitnessLikelihood, pessimisticWitnessLikelihood, optimisticWitnessLikelihood, negationWitnessLikelihood,
         randomWitnessLikelihood, promotionWitnessLikelihood, slanderWitnessLikelihood,
         providersToPromote, providersToSlander
       )
@@ -159,6 +161,7 @@ class SellerConfiguration(override val strategy: Strategy,
                           val eventEffects: Double = 0,
                           val honestWitnessLikelihood: Double = 0.1,
                           val pessimisticWitnessLikelihood: Double = 0.1,
+                          val optimisticWitnessLikelihood: Double = 0.1,
                           val negationWitnessLikelihood: Double = 0.1,
                           val randomWitnessLikelihood: Double = 0.1,
                           val promotionWitnessLikelihood: Double = 0.1,
@@ -239,12 +242,14 @@ class SellerConfiguration(override val strategy: Strategy,
     Chooser.choose(
       new HonestWitnessModel ::
         new PessimisticWitnessModel ::
+        new OptimisticWitnessModel ::
         new NegationWitnessModel ::
         new RandomWitnessModel ::
         new PromotionWitnessModel(Chooser.sample(network.providers, (providersToPromote*numProviders).toInt)) ::
         new SlanderWitnessModel(Chooser.sample(network.providers, (providersToSlander*numProviders).toInt)) ::
         Nil,
       honestWitnessLikelihood ::
+        optimisticWitnessLikelihood ::
         pessimisticWitnessLikelihood ::
         negationWitnessLikelihood ::
         randomWitnessLikelihood ::
