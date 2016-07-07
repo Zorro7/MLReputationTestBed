@@ -40,6 +40,8 @@ object SellerMultiConfiguration extends App {
     opt[Int]("numSimCapabilities") required() action {(x,c) => c.copy(numSimCapabilities = x)}
     opt[Int]("numProviderCapabilities") required() action {(x,c) => c.copy(numProviderCapabilities = x)}
     opt[Int]("numTerms") required() action {(x,c) => c.copy(numTerms = x)}
+    opt[Int]("numAdverts") required() action {(x,c) => c.copy(numAdverts = x)}
+    opt[Boolean]("usePreferences") required() action {(x,c) => c.copy(usePreferences = x)}
     opt[Double]("eventLikelihood") required() action {(x,c) => c.copy(eventLikelihood = x)}
     opt[Double]("eventEffects") required() action {(x,c) => c.copy(eventEffects = x)}
     opt[Double]("honestWitnessLikelihood") required() action {(x,c) => c.copy(honestWitnessLikelihood = x)}
@@ -74,22 +76,26 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.strategy.betareputation.Travos,"+
         //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
-        "jaspr.strategy.habit.Habit(10),"+
+//        "jaspr.strategy.habit.Habit(5),"+
+//        "jaspr.strategy.stereotype.Burnett," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.5;true),"+
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
-        " --numSimulations 5 " +
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.functions.SMO;5;0.5;true)," +
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.RandomForest;5;0.5;true)," +
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.lazy.KStar;5;0.5;true)," +
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.5;true),"+
+    //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
+        " --numSimulations 10 " +
         "--honestWitnessLikelihood 0.5 " +
-        "--pessimisticWitnessLikelihood 0.1 --optimisticWitnessLikelihood 0.2 " +
+        "--pessimisticWitnessLikelihood 0.1 --optimisticWitnessLikelihood 0.1 " +
         "--randomWitnessLikelihood 0.1 " +
         "--negationWitnessLikelihood 0.1 " +
         "--promotionWitnessLikelihood 0.1 --slanderWitnessLikelihood 0.1 " +
-        "--providersToPromote 0.1 --providersToSlander 0.1 " +
-        "--numClients 100 --numProviders 100 --eventLikelihood 0 --clientInvolvementLikelihood 0.1" +
+        "--providersToPromote 0.2 --providersToSlander 0.2 " +
+        "--numClients 25 --numProviders 25 --eventLikelihood 0 --clientInvolvementLikelihood 0.1" +
         " --eventEffects 0 --numRounds 1000 --memoryLimit 100 " +
-        "--numSimCapabilities 25 --numProviderCapabilities 5 --numTerms 5" +
-        " --witnessRequestLikelihood 0.1").split(" ")
+        "--numSimCapabilities 2 --numProviderCapabilities 5 --numTerms 5" +
+        " --witnessRequestLikelihood 0.1 --numAdverts 5 --usePreferences true").split(" ")
     } else args
 
   println(argsplt.toList mkString("["," ","]"))
@@ -115,6 +121,8 @@ case class SellerMultiConfiguration(
                                numSimCapabilities: Int = 10,
                                numProviderCapabilities: Int = 5,
                                numTerms: Int = 2,
+                               numAdverts: Int = 2,
+                               usePreferences: Boolean = true,
                                eventLikelihood: Double = 0,
                                eventEffects: Double = 0,
                                honestWitnessLikelihood: Double = 0.1,
@@ -137,7 +145,7 @@ case class SellerMultiConfiguration(
     strategies.map(x => {
       new SellerConfiguration(
         Strategy.forName(x), numRounds, numSimulations, clientInvolvementLikelihood, witnessRequestLikelihood, memoryLimit,
-        numClients, numProviders, numSimCapabilities, numProviderCapabilities, numTerms, eventLikelihood,
+        numClients, numProviders, numSimCapabilities, numProviderCapabilities, numTerms, numAdverts, usePreferences, eventLikelihood,
         honestWitnessLikelihood, pessimisticWitnessLikelihood, optimisticWitnessLikelihood, negationWitnessLikelihood,
         randomWitnessLikelihood, promotionWitnessLikelihood, slanderWitnessLikelihood,
         providersToPromote, providersToSlander
@@ -157,6 +165,8 @@ class SellerConfiguration(override val strategy: Strategy,
                           val numSimCapabilities: Int = 10,
                           val numProviderCapabilities: Int = 5,
                           val numTerms: Int = 2,
+                          val numAdverts: Int = 2,
+                          val usePreferences: Boolean = true,
                           val eventLikelihood: Double = 0,
                           val eventEffects: Double = 0,
                           val honestWitnessLikelihood: Double = 0.1,
@@ -172,6 +182,8 @@ class SellerConfiguration(override val strategy: Strategy,
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
   }
+
+
 
   // Basic utility gained in each interaction (0 if absolute service properties are used and 2/3 if preferences are used (Like this so random strategy has E[U]=0).
   val baseUtility = if (preferences(null).isEmpty) 0d else 2d/3d
@@ -209,7 +221,8 @@ class SellerConfiguration(override val strategy: Strategy,
 
   def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
     //        agent.properties.mapValues(x => Property(x.name, x.doubleValue + Chooser.randomDouble(-1.5,1.5))) //todo make this more something.
-        agent.properties.mapValues(x => Property(x.name, addNoise(x.doubleValue)))
+    agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
+
 //    new Property("agentid", agent.id) :: Nil
   }
 
@@ -234,7 +247,8 @@ class SellerConfiguration(override val strategy: Strategy,
 //      new Property("b", Chooser.randomDouble(-1d,1d)) ::
 //      new Property("c", Chooser.randomDouble(-1d,1d)) ::
 // Nil
-    (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
+    if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
+    else Nil
   }
 
 
@@ -257,21 +271,6 @@ class SellerConfiguration(override val strategy: Strategy,
         slanderWitnessLikelihood ::
         Nil
     )
-//    Chooser.ifHappens[WitnessModel](honestLikelihood)(
-//      new HonestWitnessModel
-//    )(
-//      Chooser.choose(
-//        Chooser.ifHappens(pessimisticLikelihood)(new PessimisticWitnessModel :: Nil)(Nil) ++ Nil
-//          ::
-//          new OptimisticWitnessModel ::
-//          new NegationWitnessModel ::
-//          new RandomWitnessModel ::
-//          new PromotionWitnessModel(Chooser.sample(network.providers, numProviders/10)) ::
-//          new SlanderWitnessModel(Chooser.sample(network.providers, numProviders/10)) ::
-//          Nil
-//      )
-//    )
-
   }
 
 }

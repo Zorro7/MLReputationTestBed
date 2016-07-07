@@ -28,6 +28,10 @@ class BetaDistribution(val alpha: Double = 0, val beta: Double = 0) {
     alpha / (alpha + beta)
   }
 
+  def uncertainty(): Double = {
+    1 / (alpha + beta)
+  }
+
   def numer(): Double = alpha
 
   def denom(): Double = alpha+beta

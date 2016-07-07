@@ -40,7 +40,7 @@ class HonestWitnessModel extends WitnessModel {
 class PessimisticWitnessModel extends WitnessModel {
   def changeRecord(record: Record, agent: Provenance) = {
     record.asInstanceOf[BuyerRecord].copy(
-      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x-1)/2)
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x-1d)/2d)
     )
   }
   def omitRecord(record: Record, agent: Provenance) = false
@@ -49,7 +49,7 @@ class PessimisticWitnessModel extends WitnessModel {
 class OptimisticWitnessModel extends WitnessModel {
   def changeRecord(record: Record, agent: Provenance) = {
     record.asInstanceOf[BuyerRecord].copy(
-      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x-1)/2)
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x+1d)/2d)
     )
   }
   def omitRecord(record: Record, agent: Provenance) = false
@@ -77,7 +77,7 @@ class PromotionWitnessModel(val agentsToPromote: Seq[Provider]) extends WitnessM
   def changeRecord(record: Record, agent: Provenance) = {
     if (agentsToPromote.contains(record.asInstanceOf[BuyerRecord].provider)) {
       record.asInstanceOf[BuyerRecord].copy(
-        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => 1d)
+        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x+1d)/2d)
       )
     }
     else record
@@ -89,7 +89,7 @@ class SlanderWitnessModel(val agentsToPromote: Seq[Provider]) extends WitnessMod
   def changeRecord(record: Record, agent: Provenance) = {
     if (agentsToPromote.contains(record.asInstanceOf[BuyerRecord].provider)) {
       record.asInstanceOf[BuyerRecord].copy(
-        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => -1d)
+        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x-1d)/2d)
       )
     }
     else record

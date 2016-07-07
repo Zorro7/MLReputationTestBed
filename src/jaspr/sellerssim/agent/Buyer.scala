@@ -36,18 +36,17 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Witne
     ))
   }
 
+  var tmp: List[Double] = Nil
+
   def rateService(service: Service): Map[String,Double] = {
     val received = service.payload.asInstanceOf[ProductPayload].quality
     val wanted = service.request.payload.asInstanceOf[ProductPayload].quality
-    val x = received.map(x => x._1 -> {
-      val r = wanted.get(x._1) match {
+    received.map(x => x._1 -> {
+      wanted.get(x._1) match {
         case Some(req) => simulation.config.baseUtility - Math.abs(x._2 - req)
         case None => simulation.config.baseUtility + x._2
       }
-//      println(simulation.config.baseUtility, x._2, wanted.get(x._1), r)
-      r
     })
-    x
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {

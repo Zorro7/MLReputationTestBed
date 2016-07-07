@@ -51,7 +51,7 @@ class Mlrs(val baseLearner: Classifier,
   }
 
   def adverts(provider: Provider): List[Any] = {
-    if (useAdvertProperties) provider.advertProperties.values.map(_.value).toList
+    if (useAdvertProperties) provider.name :: provider.advertProperties.values.map(_.value).toList
     else provider.name :: Nil
   }
 

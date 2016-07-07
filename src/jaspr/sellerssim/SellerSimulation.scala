@@ -11,7 +11,6 @@ import jaspr.utilities.Chooser
 object SellerSimulation extends App {
   val results = Simulation(new SellerMultiConfiguration)
 
-
 //  def sigmoid(x: Double) = x/(1d+Math.exp(Math.abs(x)))
 //
 //  val results = for (i <- 0 to 10000) yield {
