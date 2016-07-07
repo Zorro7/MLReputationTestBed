@@ -59,7 +59,7 @@ object SellerMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.strategy.NoStrategy," +
+//        "jaspr.strategy.NoStrategy," +
 //        "jaspr.sellerssim.strategy.general.BasicML," +
 //        "jaspr.sellerssim.strategy.general.FireLike," +
 //        "jaspr.sellerssim.strategy.general.BasicContext," +
@@ -68,7 +68,7 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.FireLikeStereotype," +
 //        "jaspr.sellerssim.strategy.general.TravosLikeSlim," +
 //        "jaspr.sellerssim.strategy.general.TravosLike" +
-//        "jaspr.strategy.fire.Fire(0.5)," +
+        "jaspr.strategy.fire.Fire(0.5)," +
 //        "jaspr.strategy.fire.Fire(0.0)," +
 //        "jaspr.strategy.fire.MLFire(0.5),jaspr.strategy.fire.MLFire(0.0)," +
 //        "jaspr.strategy.betareputation.BetaReputation," +
@@ -83,17 +83,17 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.functions.SMO;5;0.5;true)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.RandomForest;5;0.5;true)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.lazy.KStar;5;0.5;true)," +
-        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.5;true),"+
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.5;true),"+
     //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
         " --numSimulations 10 " +
-        "--honestWitnessLikelihood 0.5 " +
-        "--pessimisticWitnessLikelihood 0.1 --optimisticWitnessLikelihood 0.1 " +
-        "--randomWitnessLikelihood 0.1 " +
-        "--negationWitnessLikelihood 0.1 " +
-        "--promotionWitnessLikelihood 0.1 --slanderWitnessLikelihood 0.1 " +
-        "--providersToPromote 0.2 --providersToSlander 0.2 " +
-        "--numClients 25 --numProviders 25 --eventLikelihood 0 --clientInvolvementLikelihood 0.1" +
-        " --eventEffects 0 --numRounds 1000 --memoryLimit 100 " +
+        "--honestWitnessLikelihood 1 " +
+        "--pessimisticWitnessLikelihood 0 --optimisticWitnessLikelihood 0 " +
+        "--randomWitnessLikelihood 0 " +
+        "--negationWitnessLikelihood 1 " +
+        "--promotionWitnessLikelihood 0 --slanderWitnessLikelihood 0 " +
+        "--providersToPromote 0 --providersToSlander 0 " +
+        "--numClients 5 --numProviders 5 --eventLikelihood 0 --clientInvolvementLikelihood 0.1" +
+        " --eventEffects 0 --numRounds 500 --memoryLimit 100 " +
         "--numSimCapabilities 2 --numProviderCapabilities 5 --numTerms 5" +
         " --witnessRequestLikelihood 0.1 --numAdverts 5 --usePreferences true").split(" ")
     } else args
@@ -141,48 +141,68 @@ case class SellerMultiConfiguration(
   override val resultEnd: Int = -1
   //  override val _seed = 1000
 
+
+
   override lazy val configs: Seq[Configuration] =
     strategies.map(x => {
       new SellerConfiguration(
-        Strategy.forName(x), numRounds, numSimulations, clientInvolvementLikelihood, witnessRequestLikelihood, memoryLimit,
-        numClients, numProviders, numSimCapabilities, numProviderCapabilities, numTerms, numAdverts, usePreferences, eventLikelihood,
-        honestWitnessLikelihood, pessimisticWitnessLikelihood, optimisticWitnessLikelihood, negationWitnessLikelihood,
-        randomWitnessLikelihood, promotionWitnessLikelihood, slanderWitnessLikelihood,
-        providersToPromote, providersToSlander
+        strategy = Strategy.forName(x),
+        numRounds = numRounds,
+        numSimulations = numSimulations,
+        clientInvolvementLikelihood = clientInvolvementLikelihood,
+        witnessRequestLikelihood = witnessRequestLikelihood,
+        memoryLimit = memoryLimit,
+        numClients = numClients,
+        numProviders = numProviders,
+        numSimCapabilities = numSimCapabilities,
+        numProviderCapabilities = numProviderCapabilities,
+        numTerms = numTerms,
+        numAdverts = numAdverts,
+        usePreferences = usePreferences,
+        eventLikelihood = eventLikelihood,
+        eventEffects = eventEffects,
+        honestWitnessLikelihood = honestWitnessLikelihood,
+        pessimisticWitnessLikelihood = pessimisticWitnessLikelihood,
+        optimisticWitnessLikelihood = optimisticWitnessLikelihood,
+        negationWitnessLikelihood = negationWitnessLikelihood,
+        randomWitnessLikelihood = randomWitnessLikelihood,
+        promotionWitnessLikelihood = promotionWitnessLikelihood,
+        slanderWitnessLikelihood = slanderWitnessLikelihood,
+        providersToPromote = providersToPromote,
+        providersToSlander = providersToSlander
       )
     })
 
 }
 
 class SellerConfiguration(override val strategy: Strategy,
-                          override val numRounds: Int = 250,
-                          override val numSimulations: Int = 1,
-                          val clientInvolvementLikelihood: Double = 0.01,
-                          val witnessRequestLikelihood: Double = 0.1,
-                          val memoryLimit: Int = 100,
-                          val numClients: Int = 50,
-                          val numProviders: Int = 50,
-                          val numSimCapabilities: Int = 10,
-                          val numProviderCapabilities: Int = 5,
-                          val numTerms: Int = 2,
-                          val numAdverts: Int = 2,
-                          val usePreferences: Boolean = true,
-                          val eventLikelihood: Double = 0,
-                          val eventEffects: Double = 0,
-                          val honestWitnessLikelihood: Double = 0.1,
-                          val pessimisticWitnessLikelihood: Double = 0.1,
-                          val optimisticWitnessLikelihood: Double = 0.1,
-                          val negationWitnessLikelihood: Double = 0.1,
-                          val randomWitnessLikelihood: Double = 0.1,
-                          val promotionWitnessLikelihood: Double = 0.1,
-                          val slanderWitnessLikelihood: Double = 0.1,
-                          val providersToPromote: Double = 0.1,
-                          val providersToSlander: Double = 0.1
+                          override val numRounds: Int,
+                          override val numSimulations: Int,
+                          val clientInvolvementLikelihood: Double,
+                          val witnessRequestLikelihood: Double,
+                          val memoryLimit: Int,
+                          val numClients: Int,
+                          val numProviders: Int,
+                          val numSimCapabilities: Int,
+                          val numProviderCapabilities: Int,
+                          val numTerms: Int,
+                          val numAdverts: Int,
+                          val usePreferences: Boolean,
+                          val eventLikelihood: Double,
+                          val eventEffects: Double,
+                          val honestWitnessLikelihood: Double,
+                          val pessimisticWitnessLikelihood: Double,
+                          val optimisticWitnessLikelihood: Double,
+                          val negationWitnessLikelihood: Double,
+                          val randomWitnessLikelihood: Double,
+                          val promotionWitnessLikelihood: Double,
+                          val slanderWitnessLikelihood: Double,
+                          val providersToPromote: Double,
+                          val providersToSlander: Double
                            ) extends Configuration {
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
   }
-
 
 
   // Basic utility gained in each interaction (0 if absolute service properties are used and 2/3 if preferences are used (Like this so random strategy has E[U]=0).
@@ -263,8 +283,8 @@ class SellerConfiguration(override val strategy: Strategy,
         new SlanderWitnessModel(Chooser.sample(network.providers, (providersToSlander*numProviders).toInt)) ::
         Nil,
       honestWitnessLikelihood ::
-        optimisticWitnessLikelihood ::
         pessimisticWitnessLikelihood ::
+        optimisticWitnessLikelihood ::
         negationWitnessLikelihood ::
         randomWitnessLikelihood ::
         promotionWitnessLikelihood ::
