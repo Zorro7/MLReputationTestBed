@@ -18,3 +18,27 @@ def numbers(dic):
 		except:
 			pass
 	return dic
+
+
+def typeset(x):
+	try:
+		return int(x)
+	except:
+		pass
+	try:
+		return float(x)
+	except:
+		pass
+	return str(x)
+
+
+def maxindices(arr):
+	mx = arr[0]
+	mxi = [0]
+	for i,a in zip(xrange(1,len(arr)+1),arr[1:]):
+		if a > mx:
+			mx = a
+			mxi = [i]
+		elif a == mx:
+			mxi.append(i)
+	return mxi
