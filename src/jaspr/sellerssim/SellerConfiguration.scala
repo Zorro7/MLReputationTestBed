@@ -68,12 +68,12 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.FireLikeStereotype," +
 //        "jaspr.sellerssim.strategy.general.TravosLikeSlim," +
 //        "jaspr.sellerssim.strategy.general.TravosLike" +
-        "jaspr.strategy.fire.Fire(0.5)," +
+//        "jaspr.strategy.fire.Fire(0.5)," +
 //        "jaspr.strategy.fire.Fire(0.0)," +
 //        "jaspr.strategy.fire.MLFire(0.5),jaspr.strategy.fire.MLFire(0.0)," +
 //        "jaspr.strategy.betareputation.BetaReputation," +
 //        "jaspr.strategy.betareputation.MLTravos_provider," +
-//        "jaspr.strategy.betareputation.Travos,"+
+        "jaspr.strategy.betareputation.Travos,"+
         //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
 //        "jaspr.strategy.habit.Habit(5),"+
@@ -85,17 +85,28 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.lazy.KStar;5;0.5;true)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.5;true),"+
     //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
-        " --numSimulations 10 " +
+        " --numSimulations 25 " +
         "--honestWitnessLikelihood 1 " +
-        "--pessimisticWitnessLikelihood 0 --optimisticWitnessLikelihood 0 " +
+        "--pessimisticWitnessLikelihood 1 " +
+        "--optimisticWitnessLikelihood 1 " +
         "--randomWitnessLikelihood 0 " +
-        "--negationWitnessLikelihood 1 " +
-        "--promotionWitnessLikelihood 0 --slanderWitnessLikelihood 0 " +
-        "--providersToPromote 0 --providersToSlander 0 " +
-        "--numClients 5 --numProviders 5 --eventLikelihood 0 --clientInvolvementLikelihood 0.1" +
-        " --eventEffects 0 --numRounds 500 --memoryLimit 100 " +
-        "--numSimCapabilities 2 --numProviderCapabilities 5 --numTerms 5" +
-        " --witnessRequestLikelihood 0.1 --numAdverts 5 --usePreferences true").split(" ")
+        "--negationWitnessLikelihood 0 " +
+        "--promotionWitnessLikelihood 0 " +
+        "--slanderWitnessLikelihood 0 " +
+        "--providersToPromote 0.25 " +
+        "--providersToSlander 0.25 " +
+        "--numClients 25 --numProviders 25 " +
+        "--eventLikelihood 0 " +
+        "--clientInvolvementLikelihood 0.1 " +
+        "--eventEffects 0 " +
+        "--numRounds 500 " +
+        "--memoryLimit 100 " +
+        "--numSimCapabilities 5 " +
+        "--numProviderCapabilities 5 " +
+        "--numTerms 5 " +
+        "--witnessRequestLikelihood 0.1 " +
+        "--numAdverts 0 " +
+        "--usePreferences false").split(" ")
     } else args
 
   println(argsplt.toList mkString("["," ","]"))
@@ -139,7 +150,7 @@ case class SellerMultiConfiguration(
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-  //  override val _seed = 1000
+//  override val _seed = 1
 
 
 
@@ -217,33 +228,23 @@ class SellerConfiguration(override val strategy: Strategy,
     caps = caps.map(_.copy(
       quality = provider.properties.map(x =>
         x._1 -> addNoise(x._2.doubleValue)
-//        x._1 -> x._2.doubleValue
       )
     ))
+    println(provider, caps)
     caps
   }
 
   def addNoise(x: Double): Double = {
-//    Chooser.bound(x * Chooser.randomDouble(0.5,2), -1, 1)
     Chooser.bound(x + Chooser.randomDouble(-0.5,0.5), -1, 1)
   }
 
   // Properties of a provider agent
   def properties(agent: Agent): SortedMap[String,Property] = {
-    //    TreeMap()
-//    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
-//      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
-//      new Property("a", Chooser.randomDouble(-1d,1d)) ::
-//      new Property("b", Chooser.randomDouble(-1d,1d)) ::
-//      new Property("c", Chooser.randomDouble(-1d,1d)) ::
     (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
   }
 
   def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
-    //        agent.properties.mapValues(x => Property(x.name, x.doubleValue + Chooser.randomDouble(-1.5,1.5))) //todo make this more something.
     agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
-
-//    new Property("agentid", agent.id) :: Nil
   }
 
 
@@ -260,13 +261,6 @@ class SellerConfiguration(override val strategy: Strategy,
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Buyer): SortedMap[String,Property] = {
-//    TreeMap()
-//    new Property("Quality", Chooser.randomDouble(-1d,1d)) ::
-//      new Property("Timeliness", Chooser.randomDouble(-1d,1d)) ::
-//      new Property("a", Chooser.randomDouble(-1d,1d)) ::
-//      new Property("b", Chooser.randomDouble(-1d,1d)) ::
-//      new Property("c", Chooser.randomDouble(-1d,1d)) ::
-// Nil
     if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
     else Nil
   }

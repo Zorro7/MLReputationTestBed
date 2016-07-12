@@ -21,7 +21,7 @@ trait BetaCore {
 
   /** combine all the ratings (interaction and weighted opinions) for final reputation value */
   def getCombinedOpinions(interactionTrust: BetaDistribution, opinions: Iterable[BetaDistribution]): BetaDistribution = {
-    opinions.map(x => x).foldLeft(interactionTrust)((m1, m2) => // Start the reduce op with the client's trust value
+    opinions.foldLeft(interactionTrust)((m1, m2) => // Start the reduce op with the client's trust value
       m1 + m2
     )
   }
