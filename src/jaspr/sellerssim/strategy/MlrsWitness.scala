@@ -80,7 +80,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       r.client.id.toString ::
       r.service.payload.name :: // service identifier (client context)
       r.rating ::
-      r.provider.advertProperties.values.map(_.value).toList
+      adverts(r.provider)
   }
 
   def makeWitnessRow(r: BuyerRecord): Seq[Any] = {
@@ -88,7 +88,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       r.client.id.toString ::
       r.service.payload.name :: // service identifier (client context)
       r.rating ::
-      r.provider.advertProperties.values.map(_.value).toList
+      adverts(r.provider)
   }
 
   def makeWitnessTestRows(init: MlrsInit, request: ServiceRequest, witnessRatings: Seq[BuyerRecord], fe: String): Iterable[List[Any]] = {
@@ -97,7 +97,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
         r.client.id.toString :: // witness
         request.payload.name ::  // service context
         r.rating ::
-        request.provider.advertProperties.values.map(_.value).toList
+        adverts(r.provider)
     }
     ret
   }
