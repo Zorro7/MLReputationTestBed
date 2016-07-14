@@ -40,10 +40,15 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
       case Some(trustModel) =>
         val row = makeTestRow(init, request)
         val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
-        val pred = trustModel.model.classifyInstance(query)
-        val result =
-          if (discreteClass) trustModel.train.classAttribute().value(pred.toInt).toDouble
-          else pred
+
+        val result = if (discreteClass && numBins <= 2) {
+          val dist = trustModel.model.distributionForInstance(query)
+          dist.zipWithIndex.map(x => x._1 * trustModel.train.classAttribute().value(x._2).toDouble).sum
+        } else if (discreteClass) {
+          val pred = trustModel.model.classifyInstance(query)
+          trustModel.train.classAttribute().value(pred.toInt).toDouble
+        } else trustModel.model.classifyInstance(query)
+
         new TrustAssessment(baseInit.context, request, result)
     }
   }

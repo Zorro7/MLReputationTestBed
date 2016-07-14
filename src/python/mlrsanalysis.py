@@ -15,8 +15,13 @@ if __name__ == "__main__":
 
 
 	df = "{0:.1f}"
-	strategies = [('NoStrategy',), ('Fire-0.5',), ('BetaReputation',), ('Travos',), ('Blade-2',), ('Habit-2',), ('Blade-5',), ('Habit-5',),
-					('Burnett',), ('FireLikeStereotype',), ('BasicStereotype',), ('Mlrs-J48-5-0.5',), ('Mlrs-NaiveBayes-2-0.5',), ('Mlrs-NaiveBayes-5-0.5',)]
+	strategies = [('NoStrategy',), ('Fire-0.5',), ('BetaReputation',), ('Travos',), ('Blade-5',), ('Habit-5',),
+	# ('Blade-5',), ('Habit-5',),
+					('Burnett',), ('FireLikeStereotype',), ('BasicStereotype',),
+					# ('Mlrs-J48-5-0.5',),
+					('Mlrs-NaiveBayes-5-0.5',),
+					# ('Mlrs-NaiveBayes-5-0.5',)
+					]
 	# [('BasicML',), ('BasicStereotype',), ('BetaReputation',), ('Blade-2',), ('Fire-0.0',),  ('FireLike',), ('FireLikeStereotype',), ('Habit-2',), ('Mlrs-J48-10-0.0',), ('Mlrs-J48-10-0.5',), ('Mlrs-J48-2-0.0',),
 	# ('Mlrs-J48-2-0.5',), ('Mlrs-NaiveBayes-10-0.0',), ('Mlrs-NaiveBayes-10-0.5',), ('Mlrs-NaiveBayes-2-0.0',), ('Mlrs-NaiveBayes-2-0.5',), ('NoStrategy',), ('Travos',)]
 
@@ -48,7 +53,7 @@ if __name__ == "__main__":
 	exps = [e for e in exps if e[0] in [1,0.5]]
 	print exps
 	botspltkeys = ["exp"]
-	scorename = "utility"
+	scorename = "gain100"
 
 	means = []
 	stds = []
@@ -89,7 +94,8 @@ if __name__ == "__main__":
 		for boti in xrange(0,len(exps)):
 			if topi in meanis[boti]:
 				print "\\bf",
-			print df.format(stderrs[boti][topi]*1.96),
+			# print df.format(stderrs[boti][topi]*1.96),
+			print df.format(means[boti][topi]),
 			if boti < len(exps)-1:
 				print "&",
 		print "\\\\"
