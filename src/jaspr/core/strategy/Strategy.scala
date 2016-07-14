@@ -28,6 +28,12 @@ object Strategy {
 
 abstract class Strategy {
 
+  var initTime: Long = 0
+  var computeTime: Long = 0
+  var computeProviderTime: Long = 0
+  var callCounter: Int = 0
+  var callProviderCounter: Int = 0
+
   val name: String = this.getClass.getSimpleName
   override def toString = name
 
@@ -38,8 +44,17 @@ abstract class Strategy {
 
   def assessReputation(network: Network, context: ClientContext): TrustAssessment = {
     val requests = network.possibleRequests(context)
+    val initStart = System.currentTimeMillis()
     val init = initStrategy(network, context)
+    val initEnd = System.currentTimeMillis()
+    val computeStart = System.currentTimeMillis()
     val orderedProviders = rank(init, requests)
+    val computeEnd = System.currentTimeMillis()
+    initTime += initEnd - initStart
+    computeTime += computeEnd - computeStart
+    computeProviderTime += (computeEnd - computeStart)/orderedProviders.size
+    callCounter += 1
+    callProviderCounter += orderedProviders.size
     select(orderedProviders)
   }
 
@@ -50,4 +65,11 @@ abstract class Strategy {
     ).reverse
   }
 
+  def resetTimeCounters(): Unit = {
+    initTime = 0
+    computeTime = 0
+    computeProviderTime = 0
+    callCounter = 0
+    callProviderCounter = 0
+  }
 }

@@ -60,21 +60,24 @@ object SellerMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
 //        "jaspr.strategy.NoStrategy," +
-//        "jaspr.sellerssim.strategy.general.BasicML," +
-//        "jaspr.sellerssim.strategy.general.FireLike," +
-//        "jaspr.sellerssim.strategy.general.BasicContext," +
-//        "jaspr.sellerssim.strategy.general.FireLikeContext," +
-//        "jaspr.sellerssim.strategy.general.BasicStereotype," +
-//        "jaspr.sellerssim.strategy.general.FireLikeStereotype," +
+//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
+//        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2)," +
+//        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
+//        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.TravosLikeSlim," +
-//        "jaspr.sellerssim.strategy.general.TravosLike" +
+//        "jaspr.sellerssim.strategy.general.TravosLike(weka.classifiers.bayes.NaiveBayes;2)," +
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2)," +
+//        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.strategy.fire.Fire(0.5)," +
 //        "jaspr.strategy.fire.Fire(0.0)," +
-//        "jaspr.strategy.fire.MLFire(0.5),jaspr.strategy.fire.MLFire(0.0)," +
+//        "jaspr.strategy.fire.MLFire(0.5), " +
+//        "jaspr.strategy.fire.MLFire(0.0)," +
 //        "jaspr.strategy.betareputation.BetaReputation," +
 //        "jaspr.strategy.betareputation.MLTravos_provider," +
-        "jaspr.strategy.betareputation.Travos,"+
-        //        "jaspr.strategy.blade.Blade(2)," +
+//        "jaspr.strategy.betareputation.Travos,"+
+          "jaspr.strategy.blade.Blade(2)," +
+//          "jaspr.strategy.blade.Blade(5)," +
+        //
 //        "jaspr.strategy.habit.Habit(2),"+
 //        "jaspr.strategy.habit.Habit(5),"+
 //        "jaspr.strategy.stereotype.Burnett," +
@@ -83,30 +86,30 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.functions.SMO;5;0.5;true)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.RandomForest;5;0.5;true)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.lazy.KStar;5;0.5;true)," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.5;true),"+
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
     //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
-        " --numSimulations 25 " +
+        " --numSimulations 100 " +
         "--honestWitnessLikelihood 1 " +
-        "--pessimisticWitnessLikelihood 1 " +
-        "--optimisticWitnessLikelihood 1 " +
+        "--pessimisticWitnessLikelihood 0 " +
+        "--optimisticWitnessLikelihood 0 " +
         "--randomWitnessLikelihood 0 " +
         "--negationWitnessLikelihood 0 " +
         "--promotionWitnessLikelihood 0 " +
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 25 --numProviders 25 " +
+        "--numClients 100 --numProviders 100 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 500 " +
+        "--numRounds 1000 " +
         "--memoryLimit 100 " +
         "--numSimCapabilities 5 " +
         "--numProviderCapabilities 5 " +
         "--numTerms 5 " +
         "--witnessRequestLikelihood 0.1 " +
-        "--numAdverts 0 " +
-        "--usePreferences false").split(" ")
+        "--numAdverts 2 " +
+        "--usePreferences true").split(" ")
     } else args
 
   println(argsplt.toList mkString("["," ","]"))
@@ -183,7 +186,6 @@ case class SellerMultiConfiguration(
         providersToSlander = providersToSlander
       )
     })
-
 }
 
 class SellerConfiguration(override val strategy: Strategy,
@@ -217,8 +219,8 @@ class SellerConfiguration(override val strategy: Strategy,
 
 
   // Basic utility gained in each interaction (0 if absolute service properties are used and 2/3 if preferences are used (Like this so random strategy has E[U]=0).
-  val baseUtility = if (preferences(null).isEmpty) 0d else 2d/3d
-
+  val baseUtility = if (usePreferences) 2d/3d else 1d/2d
+//  val baseUtility = 2d/3d
 
   // Services that exist in the simulation
   var simcapabilities = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
@@ -230,12 +232,13 @@ class SellerConfiguration(override val strategy: Strategy,
         x._1 -> addNoise(x._2.doubleValue)
       )
     ))
-    println(provider, caps)
+//    println(provider, caps)
     caps
   }
 
   def addNoise(x: Double): Double = {
     Chooser.bound(x + Chooser.randomDouble(-0.5,0.5), -1, 1)
+//    x + Chooser.randomDouble(-0.5,0.5)
   }
 
   // Properties of a provider agent
@@ -262,7 +265,7 @@ class SellerConfiguration(override val strategy: Strategy,
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Buyer): SortedMap[String,Property] = {
     if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
-    else Nil
+    else (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
   }
 
 
