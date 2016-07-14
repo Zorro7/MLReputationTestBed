@@ -60,6 +60,7 @@ object SellerMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
 //        "jaspr.strategy.NoStrategy," +
+        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
 //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
@@ -77,7 +78,6 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.strategy.betareputation.Travos,"+
           "jaspr.strategy.blade.Blade(2)," +
 //          "jaspr.strategy.blade.Blade(5)," +
-        //
 //        "jaspr.strategy.habit.Habit(2),"+
 //        "jaspr.strategy.habit.Habit(5),"+
 //        "jaspr.strategy.stereotype.Burnett," +
@@ -86,9 +86,11 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.functions.SMO;5;0.5;true)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.RandomForest;5;0.5;true)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.lazy.KStar;5;0.5;true)," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
+        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true),"+
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;1.0;true),"+
     //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
-        " --numSimulations 100 " +
+        " --numSimulations 5 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -98,17 +100,17 @@ object SellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 100 --numProviders 100 " +
+        "--numClients 25 --numProviders 25 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 1000 " +
+        "--numRounds 250 " +
         "--memoryLimit 100 " +
         "--numSimCapabilities 5 " +
         "--numProviderCapabilities 5 " +
         "--numTerms 5 " +
         "--witnessRequestLikelihood 0.1 " +
-        "--numAdverts 2 " +
+        "--numAdverts 5 " +
         "--usePreferences true").split(" ")
     } else args
 

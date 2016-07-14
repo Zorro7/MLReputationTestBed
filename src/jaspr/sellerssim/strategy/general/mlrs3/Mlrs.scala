@@ -1,16 +1,12 @@
-package jaspr.sellerssim.strategy
+package jaspr.sellerssim.strategy.general.mlrs3
 
 import jaspr.core.Network
 import jaspr.core.agent.Provider
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
-import jaspr.core.strategy.{StrategyInit, Exploration}
+import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.strategy.CompositionStrategy
 import jaspr.weka.classifiers.meta.MultiRegression
-import weka.classifiers.bayes.NaiveBayes
-import weka.classifiers.rules.OneR
-import weka.classifiers.trees.{RandomForest, J48}
 import weka.classifiers.{AbstractClassifier, Classifier}
-import weka.classifiers.functions._
 
 /**
  * Created by phil on 24/03/16.
@@ -25,8 +21,6 @@ class Mlrs(val baseLearner: Classifier,
   override val name = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+"-"+numBins+"-"+witnessWeight
 
   override val explorationProbability: Double = 0.1
-
-  if (baseLearner.isInstanceOf[NaiveBayes]) baseLearner.asInstanceOf[NaiveBayes].setUseSupervisedDiscretization(true)
 
   override def baseDirect: Classifier = AbstractClassifier.makeCopy(baseLearner)
 

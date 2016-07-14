@@ -1,16 +1,12 @@
-package jaspr.sellerssim.strategy
+package jaspr.sellerssim.strategy.general.mlrs3
 
 import jaspr.core.Network
 import jaspr.core.agent.Provider
-import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
-import jaspr.core.strategy.{StrategyInit, Exploration}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.service.BuyerRecord
 import jaspr.strategy.CompositionStrategy
-import weka.classifiers.functions.LinearRegression
-import weka.classifiers.{AbstractClassifier, Classifier}
-import weka.core.Instances
-
-import scala.collection.mutable
+import weka.classifiers.Classifier
 
 /**
  * Created by phil on 04/11/15.
@@ -67,13 +63,11 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
         baseWitness,
         makeWitnessRow(_: BuyerRecord, imputationModel)
       )
-      println(model.model)
       new MlrsWitnessInit(context, model.model, model.train, model.attVals, witnessRatings, freakEventLikelihood)
     }
   }
 
-  def makeWitnessRow(r: BuyerRecord,
-                      imputationModel: MlrsModel): List[Any] = {
+  def makeWitnessRow(r: BuyerRecord, imputationModel: MlrsModel): List[Any] = {
     val imputationRow = makeImputationTestRow(r)
     val imputationQuery = convertRowToInstance(imputationRow, imputationModel.attVals, imputationModel.train)
     val imputationResult = imputationModel.model.classifyInstance(imputationQuery)
@@ -89,7 +83,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       r.client.id.toString ::
       r.service.payload.name :: // service identifier (client context)
       r.rating ::
-    adverts(r.provider)
+      adverts(r.provider)
   }
 
   def makeWitnessTestRows(init: MlrsInit, request: ServiceRequest, witnessRatings: Seq[BuyerRecord], fe: String): Iterable[List[Any]] = {
