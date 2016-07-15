@@ -67,7 +67,6 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
         baseWitness,
         makeWitnessRow(_: BuyerRecord, imputationModel)
       )
-      println(model.model)
       new MlrsWitnessInit(context, model.model, model.train, model.attVals, witnessRatings, freakEventLikelihood)
     }
   }

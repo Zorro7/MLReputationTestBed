@@ -1,5 +1,7 @@
 package jaspr.sellerssim.strategy.general.mlrs2
 
+import java.util
+
 import jaspr.core.Network
 import jaspr.core.agent.{Client, Provider}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
@@ -7,11 +9,14 @@ import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
 import jaspr.strategy.CompositionStrategy
 import jaspr.weka.classifiers.meta.MultiRegression
+import weka.classifiers.`lazy`.IBk
+import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.functions._
 import weka.classifiers.{AbstractClassifier, Classifier}
-import weka.core.{DenseInstance, Attribute}
+import weka.core.{Instances, DenseInstance, Attribute}
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable
 
 
 /**
@@ -27,12 +32,14 @@ class Mlrs(val baseLearner: Classifier,
   class Mlrs2Init(
                    context: ClientContext,
                    val trustModel: Option[MlrsModel],
-                   val reinterpretationModels: Option[Map[Client,Classifier]]
+                   val reinterpretationModels: Option[Map[Client,MlrsModel]]
                    ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+"-"+numBins+"-"+witnessWeight
+  override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+witnessWeight
 
   override val explorationProbability: Double = 0.1
+
+//  if (baseLearner.isInstanceOf[NaiveBayes]) baseLearner.asInstanceOf[NaiveBayes].setUseSupervisedDiscretization(true)
 
   val baseModel = new MultiRegression
   baseModel.setClassifier(AbstractClassifier.makeCopy(baseLearner))
@@ -51,15 +58,23 @@ class Mlrs(val baseLearner: Classifier,
             val result = makePrediction(query, model)
             new TrustAssessment(baseInit.context, request, result)
           case Some(x) =>
-            val results = for ((witness,reint) <- x.iterator.filter(_ != request.client)) yield {
-              val row = makeTestRow(init, request, witness)
-              val query = convertRowToInstance(row, model.attVals, model.train)
-              val witResult = makePrediction(query, model)
-              val result = reint.classifyInstance(new DenseInstance(1d, Array(0d, witResult)))
-//              println(witResult - result)
-              result
-            }
-            new TrustAssessment(baseInit.context, request, results.sum / results.size)
+            val row = makeTestRow(init, request)
+            val query = convertRowToInstance(row, model.attVals, model.train)
+            val directResult = makePrediction(query, model)
+            val witnessResults =
+              for ((witness,reint) <- x.filter(_._1 != request.client)) yield {
+                val row = makeTestRow(init, request, witness)
+                val query = convertRowToInstance(row, model.attVals, model.train)
+                val witResult = makePrediction(query, model)
+                val reintRow = 0 :: discretizeDouble(witResult) :: request.payload.name :: Nil//:: adverts(request.provider)
+                val inst = convertRowToInstance(reintRow, reint.attVals, reint.train)
+                val result = makePrediction(inst, reint, true, 2)
+                result
+              }
+            val witnessResult: Double = if (witnessResults.isEmpty) 0d else witnessResults.sum / witnessResults.size.toDouble
+            val score = (1-witnessWeight)*directResult + witnessWeight*witnessResult
+//            val score = directResult + witnessResults.sum
+            new TrustAssessment(baseInit.context, request, score)
         }
     }
   }
@@ -93,26 +108,30 @@ class Mlrs(val baseLearner: Classifier,
 //      Nil
   val reinterpretationAtts = new Attribute("target") :: new Attribute("input") :: Nil
 
-  def makeReinterpretationModel(directRecords: Seq[BuyerRecord], witnessRecords: Seq[BuyerRecord], client: Client, witness: Client, model: MlrsModel): Classifier = {
-    val reinterpretationRows: Seq[Seq[Double]] =
+  def makeReinterpretationModel(directRecords: Seq[BuyerRecord], witnessRecords: Seq[BuyerRecord], client: Client, witness: Client, model: MlrsModel): MlrsModel = {
+    val reinterpretationRows: Seq[List[Any]] =
       directRecords.map(record =>
-        record.rating :: {
+        discretizeDouble(record.rating) :: {
           val row = makeReinterpretationRow(record, witness)
           val query = convertRowToInstance(row, model.attVals, model.train)
           makePrediction(query, model)
-        } :: Nil
-      ) ++ witnessRecords.filter(_.client == witness).map(record =>
-        {
+        } :: record.payload.name :: Nil //:: adverts(record.provider)
+      ) ++ witnessRecords.map(record => {
           val row = makeReinterpretationRow(record, client)
           val query = convertRowToInstance(row, model.attVals, model.train)
-          makePrediction(query, model)
-        } :: record.rating :: Nil
+          discretizeDouble(makePrediction(query, model))
+        } :: record.rating :: record.payload.name ::Nil//:: adverts(record.provider)
       )
-    val reinterpretationData = makeInstances(reinterpretationAtts, reinterpretationRows)
-    val reinterpretationModel = new LinearRegression
-    reinterpretationModel.buildClassifier(reinterpretationData)
-//    println(client, witness, reinterpretationData, reinterpretationModel)
-    reinterpretationModel
+    val reinterpretationAttVals: Iterable[mutable.Map[Any,Double]] = List.fill(reinterpretationRows.head.size)(mutable.Map[Any,Double]())
+    val doubleRows = convertRowsToDouble(reinterpretationRows, reinterpretationAttVals, classIndex, true, 2)
+    val atts = makeAtts(reinterpretationRows.head, reinterpretationAttVals, classIndex, true)
+    val reinterpretationTrain = makeInstances(atts, doubleRows)
+    reinterpretationTrain.setClassIndex(classIndex)
+    val reinterpretationModel = new NaiveBayes
+//    reinterpretationModel.setUseSupervisedDiscretization(true)
+    reinterpretationModel.buildClassifier(reinterpretationTrain)
+//    println(client, witness, reinterpretationTrain, reinterpretationModel)
+    new MlrsModel(reinterpretationModel, reinterpretationTrain, reinterpretationAttVals)
   }
 
   def makeReinterpretationRow(record: BuyerRecord, witness: Client): Seq[Any] = {

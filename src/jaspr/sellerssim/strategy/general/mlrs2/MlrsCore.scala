@@ -51,7 +51,7 @@ trait MlrsCore extends Discretization {
     else queries.map(q => new NumericPrediction(q.classValue(), mlrsModel.model.classifyInstance(q)))
   }
 
-  def makePrediction(query: Instance, model: MlrsModel): Double = {
+  def makePrediction(query: Instance, model: MlrsModel, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Double = {
     if (discreteClass && numBins <= 2) {
       val dist = model.model.distributionForInstance(query)
       dist.zipWithIndex.map(x => x._1 * model.train.classAttribute().value(x._2).toDouble).sum
@@ -69,13 +69,13 @@ trait MlrsCore extends Discretization {
     }
   }
 
-  def convertRowsToDouble(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any,Double]]): Iterable[Seq[Double]] = {
+  def convertRowsToDouble(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any,Double]], classIndex: Int = classIndex, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Iterable[Seq[Double]] = {
     for (row <- rows) yield {
-      convertRowToDouble(row, attVals)
+      convertRowToDouble(row, attVals, classIndex, discreteClass, numBins)
     }
   }
 
-  def convertRowToDouble(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]]): Seq[Double] = {
+  def convertRowToDouble(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]], classIndex: Int = classIndex, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Seq[Double] = {
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) yield {
       item match {
         case x: Int => if (i == classIndex) x else lookup(vals, x)
@@ -107,7 +107,7 @@ trait MlrsCore extends Discretization {
     inst
   }
 
-  def makeAtts(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]]): Iterable[Attribute] = {
+  def makeAtts(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]], classIndex: Int = classIndex, discreteClass: Boolean = discreteClass): Iterable[Attribute] = {
     for (((item,vals),i) <- row.zip(attVals).zipWithIndex) yield {
       if (i==classIndex) if (discreteClass) new Attribute("target", discVals) else new Attribute("target")
       else {

@@ -61,6 +61,8 @@ object SellerMultiConfiguration extends App {
       ("--strategy " +
 //        "jaspr.strategy.NoStrategy," +
         "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;1.0;true),"+
 //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
@@ -86,8 +88,8 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.functions.SMO;5;0.5;true)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.RandomForest;5;0.5;true)," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.lazy.KStar;5;0.5;true)," +
-        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
-        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true),"+
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
+//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true),"+
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;1.0;true),"+
     //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
         " --numSimulations 5 " +
@@ -100,17 +102,17 @@ object SellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 25 --numProviders 25 " +
+        "--numClients 25 --numProviders 100 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 250 " +
+        "--numRounds 500 " +
         "--memoryLimit 100 " +
         "--numSimCapabilities 5 " +
         "--numProviderCapabilities 5 " +
         "--numTerms 5 " +
         "--witnessRequestLikelihood 0.1 " +
-        "--numAdverts 5 " +
+        "--numAdverts 2 " +
         "--usePreferences true").split(" ")
     } else args
 
@@ -151,7 +153,7 @@ case class SellerMultiConfiguration(
                                providersToPromote: Double = 0.1,
                                providersToSlander: Double = 0.1
                                 ) extends MultiConfiguration {
-  override val directComparison = false
+  override val directComparison = true
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
