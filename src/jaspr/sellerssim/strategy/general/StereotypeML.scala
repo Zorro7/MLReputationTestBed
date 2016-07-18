@@ -6,6 +6,7 @@ import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
 import jaspr.core.service.{ServiceRequest, ClientContext}
 import jaspr.core.strategy.StrategyInit
 import weka.classifiers.Classifier
+import weka.classifiers.bayes.NaiveBayes
 
 /**
  * Created by phil on 30/06/16.

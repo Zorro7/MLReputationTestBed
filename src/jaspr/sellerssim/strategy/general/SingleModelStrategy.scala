@@ -18,6 +18,8 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
 
   val baseLearner: Classifier
 
+  if (baseLearner.isInstanceOf[NaiveBayes]) baseLearner.asInstanceOf[NaiveBayes].setUseSupervisedDiscretization(true)
+
   class BasicInit(context: ClientContext,
                   val trustModel: Option[MlrsModel]
                    ) extends StrategyInit(context)
