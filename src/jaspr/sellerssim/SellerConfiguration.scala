@@ -62,9 +62,11 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.strategy.NoStrategy," +
 //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.5;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;1.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
+        //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;1.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
+        //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
@@ -93,7 +95,7 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true),"+
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;1.0;true),"+
     //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
-        " --numSimulations 250 " +
+        " --numSimulations 25 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -104,13 +106,13 @@ object SellerMultiConfiguration extends App {
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
         "--numClients 10 --numProviders 100 " +
-        "--eventLikelihood 0 " +
+        "--eventLikelihood 0.1 " +
         "--clientInvolvementLikelihood 0.1 " +
-        "--eventEffects 0 " +
-        "--numRounds 100 " +
+        "--eventEffects -1 " +
+        "--numRounds 250 " +
         "--memoryLimit 100 " +
-        "--numSimCapabilities 5 " +
-        "--numProviderCapabilities 5 " +
+        "--numSimCapabilities 10 " +
+        "--numProviderCapabilities 10 " +
         "--numTerms 5 " +
         "--witnessRequestLikelihood 0.5 " +
         "--numAdverts 2 " +

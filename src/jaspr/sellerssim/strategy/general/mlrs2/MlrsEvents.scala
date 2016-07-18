@@ -1,38 +1,33 @@
 package jaspr.sellerssim.strategy.general.mlrs2
 
-import java.util
-
 import jaspr.core.Network
 import jaspr.core.agent.{Client, Provider}
-import jaspr.core.service.{ServiceContext, ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
+import jaspr.sellerssim.service.BuyerRecord
 import jaspr.strategy.CompositionStrategy
 import jaspr.weka.classifiers.meta.MultiRegression
-import weka.classifiers.`lazy`.IBk
 import weka.classifiers.bayes.NaiveBayes
-import weka.classifiers.functions._
 import weka.classifiers.{AbstractClassifier, Classifier}
-import weka.core.{Instances, DenseInstance, Attribute}
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 
 /**
  * Created by phil on 24/03/16.
  */
-class Mlrs(val baseLearner: Classifier,
+class MlrsEvents(val baseLearner: Classifier,
                 override val numBins: Int,
                 val witnessWeight: Double = 0.5d,
                 val reinterpretationContext: Boolean = true
-                 ) extends CompositionStrategy with Exploration with MlrsCore {
+                  ) extends CompositionStrategy with Exploration with MlrsCore {
 
 
   class Mlrs2Init(
                    context: ClientContext,
                    val trustModel: Option[MlrsModel],
-                   val reinterpretationModels: Option[Map[Client,MlrsModel]]
+                   val reinterpretationModels: Option[Map[Client,MlrsModel]],
+                   val feLikelihood: Map[String,Double]
                    ) extends StrategyInit(context)
 
   override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+witnessWeight+"-"+reinterpretationContext
@@ -55,22 +50,29 @@ class Mlrs(val baseLearner: Classifier,
       case Some(model) =>
         init.reinterpretationModels match {
           case None =>
-            val row = makeTestRow(request)
-            val query = convertRowToInstance(row, model.attVals, model.train)
-            val result = makePrediction(query, model)
-            new TrustAssessment(baseInit.context, request, result)
+            val results = init.feLikelihood.map(event => {
+              val row = makeTestRow(request, event._1)
+              val query = convertRowToInstance(row, model.attVals, model.train)
+              event._2 * makePrediction(query, model)
+            })
+            new TrustAssessment(baseInit.context, request, results.sum)
           case Some(reinterpretationModels) =>
-            val row = makeTestRow(request)
-            val query = convertRowToInstance(row, model.attVals, model.train)
-            val directResult = makePrediction(query, model)
+            val directResults = init.feLikelihood.map(event => {
+              val row = makeTestRow(request, event._1)
+              val query = convertRowToInstance(row, model.attVals, model.train)
+              event._2 * makePrediction(query, model)
+            })
+            val directResult = directResults.sum
             val witnessResults =
               for ((witness,reint) <- reinterpretationModels.filter(_._1 != request.client)) yield {
-                val row = makeTestRow(request, witness)
-                val query = convertRowToInstance(row, model.attVals, model.train)
-                val reinterpretationRow = 0 :: makePrediction(query, model) :: makeReinterpretationContext(request)
-                val inst = convertRowToInstance(reinterpretationRow, reint.attVals, reint.train)
-                val result = makePrediction(inst, reint)
-                result
+                val wRes = init.feLikelihood.map(event => {
+                  val row = makeTestRow(request, witness, event._1)
+                  val query = convertRowToInstance(row, model.attVals, model.train)
+                  val reinterpretationRow = 0 :: makePrediction(query, model) :: makeReinterpretationContext(request)
+                  val inst = convertRowToInstance(reinterpretationRow, reint.attVals, reint.train)
+                  event._2 * makePrediction(inst, reint)
+                })
+                wRes.sum
               }
             val witnessResult: Double = if (witnessResults.isEmpty) 0d else witnessResults.sum / witnessResults.size.toDouble
             val score =
@@ -88,10 +90,12 @@ class Mlrs(val baseLearner: Classifier,
     val witnesses = context.client :: witnessRecords.map(_.service.request.client).toSet.toList
     val records = directRecords ++ witnessRecords
 
-    if (witnessRecords.isEmpty && directRecords.isEmpty) new Mlrs2Init(context, None, None)
+    val feLikelihood = directRecords.groupBy(_.event.name).mapValues(_.size / directRecords.size.toDouble)
+
+    if (witnessRecords.isEmpty && directRecords.isEmpty) new Mlrs2Init(context, None, None, feLikelihood)
     else if (witnessRecords.isEmpty || directRecords.isEmpty) {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
-      new Mlrs2Init(context, Some(model), None)
+      new Mlrs2Init(context, Some(model), None, feLikelihood)
     } else {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
 
@@ -99,7 +103,7 @@ class Mlrs(val baseLearner: Classifier,
         witness -> makeReinterpretationModel(directRecords, witnessRecords, context.client, witness, model)
       ).toMap
 
-      new Mlrs2Init(context, Some(model), Some(reinterpretationModels))
+      new Mlrs2Init(context, Some(model), Some(reinterpretationModels), feLikelihood)
     }
   }
 
@@ -178,22 +182,25 @@ class Mlrs(val baseLearner: Classifier,
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
       record.client.name ::
       record.service.request.payload.name :: // service identifier (client context)
+      record.event.name ::
 //      record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
         adverts(record.service.request.provider)
   }
 
-  def makeTestRow(request: ServiceRequest, witness: Client): Seq[Any] = {
+  def makeTestRow(request: ServiceRequest, witness: Client, serviceContext: String): Seq[Any] = {
     0 ::
       witness.name ::
       request.payload.name ::
+      serviceContext ::
 //      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
         adverts(request.provider)
   }
 
-  def makeTestRow(request: ServiceRequest): Seq[Any] = {
+  def makeTestRow(request: ServiceRequest, serviceContext: String): Seq[Any] = {
     0 ::
       request.client.name ::
       request.payload.name ::
+      serviceContext ::
 //      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
         adverts(request.provider)
   }
@@ -202,6 +209,7 @@ class Mlrs(val baseLearner: Classifier,
     0 ::
       witness.name ::
       record.service.request.payload.name :: // service identifier (client context)
+      record.event.name ::
 //            record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       adverts(record.service.request.provider)
   }
