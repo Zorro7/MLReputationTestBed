@@ -13,13 +13,29 @@ if __name__ == "__main__":
 		index = (0.1,100,100,100,1,2,5)
 	results = loadprocessed(filename)
 
+	if int(index[6]) < int(index[7]):
+		sys.exit(0)
 
 	df = "{0:.1f}"
-	strategies = [('NoStrategy',), ('Fire-0.5',), ('BetaReputation',), ('Travos',), ('Blade-5',), ('Habit-5',),
+	strategies = [('NoStrategy',),('Fire-0.0',), ('Fire-0.5',), ('BetaReputation',), ('Travos',), ('Blade-2',), ('Habit-2',),
 	# ('Blade-5',), ('Habit-5',),
-					('Burnett',), ('FireLikeStereotype',), ('BasicStereotype',),
+					# ('Burnett',),
+					('BasicML',),
+					('FireLike',),
+					('BasicContext',),
+					('FireLikeContext',),
+					('BasicStereotype',),
+					('FireLikeStereotype',),
+					('Mlrs2-NaiveBayes-0.0-false',),
+					('Mlrs2-NaiveBayes-1.0-false',),
+					('Mlrs2-NaiveBayes-0.5-false',),
+					('Mlrs2-NaiveBayes-2.0-false',),
+					('Mlrs2-NaiveBayes-0.0-true',),
+					('Mlrs2-NaiveBayes-1.0-true',),
+					('Mlrs2-NaiveBayes-0.5-true',),
+					('Mlrs2-NaiveBayes-2.0-true',),
 					# ('Mlrs-J48-5-0.5',),
-					('Mlrs-NaiveBayes-5-0.5',),
+					# ('Mlrs-NaiveBayes-5-0.5',),
 					# ('Mlrs-NaiveBayes-5-0.5',)
 					]
 	# [('BasicML',), ('BasicStereotype',), ('BetaReputation',), ('Blade-2',), ('Fire-0.0',),  ('FireLike',), ('FireLikeStereotype',), ('Habit-2',), ('Mlrs-J48-10-0.0',), ('Mlrs-J48-10-0.5',), ('Mlrs-J48-2-0.0',),
@@ -51,9 +67,8 @@ if __name__ == "__main__":
 	# exps = [(1,0,0,0,0,0,0)]
 	exps = sorted(topsplt.keys(), reverse=True, key=lambda x: str(x))
 	exps = [e for e in exps if e[0] in [1,0.5]]
-	print exps
 	botspltkeys = ["exp"]
-	scorename = "gain100"
+	scorename = "utility250"
 
 	means = []
 	stds = []
@@ -61,36 +76,24 @@ if __name__ == "__main__":
 	for topkey in exps:
 		topval = topsplt[topkey]
 		botsplt = split(topval, *botspltkeys)
-		mns = []
-		sts = []
-		ses = []
-		for botkey in strategies:
-			if botkey not in botsplt:
-				mns.append(0)
-				sts.append(0)
-				ses.append(0)
-			else:
-				botval = botsplt[botkey]
-				mn = findmean(botval, scorename)
-				mns.append(mn[scorename])
-				st = findstd(botval, scorename)
-				sts.append(st[scorename])
-				se = st[scorename] / (float(len(botval))**0.5)
-				ses.append(se)
+		mns = [botsplt[botkey][0][scorename+"_mean"] if botkey in botsplt else -9999 for botkey in strategies]
+		sts = [botsplt[botkey][0][scorename+"_std"] if botkey in botsplt else -9999 for botkey in strategies]
+		ses = [st / (float(botsplt[botkey][0]["iterations"])**0.5) for st in sts]
 		means.append(mns)
 		stds.append(sts)
 		stderrs.append(ses)
 
 	meanis = [maxindices(mns) for mns in means]
 
-	print "\\begin{table}\n\\begin{tabular}{lrrrrrr}"
+	print "\\begin{table}\n\\begin{tabular}{l"+("r"*len(exps))+"}"
+	print "Strategy & ",
 	for boti in xrange(0,len(exps)):
 		print exps[boti],
 		if boti < len(exps)-1:
 			print "&",
 	print "\\\\"
 	for topi in xrange(0,len(strategies)):
-		print strategies[topi], "&",
+		print str(strategies[topi]), "&",
 		for boti in xrange(0,len(exps)):
 			if topi in meanis[boti]:
 				print "\\bf",
