@@ -2,7 +2,7 @@ import sys
 import parse
 import util
 from copy import copy
-
+from operator import *
 
 def search(results, **kwargs):
 	ret = []
@@ -56,11 +56,21 @@ def findmean(results, *meanof):
 		avg[m] = 0
 	for cand in results: ##for all candidates
 		for m in meanof:
-			avg[m] += cand[m]
+			avg[m] = calc(avg[m], cand[m], add)
 	for m in meanof:
-		avg[m] /= float(len(results))
+		avg[m] = calc(avg[m], float(len(results)), div)
 	return avg
 
+
+def calc(a,b, op):
+	if isinstance(a, list) and isinstance(b, list):
+		return [op(x, y) for x,y in zip(a,b)]
+	elif isinstance(a, list):
+		return [op(x, b) for x in a]
+	elif isinstance(b, list):
+		return [op(a, y) for y in b]
+	else:
+		return op(a, b)
 
 def findstd(results, *stdof):
 	avg = findmean(results, *stdof) ##init
@@ -69,9 +79,9 @@ def findstd(results, *stdof):
 		std[m] = 0
 	for cand in results: ##for all candidates
 		for m in stdof:
-			std[m] += (cand[m] - avg[m])**2
+			std[m] = calc(std[m], calc(calc(cand[m], avg[m], sub), 2, pow), add)
 	for m in stdof:
-		std[m] = (std[m]/float(len(results)))**0.5
+		std[m] = calc(calc(std[m], float(len(results)), div), 0.5, pow)
 	return std
 
 def findstderr(results, *stdof):
@@ -84,7 +94,7 @@ def loadprocessed(filename, num = -1):
 	results = []
 	with open(filename) as resF:
 		for line in resF:
-			results.append(util.numbers(util.longdic(line[:-1])))
+			results.append(util.numbers(util.lists(util.longdic(line[:-1]))))
 			num -= 1
 			if num == 0:
 				return results

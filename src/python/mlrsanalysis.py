@@ -2,6 +2,12 @@ from util import *
 from analysis import *
 from sys import argv
 
+
+def justprint(s):
+	sys.stdout.write(s)
+	sys.stdout.flush()
+
+
 if __name__ == "__main__":
 
 	if len(sys.argv) > 1:
@@ -13,11 +19,13 @@ if __name__ == "__main__":
 		index = (0.1,100,100,100,1,2,5)
 	results = loadprocessed(filename)
 
-	if int(index[6]) < int(index[7]):
+	if int(index[-4]) < int(index[-3]):
 		sys.exit(0)
 
 	df = "{0:.1f}"
-	strategies = [('NoStrategy',),('Fire-0.0',), ('Fire-0.5',), ('BetaReputation',), ('Travos',), ('Blade-2',), ('Habit-2',),
+	strategies = [('NoStrategy',),
+	('Fire-0.0',),
+	 ('Fire-0.5',), ('BetaReputation',), ('Travos',), ('Blade-2',), ('Habit-2',),
 	# ('Blade-5',), ('Habit-5',),
 					# ('Burnett',),
 					('BasicML',),
@@ -26,49 +34,58 @@ if __name__ == "__main__":
 					('FireLikeContext',),
 					('BasicStereotype',),
 					('FireLikeStereotype',),
-					('Mlrs2-NaiveBayes-0.0-false',),
-					('Mlrs2-NaiveBayes-1.0-false',),
-					('Mlrs2-NaiveBayes-0.5-false',),
-					('Mlrs2-NaiveBayes-2.0-false',),
-					('Mlrs2-NaiveBayes-0.0-true',),
-					('Mlrs2-NaiveBayes-1.0-true',),
-					('Mlrs2-NaiveBayes-0.5-true',),
+					# ('Mlrs2-NaiveBayes-0.0-false',),
+					# ('Mlrs2-NaiveBayes-1.0-false',),
+					# ('Mlrs2-NaiveBayes-0.5-false',),
+					# ('Mlrs2-NaiveBayes-2.0-false',),
+					# ('Mlrs2-NaiveBayes-0.0-true',),
+					# ('Mlrs2-NaiveBayes-1.0-true',),
+					# ('Mlrs2-NaiveBayes-0.5-true',),
 					('Mlrs2-NaiveBayes-2.0-true',),
 					# ('Mlrs-J48-5-0.5',),
 					# ('Mlrs-NaiveBayes-5-0.5',),
 					# ('Mlrs-NaiveBayes-5-0.5',)
 					]
+
+
+	strategynamelookup = {
+		"NoStrategy": "RAND\t\t",
+		"Fire-0.0": "Basic\t\t",
+		"Fire-0.5": "FIRE\t\t",
+		"BetaReputation": "BetaRep\t\t",
+		"Travos": "TRAVOS\t\t",
+		"Blade-2": "BLADE\t\t",
+		"Habit-2": "HABIT\t\t",
+		"BasicML": "Basic-ML\t",
+		"FireLike": "FIRE-ML\t\t",
+		"BasicContext": "Context-ML\t",
+		"BasicStereotype": "Stereotype-ML\t",
+		"FireLikeStereotype": "FIRE-Stereotype-ML",
+		"FireLikeContext": "FIRE-Context-ML",
+		"Mlrs2-NaiveBayes-2.0-true": "MLRS\t\t"
+	}
+
 	# [('BasicML',), ('BasicStereotype',), ('BetaReputation',), ('Blade-2',), ('Fire-0.0',),  ('FireLike',), ('FireLikeStereotype',), ('Habit-2',), ('Mlrs-J48-10-0.0',), ('Mlrs-J48-10-0.5',), ('Mlrs-J48-2-0.0',),
 	# ('Mlrs-J48-2-0.5',), ('Mlrs-NaiveBayes-10-0.0',), ('Mlrs-NaiveBayes-10-0.5',), ('Mlrs-NaiveBayes-2-0.0',), ('Mlrs-NaiveBayes-2-0.5',), ('NoStrategy',), ('Travos',)]
 
 	splt = split(results, "clientInvolvementLikelihood", "memoryLimit", "numClients", "numProviders",
-	"numSimCapabilities", "numProviderCapabilities", "numTerms", "numAdverts", "usePreferences")
+	"numTerms", "numAdverts", "usePreferences", "honestWitnessLikelihood")
 
-# 0.1, 100.0, 100.0, 100.0, 1.0, 5.0, 5.0
-# 0.1, 100.0, 100.0, 100.0, 5.0, 5.0, 5.0
-# 0.1, 100.0, 100.0, 100.0, 5.0, 2.0, 5.0
 
-# 0.1, 100.0, 100.0, 100.0, 1.0, 2.0, 5.0
-# 0.1, 100.0, 25.0, 25.0, 5.0, 2.0, 5.0
-# 0.1, 100.0, 25.0, 25.0, 5.0, 5.0, 5.0
-# 0.1, 100.0, 25.0, 25.0, 1.0, 2.0, 5.0
-# 0.1, 100.0, 25.0, 25.0, 1.0, 5.0, 5.0
-
-	# splt = {"all": results}
-	# index = "all"
-	topspltkeys = ["honestWitnessLikelihood"
-					, "negationWitnessLikelihood"
-					, "randomWitnessLikelihood"
-					,"optimisticWitnessLikelihood","pessimisticWitnessLikelihood"
-					#,"providersToPromote", "providersToSlander"
-					 ,"promotionWitnessLikelihood", "slanderWitnessLikelihood",
-						]
+	# topspltkeys = ["honestWitnessLikelihood"
+	# 				, "negationWitnessLikelihood"
+	# 				, "randomWitnessLikelihood"
+	# 				,"optimisticWitnessLikelihood","pessimisticWitnessLikelihood"
+	# 				#,"providersToPromote", "providersToSlander"
+	# 				 ,"promotionWitnessLikelihood", "slanderWitnessLikelihood",
+	# 					]
+	topspltkeys = ["numSimCapabilities"]
 	topsplt = split(splt[index], *topspltkeys)
-	# exps = [(1,0,0,0,0,0,0)]
-	exps = sorted(topsplt.keys(), reverse=True, key=lambda x: str(x))
-	exps = [e for e in exps if e[0] in [1,0.5]]
+	# exps = sorted(topsplt.keys(), reverse=True, key=lambda x: str(x))
+	# exps = [e for e in exps if e[0] in [1,0.5]]
+	exps = sorted(topsplt.keys(), key=lambda x: x[0])
 	botspltkeys = ["exp"]
-	scorename = "utility250"
+	scorename = "utility"
 
 	means = []
 	stds = []
@@ -76,6 +93,7 @@ if __name__ == "__main__":
 	for topkey in exps:
 		topval = topsplt[topkey]
 		botsplt = split(topval, *botspltkeys)
+		print [len(botsplt[botkey]) for botkey in strategies]
 		mns = [botsplt[botkey][0][scorename+"_mean"] if botkey in botsplt else -9999 for botkey in strategies]
 		sts = [botsplt[botkey][0][scorename+"_std"] if botkey in botsplt else -9999 for botkey in strategies]
 		ses = [st / (float(botsplt[botkey][0]["iterations"])**0.5) for st in sts]
@@ -85,26 +103,43 @@ if __name__ == "__main__":
 
 	meanis = [maxindices(mns) for mns in means]
 
-	print "\\begin{table}\n\\begin{tabular}{l"+("r"*len(exps))+"}"
-	print "Strategy & ",
-	for boti in xrange(0,len(exps)):
-		print exps[boti],
-		if boti < len(exps)-1:
-			print "&",
-	print "\\\\"
+
+
+	print str(index)
+	print "Strategy \t\t Honest \t Negation \t Random \t Opt \t\t Opt/Pess \t Pess \t\t Pro \t\t Pro/Sland \t Sland"
 	for topi in xrange(0,len(strategies)):
-		print str(strategies[topi]), "&",
+		print strategynamelookup[str(strategies[topi])], "\t",
 		for boti in xrange(0,len(exps)):
 			if topi in meanis[boti]:
-				print "\\bf",
+				justprint(".")
+			else:
+				justprint(" ")
 			# print df.format(stderrs[boti][topi]*1.96),
-			print df.format(means[boti][topi]),
+			print df.format(means[boti][topi]).zfill(6), "("+df.format(stderrs[boti][topi]*1.96)+")",
 			if boti < len(exps)-1:
-				print "&",
-		print "\\\\"
-	print "\\end{tabular}"
- 	print "\\caption{"+str(index)+"}"
-	print "\\end{table}"
+				print "\t",
+		print
+	print
+
+
+
+
+	# print "\\begin{table}\n\\begin{tabular}{l"+("r"*len(exps))+"}"
+	# print "Strategy & Honest & Negation & Random & Opt & Opt/Pess & Pess & Pro & Pro/Sland & Sland",
+	# print "\\\\"
+	# for topi in xrange(0,len(strategies)):
+	# 	print strategynamelookup[str(strategies[topi])], "&",
+	# 	for boti in xrange(0,len(exps)):
+	# 		if topi in meanis[boti]:
+	# 			print "\\bf",
+	# 		# print df.format(stderrs[boti][topi]*1.96),
+	# 		print df.format(means[boti][topi]), "& ("+df.format(stderrs[boti][topi]*1.96)+")",
+	# 		if boti < len(exps)-1:
+	# 			print "&",
+	# 	print "\\\\"
+	# print "\\end{tabular}"
+ # 	print "\\caption{"+str(index)+"}"
+	# print "\\end{table}"
 
 
 	# print "\\begin{tikzpicture}"

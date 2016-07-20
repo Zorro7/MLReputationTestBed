@@ -11,12 +11,27 @@ def shortdic(dic):
 def longdic(dic):
 	return {x[:x.index("=")]:x[x.index("=")+1:] for x in dic.split(",")}
 
+def shortlist(lst):
+	return ";".join([str(v) for v in lst])
+
+def longlist(lst):
+	return [v for v in lst.split(";")]
+
 def numbers(dic):
 	for k,v in dic.iteritems():
 		try:
-			dic[k] = float(v)
+			if isinstance(v, list):
+				dic[k] = [float(x) for x in v]
+			else:
+				dic[k] = float(v)
 		except:
 			pass
+	return dic
+
+def lists(dic):
+	for k,v in dic.iteritems():
+		if ";" in v:
+			dic[k] = longlist(v)
 	return dic
 
 

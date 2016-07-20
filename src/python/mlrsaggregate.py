@@ -12,7 +12,12 @@ if __name__ == "__main__":
 
 	results = loadprocessed(filename)
 
+
 	aggkeys = ["gain100", "utility", "utility100", "utility250", "utility500"]
+
+	if "utilities" not in aggkeys:
+		for res in results:
+			del res["utilities"]
 
 	header = results[0].keys()
 	spltkeys = [h for h in header if h not in aggkeys]
@@ -30,5 +35,9 @@ if __name__ == "__main__":
 		aggregate["iterations"] = len(splt[key])
 		aggregated.append(aggregate)
 
+	df = "{0:.3f}"
 	for res in aggregated:
+		if "utilities" in aggkeys:
+			res["utilities_mean"] = shortlist([df.format(x) for x in res["utilities_mean"]])
+			res["utilities_std"] = shortlist([df.format(x) for x in res["utilities_std"]])
 		print util.shortdic(res)
