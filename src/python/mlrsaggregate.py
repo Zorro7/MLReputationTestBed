@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
 	results = loadprocessed(filename)
 
-
+	iterationsWatned = 50
 	aggkeys = ["gain100", "utility", "utility100", "utility250", "utility500"]
 
 	if "utilities" not in aggkeys:
@@ -26,6 +26,8 @@ if __name__ == "__main__":
 
 	splt = split(results, *spltkeys)
 	for key in splt.iterkeys():
+		if len(splt[key]) > iterationsWanted:
+			splt[key] = splt[key][:iterationsWanted]
 		mn = findmean(splt[key], *aggkeys)
 		st = findstd(splt[key], *aggkeys)
 		aggregate = {k:mn[k] for k in spltkeys}
