@@ -17,14 +17,12 @@ class FireLike(override val baseLearner: Classifier, override val numBins: Int) 
   override def makeTrainRow(baseRecord: Record): Seq[Any] = {
     val record = baseRecord.asInstanceOf[ServiceRecord with RatingRecord]
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
-      record.service.request.client.name ::
       record.service.request.provider.name :: // service identifier (client context)
       Nil
   }
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]  = {
     0d ::
-      request.client.name ::
       request.provider.name ::
       Nil
   }

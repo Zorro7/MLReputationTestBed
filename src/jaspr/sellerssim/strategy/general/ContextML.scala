@@ -21,12 +21,12 @@ trait ContextML extends SingleModelStrategy {
   override def makeTrainRow(baseRecord: Record): Seq[Any] = {
     val record = baseRecord.asInstanceOf[ServiceRecord with RatingRecord]
     baseStrategy.makeTrainRow(baseRecord) ++
-      record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList
+      (record.service.payload.name :: Nil)
   }
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]  = {
     baseStrategy.makeTestRow(init, request) ++
-      request.payload.asInstanceOf[ProductPayload].quality.values.toList
+      (request.payload.name :: Nil)
   }
 }
 

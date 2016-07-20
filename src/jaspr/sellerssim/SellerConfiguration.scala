@@ -64,17 +64,17 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
         //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;1.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
         //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2)," +
-//        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
+//                "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.TravosLikeSlim," +
 //        "jaspr.sellerssim.strategy.general.TravosLike(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;2)," +
-//        "jaspr.strategy.fire.Fire(0.5)," +
+        "jaspr.strategy.fire.Fire(0.5)," +
 //        "jaspr.strategy.fire.Fire(0.0)," +
 //        "jaspr.strategy.fire.MLFire(0.5), " +
 //        "jaspr.strategy.fire.MLFire(0.0)," +
@@ -95,7 +95,7 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true),"+
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;1.0;true),"+
     //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
-        " --numSimulations 25 " +
+        " --numSimulations 5 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -111,12 +111,12 @@ object SellerMultiConfiguration extends App {
         "--eventEffects -1 " +
         "--numRounds 250 " +
         "--memoryLimit 100 " +
-        "--numSimCapabilities 10 " +
-        "--numProviderCapabilities 10 " +
+        "--numSimCapabilities 1 " +
+        "--numProviderCapabilities 1 " +
         "--numTerms 5 " +
         "--witnessRequestLikelihood 0.5 " +
-        "--numAdverts 2 " +
-        "--usePreferences true").split(" ")
+        "--numAdverts 5 " +
+        "--usePreferences false").split(" ")
     } else args
 
   println(argsplt.toList mkString("["," ","]"))
@@ -160,7 +160,7 @@ case class SellerMultiConfiguration(
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-//  override val _seed = 1
+  override val _seed = 1
 
 
 
