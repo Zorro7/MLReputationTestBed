@@ -29,11 +29,11 @@ if __name__ == "__main__":
 	# ('Blade-5',), ('Habit-5',),
 					# ('Burnett',),
 					('BasicML',),
-					('FireLike',),
+					# ('FireLike',),
 					('BasicContext',),
-					('FireLikeContext',),
+					# ('FireLikeContext',),
 					('BasicStereotype',),
-					('FireLikeStereotype',),
+					# ('FireLikeStereotype',),
 					# ('Mlrs2-NaiveBayes-0.0-false',),
 					# ('Mlrs2-NaiveBayes-1.0-false',),
 					# ('Mlrs2-NaiveBayes-0.5-false',),
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 	# exps = [e for e in exps if e[0] in [1,0.5]]
 	exps = sorted(topsplt.keys(), key=lambda x: x[0])
 	botspltkeys = ["exp"]
-	scorename = "utility"
+	scorename = "gain100"
 
 	means = []
 	stds = []
@@ -115,7 +115,7 @@ if __name__ == "__main__":
 			else:
 				justprint(" ")
 			# print df.format(stderrs[boti][topi]*1.96),
-			print df.format(means[boti][topi]).zfill(6), "("+df.format(stderrs[boti][topi]*1.96)+")",
+			print df.format(means[boti][topi]).zfill(6), "("+df.format(stds[boti][topi]*1.96).zfill(5)+")",
 			if boti < len(exps)-1:
 				print "\t",
 		print
@@ -124,22 +124,22 @@ if __name__ == "__main__":
 
 
 
-	# print "\\begin{table}\n\\begin{tabular}{l"+("r"*len(exps))+"}"
-	# print "Strategy & Honest & Negation & Random & Opt & Opt/Pess & Pess & Pro & Pro/Sland & Sland",
-	# print "\\\\"
-	# for topi in xrange(0,len(strategies)):
-	# 	print strategynamelookup[str(strategies[topi])], "&",
-	# 	for boti in xrange(0,len(exps)):
-	# 		if topi in meanis[boti]:
-	# 			print "\\bf",
-	# 		# print df.format(stderrs[boti][topi]*1.96),
-	# 		print df.format(means[boti][topi]), "& ("+df.format(stderrs[boti][topi]*1.96)+")",
-	# 		if boti < len(exps)-1:
-	# 			print "&",
-	# 	print "\\\\"
-	# print "\\end{tabular}"
- # 	print "\\caption{"+str(index)+"}"
-	# print "\\end{table}"
+	print "\\begin{table}\n\\begin{tabular}{l"+("r"*len(exps))+"}"
+	print "Strategy & Honest & Negation & Random & Opt & Opt/Pess & Pess & Pro & Pro/Sland & Sland",
+	print "\\\\"
+	for topi in xrange(0,len(strategies)):
+		print strategynamelookup[str(strategies[topi])], "&",
+		for boti in xrange(0,len(exps)):
+			if topi in meanis[boti]:
+				print "\\bf",
+			# print df.format(stderrs[boti][topi]*1.96),
+			print df.format(means[boti][topi]), "& ("+df.format(stderrs[boti][topi]*1.96)+")",
+			if boti < len(exps)-1:
+				print "&",
+		print "\\\\"
+	print "\\end{tabular}"
+ 	print "\\caption{"+str(index)+"}"
+	print "\\end{table}"
 
 
 	# print "\\begin{tikzpicture}"
