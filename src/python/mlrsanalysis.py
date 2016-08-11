@@ -13,27 +13,29 @@ if __name__ == "__main__":
 	if len(sys.argv) > 1:
 		args = sys.argv[1:]
 		filename = args[0]
-		index = tuple([typeset(a.replace(",","")) for a in args[1:]])
+		scorename = args[1]
+		index = tuple([typeset(a.replace(",","")) for a in args[2:]])
 	else:
 		filename = "../../results/go5.4.res"
 		index = (0.1,100,100,100,1,2,5)
+		scorename = "utility"
 	results = loadprocessed(filename)
 
-	if int(index[-4]) < int(index[-3]):
-		sys.exit(0)
+	# if int(index[-4]) < int(index[-3]):
+	# 	sys.exit(0)
 
 	df = "{0:.1f}"
 	strategies = [('NoStrategy',),
 	('Fire-0.0',),
 	 ('Fire-0.5',), ('BetaReputation',), ('Travos',), ('Blade-2',), ('Habit-2',),
 	# ('Blade-5',), ('Habit-5',),
-					# ('Burnett',),
+					('Burnett',),
 					('BasicML',),
-					# ('FireLike',),
+					('FireLike',),
 					('BasicContext',),
-					# ('FireLikeContext',),
+					('FireLikeContext',),
 					('BasicStereotype',),
-					# ('FireLikeStereotype',),
+					('FireLikeStereotype',),
 					# ('Mlrs2-NaiveBayes-0.0-false',),
 					# ('Mlrs2-NaiveBayes-1.0-false',),
 					# ('Mlrs2-NaiveBayes-0.5-false',),
@@ -58,6 +60,7 @@ if __name__ == "__main__":
 		"Habit-2": "HABIT\t\t",
 		"BasicML": "Basic-ML\t",
 		"FireLike": "FIRE-ML\t\t",
+		"Burnett": "Burnett\t\t",
 		"BasicContext": "Context-ML\t",
 		"BasicStereotype": "Stereotype-ML\t",
 		"FireLikeStereotype": "FIRE-Stereotype-ML",
@@ -68,7 +71,7 @@ if __name__ == "__main__":
 	# [('BasicML',), ('BasicStereotype',), ('BetaReputation',), ('Blade-2',), ('Fire-0.0',),  ('FireLike',), ('FireLikeStereotype',), ('Habit-2',), ('Mlrs-J48-10-0.0',), ('Mlrs-J48-10-0.5',), ('Mlrs-J48-2-0.0',),
 	# ('Mlrs-J48-2-0.5',), ('Mlrs-NaiveBayes-10-0.0',), ('Mlrs-NaiveBayes-10-0.5',), ('Mlrs-NaiveBayes-2-0.0',), ('Mlrs-NaiveBayes-2-0.5',), ('NoStrategy',), ('Travos',)]
 
-	splt = split(results, "clientInvolvementLikelihood", "memoryLimit", "numClients", "numProviders",
+	splt = split(results, "clientInvolvementLikelihood", "memoryLimit", "numClients", "numProviders",# "numSimCapabilities",
 	"numTerms", "numAdverts", "usePreferences", "honestWitnessLikelihood")
 
 
@@ -82,10 +85,10 @@ if __name__ == "__main__":
 	topspltkeys = ["numSimCapabilities"]
 	topsplt = split(splt[index], *topspltkeys)
 	# exps = sorted(topsplt.keys(), reverse=True, key=lambda x: str(x))
-	# exps = [e for e in exps if e[0] in [1,0.5]]
+	# exps = [e for e in exps if all(x in [0,0.5] for x in e)]
+	# exps = [(0.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0), (0.5, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0), (0.5, 0.0, 0.0, 0.25, 0.25, 0.0, 0.0), (0.5, 0.0, 0.0, 0.0, 0.0, 0.25, 0.25)]
 	exps = sorted(topsplt.keys(), key=lambda x: x[0])
 	botspltkeys = ["exp"]
-	scorename = "gain100"
 
 	means = []
 	stds = []
@@ -105,8 +108,7 @@ if __name__ == "__main__":
 
 
 
-	print str(index)
-	print "Strategy \t\t Honest \t Negation \t Random \t Opt \t\t Opt/Pess \t Pess \t\t Pro \t\t Pro/Sland \t Sland"
+	print str(index), exps
 	for topi in xrange(0,len(strategies)):
 		print strategynamelookup[str(strategies[topi])], "\t",
 		for boti in xrange(0,len(exps)):
@@ -122,11 +124,21 @@ if __name__ == "__main__":
 	print
 
 
+	# print str(index), exps
+	# for topi in xrange(0,len(strategies)):
+	# 	print strategynamelookup[str(strategies[topi])], "\t",
+	# 	for boti in xrange(0,len(exps)):
+	# 		if topi in meanis[boti]:
+	# 			justprint(".")
+	# 		else:
+	# 			justprint(" ")
+	# 		# print df.format(stderrs[boti][topi]*1.96),
+	# 		print df.format(means[boti][topi]), "("+df.format(stds[boti][topi]*1.96)+")",
+	# 		if boti < len(exps)-1:
+	# 			print "\t",
+	# 	print
+	# print
 
-
-	print "\\begin{table}\n\\begin{tabular}{l"+("r"*len(exps))+"}"
-	print "Strategy & Honest & Negation & Random & Opt & Opt/Pess & Pess & Pro & Pro/Sland & Sland",
-	print "\\\\"
 	for topi in xrange(0,len(strategies)):
 		print strategynamelookup[str(strategies[topi])], "&",
 		for boti in xrange(0,len(exps)):
@@ -137,9 +149,6 @@ if __name__ == "__main__":
 			if boti < len(exps)-1:
 				print "&",
 		print "\\\\"
-	print "\\end{tabular}"
- 	print "\\caption{"+str(index)+"}"
-	print "\\end{table}"
 
 
 	# print "\\begin{tikzpicture}"
