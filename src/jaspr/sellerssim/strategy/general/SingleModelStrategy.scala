@@ -6,6 +6,7 @@ import jaspr.core.service.{TrustAssessment, ServiceRequest, ClientContext}
 import jaspr.core.strategy.{StrategyInit, Exploration}
 import jaspr.sellerssim.strategy.MlrsCore
 import jaspr.strategy.CompositionStrategy
+import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 import weka.classifiers.bayes.NaiveBayes
 
@@ -18,7 +19,15 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
 
   val baseLearner: Classifier
 
-  if (baseLearner.isInstanceOf[NaiveBayes]) baseLearner.asInstanceOf[NaiveBayes].setUseSupervisedDiscretization(true)
+  baseLearner match {
+    case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
+    case x: MultiRegression =>
+      val bayes = new NaiveBayes
+      bayes.setUseSupervisedDiscretization(true)
+      x.setClassifier(bayes)
+      x.setSplitAttIndex(-1)
+  }
+
 
   class BasicInit(context: ClientContext,
                   val trustModel: Option[MlrsModel]
