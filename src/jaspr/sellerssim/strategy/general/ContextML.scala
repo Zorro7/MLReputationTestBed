@@ -5,6 +5,7 @@ import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.service.ProductPayload
+import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 
 /**
@@ -20,13 +21,17 @@ trait ContextML extends SingleModelStrategy {
 
   override def makeTrainRow(baseRecord: Record): Seq[Any] = {
     val record = baseRecord.asInstanceOf[ServiceRecord with RatingRecord]
-    baseStrategy.makeTrainRow(baseRecord) ++
+    val x= baseStrategy.makeTrainRow(baseRecord) ++
       (record.service.payload.name :: Nil)
+//    println("train: "+x)
+    x
   }
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]  = {
-    baseStrategy.makeTestRow(init, request) ++
+    val x = baseStrategy.makeTestRow(init, request) ++
       (request.payload.name :: Nil)
+//    println("test: "+x)
+    x
   }
 }
 
