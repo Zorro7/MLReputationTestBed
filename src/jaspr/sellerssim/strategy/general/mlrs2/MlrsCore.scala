@@ -3,7 +3,8 @@ package jaspr.sellerssim.strategy.general.mlrs2
 import java.util
 
 import jaspr.core.provenance.Record
-import jaspr.utilities.Discretization
+import jaspr.utilities.{Chooser, Discretization}
+import jaspr.weka.utilities.EvaluatingUtils
 import weka.classifiers.evaluation.{NominalPrediction, NumericPrediction, Prediction}
 import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.core.{Attribute, DenseInstance, Instance, Instances}
@@ -49,6 +50,30 @@ trait MlrsCore extends Discretization {
     val queries = convertRowsToInstances(rows, mlrsModel.attVals, mlrsModel.train, weights)
     if (discreteClass) queries.map(q => new NominalPrediction(q.classValue(), mlrsModel.model.distributionForInstance(q)))
     else queries.map(q => new NumericPrediction(q.classValue(), mlrsModel.model.classifyInstance(q)))
+  }
+
+  def cut[A](xs: Seq[A], n: Int): List[Seq[A]] = {
+    val (quot,rem) =
+      if (xs.size <= n) (1,0)
+      else (xs.size/n,xs.size % n)
+    val (smaller, bigger) = xs.splitAt(xs.size - rem * (quot + 1))
+    (smaller.grouped(quot) ++ bigger.grouped(quot + 1)).toList
+  }
+
+  def crossValidate[T <: Record](records: Seq[T],
+                                 baseModel: Classifier,
+                                 makeRow: T => Seq[Any],
+                                 numFolds: Int = 5,
+                                 makeweight: T => Double = null) = {
+    val shuffled = Chooser.shuffle(records)
+    val folds = cut(shuffled, numFolds)
+    val preds = (for (fold <- 0 until folds.size) yield {
+      val trainRecords = folds.take(fold) ++ folds.drop(fold+1)
+      val testRecords = folds.get(fold)
+      val model = makeMlrsModel[T](trainRecords.flatten, baseModel, makeRow)
+      evaluateMlrsModel(testRecords, model, makeRow)
+    }).flatten
+    EvaluatingUtils.weightedAUC(new util.ArrayList(preds))
   }
 
   def makePrediction(query: Instance, model: MlrsModel, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Double = {

@@ -59,11 +59,12 @@ object SellerMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.strategy.NoStrategy," +
+//        "jaspr.strategy.NoStrategy," +
 //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.5;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
         //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;1.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
         "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
         //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
@@ -84,7 +85,7 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
 //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;2)," +
-        "jaspr.strategy.fire.Fire(0.5)," +
+//        "jaspr.strategy.fire.Fire(0.5)," +
         "jaspr.strategy.fire.Fire(0.0)," +
 //        "jaspr.strategy.fire.MLFire(0.5), " +
 //        "jaspr.strategy.fire.MLFire(0.0)," +
@@ -105,7 +106,7 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true),"+
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;1.0;true),"+
 //            "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
-        " --numSimulations 10 " +
+        " --numSimulations 25 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -116,10 +117,10 @@ object SellerMultiConfiguration extends App {
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
         "--numClients 25 --numProviders 100 " +
-        "--eventLikelihood 0.1 " +
+        "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 100 " +
+        "--numRounds 500 " +
         "--memoryLimit 100 " +
         "--numSimCapabilities 10 " +
         "--numProviderCapabilities 10 " +
