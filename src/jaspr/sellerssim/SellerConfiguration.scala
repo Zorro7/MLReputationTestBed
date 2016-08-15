@@ -64,7 +64,16 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
         //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;1.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.5;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.6;2.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.7;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.8;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.9;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.5;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.6;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.7;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.8;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.9;2.0;true),"+
         "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
         //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
@@ -106,7 +115,7 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true),"+
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;1.0;true),"+
 //            "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
-        " --numSimulations 25 " +
+        " --numSimulations 10 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +

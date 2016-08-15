@@ -28,10 +28,14 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
           x.rating
         ) with BetaOpinions {
           override val opinions: List[(Agent,BetaDistribution)] =
-            x.assessment.asInstanceOf[TravosTrustAssessment]
-              .opinions.getOrElse(x.service.request, new BetaOpinions {
-              override val opinions: List[(Agent, BetaDistribution)] = Nil
-            }).opinions
+            x.assessment match {
+              case ass: TravosTrustAssessment =>
+                ass.opinions.getOrElse(x.service.request, new BetaOpinions {
+                  override val opinions: List[(Agent, BetaDistribution)] = Nil
+                }).opinions
+              case ass: TrustAssessment =>
+                Nil
+            }
         }
       )
     val witness = toRatings(network.gatherProvenance(context.client))

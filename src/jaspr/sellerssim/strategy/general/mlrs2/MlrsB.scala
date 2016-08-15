@@ -11,6 +11,7 @@ import jaspr.strategy.CompositionStrategy
 import jaspr.strategy.betareputation.Travos
 import jaspr.strategy.blade.Blade
 import jaspr.strategy.fire.Fire
+import jaspr.strategy.habit.Habit
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import jaspr.weka.utilities.EvaluatingUtils
@@ -27,6 +28,8 @@ import scala.collection.JavaConversions._
  */
 class MlrsB(val baseLearner: Classifier,
                 override val numBins: Int,
+                val numFolds: Int = 5,
+                val aucThreshold: Double = 0.5,
                 val witnessWeight: Double = 0.5d,
                 val reinterpretationContext: Boolean = true
                  ) extends CompositionStrategy with Exploration with MlrsCore {
@@ -51,7 +54,7 @@ class MlrsB(val baseLearner: Classifier,
   baseTrustModel.setSplitAttIndex(1)
   val baseReinterpretationModel = AbstractClassifier.makeCopy(baseLearner)
 
-  val backupStrategy = new Blade(numBins)
+  val backupStrategy = new Habit(numBins)
 
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
@@ -110,9 +113,9 @@ class MlrsB(val baseLearner: Classifier,
       new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)))
     } else {
 
-      val auc = crossValidate(records, baseTrustModel, makeTrainRow, 5)
-      println(directRecords.size, witnessRecords.size, witnesses.size, auc)
-      if (auc < 0.7) {
+      val auc = crossValidate(records, baseTrustModel, makeTrainRow, numFolds)
+//      println(directRecords.size, witnessRecords.size, witnesses.size, auc)
+      if (auc < aucThreshold) {
         new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)))
       } else {
         val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
