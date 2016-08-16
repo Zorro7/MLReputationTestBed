@@ -26,6 +26,7 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
       bayes.setUseSupervisedDiscretization(true)
       x.setClassifier(bayes)
       x.setSplitAttIndex(-1)
+    case _ => // do nothing
   }
 
 
