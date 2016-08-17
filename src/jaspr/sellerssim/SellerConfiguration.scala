@@ -63,11 +63,12 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.5;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
-        //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;1.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.5;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.6;2.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.7;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.8;2.0;true),"+
+//                "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;1.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;10.;2.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;25.;2.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;50.;2.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;100.;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;150.;2.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.9;2.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.5;2.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.6;2.0;true),"+
@@ -76,7 +77,7 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.9;2.0;true),"+
         "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
-        //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
+//                "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2)," +
 //                "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
 //        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
@@ -101,9 +102,9 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.strategy.betareputation.BetaReputation," +
 //        "jaspr.strategy.betareputation.MLTravos_provider," +
         "jaspr.strategy.betareputation.Travos,"+
-//          "jaspr.strategy.blade.Blade(2)," +
+          "jaspr.strategy.blade.Blade(2)," +
 //          "jaspr.strategy.blade.Blade(5)," +
-//        "jaspr.strategy.habit.Habit(2),"+
+        "jaspr.strategy.habit.Habit(2),"+
 //        "jaspr.strategy.habit.Habit(5),"+
 //        "jaspr.strategy.stereotype.Burnett," +
 //        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
@@ -125,7 +126,7 @@ object SellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 25 --numProviders 100 " +
+        "--numClients 10 --numProviders 100 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +

@@ -2,9 +2,12 @@ package jaspr.sellerssim.agent
 
 import jaspr.core.agent.{Event, Agent, Client}
 import jaspr.core.provenance.{RatingRecord, Provenance, Record}
-import jaspr.core.service.{Service, TrustAssessment, ClientContext}
+import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
+import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
+
+import scala.collection.mutable
 
 /**
  * Created by phil on 21/03/16.
@@ -34,7 +37,15 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Witne
       },
       rateService(service)
     ))
+//    val si: Double = mlrsAUCs.remove(service.request).get
+//    val dr: Double = mlrsDRs.remove(service.request).get
+//    val wr: Double = mlrsWRs.remove(service.request).get
+//    println(si, dr, wr, service.utility(), simulation.network.utility())
   }
+
+  val mlrsAUCs: mutable.Map[ServiceRequest, Double] = new mutable.HashMap
+  val mlrsDRs: mutable.Map[ServiceRequest, Int] = new mutable.HashMap
+  val mlrsWRs: mutable.Map[ServiceRequest, Int] = new mutable.HashMap
 
   var tmp: List[Double] = Nil
 

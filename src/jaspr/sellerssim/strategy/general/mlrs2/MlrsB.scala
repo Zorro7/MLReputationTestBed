@@ -6,8 +6,10 @@ import jaspr.core.Network
 import jaspr.core.agent.{Client, Provider}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{Strategy, Exploration, StrategyInit}
+import jaspr.sellerssim.SellerSimulation
+import jaspr.sellerssim.agent.Buyer
 import jaspr.sellerssim.service.BuyerRecord
-import jaspr.strategy.CompositionStrategy
+import jaspr.strategy.{NoStrategy, CompositionStrategy}
 import jaspr.strategy.betareputation.Travos
 import jaspr.strategy.blade.Blade
 import jaspr.strategy.fire.Fire
@@ -39,14 +41,20 @@ class MlrsB(val baseLearner: Classifier,
                    context: ClientContext,
                    val trustModel: Option[MlrsModel],
                    val reinterpretationModels: Option[Map[Client,MlrsModel]],
-                   val backupStrategyInit: Option[StrategyInit]
+                   val backupStrategyInit: Option[StrategyInit],
+                   val modelAUC: Double,
+                    val numDirectRecords: Int,
+                   val numWitnessRecords: Int
                    ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+witnessWeight+"-"+reinterpretationContext
+  override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+numFolds+"-"+aucThreshold+"-"+witnessWeight+"-"+reinterpretationContext
 
   override val explorationProbability: Double = 0.1
 
-  if (baseLearner.isInstanceOf[NaiveBayes]) baseLearner.asInstanceOf[NaiveBayes].setUseSupervisedDiscretization(true)
+  baseLearner match {
+    case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
+    case _ => // do nothing
+  }
 
 //  val baseTrustModel = AbstractClassifier.makeCopy(baseLearner)
   val baseTrustModel = new MultiRegression
@@ -54,20 +62,19 @@ class MlrsB(val baseLearner: Classifier,
   baseTrustModel.setSplitAttIndex(1)
   val baseReinterpretationModel = AbstractClassifier.makeCopy(baseLearner)
 
-  val backupStrategy = new Habit(numBins)
-
+  val backupStrategy: Strategy = new Travos
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[Mlrs2Init]
 
-    (init.trustModel,init.reinterpretationModels,init.backupStrategyInit) match {
+    val ta = (init.trustModel,init.reinterpretationModels,init.backupStrategyInit) match {
       case (None,None,None) =>
 //        println("NOTHONG")
-        new TrustAssessment(baseInit.context, request, 0d)
+        new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0d,1d))
 
       case (None,None,Some(backupInit)) =>
 //        println("backup")
-        backupStrategy.compute(backupInit, request)
+        backupStrategy.computeAssessment(backupInit, request)
 
       case (Some(model),None,None) =>
 //        println("as is")
@@ -95,7 +102,12 @@ class MlrsB(val baseLearner: Classifier,
           if (witnessWeight < 0d || witnessWeight > 1d) directResult + witnessResults.sum
           else (1-witnessWeight)*directResult + witnessWeight*witnessResult
         new TrustAssessment(baseInit.context, request, score)
+
     }
+    init.context.client.asInstanceOf[Buyer].mlrsAUCs.put(request, init.modelAUC)
+    init.context.client.asInstanceOf[Buyer].mlrsDRs.put(request, init.numDirectRecords)
+    init.context.client.asInstanceOf[Buyer].mlrsWRs.put(request, init.numWitnessRecords)
+    ta
   }
 
 
@@ -106,24 +118,25 @@ class MlrsB(val baseLearner: Classifier,
     val records = directRecords ++ witnessRecords
 
     if (witnessRecords.isEmpty && directRecords.isEmpty) {
-      new Mlrs2Init(context, None, None, None)
+      new Mlrs2Init(context, None, None, None, 0d, 0, 0)
     } else if (witnessRecords.isEmpty || directRecords.isEmpty) {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
-//      new Mlrs2Init(context, Some(model), None, None)
-      new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)))
+      new Mlrs2Init(context, Some(model), None, None, 0d, directRecords.size, directRecords.size)
+//      new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)), 0d, directRecords.size, witnessRecords.size)
     } else {
-
-      val auc = crossValidate(records, baseTrustModel, makeTrainRow, numFolds)
-//      println(directRecords.size, witnessRecords.size, witnesses.size, auc)
+//      val auc = crossValidate(records, baseTrustModel, makeTrainRow, numFolds)
+      val auc = network.simulation.round
+//      val auc = directRecords.size
+      println(network.simulation.round, directRecords.size, witnessRecords.size, witnesses.size, auc, context.client.utility, network.utility())
       if (auc < aucThreshold) {
-        new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)))
+        new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)), auc, directRecords.size, witnessRecords.size)
       } else {
         val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
         val reinterpretationModels = witnesses.withFilter(_ != context.client).map(witness =>
           witness -> makeReinterpretationModel(directRecords, witnessRecords, context.client, witness, model)
         ).toMap
 
-        new Mlrs2Init(context, Some(model), Some(reinterpretationModels), None)
+        new Mlrs2Init(context, Some(model), Some(reinterpretationModels), None, auc, directRecords.size, witnessRecords.size)
       }
     }
   }

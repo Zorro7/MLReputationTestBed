@@ -8,6 +8,7 @@ import jaspr.core.service.{ServiceContext, ClientContext, ServiceRequest, TrustA
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
 import jaspr.strategy.CompositionStrategy
+import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.`lazy`.IBk
 import weka.classifiers.bayes.NaiveBayes
@@ -50,34 +51,34 @@ class Mlrs(val baseLearner: Classifier,
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[Mlrs2Init]
 
-    init.trustModel match {
-      case None => new TrustAssessment(baseInit.context, request, 0d)
-      case Some(model) =>
-        init.reinterpretationModels match {
-          case None =>
-            val row = makeTestRow(request)
+    (init.trustModel,init.reinterpretationModels) match {
+      case (None,None) =>
+        new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0d,1d))
+
+      case (Some(model),None) =>
+        val row = makeTestRow(request)
+        val query = convertRowToInstance(row, model.attVals, model.train)
+        val result = makePrediction(query, model)
+        new TrustAssessment(baseInit.context, request, result)
+
+      case (Some(model),Some(reinterpretationModels)) =>
+        val row = makeTestRow(request)
+        val query = convertRowToInstance(row, model.attVals, model.train)
+        val directResult = makePrediction(query, model)
+        val witnessResults =
+          for ((witness,reint) <- reinterpretationModels.filter(_._1 != request.client)) yield {
+            val row = makeTestRow(request, witness)
             val query = convertRowToInstance(row, model.attVals, model.train)
-            val result = makePrediction(query, model)
-            new TrustAssessment(baseInit.context, request, result)
-          case Some(reinterpretationModels) =>
-            val row = makeTestRow(request)
-            val query = convertRowToInstance(row, model.attVals, model.train)
-            val directResult = makePrediction(query, model)
-            val witnessResults =
-              for ((witness,reint) <- reinterpretationModels.filter(_._1 != request.client)) yield {
-                val row = makeTestRow(request, witness)
-                val query = convertRowToInstance(row, model.attVals, model.train)
-                val reinterpretationRow = 0 :: makePrediction(query, model) :: makeReinterpretationContext(request)
-                val inst = convertRowToInstance(reinterpretationRow, reint.attVals, reint.train)
-                val result = makePrediction(inst, reint)
-                result
-              }
-            val witnessResult: Double = if (witnessResults.isEmpty) 0d else witnessResults.sum / witnessResults.size.toDouble
-            val score =
-              if (witnessWeight < 0d || witnessWeight > 1d) directResult + witnessResults.sum
-              else (1-witnessWeight)*directResult + witnessWeight*witnessResult
-            new TrustAssessment(baseInit.context, request, score)
-        }
+            val reinterpretationRow = 0 :: makePrediction(query, model) :: makeReinterpretationContext(request)
+            val inst = convertRowToInstance(reinterpretationRow, reint.attVals, reint.train)
+            val result = makePrediction(inst, reint)
+            result
+          }
+        val witnessResult: Double = if (witnessResults.isEmpty) 0d else witnessResults.sum / witnessResults.size.toDouble
+        val score =
+          if (witnessWeight < 0d || witnessWeight > 1d) directResult + witnessResults.sum
+          else (1-witnessWeight)*directResult + witnessWeight*witnessResult
+        new TrustAssessment(baseInit.context, request, score)
     }
   }
 

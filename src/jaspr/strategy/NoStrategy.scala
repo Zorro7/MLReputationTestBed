@@ -14,7 +14,9 @@ class NoStrategy extends Strategy with NoExploration {
     new StrategyInit(context)
   }
 
-  override def computeAssessment(init: StrategyInit, request: ServiceRequest): TrustAssessment = ???
+  override def computeAssessment(init: StrategyInit, request: ServiceRequest): TrustAssessment = {
+    new TrustAssessment(init.context, request, Chooser.randomDouble(0,1))
+  }
 
   override def rank(init: StrategyInit, requests: Seq[ServiceRequest]): Seq[TrustAssessment] = {
     val assessments = new TrustAssessment(init.context, Chooser.choose(requests), 1) :: Nil
