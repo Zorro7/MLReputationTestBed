@@ -28,7 +28,6 @@ if __name__ == "__main__":
 	strategies = [('NoStrategy',),
 	('Fire-0.0',),
 	 ('Fire-0.5',), ('BetaReputation',), ('Travos',), ('Blade-2',), ('Habit-2',),
-	# ('Blade-5',), ('Habit-5',),
 					('Burnett',),
 					('BasicML',),
 					('FireLike',),
@@ -36,17 +35,23 @@ if __name__ == "__main__":
 					('FireLikeContext',),
 					('BasicStereotype',),
 					('FireLikeStereotype',),
-					# ('Mlrs2-NaiveBayes-0.0-false',),
-					# ('Mlrs2-NaiveBayes-1.0-false',),
-					# ('Mlrs2-NaiveBayes-0.5-false',),
-					# ('Mlrs2-NaiveBayes-2.0-false',),
-					# ('Mlrs2-NaiveBayes-0.0-true',),
-					# ('Mlrs2-NaiveBayes-1.0-true',),
-					# ('Mlrs2-NaiveBayes-0.5-true',),
 					('Mlrs2-NaiveBayes-2.0-true',),
-					# ('Mlrs-J48-5-0.5',),
-					# ('Mlrs-NaiveBayes-5-0.5',),
-					# ('Mlrs-NaiveBayes-5-0.5',)
+					('MlrsB2-NaiveBayes-records-2.0-2.0-true',),
+					('MlrsB2-NaiveBayes-records-5.0-2.0-true',),
+					('MlrsB2-NaiveBayes-records-10.0-2.0-true',),
+					('MlrsB2-NaiveBayes-records-25.0-2.0-true',),
+					('MlrsB2-NaiveBayes-records-50.0-2.0-true',),
+					('MlrsB2-NaiveBayes-directRecords-2.0-2.0-true',),
+					('MlrsB2-NaiveBayes-directRecords-5.0-2.0-true',),
+					('MlrsB2-NaiveBayes-directRecords-10.0-2.0-true',),
+					('MlrsB2-NaiveBayes-round-10.0-2.0-true',),
+					('MlrsB2-NaiveBayes-round-25.0-2.0-true',),
+					('MlrsB2-NaiveBayes-round-50.0-2.0-true',),
+					('MlrsB2-NaiveBayes-round-100.0-2.0-true',),
+					#('MlrsB-NB-2-5-0.6-2.0-true.res',),
+					#('MlrsB-NB-2-5-0.7-2.0-true.res',),
+					#('MlrsB-NB-2-5-0.8-2.0-true.res',),
+					#('MlrsB-NB-2-5-0.9-2.0-true.res',),
 					]
 
 
@@ -65,7 +70,23 @@ if __name__ == "__main__":
 		"BasicStereotype": "Stereotype-ML\t",
 		"FireLikeStereotype": "FIRE-Stereotype-ML",
 		"FireLikeContext": "FIRE-Context-ML",
-		"Mlrs2-NaiveBayes-2.0-true": "MLRS\t\t"
+		"Mlrs2-NaiveBayes-2.0-true": "MLRS\t\t",
+		'MlrsB-NB-2-5-0.6-2.0-true.res': "MLRS-B0.6\t",
+		'MlrsB-NB-2-5-0.7-2.0-true.res': "MLRS-B0.7\t",
+		'MlrsB-NB-2-5-0.8-2.0-true.res': "MLRS-B0.8\t",
+		'MlrsB-NB-2-5-0.9-2.0-true.res': "MLRS-B0.9\t",
+		'MlrsB2-NaiveBayes-records-2.0-2.0-true': "MLRS-2records\t",
+		'MlrsB2-NaiveBayes-records-5.0-2.0-true': "MLRS-5records\t",
+		'MlrsB2-NaiveBayes-records-10.0-2.0-true': "MLRS-10records\t",
+		'MlrsB2-NaiveBayes-records-25.0-2.0-true': "MLRS-25records\t",
+		'MlrsB2-NaiveBayes-records-50.0-2.0-true': "MLRS-50records\t",
+		'MlrsB2-NaiveBayes-directRecords-2.0-2.0-true': "MLRS-2directRecords\t",
+		'MlrsB2-NaiveBayes-directRecords-5.0-2.0-true': "MLRS-5directRecords\t",
+		'MlrsB2-NaiveBayes-directRecords-10.0-2.0-true': "MLRS-10directRecords\t",
+		'MlrsB2-NaiveBayes-round-10.0-2.0-true': "MLRS-10rounds\t",
+		'MlrsB2-NaiveBayes-round-25.0-2.0-true': "MLRS-25rounds\t",
+		'MlrsB2-NaiveBayes-round-50.0-2.0-true': "MLRS-50rounds\t",
+		'MlrsB2-NaiveBayes-round-100.0-2.0-true': "MLRS-100rounds\t",
 	}
 
 	# [('BasicML',), ('BasicStereotype',), ('BetaReputation',), ('Blade-2',), ('Fire-0.0',),  ('FireLike',), ('FireLikeStereotype',), ('Habit-2',), ('Mlrs-J48-10-0.0',), ('Mlrs-J48-10-0.5',), ('Mlrs-J48-2-0.0',),
@@ -116,8 +137,7 @@ if __name__ == "__main__":
 				justprint(".")
 			else:
 				justprint(" ")
-			# print df.format(stderrs[boti][topi]*1.96),
-			print df.format(means[boti][topi]).zfill(6), "("+df.format(stds[boti][topi]*1.96).zfill(5)+")",
+			print df.format(means[boti][topi]).zfill(6), "("+df.format(stderrs[boti][topi]).zfill(5)+")",
 			if boti < len(exps)-1:
 				print "\t",
 		print
@@ -133,7 +153,7 @@ if __name__ == "__main__":
 	# 		else:
 	# 			justprint(" ")
 	# 		# print df.format(stderrs[boti][topi]*1.96),
-	# 		print df.format(means[boti][topi]), "("+df.format(stds[boti][topi]*1.96)+")",
+	# 		print df.format(means[boti][topi]), "("+df.format(stderrs[boti][topi]*1.96)+")",
 	# 		if boti < len(exps)-1:
 	# 			print "\t",
 	# 	print
@@ -145,7 +165,7 @@ if __name__ == "__main__":
 			if topi in meanis[boti]:
 				print "\\bf",
 			# print df.format(stderrs[boti][topi]*1.96),
-			print df.format(means[boti][topi]), "& ("+df.format(stderrs[boti][topi]*1.96)+")",
+			print df.format(means[boti][topi]), "& ("+df.format(stderrs[boti][topi])+")",
 			if boti < len(exps)-1:
 				print "&",
 		print "\\\\"
@@ -158,7 +178,7 @@ if __name__ == "__main__":
 	# 	for boti in xrange(0,len(strategies)):
 	# 		print "("+str(boti)+","+df.format(means[topi][boti])+") +- (0,"+df.format(stderrs[topi][boti])+")"
 	# 	print "};\n"
-	# print "\n\\legend{"+','.join([str(s) for s in strategies])+"}"
+	# print "\n\\legend{"+',''.join([str(s) for s in strategies])+"}"
 	# print "\\end{axis}\n"
 	# print "\\end{tikzpicture}"
 
