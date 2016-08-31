@@ -13,7 +13,7 @@ if __name__ == "__main__":
 	results = loadprocessed(filename)
 
 	iterationsWanted = 100
-	aggkeys = ["gain100", "utility", "utility100", "utility250", "utility500"]
+	aggkeys = ["gain100", "utility", "utility100", "utility250", "utility500", "utilities"]
 
 	if "utilities" not in aggkeys:
 		for res in results:
