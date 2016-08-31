@@ -39,6 +39,7 @@ object SellerMultiConfiguration extends App {
     opt[Int]("numProviders") required() action {(x,c) => c.copy(numProviders = x)}
     opt[Int]("numSimCapabilities") required() action {(x,c) => c.copy(numSimCapabilities = x)}
     opt[Int]("numProviderCapabilities") required() action {(x,c) => c.copy(numProviderCapabilities = x)}
+    opt[Double]("noiseRange") required() action {(x,c) => c.copy(noiseRange = x)}
     opt[Int]("numTerms") required() action {(x,c) => c.copy(numTerms = x)}
     opt[Int]("numAdverts") required() action {(x,c) => c.copy(numAdverts = x)}
     opt[Boolean]("usePreferences") required() action {(x,c) => c.copy(usePreferences = x)}
@@ -64,11 +65,11 @@ object SellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
 //                "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;1.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;10.;2.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;25.;2.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;50.;2.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;100.;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;150.;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;10.;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;25.;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;50.;2.0;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;100.;2.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;250.;2.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.9;2.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.5;2.0;true),"+
 //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.6;2.0;true),"+
@@ -126,7 +127,7 @@ object SellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 10 --numProviders 100 " +
+        "--numClients 10 --numProviders 10 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
@@ -134,6 +135,7 @@ object SellerMultiConfiguration extends App {
         "--memoryLimit 100 " +
         "--numSimCapabilities 10 " +
         "--numProviderCapabilities 10 " +
+        "--noiseRange 2 " +
         "--numTerms 5 " +
         "--witnessRequestLikelihood 0.2 " +
         "--numAdverts 5 " +
@@ -162,6 +164,7 @@ case class SellerMultiConfiguration(
                                numProviders: Int = 25,
                                numSimCapabilities: Int = 10,
                                numProviderCapabilities: Int = 5,
+                               noiseRange: Double = 1d,
                                numTerms: Int = 2,
                                numAdverts: Int = 2,
                                usePreferences: Boolean = true,
@@ -198,6 +201,7 @@ case class SellerMultiConfiguration(
         numProviders = numProviders,
         numSimCapabilities = numSimCapabilities,
         numProviderCapabilities = numProviderCapabilities,
+        noiseRange = noiseRange,
         numTerms = numTerms,
         numAdverts = numAdverts,
         usePreferences = usePreferences,
@@ -226,6 +230,7 @@ class SellerConfiguration(override val strategy: Strategy,
                           val numProviders: Int,
                           val numSimCapabilities: Int,
                           val numProviderCapabilities: Int,
+                          val noiseRange: Double,
                           val numTerms: Int,
                           val numAdverts: Int,
                           val usePreferences: Boolean,
@@ -265,7 +270,8 @@ class SellerConfiguration(override val strategy: Strategy,
   }
 
   def addNoise(x: Double): Double = {
-    Chooser.bound(x + Chooser.randomDouble(-0.5,0.5), -1, 1)
+    Chooser.bound(x + Chooser.randomDouble(-noiseRange/2d, noiseRange/2d), -1, 1)
+//    Chooser.bound(x + Chooser.randomDouble(-1,1), -1, 1)
 //    x + Chooser.randomDouble(-0.5,0.5)
   }
 
