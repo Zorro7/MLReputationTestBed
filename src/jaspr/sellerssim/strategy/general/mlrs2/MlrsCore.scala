@@ -1,5 +1,6 @@
 package jaspr.sellerssim.strategy.general.mlrs2
 
+import java.text.DecimalFormat
 import java.util
 
 import jaspr.core.provenance.Record
@@ -65,15 +66,23 @@ trait MlrsCore extends Discretization {
                                  makeRow: T => Seq[Any],
                                  numFolds: Int = 5,
                                  makeweight: T => Double = null) = {
-    val shuffled = Chooser.shuffle(records)
-    val folds = cut(shuffled, numFolds)
-    val preds = (for (fold <- 0 until folds.size) yield {
-      val trainRecords = folds.take(fold) ++ folds.drop(fold+1)
-      val testRecords = folds.get(fold)
-      val model = makeMlrsModel[T](trainRecords.flatten, baseModel, makeRow)
-      evaluateMlrsModel(testRecords, model, makeRow)
-    }).flatten
-    EvaluatingUtils.weightedAUC(new util.ArrayList(preds))
+    if (records.size <= 1) {
+      0d
+    } else {
+      val shuffled = Chooser.shuffle(records)
+      val folds = cut(shuffled, numFolds)
+      val preds = (for (fold <- 0 until folds.size) yield {
+        val trainRecords = folds.take(fold) ++ folds.drop(fold + 1)
+        val testRecords = folds.get(fold)
+        val model = makeMlrsModel[T](trainRecords.flatten, baseModel, makeRow)
+        evaluateMlrsModel(testRecords, model, makeRow)
+      })
+      val aucs = preds.map(x => EvaluatingUtils.weightedAUC(new util.ArrayList(x)))
+      val df = new DecimalFormat("#.##")
+      println(aucs.map(df.format))
+//      EvaluatingUtils.weightedAUC(new util.ArrayList(preds.flatten))
+      aucs.sum / aucs.size
+    }
   }
 
   def makePrediction(query: Instance, model: MlrsModel, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Double = {
