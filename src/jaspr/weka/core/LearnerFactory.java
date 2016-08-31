@@ -38,7 +38,6 @@ public class LearnerFactory {
 
     //Just makes it.
     public static Classifier makeLearner(String[] l, boolean debug) throws Exception {
-        System.out.println("Making learner: "+l[0]);
         String clss = removeOptions(l[0]);
         String[] options = getOptions(l[0]);
         Classifier ret = AbstractClassifier.forName(clss, options);
@@ -52,6 +51,7 @@ public class LearnerFactory {
                 throw new UnsupportedOperationException();
             }
         }
+        System.out.println("Making learner: "+l[0]);
         return ret;
     }
 

@@ -32,7 +32,7 @@ class Results {
     val x = results.keys.mkString("", "\t", "\n") +
       (for ((config,res) <- results) yield {
         average(res, funch).map(df.format)
-      }).transpose.map(_.mkString("\t\t")).mkString("\n")
+      }).transpose.map(_.mkString("\t")).mkString("\n")
     println(x)
   }
 
@@ -61,7 +61,7 @@ class Results {
             -funch(r(if (start >= 0) r.size-1-start else -start))
         ).sum / res.size
       }
-    println(x.map(df.format).mkString("", "\t\t", ""))
+    println(x.map(df.format).mkString("", "\t", ""))
   }
 }
 

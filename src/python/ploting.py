@@ -2,7 +2,7 @@ import os
 from analysis import *
 
 def tikzheader():
-	return "\\begin{tikzpicture}"
+	return "\\begin{tikzpicture}\n"
 
 def tikzfooter():
 	return "\\end{tikzpicture}\n"
@@ -16,14 +16,14 @@ def kwargsaslines(header, footer, *args, **kwargs):
 	lines.append(footer)
 	return '\n'.join(lines)+"\n"
 
-def axisheader(**kwargs):
-	return kwargsaslines("\\begin{axis}[", "]", *[], **kwargs)
+def axisheader(*args, **kwargs):
+	return kwargsaslines("\\begin{axis}[", "]", *args, **kwargs)
 
 def axisfooter():
 	return "\end{axis}\n"
 
 def plotheader(*args, **kwargs):
-	return kwargsaslines("\\addplot[", "]", *args, **kwargs)
+	return kwargsaslines("\\addplot+[", "]", *args, **kwargs)
 
 def coordinatesheader():
 	return "coordinates {"
@@ -31,14 +31,21 @@ def coordinatesheader():
 def coordinatesfooter():
 	return "};\n"
 
+def format(number, df):
+	if isinstance(number, int):
+		return str(number)
+	else:
+		return df.format(number)
+
+
 def coordline(x, y, xerr=None, yerr=None, df="{0:.2f}"):
-	line = "("+df.format(x)+","+df.format(y)
+	line = "("+format(x, df)+","+format(y, df)
 	if xerr is not None:
-		line += ") +- ("+df.format(xerr)+","
+		line += ") +- ("+format(xerr, df)+","
 	elif yerr is not None:
 		line += ") +- (0,"
 	if yerr is not None:
-		line += df.format(yerr)
+		line += format(yerr, df)
 	elif xerr is not None:
 		line += "0"
 	line += ")"
@@ -56,6 +63,14 @@ def coordinates(X, Y, Xerr=None, Yerr=None):
 		lines.extend([coordline(x,y,xerr=xerr,yerr=yerr) for x,y,xerr,yerr in zip(X,Y,Xerr,Yerr)])
 	lines.append(coordinatesfooter())
 	return '\n'.join(lines)
+
+def legend(entries):
+	line = "\\legend{"
+	for x in entries:
+		line += "'"+str(x)+"',"
+	line = line[:-1]
+	line += "}"
+	return line
 
 def latexheader():
 	lines = ["\\documentclass{standalone}"]
@@ -80,7 +95,7 @@ def viewpdf(texstr):
 	texF.close()
 	p = subprocess.Popen('pdflatex plot.tex', shell=True)
 	p.wait()
-	p=subprocess.Popen(['evince','plot.pdf'])
+	p=subprocess.Popen(['open','plot.pdf'])
 	p.wait()
 	shutil.rmtree(temp)
 
