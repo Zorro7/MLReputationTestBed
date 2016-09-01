@@ -42,10 +42,7 @@ class MlrsB(val baseLearner: Classifier,
                    context: ClientContext,
                    val trustModel: Option[MlrsModel],
                    val reinterpretationModels: Option[Map[Client,MlrsModel]],
-                   val backupStrategyInit: Option[StrategyInit],
-                   val modelAUC: Double,
-                    val numDirectRecords: Int,
-                   val numWitnessRecords: Int
+                   val backupStrategyInit: Option[StrategyInit]
                    ) extends StrategyInit(context)
 
   override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+backupKind+"-"+backupThreshold+"-"+witnessWeight+"-"+reinterpretationContext
@@ -68,7 +65,7 @@ class MlrsB(val baseLearner: Classifier,
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[Mlrs2Init]
 
-    val ta = (init.trustModel,init.reinterpretationModels,init.backupStrategyInit) match {
+    (init.trustModel,init.reinterpretationModels,init.backupStrategyInit) match {
       case (None,None,None) =>
 //        println(init.context.round, "NOTHONG")
         new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0d,1d))
@@ -105,10 +102,6 @@ class MlrsB(val baseLearner: Classifier,
         new TrustAssessment(baseInit.context, request, score)
 
     }
-    init.context.client.asInstanceOf[Buyer].mlrsAUCs.put(request, init.modelAUC)
-    init.context.client.asInstanceOf[Buyer].mlrsDRs.put(request, init.numDirectRecords)
-    init.context.client.asInstanceOf[Buyer].mlrsWRs.put(request, init.numWitnessRecords)
-    ta
   }
 
 
@@ -130,19 +123,19 @@ class MlrsB(val baseLearner: Classifier,
     }
 
     if (witnessRecords.isEmpty && directRecords.isEmpty) {
-      new Mlrs2Init(context, None, None, None, 0d, 0, 0)
+      new Mlrs2Init(context, None, None, None)
     } else if (useBackup) {
-      new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)), 0d, directRecords.size, witnessRecords.size)
+      new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)))
     } else if (witnessRecords.isEmpty || directRecords.isEmpty) {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
-      new Mlrs2Init(context, Some(model), None, None, 0d, directRecords.size, directRecords.size)
+      new Mlrs2Init(context, Some(model), None, None)
     } else {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
       val reinterpretationModels = witnesses.withFilter(_ != context.client).map(witness =>
         witness -> makeReinterpretationModel(directRecords, witnessRecords, context.client, witness, model)
       ).toMap
 
-      new Mlrs2Init(context, Some(model), Some(reinterpretationModels), None, 0d, directRecords.size, witnessRecords.size)
+      new Mlrs2Init(context, Some(model), Some(reinterpretationModels), None)
     }
 
   }

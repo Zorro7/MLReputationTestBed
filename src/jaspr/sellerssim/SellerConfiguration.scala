@@ -60,63 +60,15 @@ object SellerMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-//        "jaspr.strategy.NoStrategy," +
-//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.5;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;5;0.0;true),"+
-//                "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;5;1.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;10.;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;25.;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;50.;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;100.;2.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;250.;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;5;0.9;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.5;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.6;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.7;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.8;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;10;0.9;2.0;true),"+
+        "jaspr.strategy.NoStrategy," +
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true),"+
         "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsEvents(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
-//                "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2)," +
-//        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2)," +
-//                "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
-//        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.bayes.NaiveBayes;2)," +
-//        "jaspr.sellerssim.strategy.general.TravosLikeSlim," +
-//        "jaspr.sellerssim.strategy.general.TravosLike(weka.classifiers.bayes.NaiveBayes;2)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;5)," +
-//        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;2)," +
-//        "jaspr.strategy.fire.Fire(0.5)," +
         "jaspr.strategy.fire.Fire(0.0)," +
-//        "jaspr.strategy.fire.MLFire(0.5), " +
-//        "jaspr.strategy.fire.MLFire(0.0)," +
-//        "jaspr.strategy.betareputation.BetaReputation," +
-//        "jaspr.strategy.betareputation.MLTravos_provider," +
+        "jaspr.strategy.fire.Fire(0.5)," +
+        "jaspr.strategy.betareputation.BetaReputation," +
         "jaspr.strategy.betareputation.Travos,"+
           "jaspr.strategy.blade.Blade(2)," +
-//          "jaspr.strategy.blade.Blade(5)," +
         "jaspr.strategy.habit.Habit(2),"+
-//        "jaspr.strategy.habit.Habit(5),"+
-//        "jaspr.strategy.stereotype.Burnett," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.5;false)," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.J48;10;0.0;false)," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.functions.SMO;5;0.5;true)," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.trees.RandomForest;5;0.5;true)," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.lazy.KStar;5;0.5;true)," +
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.5;true),"+
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;true),"+
-//        "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;2;1.0;true),"+
-//            "jaspr.sellerssim.strategy.Mlrs(weka.classifiers.bayes.NaiveBayes;10;0.0;true)," +
         " --numSimulations 10 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -127,18 +79,18 @@ object SellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 10 --numProviders 10 " +
+        "--numClients 10 --numProviders 50 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
         "--numRounds 500 " +
         "--memoryLimit 100 " +
-        "--numSimCapabilities 10 " +
-        "--numProviderCapabilities 10 " +
-        "--noiseRange 2 " +
-        "--numTerms 5 " +
+        "--numSimCapabilities 5 " +
+        "--numProviderCapabilities 5 " +
+        "--noiseRange 1. " +
+        "--numTerms 3 " +
         "--witnessRequestLikelihood 0.2 " +
-        "--numAdverts 5 " +
+        "--numAdverts 3 " +
         "--usePreferences true").split(" ")
     } else args
 
@@ -251,9 +203,20 @@ class SellerConfiguration(override val strategy: Strategy,
   }
 
 
-  // Basic utility gained in each interaction (0 if absolute service properties are used and 2/3 if preferences are used (Like this so random strategy has E[U]=0).
-  val baseUtility = if (usePreferences) 2d/3d else 1d/2d
-//  val baseUtility = 2d/3d
+  val baseUtility: Double = 1d/2d
+
+//  val baseUtility = if (usePreferences) 2d/3d else 1d/2d
+//  val baseUtility = 1d
+
+  def addNoise(x: Double): Double = {
+    //    Chooser.bound(x + Chooser.randomDouble(-noiseRange/2d, noiseRange/2d), -1, 1)
+    val ret = (x + Chooser.randomDouble(-1*noiseRange,1*noiseRange))/2d
+//    val ret = (x + Chooser.nextGaussian())/2d
+    //    Chooser.bound(x + Chooser.randomDouble(-1,1), -1, 1)
+//    println(x, ret)
+//   val ret =  x + Chooser.randomDouble(-1d,1d)
+    ret
+  }
 
   // Services that exist in the simulation
   var simcapabilities = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
@@ -269,22 +232,6 @@ class SellerConfiguration(override val strategy: Strategy,
     caps
   }
 
-  def addNoise(x: Double): Double = {
-    Chooser.bound(x + Chooser.randomDouble(-noiseRange/2d, noiseRange/2d), -1, 1)
-//    Chooser.bound(x + Chooser.randomDouble(-1,1), -1, 1)
-//    x + Chooser.randomDouble(-0.5,0.5)
-  }
-
-  // Properties of a provider agent
-  def properties(agent: Agent): SortedMap[String,Property] = {
-    (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
-  }
-
-  def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
-    agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
-  }
-
-
   // Context generation with required ppayload
   def clientContext(network: Network, client: Client, round: Int) = {
     val cap = Chooser.choose(simcapabilities).copy(
@@ -295,12 +242,30 @@ class SellerConfiguration(override val strategy: Strategy,
     new ClientContext(client, round, cap, network.markets.head)
   }
 
+
+
+  // Properties of a provider agent
+  def properties(agent: Agent): SortedMap[String,Property] = {
+    (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
+  }
+
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Buyer): SortedMap[String,Property] = {
     if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
-    else (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
+    else Nil//(1 to numTerms).map(x => new Property(x.toString, 0d)).toList
   }
+
+  def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
+    agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
+  }
+
+
+
+
+
+
+
 
 
   def witnessModel(witness: Witness, network: Network): WitnessModel = {
