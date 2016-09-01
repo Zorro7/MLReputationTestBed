@@ -26,7 +26,8 @@ import scala.collection.mutable
 class Mlrs(val baseLearner: Classifier,
                 override val numBins: Int,
                 val witnessWeight: Double = 0.5d,
-                val reinterpretationContext: Boolean = true
+                val reinterpretationContext: Boolean = true,
+                val useAdverts: Boolean = true
                  ) extends CompositionStrategy with Exploration with MlrsCore {
 
 
@@ -36,7 +37,7 @@ class Mlrs(val baseLearner: Classifier,
                    val reinterpretationModels: Option[Map[Client,MlrsModel]]
                    ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+witnessWeight+"-"+reinterpretationContext
+  override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+witnessWeight+"-"+reinterpretationContext+"-"+useAdverts
 
   override val explorationProbability: Double = 0.1
 
@@ -208,6 +209,10 @@ class Mlrs(val baseLearner: Classifier,
   }
 
   def adverts(provider: Provider): List[Any] = {
-    provider.name :: provider.advertProperties.values.map(_.value).toList
+    if (useAdverts) {
+      provider.name :: provider.advertProperties.values.map(_.value).toList
+    } else {
+      provider.name :: Nil
+    }
   }
 }

@@ -61,14 +61,17 @@ object SellerMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
         "jaspr.strategy.NoStrategy," +
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;true),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
+        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
         "jaspr.strategy.fire.Fire(0.0)," +
         "jaspr.strategy.fire.Fire(0.5)," +
         "jaspr.strategy.betareputation.BetaReputation," +
         "jaspr.strategy.betareputation.Travos,"+
           "jaspr.strategy.blade.Blade(2)," +
         "jaspr.strategy.habit.Habit(2),"+
+        "jaspr.strategy.stereotype.Burnett,"+
         " --numSimulations 10 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -83,10 +86,10 @@ object SellerMultiConfiguration extends App {
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 500 " +
+        "--numRounds 1000 " +
         "--memoryLimit 100 " +
-        "--numSimCapabilities 5 " +
-        "--numProviderCapabilities 5 " +
+        "--numSimCapabilities 10 " +
+        "--numProviderCapabilities 10 " +
         "--noiseRange 1. " +
         "--numTerms 3 " +
         "--witnessRequestLikelihood 0.2 " +
@@ -211,7 +214,8 @@ class SellerConfiguration(override val strategy: Strategy,
   def addNoise(x: Double): Double = {
     //    Chooser.bound(x + Chooser.randomDouble(-noiseRange/2d, noiseRange/2d), -1, 1)
     val ret = (x + Chooser.randomDouble(-1*noiseRange,1*noiseRange))/2d
-//    val ret = (x + Chooser.nextGaussian())/2d
+//    val ret = (x + Chooser.nextGaussian()*noiseRange)/2d
+//    val ret = (x+noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1)
     //    Chooser.bound(x + Chooser.randomDouble(-1,1), -1, 1)
 //    println(x, ret)
 //   val ret =  x + Chooser.randomDouble(-1d,1d)

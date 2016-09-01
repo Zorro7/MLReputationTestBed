@@ -33,7 +33,8 @@ class MlrsB(val baseLearner: Classifier,
                 val backupKind: String = "round",
                 val backupThreshold: Double = 0.5,
                 val witnessWeight: Double = 0.5d,
-                val reinterpretationContext: Boolean = true
+                val reinterpretationContext: Boolean = true,
+                val useAdverts: Boolean = true
                  ) extends CompositionStrategy with Exploration with MlrsCore {
 
   val numFolds: Int = 5
@@ -45,7 +46,7 @@ class MlrsB(val baseLearner: Classifier,
                    val backupStrategyInit: Option[StrategyInit]
                    ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+backupKind+"-"+backupThreshold+"-"+witnessWeight+"-"+reinterpretationContext
+  override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+backupKind+"-"+backupThreshold+"-"+witnessWeight+"-"+reinterpretationContext+"-"+useAdverts
 
   override val explorationProbability: Double = 0.1
 
@@ -116,8 +117,8 @@ class MlrsB(val baseLearner: Classifier,
         case "round" => context.round
         case "auc" => crossValidate(records, baseTrustModel, makeTrainRow, numFolds)
         case "records" => records.size
-        case "directRecords" => records.size
-        case "witnessRecords" => records.size
+        case "directRecords" => directRecords.size
+        case "witnessRecords" => witnessRecords.size
       }
       backupScore < backupThreshold
     }
@@ -245,6 +246,10 @@ class MlrsB(val baseLearner: Classifier,
   }
 
   def adverts(provider: Provider): List[Any] = {
-    provider.name :: provider.advertProperties.values.map(_.value).toList
+    if (useAdverts) {
+      provider.name :: provider.advertProperties.values.map(_.value).toList
+    } else {
+      provider.name :: Nil
+    }
   }
 }
