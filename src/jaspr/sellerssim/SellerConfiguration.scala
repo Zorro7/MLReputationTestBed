@@ -88,12 +88,12 @@ object SellerMultiConfiguration extends App {
         "--eventEffects 0 " +
         "--numRounds 1000 " +
         "--memoryLimit 100 " +
-        "--numSimCapabilities 10 " +
-        "--numProviderCapabilities 10 " +
+        "--numSimCapabilities 5 " +
+        "--numProviderCapabilities 5 " +
         "--noiseRange 1. " +
-        "--numTerms 3 " +
+        "--numTerms 1 " +
         "--witnessRequestLikelihood 0.2 " +
-        "--numAdverts 3 " +
+        "--numAdverts 1 " +
         "--usePreferences true").split(" ")
     } else args
 

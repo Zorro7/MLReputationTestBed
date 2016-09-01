@@ -67,7 +67,7 @@ def coordinates(X, Y, Xerr=None, Yerr=None):
 def legend(entries):
 	line = "\\legend{"
 	for x in entries:
-		line += "'"+str(x)+"',"
+		line += ""+str(x)+","
 	line = line[:-1]
 	line += "}"
 	return line

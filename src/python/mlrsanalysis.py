@@ -35,14 +35,15 @@ if __name__ == "__main__":
 					# ('FireLikeContext',),
 					# ('BasicStereotype',),
 					# ('FireLikeStereotype',),
-					('Mlrs2-NaiveBayes-2.0-true',),
-					('MlrsB2-NaiveBayes-round-25.0-2.0-true',),
-					('MlrsB2-NaiveBayes-round-50.0-2.0-true',),
-					('MlrsB2-NaiveBayes-round-100.0-2.0-true',),
-					('MlrsB2-NaiveBayes-round-250.0-2.0-true',),
-					('MlrsB2-NaiveBayes-round-500.0-2.0-true',),
-					('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
-					('MlrsB2-NaiveBayes-round-1000.0-2.0-true',),
+					('Mlrs2-NaiveBayes-2.0-true-true',),
+					('Mlrs2-NaiveBayes-2.0-true-false',),
+					# ('MlrsB2-NaiveBayes-round-25.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-50.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-100.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-250.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-500.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-1000.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-directRecords-2.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-directRecords-5.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-directRecords-10.0-2.0-true',),
@@ -72,7 +73,8 @@ if __name__ == "__main__":
 		"BasicStereotype": "Stereotype-ML\t",
 		"FireLikeStereotype": "FIRE-Stereotype-ML",
 		"FireLikeContext": "FIRE-Context-ML",
-		"Mlrs2-NaiveBayes-2.0-true": "MLRS\t\t",
+		"Mlrs2-NaiveBayes-2.0-true-false": "MLRS\t\t",
+		"Mlrs2-NaiveBayes-2.0-true-true": "MLRS-Ads\t\t",
 		'MlrsB-NB-2-5-0.6-2.0-true.res': "MLRS-B0.6\t",
 		'MlrsB-NB-2-5-0.7-2.0-true.res': "MLRS-B0.7\t",
 		'MlrsB-NB-2-5-0.8-2.0-true.res': "MLRS-B0.8\t",
@@ -142,7 +144,9 @@ if __name__ == "__main__":
 				justprint(".")
 			else:
 				justprint(" ")
-			print df.format(means[boti][topi]).zfill(6), "("+df.format(stderrs[boti][topi]).zfill(5)+")",
+			# sep = (stderrs[boti][topi]/means[boti][topi])*100
+			sep = stderrs[boti][topi]
+			print df.format(means[boti][topi]).zfill(6), "("+df.format(sep).zfill(5)+")",
 			if boti < len(exps)-1:
 				print "\t",
 		print
@@ -170,7 +174,7 @@ if __name__ == "__main__":
 			if topi in meanis[boti]:
 				print "\\bf",
 			# print df.format(stderrs[boti][topi]*1.96),
-			print df.format(means[boti][topi]), "& ("+df.format(stderrs[boti][topi])+")",
+			print df.format(means[boti][topi]), #"& ("+df.format(stderrs[boti][topi])+")",
 			if boti < len(exps)-1:
 				print "&",
 		print "\\\\"

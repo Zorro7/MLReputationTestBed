@@ -9,7 +9,7 @@ from ploting import *
 
 if __name__ == "__main__":
 
-	filename = "../../results/long.res"
+	filename = "../../results/long4.res"
 
 	results = loadprocessed(filename)
 
@@ -24,12 +24,13 @@ if __name__ == "__main__":
 					# ('FireLikeContext',),
 					# ('BasicStereotype',),
 					# ('FireLikeStereotype',),
-					('Mlrs2-NaiveBayes-2.0-true',),
+					('Mlrs2-NaiveBayes-2.0-true-false',),
+					('Mlrs2-NaiveBayes-2.0-true-true',),
 					# ('MlrsB2-NaiveBayes-round-25.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-50.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-100.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-250.0-2.0-true',),
-					('MlrsB2-NaiveBayes-round-500.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-500.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-1000.0-2.0-true',)
 					]
@@ -50,7 +51,8 @@ if __name__ == "__main__":
 		"BasicStereotype": "Stereotype-ML",
 		"FireLikeStereotype": "FIRE-Stereotype-ML",
 		"FireLikeContext": "FIRE-Context-ML",
-		"Mlrs2-NaiveBayes-2.0-true": "MLRS",
+		"Mlrs2-NaiveBayes-2.0-true-false": "MLRS",
+		"Mlrs2-NaiveBayes-2.0-true-true": "MLRS-Ads",
 		'MlrsB-NB-2-5-0.6-2.0-true.res': "MLRS-B0.6",
 		'MlrsB-NB-2-5-0.7-2.0-true.res': "MLRS-B0.7",
 		'MlrsB-NB-2-5-0.8-2.0-true.res': "MLRS-B0.8",
@@ -78,7 +80,7 @@ if __name__ == "__main__":
 	splt = split(results, "clientInvolvementLikelihood", "memoryLimit", "numClients", "numProviders", "numSimCapabilities",
 	"numTerms", "numAdverts", "usePreferences", "honestWitnessLikelihood")
 
-	index = (0.1,100,100,100,10,3,3,"false",1)
+	index = (0.1,100,100,100,10,3,3,"true",1)
 
 	splt = splt[index]
 
@@ -91,10 +93,11 @@ if __name__ == "__main__":
 	texstr += axisheader(
 		"cycle list name=color list",
 		# "cycle multi list={mark list\\nextlist color list}",
-		"legend style={at={(0.07,0.1)},anchor=south west}",
-		xmin="0", xmax="1000",
-		width = "20cm",
-		height = "20cm",
+		"legend columns=3",
+		"legend style={at={(0.02,0.95)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
+		xmin="0", xmax="2500",
+		width = "15cm",
+		height = "10cm",
 		xlabel = "\\textbf{Round}", 
 		ylabel = "\\textbf{Utility}"
 	)
