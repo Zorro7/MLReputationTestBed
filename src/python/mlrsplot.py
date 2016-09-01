@@ -25,22 +25,13 @@ if __name__ == "__main__":
 					# ('BasicStereotype',),
 					# ('FireLikeStereotype',),
 					('Mlrs2-NaiveBayes-2.0-true',),
-					# ('MlrsB2-NaiveBayes-records-2.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-records-5.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-records-10.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-records-25.0-2.0-true',),
-					('MlrsB2-NaiveBayes-records-50.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-directRecords-2.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-directRecords-5.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-directRecords-10.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-round-10.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-25.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-50.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-100.0-2.0-true',),
-					#('MlrsB-NB-2-5-0.6-2.0-true.res',),
-					#('MlrsB-NB-2-5-0.7-2.0-true.res',),
-					#('MlrsB-NB-2-5-0.8-2.0-true.res',),
-					#('MlrsB-NB-2-5-0.9-2.0-true.res',),
+					# ('MlrsB2-NaiveBayes-round-250.0-2.0-true',),
+					('MlrsB2-NaiveBayes-round-500.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-1000.0-2.0-true',)
 					]
 
 
@@ -72,10 +63,14 @@ if __name__ == "__main__":
 		'MlrsB2-NaiveBayes-directRecords-2.0-2.0-true': "MLRS-2directRecords",
 		'MlrsB2-NaiveBayes-directRecords-5.0-2.0-true': "MLRS-5directRecords",
 		'MlrsB2-NaiveBayes-directRecords-10.0-2.0-true': "MLRS-10directRecords",
-		'MlrsB2-NaiveBayes-round-10.0-2.0-true': "MLRS-10rounds",
-		'MlrsB2-NaiveBayes-round-25.0-2.0-true': "MLRS-25rounds",
-		'MlrsB2-NaiveBayes-round-50.0-2.0-true': "MLRS-50rounds",
-		'MlrsB2-NaiveBayes-round-100.0-2.0-true': "MLRS-100rounds",
+		'MlrsB2-NaiveBayes-round-10.0-2.0-true': "MLRS-10rounds\t",
+		'MlrsB2-NaiveBayes-round-25.0-2.0-true': "MLRS-25rounds\t",
+		'MlrsB2-NaiveBayes-round-50.0-2.0-true': "MLRS-50rounds\t",
+		'MlrsB2-NaiveBayes-round-100.0-2.0-true': "MLRS-100rounds\t",
+		'MlrsB2-NaiveBayes-round-250.0-2.0-true': "MLRS-250rounds\t",
+		'MlrsB2-NaiveBayes-round-500.0-2.0-true': "MLRS-500rounds\t",
+		'MlrsB2-NaiveBayes-round-750.0-2.0-true': "MLRS-750rounds\t",
+		'MlrsB2-NaiveBayes-round-1000.0-2.0-true': "MLRS-1000rounds\t",
 	}
 
 
@@ -83,7 +78,7 @@ if __name__ == "__main__":
 	splt = split(results, "clientInvolvementLikelihood", "memoryLimit", "numClients", "numProviders", "numSimCapabilities",
 	"numTerms", "numAdverts", "usePreferences", "honestWitnessLikelihood")
 
-	index = (0.1,100,100,100,10,5,5,"true",1)
+	index = (0.1,100,100,100,10,3,3,"false",1)
 
 	splt = splt[index]
 
@@ -94,9 +89,9 @@ if __name__ == "__main__":
 	texstr = latexheader()
 	texstr += tikzheader()
 	texstr += axisheader(
-		# "cycle list name=color list",
-		"cycle multi list={mark list\\nextlist color list}",
-		"legend style={at={(0.07,0.4)},anchor=south west}",
+		"cycle list name=color list",
+		# "cycle multi list={mark list\\nextlist color list}",
+		"legend style={at={(0.07,0.1)},anchor=south west}",
 		xmin="0", xmax="1000",
 		width = "20cm",
 		height = "20cm",
@@ -111,7 +106,7 @@ if __name__ == "__main__":
 		X = xrange(1,len(expsplt[strategy][0]["utilities_mean"])+1, step)
 		Y = expsplt[strategy][0]["utilities_mean"][::step]
 		texstr += coordinates(X,Y)
-		print len(expsplt[strategy]), strategy, len(expsplt[strategy][0]["utilities_mean"])
+		# print len(expsplt[strategy]), strategy, len(expsplt[strategy][0]["utilities_mean"])
 
 	texstr += legend([strategynamelookup[s[0]] for s in strategies])
 

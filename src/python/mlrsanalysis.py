@@ -101,7 +101,6 @@ if __name__ == "__main__":
 	splt = split(results, "clientInvolvementLikelihood", "memoryLimit", "numClients", "numProviders",# "numSimCapabilities",
 	"numTerms", "numAdverts", "usePreferences", "honestWitnessLikelihood")
 
-
 	# topspltkeys = ["honestWitnessLikelihood"
 	# 				, "negationWitnessLikelihood"
 	# 				, "randomWitnessLikelihood"
