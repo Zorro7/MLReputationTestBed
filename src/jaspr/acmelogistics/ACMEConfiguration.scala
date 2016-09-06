@@ -144,6 +144,8 @@ class ACMEConfiguration(override val strategy: Strategy,
   val numMines = numProviders
   val numCompositions = numProviders
 
+  val numAgents = numClients + numShippers + numRefineries + numMines
+
 //  val defaultServiceDuration = 5
 
 //  val eventProportion = 0.1

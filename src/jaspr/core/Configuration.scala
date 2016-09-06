@@ -11,6 +11,7 @@ trait Configuration {
 
   val numSimulations: Int
   val numRounds: Int
+  val numAgents: Int
 
   val strategy: Strategy
 

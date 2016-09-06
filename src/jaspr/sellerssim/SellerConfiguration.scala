@@ -183,6 +183,7 @@ abstract class SellerConfiguration extends Configuration {
   def clientInvolvementLikelihood: Double
   def numClients: Int
   def numProviders: Int
+  override val numAgents = numClients + numProviders
   def witnessRequestLikelihood: Double
   var simcapabilities: Seq[ProductPayload]
 

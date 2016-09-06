@@ -17,7 +17,7 @@ class SimpleConfiguration(val strategy: Strategy) extends Configuration {
   override val numSimulations: Int = 10
   override val numRounds: Int = 50
 
-  val numAgents = 25
+  override val numAgents = 25
 
 }
 
