@@ -4,7 +4,7 @@ import jaspr.core.agent._
 import jaspr.core.service.{ClientContext, Payload}
 import jaspr.core.strategy.Strategy
 import jaspr.core.{Configuration, MultiConfiguration, Network, Simulation}
-import jaspr.sellerssim.{SellerConfiguration, SellerSimulation}
+import jaspr.sellerssim.{SellerNetwork, SellerConfiguration, SellerSimulation}
 import jaspr.sellerssim.agent.{HonestWitnessModel, Witness, WitnessModel}
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.strategy.NoStrategy
@@ -18,26 +18,40 @@ import scala.collection.immutable.SortedMap
  */
 
 
+object DynamicMultiConfiguration extends App {
+  val multiconfig = new DynamicMultiConfiguration()
+  val results = Simulation(multiconfig)
+}
 
+class DynamicMultiConfiguration extends MultiConfiguration {
+  override val directComparison = true
 
+  override lazy val configs: Seq[Configuration] =
+    new DynamicConfiguration(new Fire) ::
+      new DynamicConfiguration(new NoStrategy) ::
+      Nil
+}
 
 class DynamicConfiguration(override val strategy: Strategy) extends SellerConfiguration {
 
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
   }
+  override def network(simulation: SellerSimulation): SellerNetwork = {
+    new DynamicNetwork(simulation)
+  }
 
-  override val numSimulations: Int = 1
-  override val numRounds: Int = 100
+  override val numSimulations: Int = 10
+  override val numRounds: Int = 500
 
-  override def numClients: Int = 5
-  override def numProviders: Int = 5
+  override def numClients: Int = 25
+  override def numProviders: Int = 25
   override def memoryLimit: Int = 100
 
   override def clientInvolvementLikelihood: Double = 0.1
   override def witnessRequestLikelihood: Double = 0.1
 
-  override def baseUtility: Double = 1
+  override def baseUtility: Double = 0.5
   override def eventLikelihood: Double = 0d
   override def eventEffects: Double = 0d
 
@@ -60,10 +74,10 @@ class DynamicConfiguration(override val strategy: Strategy) extends SellerConfig
   }
 
   override def properties(agent: Agent): SortedMap[String, Property] = {
-    Property("a", 1) :: Nil
+    Property("a", Chooser.randomDouble(-1,1)) :: Nil
   }
   override def preferences(agent: Client): SortedMap[String, Property] = {
-    Property("a", 1) :: Nil
+    Property("a", 0) :: Nil
   }
   override def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
     Property("a", 1) :: Nil
@@ -75,11 +89,3 @@ class DynamicConfiguration(override val strategy: Strategy) extends SellerConfig
 }
 
 
-class DynamicMultiConfiguration extends MultiConfiguration {
-  override val directComparison = true
-
-  override lazy val configs: Seq[Configuration] =
-    new DynamicConfiguration(new Fire) ::
-    new DynamicConfiguration(new NoStrategy) ::
-      Nil
-}

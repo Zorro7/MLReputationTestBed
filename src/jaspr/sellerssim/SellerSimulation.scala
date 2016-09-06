@@ -14,7 +14,7 @@ object SellerSimulation extends App {
 
 class SellerSimulation(val config: SellerConfiguration) extends Simulation {
 
-  override val network: Network = new SellerNetwork(this)
+  override val network: Network = config.network(this)
 
   override def act(): Result = {
     for (client <- network.clients) {

@@ -7,6 +7,7 @@ import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
 
+import scala.annotation.tailrec
 import scala.collection.mutable
 
 /**
@@ -15,7 +16,11 @@ import scala.collection.mutable
 class Buyer(override val simulation: SellerSimulation) extends Client with Witness {
 
   override def generateContext(): ClientContext = {
-    simulation.config.clientContext(simulation.network, this, simulation.round)
+    var context = simulation.config.clientContext(simulation.network, this, simulation.round)
+    while (!simulation.network.providers.exists(_.capableOf(context.payload, 0))) {
+      context = simulation.config.clientContext(simulation.network, this, simulation.round)
+    }
+    context
   }
 
   override def receiveService(service: Service): Unit = {

@@ -61,17 +61,17 @@ object SellerMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
         "jaspr.strategy.NoStrategy," +
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;true),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
-        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;true),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
+//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
         "jaspr.strategy.fire.Fire(0.0)," +
         "jaspr.strategy.fire.Fire(0.5)," +
         "jaspr.strategy.betareputation.BetaReputation," +
         "jaspr.strategy.betareputation.Travos,"+
-          "jaspr.strategy.blade.Blade(2)," +
-        "jaspr.strategy.habit.Habit(2),"+
-        "jaspr.strategy.stereotype.Burnett,"+
+//          "jaspr.strategy.blade.Blade(2)," +
+//        "jaspr.strategy.habit.Habit(2),"+
+//        "jaspr.strategy.stereotype.Burnett,"+
         " --numSimulations 10 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -181,25 +181,38 @@ case class SellerMultiConfiguration(
 abstract class SellerConfiguration extends Configuration {
 
   def clientInvolvementLikelihood: Double
+
   def numClients: Int
+
   def numProviders: Int
+
   override val numAgents = numClients + numProviders
+
   def witnessRequestLikelihood: Double
+
   var simcapabilities: Seq[ProductPayload]
 
   def baseUtility: Double
 
   def eventLikelihood: Double
+
   def eventEffects: Double
+
   def memoryLimit: Int
 
-  def properties(agent: Agent): SortedMap[String,Property]
-  def preferences(agent: Client): SortedMap[String,Property]
+  def properties(agent: Agent): SortedMap[String, Property]
+
+  def preferences(agent: Client): SortedMap[String, Property]
+
   def capabilities(agent: Provider): Seq[ProductPayload]
-  def adverts(agent: Agent with Properties): SortedMap[String,Property]
+
+  def adverts(agent: Agent with Properties): SortedMap[String, Property]
 
   def clientContext(network: Network, agent: Client, round: Int): ClientContext
+
   def witnessModel(witness: Witness, network: Network): WitnessModel
+
+  def network(simulation: SellerSimulation): SellerNetwork
 }
 
 
@@ -233,6 +246,9 @@ class ParamSellerConfiguration(override val strategy: Strategy,
                            ) extends SellerConfiguration {
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
+  }
+  override def network(simulation: SellerSimulation): SellerNetwork = {
+    new SellerNetwork(simulation)
   }
 
 
