@@ -7,26 +7,35 @@ import jaspr.core.service.{ServiceRequest, ClientContext}
 import jaspr.sellerssim.agent.{SellerMarket, Seller, Buyer}
 import jaspr.utilities.Chooser
 
+import scala.annotation.tailrec
+
 /**
  * Created by phil on 21/03/16.
  */
-class SellerNetwork(override val simulation: SellerSimulation) extends Network {
+class StaticSellerNetwork(override val simulation: SellerSimulation) extends SellerNetwork {
 
   override def events(): Seq[Event] = Nil
 
-  override def agents: Seq[Agent] = clients ++ providers
 
   override val clients: Seq[Client] = List.fill(simulation.config.numClients)(
     new Buyer(simulation)
   )
 
-  override def utility(): Double = clients.map(_.utility).sum
-
   override val providers: Seq[Provider] = List.fill(simulation.config.numProviders)(
     new Seller(simulation)
   )
 
-  override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
+}
+
+abstract class SellerNetwork extends Network {
+  override val simulation: SellerSimulation
+
+  override def utility(): Double = clients.map(_.utility).sum
+
+  override def agents: Seq[Agent] = clients ++ providers
+
+  @tailrec
+  override final def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     val p = providers.withFilter(
       _.capableOf(context.payload, 0)// && Chooser.nextDouble() < simulation.config.clientInvolvementLikelihood
     ).map(x =>
@@ -45,5 +54,4 @@ class SellerNetwork(override val simulation: SellerSimulation) extends Network {
   }
 
   override def markets: Seq[Market] = new SellerMarket(simulation) :: Nil
-
 }

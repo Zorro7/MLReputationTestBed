@@ -18,27 +18,27 @@ import scala.collection.immutable.SortedMap
  */
 
 
-object DynamicMultiConfiguration extends App {
-  val multiconfig = new DynamicMultiConfiguration()
+object DynamicSellerMultiConfiguration extends App {
+  val multiconfig = new DynamicSellerMultiConfiguration()
   val results = Simulation(multiconfig)
 }
 
-class DynamicMultiConfiguration extends MultiConfiguration {
+class DynamicSellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
 
   override lazy val configs: Seq[Configuration] =
-    new DynamicConfiguration(new Fire) ::
-      new DynamicConfiguration(new NoStrategy) ::
+    new DynamicSellerConfiguration(new Fire) ::
+      new DynamicSellerConfiguration(new NoStrategy) ::
       Nil
 }
 
-class DynamicConfiguration(override val strategy: Strategy) extends SellerConfiguration {
+class DynamicSellerConfiguration(override val strategy: Strategy) extends SellerConfiguration {
 
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
   }
   override def network(simulation: SellerSimulation): SellerNetwork = {
-    new DynamicNetwork(simulation)
+    new DynamicSellerNetwork(simulation)
   }
 
   override val numSimulations: Int = 10

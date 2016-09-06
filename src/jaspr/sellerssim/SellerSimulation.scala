@@ -9,7 +9,7 @@ import jaspr.utilities.Chooser
  * Created by phil on 21/03/16.
  */
 object SellerSimulation extends App {
-  val results = Simulation(new SellerMultiConfiguration)
+  val results = Simulation(new StaticSellerMultiConfiguration)
 }
 
 class SellerSimulation(val config: SellerConfiguration) extends Simulation {

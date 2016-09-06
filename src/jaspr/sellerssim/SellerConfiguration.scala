@@ -27,9 +27,9 @@ import scala.collection.immutable.{TreeMap, SortedMap}
 /**
  * Created by phil on 21/03/16.
  */
-object SellerMultiConfiguration extends App {
+object StaticSellerMultiConfiguration extends App {
 
-  val parser = new scopt.OptionParser[SellerMultiConfiguration]("SellerConfiguration") {
+  val parser = new scopt.OptionParser[StaticSellerMultiConfiguration]("SellerConfiguration") {
     opt[Seq[String]]("strategy") required() action {(x,c) => c.copy(strategies = x)}
     opt[Int]("numRounds") required() action {(x,c) => c.copy(numRounds = x)}
     opt[Int]("numSimulations") required() action {(x,c) => c.copy(numSimulations = x)}
@@ -99,7 +99,7 @@ object SellerMultiConfiguration extends App {
 
   println(argsplt.toList mkString("["," ","]"))
 
-  parser.parse(argsplt, SellerMultiConfiguration()) match {
+  parser.parse(argsplt, StaticSellerMultiConfiguration()) match {
     case Some(x) =>
       val results = Simulation(x)
       results.printChange(0,-1, _.recordsStored)
@@ -108,7 +108,7 @@ object SellerMultiConfiguration extends App {
 }
 
 
-case class SellerMultiConfiguration(
+case class StaticSellerMultiConfiguration(
                                strategies: Seq[String] = Nil,
                                numRounds: Int = 250,
                                numSimulations: Int = 1,
@@ -145,7 +145,7 @@ case class SellerMultiConfiguration(
 
   override lazy val configs: Seq[Configuration] =
     strategies.map(x => {
-      new ParamSellerConfiguration(
+      new StaticSellerConfiguration(
         strategy = Strategy.forName(x),
         numRounds = numRounds,
         numSimulations = numSimulations,
@@ -218,37 +218,37 @@ abstract class SellerConfiguration extends Configuration {
 
 
 
-class ParamSellerConfiguration(override val strategy: Strategy,
-                          override val numRounds: Int,
-                          override val numSimulations: Int,
-                               override val clientInvolvementLikelihood: Double,
-                               override val witnessRequestLikelihood: Double,
-                               override val memoryLimit: Int,
-                               override val numClients: Int,
-                               override val numProviders: Int,
-                          val numSimCapabilities: Int,
-                          val numProviderCapabilities: Int,
-                          val noiseRange: Double,
-                          val numTerms: Int,
-                          val numAdverts: Int,
-                          val usePreferences: Boolean,
-                               override val eventLikelihood: Double,
-                               override val eventEffects: Double,
-                          val honestWitnessLikelihood: Double,
-                          val pessimisticWitnessLikelihood: Double,
-                          val optimisticWitnessLikelihood: Double,
-                          val negationWitnessLikelihood: Double,
-                          val randomWitnessLikelihood: Double,
-                          val promotionWitnessLikelihood: Double,
-                          val slanderWitnessLikelihood: Double,
-                          val providersToPromote: Double,
-                          val providersToSlander: Double
+class StaticSellerConfiguration(override val strategy: Strategy,
+                                override val numRounds: Int,
+                                override val numSimulations: Int,
+                                override val clientInvolvementLikelihood: Double,
+                                override val witnessRequestLikelihood: Double,
+                                override val memoryLimit: Int,
+                                override val numClients: Int,
+                                override val numProviders: Int,
+                                val numSimCapabilities: Int,
+                                val numProviderCapabilities: Int,
+                                val noiseRange: Double,
+                                val numTerms: Int,
+                                val numAdverts: Int,
+                                val usePreferences: Boolean,
+                                override val eventLikelihood: Double,
+                                override val eventEffects: Double,
+                                val honestWitnessLikelihood: Double,
+                                val pessimisticWitnessLikelihood: Double,
+                                val optimisticWitnessLikelihood: Double,
+                                val negationWitnessLikelihood: Double,
+                                val randomWitnessLikelihood: Double,
+                                val promotionWitnessLikelihood: Double,
+                                val slanderWitnessLikelihood: Double,
+                                val providersToPromote: Double,
+                                val providersToSlander: Double
                            ) extends SellerConfiguration {
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
   }
   override def network(simulation: SellerSimulation): SellerNetwork = {
-    new SellerNetwork(simulation)
+    new StaticSellerNetwork(simulation)
   }
 
 
@@ -309,13 +309,6 @@ class ParamSellerConfiguration(override val strategy: Strategy,
   def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
     agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
   }
-
-
-
-
-
-
-
 
 
   def witnessModel(witness: Witness, network: Network): WitnessModel = {
