@@ -2,6 +2,7 @@ package jaspr.dynamicsim
 
 import jaspr.core.strategy.Strategy
 import jaspr.core.{Configuration, MultiConfiguration, Simulation}
+import jaspr.sellerssim.SellerConfiguration
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.fire.Fire
 
@@ -9,16 +10,17 @@ import jaspr.strategy.fire.Fire
  * Created by phil on 15/03/16.
  */
 
-class DynamicConfiguration(val strategy: Strategy) extends Configuration {
+class DynamicConfiguration(
+                            override val strategy: Strategy
+                          ) extends SellerConfiguration {
   override def newSimulation(): Simulation = {
     new DynamicSimulation(this)
   }
 
   override val numSimulations: Int = 10
   override val numRounds: Int = 50
-
-  val memoryLimit = 100
-  val numAgents = 25
+  override val numClients: Int = 10
+  override val numProviders: Int = 10
 
 }
 
