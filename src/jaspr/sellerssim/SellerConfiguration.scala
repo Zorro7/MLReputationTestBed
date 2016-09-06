@@ -145,7 +145,7 @@ case class SellerMultiConfiguration(
 
   override lazy val configs: Seq[Configuration] =
     strategies.map(x => {
-      new SellerConfiguration(
+      new ParamSellerConfiguration(
         strategy = Strategy.forName(x),
         numRounds = numRounds,
         numSimulations = numSimulations,
@@ -175,22 +175,51 @@ case class SellerMultiConfiguration(
     })
 }
 
-class SellerConfiguration(override val strategy: Strategy,
+
+
+
+abstract class SellerConfiguration extends Configuration {
+
+  def clientInvolvementLikelihood: Double
+  def numClients: Int
+  def numProviders: Int
+  def witnessRequestLikelihood: Double
+  var simcapabilities: Seq[ProductPayload]
+
+  def baseUtility: Double
+
+  def eventLikelihood: Double
+  def eventEffects: Double
+  def memoryLimit: Int
+
+  def properties(agent: Agent): SortedMap[String,Property]
+  def preferences(agent: Client): SortedMap[String,Property]
+  def capabilities(agent: Provider): Seq[ProductPayload]
+  def adverts(agent: Agent with Properties): SortedMap[String,Property]
+
+  def clientContext(network: Network, agent: Client, round: Int): ClientContext
+  def witnessModel(witness: Witness, network: Network): WitnessModel
+}
+
+
+
+
+class ParamSellerConfiguration(override val strategy: Strategy,
                           override val numRounds: Int,
                           override val numSimulations: Int,
-                          val clientInvolvementLikelihood: Double,
-                          val witnessRequestLikelihood: Double,
-                          val memoryLimit: Int,
-                          val numClients: Int,
-                          val numProviders: Int,
+                               override val clientInvolvementLikelihood: Double,
+                               override val witnessRequestLikelihood: Double,
+                               override val memoryLimit: Int,
+                               override val numClients: Int,
+                               override val numProviders: Int,
                           val numSimCapabilities: Int,
                           val numProviderCapabilities: Int,
                           val noiseRange: Double,
                           val numTerms: Int,
                           val numAdverts: Int,
                           val usePreferences: Boolean,
-                          val eventLikelihood: Double,
-                          val eventEffects: Double,
+                               override val eventLikelihood: Double,
+                               override val eventEffects: Double,
                           val honestWitnessLikelihood: Double,
                           val pessimisticWitnessLikelihood: Double,
                           val optimisticWitnessLikelihood: Double,
@@ -200,13 +229,13 @@ class SellerConfiguration(override val strategy: Strategy,
                           val slanderWitnessLikelihood: Double,
                           val providersToPromote: Double,
                           val providersToSlander: Double
-                           ) extends Configuration {
+                           ) extends SellerConfiguration {
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
   }
 
 
-  val baseUtility: Double = 1d/2d
+  override val baseUtility: Double = 1d/2d
 
 //  val baseUtility = if (usePreferences) 2d/3d else 1d/2d
 //  val baseUtility = 1d
@@ -223,7 +252,7 @@ class SellerConfiguration(override val strategy: Strategy,
   }
 
   // Services that exist in the simulation
-  var simcapabilities = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
+  override var simcapabilities: Seq[ProductPayload] = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
   // Services that a given provider is capable of providing - and with associated performance properties.
   def capabilities(provider: Provider): Seq[ProductPayload] = {
     var caps = Chooser.sample(simcapabilities, numProviderCapabilities)
@@ -255,7 +284,7 @@ class SellerConfiguration(override val strategy: Strategy,
 
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
-  def preferences(agent: Buyer): SortedMap[String,Property] = {
+  def preferences(agent: Client): SortedMap[String,Property] = {
     if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
     else Nil//(1 to numTerms).map(x => new Property(x.toString, 0d)).toList
   }

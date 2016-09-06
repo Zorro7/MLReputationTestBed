@@ -3,6 +3,7 @@ package jaspr.dynamicsim
 import jaspr.core.Network
 import jaspr.core.agent._
 import jaspr.core.service.{ClientContext, ServiceRequest}
+import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.agent.{Buyer, Seller, SellerMarket}
 import jaspr.simplesim.agent.{SimpleAgent, SimpleEvent, SimpleMarket}
 import jaspr.utilities.Chooser
@@ -10,12 +11,12 @@ import jaspr.utilities.Chooser
 /**
  * Created by phil on 15/03/16.
  */
-class DynamicNetwork(val simulation: DynamicSimulation) extends Network {
+class DynamicNetwork(val simulation: SellerSimulation) extends Network {
 
   override def utility(): Double = agents.map(_.utility).sum
 
-  override val clients: Seq[Buyer] = List.fill(simulation.config.numAgents)(new Buyer(simulation))
-  override val providers: Seq[Seller] = List.fill(simulation.config.numAgents)(new Seller(simulation))
+  override val clients: Seq[Buyer] = List.fill(simulation.config.numClients)(new Buyer(simulation))
+  override val providers: Seq[Seller] = List.fill(simulation.config.numProviders)(new Seller(simulation))
 
   override val agents: Seq[Agent] = clients ++ providers
 
