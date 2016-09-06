@@ -74,7 +74,7 @@ if __name__ == "__main__":
 		"FireLikeStereotype": "FIRE-Stereotype-ML",
 		"FireLikeContext": "FIRE-Context-ML",
 		"Mlrs2-NaiveBayes-2.0-true-false": "MLRS\t\t",
-		"Mlrs2-NaiveBayes-2.0-true-true": "MLRS-Ads\t\t",
+		"Mlrs2-NaiveBayes-2.0-true-true": "MLRS-Ads\t",
 		'MlrsB-NB-2-5-0.6-2.0-true.res': "MLRS-B0.6\t",
 		'MlrsB-NB-2-5-0.7-2.0-true.res': "MLRS-B0.7\t",
 		'MlrsB-NB-2-5-0.8-2.0-true.res': "MLRS-B0.8\t",

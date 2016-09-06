@@ -14,9 +14,12 @@ if __name__ == "__main__":
 	results = loadprocessed(filename)
 
 	df = "{0:.1f}"
-	strategies = [('NoStrategy',),
+	strategies = [
+	('NoStrategy',),
 	('Fire-0.0',),
-	 ('Fire-0.5',), ('BetaReputation',), ('Travos',), ('Blade-2',), ('Habit-2',),
+	 ('Fire-0.5',), ('BetaReputation',), 
+	 ('Travos',),
+	  ('Blade-2',), ('Habit-2',),
 					('Burnett',),
 					# ('BasicML',),
 					# ('FireLike',),
@@ -29,10 +32,10 @@ if __name__ == "__main__":
 					# ('MlrsB2-NaiveBayes-round-25.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-50.0-2.0-true',),
 					# ('MlrsB2-NaiveBayes-round-100.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-round-250.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-round-500.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
-					# ('MlrsB2-NaiveBayes-round-1000.0-2.0-true',)
+					# ('MlrsB2-NaiveBayes-round-250.0-2.0-true-true',),
+					# ('MlrsB2-NaiveBayes-round-500.0-2.0-true-true',),
+					# # ('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
+					# ('MlrsB2-NaiveBayes-round-1000.0-2.0-true-true',)
 					]
 
 
@@ -57,22 +60,22 @@ if __name__ == "__main__":
 		'MlrsB-NB-2-5-0.7-2.0-true.res': "MLRS-B0.7",
 		'MlrsB-NB-2-5-0.8-2.0-true.res': "MLRS-B0.8",
 		'MlrsB-NB-2-5-0.9-2.0-true.res': "MLRS-B0.9",
-		'MlrsB2-NaiveBayes-records-2.0-2.0-true': "MLRS-2records",
-		'MlrsB2-NaiveBayes-records-5.0-2.0-true': "MLRS-5records",
-		'MlrsB2-NaiveBayes-records-10.0-2.0-true': "MLRS-10records",
-		'MlrsB2-NaiveBayes-records-25.0-2.0-true': "MLRS-25records",
-		'MlrsB2-NaiveBayes-records-50.0-2.0-true': "MLRS-50records",
-		'MlrsB2-NaiveBayes-directRecords-2.0-2.0-true': "MLRS-2directRecords",
-		'MlrsB2-NaiveBayes-directRecords-5.0-2.0-true': "MLRS-5directRecords",
-		'MlrsB2-NaiveBayes-directRecords-10.0-2.0-true': "MLRS-10directRecords",
-		'MlrsB2-NaiveBayes-round-10.0-2.0-true': "MLRS-10rounds\t",
-		'MlrsB2-NaiveBayes-round-25.0-2.0-true': "MLRS-25rounds\t",
-		'MlrsB2-NaiveBayes-round-50.0-2.0-true': "MLRS-50rounds\t",
-		'MlrsB2-NaiveBayes-round-100.0-2.0-true': "MLRS-100rounds\t",
-		'MlrsB2-NaiveBayes-round-250.0-2.0-true': "MLRS-250rounds\t",
-		'MlrsB2-NaiveBayes-round-500.0-2.0-true': "MLRS-500rounds\t",
-		'MlrsB2-NaiveBayes-round-750.0-2.0-true': "MLRS-750rounds\t",
-		'MlrsB2-NaiveBayes-round-1000.0-2.0-true': "MLRS-1000rounds\t",
+		'MlrsB2-NaiveBayes-records-2.0-2.0-true-true': "MLRS-2records",
+		'MlrsB2-NaiveBayes-records-5.0-2.0-true-true': "MLRS-5records",
+		'MlrsB2-NaiveBayes-records-10.0-2.0-true-true': "MLRS-10records",
+		'MlrsB2-NaiveBayes-records-25.0-2.0-true-true': "MLRS-25records",
+		'MlrsB2-NaiveBayes-records-50.0-2.0-true-true': "MLRS-50records",
+		'MlrsB2-NaiveBayes-directRecords-2.0-2.0-true-true': "MLRS-2directRecords",
+		'MlrsB2-NaiveBayes-directRecords-5.0-2.0-true-true': "MLRS-5directRecords",
+		'MlrsB2-NaiveBayes-directRecords-10.0-2.0-true-true': "MLRS-10directRecords",
+		'MlrsB2-NaiveBayes-round-10.0-2.0-true-true': "MLRS-10rounds\t",
+		'MlrsB2-NaiveBayes-round-25.0-2.0-true-true': "MLRS-25rounds\t",
+		'MlrsB2-NaiveBayes-round-50.0-2.0-true-true': "MLRS-50rounds\t",
+		'MlrsB2-NaiveBayes-round-100.0-2.0-true-true': "MLRS-100rounds\t",
+		'MlrsB2-NaiveBayes-round-250.0-2.0-true-true': "MLRS-250rounds\t",
+		'MlrsB2-NaiveBayes-round-500.0-2.0-true-true': "MLRS-500rounds\t",
+		'MlrsB2-NaiveBayes-round-750.0-2.0-true-true': "MLRS-750rounds\t",
+		'MlrsB2-NaiveBayes-round-1000.0-2.0-true-true': "MLRS-1000rounds\t",
 	}
 
 
@@ -91,13 +94,17 @@ if __name__ == "__main__":
 	texstr = latexheader()
 	texstr += tikzheader()
 	texstr += axisheader(
-		"cycle list name=color list",
-		# "cycle multi list={mark list\\nextlist color list}",
-		"legend columns=3",
+		# "cycle list name=linestyles*",
+		# "cycle multi list={linestyles*\\nextlist red,blue,green}",
+		# "cycle multi list={red,green,black,blue \\nextlist linestyles}",
+		"cycle list={{green,solid},{red,solid},{red,dashed},{red,dotted},{brown,solid},{brown,dashed},{brown,dotted},{black,solid},{black,dashed},{black,dotted}}",
+		# "cycle multi list={color list\\nextlist solid,dashed,dotted}",
+		"legend columns=2",
 		"legend style={at={(0.02,0.95)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
 		xmin="0", xmax="2500",
+		ymin="-250", ymax="2350",
 		width = "15cm",
-		height = "10cm",
+		height = "9cm",
 		xlabel = "\\textbf{Round}", 
 		ylabel = "\\textbf{Utility}"
 	)
