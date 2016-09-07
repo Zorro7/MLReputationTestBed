@@ -41,7 +41,7 @@ class DynamicSellerConfiguration(override val strategy: Strategy) extends Seller
     new DynamicSellerNetwork(simulation)
   }
 
-  override val numSimulations: Int = 10
+  override val numSimulations: Int = 5
   override val numRounds: Int = 500
 
   override def numClients: Int = 25
