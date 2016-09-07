@@ -316,4 +316,6 @@ class StaticSellerConfiguration(val _strategy: Strategy,
     )
   }
 
+  override def toString: String = _strategy.name
+
 }
