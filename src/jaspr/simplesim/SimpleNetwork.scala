@@ -20,10 +20,6 @@ class SimpleNetwork(val simulation: SimpleSimulation) extends Network {
 
   override val markets: Seq[Market] = new SimpleMarket(simulation) :: Nil
 
-  override def events(): Seq[Event] = {
-    Chooser.ifHappens(0.1)(SimpleEvent("Event", Chooser.sample(providers, 2)) :: Nil)(Nil)
-  }
-
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     providers.map(
       new ServiceRequest(context.client, _, context.round, 1, context.payload, context.market)

@@ -14,9 +14,6 @@ import scala.annotation.tailrec
  */
 class StaticSellerNetwork(override val simulation: SellerSimulation) extends SellerNetwork {
 
-  override def events(): Seq[Event] = Nil
-
-
   override val clients: Seq[Client] = List.fill(simulation.config.numClients)(
     new Buyer(simulation)
   )

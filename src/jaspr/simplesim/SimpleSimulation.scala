@@ -19,9 +19,6 @@ class SimpleSimulation(override val config: SimpleConfiguration) extends Simulat
     for (agent <- network.clients) {
       Chooser.ifHappens(0.1)(agent.clientTick())()
     }
-    for (event <- network.events()) {
-      event.tick()
-    }
     for (agent <- network.providers) {
       agent.providerTick()
     }

@@ -3,7 +3,7 @@ package jaspr.acmelogistics
 import jaspr.acmelogistics.agent._
 import jaspr.core.agent._
 import jaspr.core.service.{ClientContext, ServiceRequest}
-import jaspr.core.simulation.Network
+import jaspr.core.simulation.{Network, NetworkEvents}
 import jaspr.utilities.Chooser
 
 import scala.annotation.tailrec
@@ -11,7 +11,7 @@ import scala.annotation.tailrec
 /**
  * Created by phil on 17/03/16.
  */
-class ACMENetwork(val simulation: ACMESimulation) extends Network {
+class ACMENetwork(val simulation: ACMESimulation) extends Network with NetworkEvents {
 
   override def utility(): Double = clients.map(_.utility).sum
 
