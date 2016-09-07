@@ -56,7 +56,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   override def eventLikelihood: Double = 0d
   override def eventEffects: Double = 0d
 
-  override def clientContext(network: Network, client: Client, round: Int): ClientContext = {
+  override def clientContext(network: Network, client: Client with Preferences, round: Int): ClientContext = {
     val cap = Chooser.choose(simcapabilities).copy(
       quality = client.preferences.map(x =>
         x._1 -> x._2.doubleValue

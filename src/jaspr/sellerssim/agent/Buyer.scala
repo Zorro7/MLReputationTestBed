@@ -1,6 +1,6 @@
 package jaspr.sellerssim.agent
 
-import jaspr.core.agent.Client
+import jaspr.core.agent.{Client, Preferences}
 import jaspr.core.service.{ClientContext, Service, TrustAssessment}
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.{BuyerRecord, ProductPayload}
@@ -8,7 +8,7 @@ import jaspr.sellerssim.service.{BuyerRecord, ProductPayload}
 /**
  * Created by phil on 21/03/16.
  */
-class Buyer(override val simulation: SellerSimulation) extends Client with Witness {
+class Buyer(override val simulation: SellerSimulation) extends Client with Preferences with Witness {
 
   override def generateContext(): ClientContext = {
     var context = simulation.config.clientContext(simulation.network, this, simulation.round)

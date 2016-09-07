@@ -194,7 +194,7 @@ abstract class SellerConfiguration extends Configuration {
 
   def adverts(agent: Agent with Properties): SortedMap[String, Property]
 
-  def clientContext(network: Network, agent: Client, round: Int): ClientContext
+  def clientContext(network: Network, agent: Client with Preferences, round: Int): ClientContext
 
   def witnessModel(witness: Witness, network: Network): WitnessModel
 
@@ -270,7 +270,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   }
 
   // Context generation with required ppayload
-  def clientContext(network: Network, client: Client, round: Int) = {
+  def clientContext(network: Network, client: Client with Preferences, round: Int) = {
     val cap = Chooser.choose(simcapabilities).copy(
       quality = client.preferences.map(x =>
         x._1 -> x._2.doubleValue

@@ -7,7 +7,7 @@ import scala.collection.mutable
 /**
  * Created by phil on 15/03/16.
  */
-trait Client extends Agent with Preferences {
+trait Client extends Agent {
 
   def tick(): Unit = {
     jaspr.debug("TICK (Client): ", this)

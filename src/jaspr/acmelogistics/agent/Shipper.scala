@@ -33,6 +33,4 @@ class Shipper(simulation: ACMESimulation) extends Subprovider(simulation) {
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = provenance.map(_.asInstanceOf[T])
 
   override val memoryLimit: Int = simulation.config.memoryLimit
-
-  override val preferences = ???
 }
