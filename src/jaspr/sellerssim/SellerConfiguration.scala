@@ -2,7 +2,7 @@ package jaspr.sellerssim
 
 import jaspr.core.agent._
 import jaspr.core.service.ClientContext
-import jaspr.core.simulation.{Configuration, MultiConfiguration, Network, Simulation}
+import jaspr.core.simulation._
 import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.agent._
 import jaspr.sellerssim.service.ProductPayload
@@ -194,7 +194,7 @@ abstract class SellerConfiguration extends Configuration {
 
   def adverts(agent: Agent with Properties): SortedMap[String, Property]
 
-  def clientContext(network: Network, agent: Client with Preferences, round: Int): ClientContext
+  def clientContext(network: Network with NetworkMarket, agent: Client with Preferences, round: Int): ClientContext
 
   def witnessModel(witness: Witness, network: Network): WitnessModel
 
@@ -270,13 +270,13 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   }
 
   // Context generation with required ppayload
-  def clientContext(network: Network, client: Client with Preferences, round: Int) = {
+  def clientContext(network: Network with NetworkMarket, client: Client with Preferences, round: Int) = {
     val cap = Chooser.choose(simcapabilities).copy(
       quality = client.preferences.map(x =>
         x._1 -> x._2.doubleValue
       )
     )
-    new ClientContext(client, round, cap, network.markets.head)
+    new ClientContext(client, round, cap, network.market)
   }
 
 

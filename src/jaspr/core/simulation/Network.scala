@@ -12,7 +12,6 @@ abstract class Network {
   val simulation: Simulation
 
   def utility(): Double
-  def markets: Seq[Market]
   def agents: Seq[Agent]
   def clients: Seq[Client]
   def providers: Seq[Provider]
@@ -24,4 +23,11 @@ abstract class Network {
 
 trait NetworkEvents {
   def events(): Seq[Event]
+}
+
+trait NetworkMarket {
+  def market: Market
+}
+trait NetworkMarkets {
+  def market: Seq[Market]
 }

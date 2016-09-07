@@ -18,8 +18,6 @@ class SimpleNetwork(val simulation: SimpleSimulation) extends Network {
   override val clients: Seq[SimpleAgent] = agents.map(_.asInstanceOf[SimpleAgent])
   override val providers: Seq[SimpleAgent] = agents.map(_.asInstanceOf[SimpleAgent])
 
-  override val markets: Seq[Market] = new SimpleMarket(simulation) :: Nil
-
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     providers.map(
       new ServiceRequest(context.client, _, context.round, 1, context.payload, context.market)

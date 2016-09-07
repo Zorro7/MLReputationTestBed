@@ -3,7 +3,7 @@ package jaspr.sellerssim
 import jaspr.core.agent._
 import jaspr.core.provenance.Record
 import jaspr.core.service.{ClientContext, ServiceRequest}
-import jaspr.core.simulation.Network
+import jaspr.core.simulation.{Network, NetworkMarket}
 import jaspr.sellerssim.agent.{Buyer, Seller, SellerMarket}
 import jaspr.utilities.Chooser
 
@@ -24,7 +24,7 @@ class StaticSellerNetwork(override val simulation: SellerSimulation) extends Sel
 
 }
 
-abstract class SellerNetwork extends Network {
+abstract class SellerNetwork extends Network with NetworkMarket {
   override val simulation: SellerSimulation
 
   override def utility(): Double = clients.map(_.utility).sum
@@ -50,5 +50,5 @@ abstract class SellerNetwork extends Network {
     ).flatMap(_.getProvenance[T](agent))
   }
 
-  override def markets: Seq[Market] = new SellerMarket(simulation) :: Nil
+  override def market: Market = new SellerMarket
 }

@@ -12,5 +12,5 @@ class DynamicSellerNetwork(override val simulation: SellerSimulation) extends Se
   override val clients: Seq[Buyer] = List.fill(simulation.config.numClients)(new Buyer(simulation))
   override val providers: Seq[Seller] = List.fill(simulation.config.numProviders)(new Seller(simulation))
 
-  override val markets: Seq[Market] = new SellerMarket(simulation) :: Nil
+  override val market: Market = new SellerMarket
 }

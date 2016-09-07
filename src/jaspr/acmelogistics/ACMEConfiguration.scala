@@ -4,7 +4,7 @@ import jaspr.acmelogistics.agent.{ACMEEvent, Mine, Refinery, Shipper}
 import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.agent._
 import jaspr.core.service.ClientContext
-import jaspr.core.simulation.{Configuration, MultiConfiguration, Network, Simulation}
+import jaspr.core.simulation._
 import jaspr.core.strategy.Strategy
 import jaspr.utilities.Chooser
 
@@ -147,11 +147,11 @@ class ACMEConfiguration(val _strategy: Strategy,
     x
   }
 
-  def clientContext(network: Network, client: Client, round: Int): ClientContext = {
+  def clientContext(network: Network with NetworkMarket, client: Client, round: Int): ClientContext = {
     new ClientContext(
       client, round,
       new GoodPayload(Chooser.randomDouble(0,1), Chooser.randomDouble(0,1)),
-      network.markets.head
+      network.market
     )
   }
 

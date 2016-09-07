@@ -2,7 +2,7 @@ package jaspr.dynamicsim
 
 import jaspr.core.agent._
 import jaspr.core.service.ClientContext
-import jaspr.core.simulation.{Configuration, MultiConfiguration, Network, Simulation}
+import jaspr.core.simulation._
 import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.agent.{HonestWitnessModel, Witness, WitnessModel}
 import jaspr.sellerssim.service.ProductPayload
@@ -56,13 +56,13 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   override def eventLikelihood: Double = 0d
   override def eventEffects: Double = 0d
 
-  override def clientContext(network: Network, client: Client with Preferences, round: Int): ClientContext = {
+  override def clientContext(network: Network with NetworkMarket, client: Client with Preferences, round: Int): ClientContext = {
     val cap = Chooser.choose(simcapabilities).copy(
       quality = client.preferences.map(x =>
         x._1 -> x._2.doubleValue
       )
     )
-    new ClientContext(client, round, cap, network.markets.head)
+    new ClientContext(client, round, cap, network.market)
   }
 
   override var simcapabilities: Seq[ProductPayload] = new ProductPayload("a") :: Nil

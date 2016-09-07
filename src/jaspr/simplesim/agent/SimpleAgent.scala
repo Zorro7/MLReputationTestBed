@@ -29,7 +29,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
 
   override def generateContext(): ClientContext = {
     new ClientContext(
-      this, simulation.round, new Payload, simulation.network.markets.head
+      this, simulation.round, new Payload, SimpleMarket
     )
   }
 
