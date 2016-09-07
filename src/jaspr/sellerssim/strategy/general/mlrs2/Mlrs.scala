@@ -2,11 +2,11 @@ package jaspr.sellerssim.strategy.general.mlrs2
 
 import java.util
 
-import jaspr.core.Network
 import jaspr.core.agent.{Client, Provider}
-import jaspr.core.service.{ServiceContext, ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.service.{ClientContext, ServiceContext, ServiceRequest, TrustAssessment}
+import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
+import jaspr.sellerssim.service.{BuyerRecord, ProductPayload}
 import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
@@ -14,7 +14,7 @@ import weka.classifiers.`lazy`.IBk
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.functions._
 import weka.classifiers.{AbstractClassifier, Classifier}
-import weka.core.{Instances, DenseInstance, Attribute}
+import weka.core.{Attribute, DenseInstance, Instances}
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable

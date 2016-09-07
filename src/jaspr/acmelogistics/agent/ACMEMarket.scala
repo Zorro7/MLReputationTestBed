@@ -1,9 +1,9 @@
 package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.service.GoodPayload
-import jaspr.core.Simulation
 import jaspr.core.agent.Market
 import jaspr.core.service.Service
+import jaspr.core.simulation.Simulation
 
 /**
  * Created by phil on 17/03/16.

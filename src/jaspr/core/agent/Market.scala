@@ -1,7 +1,7 @@
 package jaspr.core.agent
 
-import jaspr.core.Simulation
 import jaspr.core.service.Service
+import jaspr.core.simulation.Simulation
 
 /**
  * Created by phil on 17/03/16.

@@ -6,12 +6,13 @@ import jaspr.acmelogistics.agent.{ACMEEvent, Mine, Refinery, Shipper}
 import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.agent._
 import jaspr.core.service.ClientContext
-import jaspr.core.{Network, MultiConfiguration, Simulation, Configuration}
+import jaspr.core.{MultiConfiguration, Network, Simulation}
 import jaspr.core.strategy.Strategy
 import jaspr.core.strategy.Strategy
 import jaspr.strategy.betareputation.{BetaReputation, Travos}
 import jaspr.strategy.fire.Fire
-import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, RecordFire, Ipaw}
+import jaspr.acmelogistics.strategy.ipaw.{Ipaw, IpawEvents, RecordFire}
+import jaspr.core.simulation.{Configuration, MultiConfiguration, Network, Simulation}
 import jaspr.utilities.Chooser
 import jaspr.weka.core.LearnerFactory
 import org.apache.commons.beanutils.ConstructorUtils
@@ -21,7 +22,7 @@ import weka.classifiers.functions.LinearRegression
 import weka.classifiers.rules.OneR
 import weka.classifiers.trees.J48
 
-import scala.collection.immutable.{TreeMap, SortedMap}
+import scala.collection.immutable.{SortedMap, TreeMap}
 import scala.util.Try
 import scala.collection.JavaConversions._
 

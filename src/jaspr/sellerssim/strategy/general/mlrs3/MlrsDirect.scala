@@ -1,8 +1,8 @@
 package jaspr.sellerssim.strategy.general.mlrs3
 
-import jaspr.core.Network
 import jaspr.core.agent.Provider
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.service.{BuyerRecord, ProductPayload}
 import jaspr.strategy.CompositionStrategy

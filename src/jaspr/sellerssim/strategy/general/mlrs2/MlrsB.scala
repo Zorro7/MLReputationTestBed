@@ -2,14 +2,14 @@ package jaspr.sellerssim.strategy.general.mlrs2
 
 import java.util
 
-import jaspr.core.Network
 import jaspr.core.agent.{Client, Provider}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
-import jaspr.core.strategy.{Strategy, Exploration, StrategyInit}
+import jaspr.core.simulation.Network
+import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.agent.Buyer
 import jaspr.sellerssim.service.BuyerRecord
-import jaspr.strategy.{NoStrategy, CompositionStrategy}
+import jaspr.strategy.{CompositionStrategy, NoStrategy}
 import jaspr.strategy.betareputation.Travos
 import jaspr.strategy.blade.Blade
 import jaspr.strategy.fire.Fire

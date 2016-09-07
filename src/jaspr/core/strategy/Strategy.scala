@@ -1,7 +1,7 @@
 package jaspr.core.strategy
 
-import jaspr.core.Network
-import jaspr.core.service.{ServiceRequest, TrustAssessment, ClientContext}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.simulation.Network
 import jaspr.utilities.{ArgumentUtils, Chooser}
 import org.apache.commons.beanutils.ConstructorUtils
 

@@ -1,12 +1,12 @@
 package jaspr.strategy.blade
 
-import jaspr.core.Network
 import jaspr.core.agent.{Client, Provider}
-import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
-import jaspr.core.strategy.{StrategyInit, Exploration}
-import jaspr.strategy.{RatingStrategy, CompositionStrategy}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.simulation.Network
+import jaspr.core.strategy.{Exploration, StrategyInit}
+import jaspr.strategy.{CompositionStrategy, RatingStrategy}
 import jaspr.utilities.Dirichlet
-import jaspr.utilities.matrix.{RowVector, Matrix}
+import jaspr.utilities.matrix.{Matrix, RowVector}
 
 /**
  * Created by phil on 25/03/16.

@@ -1,7 +1,8 @@
 package jaspr.sellerssim
 
 import jaspr.core.results.Result
-import jaspr.core.{Network, Simulation}
+import jaspr.core.Simulation
+import jaspr.core.simulation.{Network, Simulation}
 import jaspr.sellerssim.agent.Seller
 import jaspr.utilities.Chooser
 

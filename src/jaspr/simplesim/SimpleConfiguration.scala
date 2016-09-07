@@ -1,7 +1,8 @@
 package jaspr.simplesim
 
+import jaspr.core.simulation.{Configuration, MultiConfiguration, Simulation}
 import jaspr.core.strategy.Strategy
-import jaspr.core.{MultiConfiguration, Simulation, Configuration}
+import jaspr.core.{MultiConfiguration, Simulation}
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.fire.Fire
 

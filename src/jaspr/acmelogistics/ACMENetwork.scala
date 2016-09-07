@@ -1,9 +1,9 @@
 package jaspr.acmelogistics
 
 import jaspr.acmelogistics.agent._
-import jaspr.core.Network
 import jaspr.core.agent._
-import jaspr.core.service.{Service, ServiceRequest, ClientContext}
+import jaspr.core.service.{ClientContext, Service, ServiceRequest}
+import jaspr.core.simulation.Network
 import jaspr.utilities.Chooser
 
 import scala.annotation.tailrec

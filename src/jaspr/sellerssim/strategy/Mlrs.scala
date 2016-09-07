@@ -1,14 +1,14 @@
 package jaspr.sellerssim.strategy
 
-import jaspr.core.Network
 import jaspr.core.agent.Provider
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
-import jaspr.core.strategy.{StrategyInit, Exploration}
+import jaspr.core.simulation.Network
+import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.strategy.CompositionStrategy
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.rules.OneR
-import weka.classifiers.trees.{RandomForest, J48}
+import weka.classifiers.trees.{J48, RandomForest}
 import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.classifiers.functions._
 

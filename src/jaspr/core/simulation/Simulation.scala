@@ -1,4 +1,4 @@
-package jaspr.core
+package jaspr.core.simulation
 
 import jaspr.core.results.{Result, Results}
 import jaspr.utilities.Chooser

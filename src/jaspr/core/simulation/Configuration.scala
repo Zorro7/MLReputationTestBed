@@ -1,7 +1,7 @@
-package jaspr.core
+package jaspr.core.simulation
 
 import jaspr.core.strategy.Strategy
-import jaspr.utilities.Chooser
+
 import scala.util.Random
 /**
  * Created by phil on 15/03/16.

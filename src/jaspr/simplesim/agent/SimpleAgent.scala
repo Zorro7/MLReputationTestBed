@@ -1,15 +1,15 @@
 package jaspr.simplesim.agent
 
-import jaspr.core.Simulation
-import jaspr.core.agent.{Property, Client, Provider}
+import jaspr.core.agent.{Client, Property, Provider}
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service._
+import jaspr.core.simulation.Simulation
 import jaspr.simplesim.provenance.SimpleRecord
 import jaspr.simplesim.service.SimpleService
 import jaspr.strategy.NoStrategy
 import jaspr.utilities.Chooser
 
-import scala.collection.immutable.{TreeMap, SortedMap}
+import scala.collection.immutable.{SortedMap, TreeMap}
 import scala.collection.mutable
 
 /**

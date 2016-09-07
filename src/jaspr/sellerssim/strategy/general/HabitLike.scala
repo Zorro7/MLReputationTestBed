@@ -1,10 +1,10 @@
 package jaspr.sellerssim.strategy.general
 
-import jaspr.core.Network
-import jaspr.core.agent.{Provider, Client}
-import jaspr.core.provenance.{Record, RatingRecord, TrustAssessmentRecord, ServiceRecord}
-import jaspr.core.service.{TrustAssessment, ServiceRequest, ClientContext}
-import jaspr.core.strategy.{StrategyInit, Exploration}
+import jaspr.core.agent.{Client, Provider}
+import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord, TrustAssessmentRecord}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.simulation.Network
+import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.strategy.MlrsCore
 import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.Dirichlet

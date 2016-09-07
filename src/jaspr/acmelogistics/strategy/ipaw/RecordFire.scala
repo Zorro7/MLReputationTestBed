@@ -1,10 +1,10 @@
 package jaspr.acmelogistics.strategy.ipaw
 
-import jaspr.acmelogistics.service.{SubproviderRecord, ACMERecord, GoodPayload}
-import jaspr.core.Network
+import jaspr.acmelogistics.service.{ACMERecord, GoodPayload, SubproviderRecord}
 import jaspr.core.provenance.{RatingRecord, ServiceRecord}
-import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
-import jaspr.core.strategy.{StrategyInit, Exploration, Strategy}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.simulation.Network
+import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
 import jaspr.strategy.CompositionStrategy
 
 import scala.math._

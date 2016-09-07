@@ -1,10 +1,10 @@
 package jaspr.strategy.habit
 
-import jaspr.core.Network
 import jaspr.core.agent.{Client, Provider}
-import jaspr.core.service.{TrustAssessment, ServiceRequest, ClientContext}
-import jaspr.core.strategy.{StrategyInit, Exploration}
-import jaspr.strategy.{RatingStrategy, CompositionStrategy}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.simulation.Network
+import jaspr.core.strategy.{Exploration, StrategyInit}
+import jaspr.strategy.{CompositionStrategy, RatingStrategy}
 import jaspr.utilities.Dirichlet
 import jaspr.utilities.matrix.RowVector
 

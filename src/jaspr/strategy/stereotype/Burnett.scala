@@ -1,8 +1,8 @@
 package jaspr.strategy.stereotype
 
-import jaspr.core.Network
 import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.strategy.general.SingleModelStrategy
 import jaspr.strategy.betareputation.BetaCore

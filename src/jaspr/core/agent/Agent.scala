@@ -1,7 +1,8 @@
 package jaspr.core.agent
 
 import jaspr.core.provenance.Provenance
-import jaspr.core.{Configuration, Simulation}
+import jaspr.core.Simulation
+import jaspr.core.simulation.{Configuration, Simulation}
 import jaspr.utilities.{NamedEntity, Tickable}
 
 /**

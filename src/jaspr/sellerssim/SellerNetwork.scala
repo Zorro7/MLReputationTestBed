@@ -1,10 +1,10 @@
 package jaspr.sellerssim
 
 import jaspr.core.provenance.Record
-import jaspr.core.Network
 import jaspr.core.agent._
-import jaspr.core.service.{ServiceRequest, ClientContext}
-import jaspr.sellerssim.agent.{SellerMarket, Seller, Buyer}
+import jaspr.core.service.{ClientContext, ServiceRequest}
+import jaspr.core.simulation.Network
+import jaspr.sellerssim.agent.{Buyer, Seller, SellerMarket}
 import jaspr.utilities.Chooser
 
 import scala.annotation.tailrec

@@ -1,8 +1,8 @@
 package jaspr.sellerssim.strategy.general
 
-import jaspr.core.Network
-import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
+import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest}
+import jaspr.core.simulation.Network
 import jaspr.core.strategy.StrategyInit
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.weka.classifiers.meta.MultiRegression

@@ -1,9 +1,9 @@
 package jaspr.simplesim
 
 import jaspr.core.agent._
-import jaspr.core.service.{ServiceRequest, ClientContext}
-import jaspr.core.Network
-import jaspr.simplesim.agent.{SimpleMarket, SimpleEvent, SimpleAgent}
+import jaspr.core.service.{ClientContext, ServiceRequest}
+import jaspr.core.simulation.Network
+import jaspr.simplesim.agent.{SimpleAgent, SimpleEvent, SimpleMarket}
 import jaspr.utilities.Chooser
 
 /**

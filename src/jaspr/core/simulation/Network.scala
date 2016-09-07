@@ -1,4 +1,4 @@
-package jaspr.core
+package jaspr.core.simulation
 
 import jaspr.core.agent._
 import jaspr.core.provenance.Record

@@ -1,12 +1,12 @@
 package jaspr.sellerssim.strategy
 
-import jaspr.core.Network
-import jaspr.core.agent.{Provider, Event}
-import jaspr.core.provenance.{ServiceRecord, Record}
+import jaspr.core.agent.{Event, Provider}
+import jaspr.core.provenance.{Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
-import jaspr.core.strategy.{StrategyInit, Exploration}
-import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
-import jaspr.strategy.{Rating, CompositionStrategy}
+import jaspr.core.simulation.Network
+import jaspr.core.strategy.{Exploration, StrategyInit}
+import jaspr.sellerssim.service.{BuyerRecord, ProductPayload}
+import jaspr.strategy.{CompositionStrategy, Rating}
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.functions.LinearRegression
 import weka.classifiers.trees.J48

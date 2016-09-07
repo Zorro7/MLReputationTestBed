@@ -1,9 +1,9 @@
 package jaspr.sellerssim.strategy
 
-import jaspr.core.Network
 import jaspr.core.agent.Provider
-import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
-import jaspr.core.strategy.{StrategyInit, Exploration}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.simulation.Network
+import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.service.BuyerRecord
 import jaspr.strategy.CompositionStrategy
 import weka.classifiers.functions.LinearRegression

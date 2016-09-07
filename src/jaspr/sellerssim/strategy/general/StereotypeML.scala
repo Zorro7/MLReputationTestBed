@@ -1,9 +1,9 @@
 package jaspr.sellerssim.strategy.general
 
-import jaspr.core.Network
 import jaspr.core.agent.Provider
-import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
-import jaspr.core.service.{ServiceRequest, ClientContext}
+import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
+import jaspr.core.service.{ClientContext, ServiceRequest}
+import jaspr.core.simulation.Network
 import jaspr.core.strategy.StrategyInit
 import weka.classifiers.Classifier
 import weka.classifiers.bayes.NaiveBayes
