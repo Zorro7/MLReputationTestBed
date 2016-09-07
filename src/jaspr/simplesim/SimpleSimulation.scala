@@ -1,7 +1,7 @@
 package jaspr.simplesim
 
 import jaspr.core.results.Result
-import jaspr.core.simulation.Simulation
+import jaspr.core.simulation.{Configuration, Network, Simulation}
 import jaspr.utilities.Chooser
 
 /**
@@ -11,7 +11,7 @@ object SimpleSimulation extends App {
   Simulation(new SimpleMultiConfiguration)
 }
 
-class SimpleSimulation(override val config: SimpleConfiguration) extends Simulation {
+class SimpleSimulation(override val config: Configuration) extends Simulation {
 
   override val network: SimpleNetwork = new SimpleNetwork(this)
 
