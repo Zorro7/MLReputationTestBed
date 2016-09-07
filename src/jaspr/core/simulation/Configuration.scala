@@ -1,5 +1,6 @@
 package jaspr.core.simulation
 
+import jaspr.core.agent.Client
 import jaspr.core.strategy.Strategy
 
 import scala.util.Random
@@ -13,11 +14,7 @@ trait Configuration {
   val numRounds: Int
   val numAgents: Int
 
-  val strategy: Strategy
-
-  override def toString: String = {
-    strategy.toString
-  }
+  def strategy(agent: Client): Strategy
 }
 
 trait MultiConfiguration {

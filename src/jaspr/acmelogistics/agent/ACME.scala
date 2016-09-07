@@ -35,7 +35,7 @@ class ACME(override val simulation: ACMESimulation) extends Client {
   }
 
   override def generateComposition(context: ClientContext): TrustAssessment = {
-    config.strategy.assessReputation(simulation.network, context)
+    config.strategy(this).assessReputation(simulation.network, context)
   }
 
   var utility: Double = 0d

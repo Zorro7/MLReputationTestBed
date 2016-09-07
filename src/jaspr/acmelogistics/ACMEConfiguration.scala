@@ -88,7 +88,7 @@ case class ACMEMultiConfiguration(strategies: Seq[String] = Nil,
 
 }
 
-class ACMEConfiguration(override val strategy: Strategy,
+class ACMEConfiguration(val _strategy: Strategy,
                         val numRounds: Int = 250,
                         val numSimulations: Int = 1,
                         val memoryLimit: Int = 100,
@@ -102,7 +102,7 @@ class ACMEConfiguration(override val strategy: Strategy,
 
   override def toString: String = {
     List(
-      "strategy"->strategy,
+      "strategy"->_strategy,
       "eventProportion"->eventProportion,
       "eventLikelihood"->eventLikelihood,
       "eventDelay"->eventDelay,
@@ -117,6 +117,7 @@ class ACMEConfiguration(override val strategy: Strategy,
 
   override def newSimulation(): Simulation = new ACMESimulation(this)
 
+  override def strategy(agent: Client): Strategy = _strategy
 //  override val numSimulations: Int = 10
 //  override val numRounds: Int = 500
 

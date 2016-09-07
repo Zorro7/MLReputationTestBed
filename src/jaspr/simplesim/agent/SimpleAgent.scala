@@ -45,7 +45,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   override def generateComposition(context: ClientContext): TrustAssessment = {
-    config.strategy.assessReputation(simulation.network, context)
+    config.strategy(this).assessReputation(simulation.network, context)
   }
 
   override def receiveRequest(request: ServiceRequest): Boolean = {

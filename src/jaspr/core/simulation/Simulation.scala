@@ -21,15 +21,7 @@ object Simulation {
         jaspr.debug(1000, "\n\n----- CONFIG " + configIndex+", SIMULATION " + simulationIndex + ", seed: " + simulationSeed + " (" + config + ") -----")
         val simulation = config.newSimulation()
         results.record(config, simulation.run())
-        jaspr.debug(
-          1000,
-          "-- Init time: "+config.strategy.initTime+", Compute time: "+config.strategy.computeTime+
-            ", Compute time (/provider): "+config.strategy.computeProviderTime+", Calls: "+config.strategy.callCounter+
-            ", Providers: "+config.strategy.callProviderCounter+" --"
-        )
-        config.strategy.resetTimeCounters()
       }
-//      results.saveConfig(config.toString + ".res", config, _.totalUtility)
     }
 
     println("\n--- RESULTS ---\n")

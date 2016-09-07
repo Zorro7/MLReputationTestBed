@@ -32,7 +32,7 @@ class DynamicSellerMultiConfiguration extends MultiConfiguration {
       Nil
 }
 
-class DynamicSellerConfiguration(override val strategy: Strategy) extends SellerConfiguration {
+class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfiguration {
 
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
@@ -40,6 +40,7 @@ class DynamicSellerConfiguration(override val strategy: Strategy) extends Seller
   override def network(simulation: SellerSimulation): SellerNetwork = {
     new DynamicSellerNetwork(simulation)
   }
+  override def strategy(agent: Client): Strategy = _strategy
 
   override val numSimulations: Int = 5
   override val numRounds: Int = 500

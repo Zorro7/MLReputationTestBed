@@ -132,7 +132,7 @@ case class StaticSellerMultiConfiguration(
   override lazy val configs: Seq[Configuration] =
     strategies.map(x => {
       new StaticSellerConfiguration(
-        strategy = Strategy.forName(x),
+        _strategy = Strategy.forName(x),
         numRounds = numRounds,
         numSimulations = numSimulations,
         clientInvolvementLikelihood = clientInvolvementLikelihood,
@@ -204,7 +204,7 @@ abstract class SellerConfiguration extends Configuration {
 
 
 
-class StaticSellerConfiguration(override val strategy: Strategy,
+class StaticSellerConfiguration(val _strategy: Strategy,
                                 override val numRounds: Int,
                                 override val numSimulations: Int,
                                 override val clientInvolvementLikelihood: Double,
@@ -236,6 +236,7 @@ class StaticSellerConfiguration(override val strategy: Strategy,
   override def network(simulation: SellerSimulation): SellerNetwork = {
     new StaticSellerNetwork(simulation)
   }
+  override def strategy(agent: Client): Strategy = _strategy
 
 
   override val baseUtility: Double = 1d/2d

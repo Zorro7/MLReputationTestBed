@@ -62,7 +62,7 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Witne
   }
 
   override def generateComposition(context: ClientContext): TrustAssessment = {
-    simulation.config.strategy.assessReputation(simulation.network, context)
+    simulation.config.strategy(this).assessReputation(simulation.network, context)
   }
 
   private var _utility: Double = 0d
