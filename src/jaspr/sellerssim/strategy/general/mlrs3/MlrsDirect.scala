@@ -9,12 +9,13 @@ import jaspr.strategy.CompositionStrategy
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 04/11/15.
- */
+  * Created by phil on 04/11/15.
+  */
 trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
 
 
   override val discreteClass: Boolean
+
   def baseDirect: Classifier
 
 
@@ -29,7 +30,7 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
       val directAttVals = init.directInit.directAttVals
 
       val predictions =
-        for ((fe,p) <- init.directInit.freakEventLikelihood) yield {
+        for ((fe, p) <- init.directInit.freakEventLikelihood) yield {
           val row = makeDirectTestRow(init, request, fe)
           val query = convertRowToInstance(row, directAttVals, directTrain)
           val result =
@@ -42,7 +43,7 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
             } else directModel.classifyInstance(query)
           result * p
         }
-      new TrustAssessment(baseInit.context, request, predictions.sum/predictions.size)
+      new TrustAssessment(baseInit.context, request, predictions.sum / predictions.size)
     }
   }
 
@@ -63,7 +64,7 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
       record.service.request.payload.name :: // service identifier (client context)
       record.event.name :: // mitigation (provider context)
       record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-      adverts(record.service.request.provider)
+        adverts(record.service.request.provider)
   }
 
   def makeDirectTestRow(init: StrategyInit, request: ServiceRequest, eventName: String): Seq[Any] = {
@@ -71,9 +72,10 @@ trait MlrsDirect extends CompositionStrategy with Exploration with MlrsCore {
       request.payload.name ::
       eventName ::
       request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-      adverts(request.provider)
+        adverts(request.provider)
   }
 
   def adverts(provider: Provider): List[Any]
+
   val useAdvertProperties: Boolean = true
 }

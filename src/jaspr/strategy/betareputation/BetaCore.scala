@@ -5,8 +5,8 @@ import jaspr.strategy.Rating
 import jaspr.utilities.BetaDistribution
 
 /**
- * Created by phil on 19/03/16.
- */
+  * Created by phil on 19/03/16.
+  */
 trait BetaCore {
   def makeBetaDistribution(ratings: Iterable[Boolean]): BetaDistribution =
     new BetaDistribution(ratings.count(x => x) + 1d, ratings.count(x => !x) + 1d)

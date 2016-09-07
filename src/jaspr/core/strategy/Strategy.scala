@@ -6,8 +6,8 @@ import jaspr.utilities.{ArgumentUtils, Chooser}
 import org.apache.commons.beanutils.ConstructorUtils
 
 /**
- * Created by phil on 16/03/16.
- */
+  * Created by phil on 16/03/16.
+  */
 
 object Strategy {
   /**
@@ -35,9 +35,11 @@ abstract class Strategy {
   var callProviderCounter: Int = 0
 
   val name: String = this.getClass.getSimpleName
+
   override def toString = name
 
   def initStrategy(network: Network, context: ClientContext): StrategyInit
+
   def computeAssessment(init: StrategyInit, request: ServiceRequest): TrustAssessment
 
   def select(orderedAssessments: Seq[TrustAssessment]): TrustAssessment
@@ -52,7 +54,7 @@ abstract class Strategy {
     val computeEnd = System.currentTimeMillis()
     initTime += initEnd - initStart
     computeTime += computeEnd - computeStart
-    computeProviderTime += (computeEnd - computeStart)/orderedProviders.size
+    computeProviderTime += (computeEnd - computeStart) / orderedProviders.size
     callCounter += 1
     callProviderCounter += orderedProviders.size
     select(orderedProviders)

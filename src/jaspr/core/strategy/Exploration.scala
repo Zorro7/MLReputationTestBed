@@ -6,8 +6,8 @@ import jaspr.utilities.Chooser
 import scala.annotation.tailrec
 
 /**
- * Created by phil on 16/03/16.
- */
+  * Created by phil on 16/03/16.
+  */
 trait RecursiveExploration extends Strategy {
 
   val explorationProbability: Double
@@ -36,7 +36,7 @@ trait Exploration extends Strategy {
     } else {
       Chooser.ifHappens(explorationProbability)(
         Chooser.choose(orderedAssessments.drop(1))
-        )(
+      )(
         orderedAssessments.head
       )
     }

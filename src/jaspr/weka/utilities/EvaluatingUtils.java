@@ -15,19 +15,18 @@ import weka.core.Utils;
 import java.util.ArrayList;
 
 /**
- *
  * @author phil
  */
 public class EvaluatingUtils {
 
     public static double weightedAUC(ArrayList<Prediction> preds) {
-        int m_NumClasses = ((NominalPrediction)preds.get(0)).distribution().length;
+        int m_NumClasses = ((NominalPrediction) preds.get(0)).distribution().length;
         double[] classCounts = new double[m_NumClasses];
         double classCountSum = 0;
 
         for (Prediction p : preds) {
-            classCounts[(int)p.actual()]+=p.weight();
-            classCountSum+=p.weight();
+            classCounts[(int) p.actual()] += p.weight();
+            classCountSum += p.weight();
         }
 
         double aucTotal = 0;

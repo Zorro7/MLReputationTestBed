@@ -9,12 +9,14 @@ import jaspr.strategy.CompositionStrategy
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 04/11/15.
- */
+  * Created by phil on 04/11/15.
+  */
 trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
 
   override val discreteClass: Boolean
+
   def baseImputation: Classifier
+
   def baseWitness: Classifier
 
 
@@ -68,7 +70,7 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
   }
 
   def makeWitnessRow(r: BuyerRecord,
-                      imputationModel: MlrsModel): List[Any] = {
+                     imputationModel: MlrsModel): List[Any] = {
     val imputationRow = makeImputationTestRow(r)
     val imputationQuery = convertRowToInstance(imputationRow, imputationModel.attVals, imputationModel.train)
     val imputationResult = imputationModel.model.classifyInstance(imputationQuery)
@@ -84,14 +86,14 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
       r.client.id.toString ::
       r.service.payload.name :: // service identifier (client context)
       r.rating ::
-    adverts(r.provider)
+      adverts(r.provider)
   }
 
   def makeWitnessTestRows(init: MlrsInit, request: ServiceRequest, witnessRatings: Seq[BuyerRecord], fe: String): Iterable[List[Any]] = {
     val ret = for (r <- witnessRatings.filter(x => x.provider == request.provider && x.service.payload.name == request.payload.name)) yield {
       0 ::
         r.client.id.toString :: // witness
-        request.payload.name ::  // service context
+        request.payload.name :: // service context
         r.rating ::
         adverts(r.provider)
     }
@@ -105,12 +107,13 @@ trait MlrsWitness extends CompositionStrategy with Exploration with MlrsCore {
   }
 
   def makeImputationTestRow(witnessRating: BuyerRecord): List[Any] = {
-      0 ::
-        witnessRating.service.payload.name ::
-        adverts(witnessRating.provider)
+    0 ::
+      witnessRating.service.payload.name ::
+      adverts(witnessRating.provider)
   }
 
   def adverts(provider: Provider): List[Any]
+
   val useAdvertProperties: Boolean = true
 
 

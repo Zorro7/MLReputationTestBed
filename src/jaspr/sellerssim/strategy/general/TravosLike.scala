@@ -11,8 +11,8 @@ import jaspr.utilities.Dirichlet
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 29/06/16.
- */
+  * Created by phil on 29/06/16.
+  */
 class TravosLike(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrsCore {
 
   override val explorationProbability: Double = 0.1
@@ -21,7 +21,7 @@ class TravosLike(val baseLearner: Classifier, override val numBins: Int) extends
                        val trustModel: Option[MlrsModel],
                        val witnessRecords: Seq[ServiceRecord with TrustAssessmentRecord with RatingRecord],
                        val witnesses: Seq[Client]
-                        ) extends StrategyInit(context)
+                      ) extends StrategyInit(context)
 
   trait Opinions {
     val opinions: Map[Client, Dirichlet]
@@ -43,7 +43,7 @@ class TravosLike(val baseLearner: Classifier, override val numBins: Int) extends
 
   override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val requestScores: Seq[TrustAssessment with Opinions] = request.flatten().map(x => compute(baseInit, request))
-    new TrustAssessment(baseInit.context, request, requestScores.map(_.trustValue).sum) with Opinions{
+    new TrustAssessment(baseInit.context, request, requestScores.map(_.trustValue).sum) with Opinions {
       override val opinions = requestScores.flatMap(_.opinions).toMap
     }
   }
@@ -79,16 +79,16 @@ class TravosLike(val baseLearner: Classifier, override val numBins: Int) extends
 
   def makeTrainRow(baseRecord: Record, witnesses: Seq[Client]): Seq[Any] = {
     val record = baseRecord.asInstanceOf[ServiceRecord with TrustAssessmentRecord with RatingRecord]
-    val opinions: Map[Client,Dirichlet] = record.assessment.asInstanceOf[Opinions].opinions
+    val opinions: Map[Client, Dirichlet] = record.assessment.asInstanceOf[Opinions].opinions
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
       record.service.request.provider.id.toString :: // provider identifier
-      witnesses.map(x => opinions.getOrElse(x, new Dirichlet(numBins))).map(x=> x.alpha).toList.flatten
+      witnesses.map(x => opinions.getOrElse(x, new Dirichlet(numBins))).map(x => x.alpha).toList.flatten
   }
 
-  def makeTestRow(init: TravosLikeInit, request: ServiceRequest, opinions: Map[Client,Dirichlet]): Seq[Any] = {
+  def makeTestRow(init: TravosLikeInit, request: ServiceRequest, opinions: Map[Client, Dirichlet]): Seq[Any] = {
     0d ::
       request.provider.id.toString ::
-      init.witnesses.map(x => opinions.getOrElse(x, new Dirichlet(numBins))).map(x=> x.alpha).toList.flatten
+      init.witnesses.map(x => opinions.getOrElse(x, new Dirichlet(numBins))).map(x => x.alpha).toList.flatten
   }
 
   def makeDirichlet(ratings: Seq[Double]): Dirichlet = {

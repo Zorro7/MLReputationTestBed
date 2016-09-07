@@ -3,8 +3,8 @@ package jaspr.core.service
 import jaspr.utilities.NamedEntity
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 abstract class Service extends NamedEntity {
 
   val request: ServiceRequest
@@ -19,14 +19,19 @@ abstract class Service extends NamedEntity {
   def isDelivered = {
     request.isDelivered
   }
+
   def isStarted = {
     request.isStarted
   }
 
   def isComplete(currentRound: Int): Boolean
+
   def canStart(currentRound: Int): Boolean
+
   def dependenciesSatisfied: Boolean
+
   private var _utility: Double = 0d
+
   def utility(): Double = _utility
 
   def tryEndService(currentRound: Int): Boolean = {
@@ -51,7 +56,7 @@ abstract class Service extends NamedEntity {
   }
 
   override def toString: String = {
-    super.toString+"["+request.client+","+request.provider+","+start+","+duration+","+payload+"]"
+    super.toString + "[" + request.client + "," + request.provider + "," + start + "," + duration + "," + payload + "]"
   }
 
 }

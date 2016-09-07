@@ -6,8 +6,8 @@ import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service._
 
 /**
- * Created by phil on 17/03/16.
- */
+  * Created by phil on 17/03/16.
+  */
 class Refinery(simulation: ACMESimulation) extends Subprovider(simulation) {
   override def affectService(performing: Service, received: Service): Unit = {
     performing.payload =

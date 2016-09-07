@@ -3,12 +3,11 @@ package jaspr.simplesim
 import jaspr.core.agent._
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.simulation.Network
-import jaspr.simplesim.agent.{SimpleAgent, SimpleEvent, SimpleMarket}
-import jaspr.utilities.Chooser
+import jaspr.simplesim.agent.SimpleAgent
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 class SimpleNetwork(val simulation: SimpleSimulation) extends Network {
 
   override def utility(): Double = agents.map(_.utility).sum

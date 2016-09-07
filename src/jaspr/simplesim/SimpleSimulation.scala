@@ -1,12 +1,12 @@
 package jaspr.simplesim
 
 import jaspr.core.results.Result
-import jaspr.core.simulation.{Configuration, Network, Simulation}
+import jaspr.core.simulation.{Configuration, Simulation}
 import jaspr.utilities.Chooser
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 object SimpleSimulation extends App {
   Simulation(new SimpleMultiConfiguration)
 }

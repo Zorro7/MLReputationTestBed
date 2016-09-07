@@ -9,8 +9,8 @@ import jaspr.core.service.{Payload, Service, ServiceRequest}
 import scala.collection.immutable.SortedMap
 
 /**
- * Created by phil on 17/03/16.
- */
+  * Created by phil on 17/03/16.
+  */
 class Mine(val simulation: ACMESimulation) extends Provider {
   override def capableOf(payload: Payload, duration: Int): Boolean = true
 

@@ -9,8 +9,8 @@ import jaspr.utilities.Chooser
 import scala.annotation.tailrec
 
 /**
- * Created by phil on 17/03/16.
- */
+  * Created by phil on 17/03/16.
+  */
 class ACMENetwork(val simulation: ACMESimulation) extends Network with NetworkEvents with NetworkMarket {
 
   override def utility(): Double = clients.map(_.utility).sum
@@ -38,13 +38,13 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network with NetworkEv
           ps.drop(1), context,
           new ServiceRequest(
             client, ps.head,
-            context.round+depth*simulation.config.defaultServiceDuration,
+            context.round + depth * simulation.config.defaultServiceDuration,
             simulation.config.defaultServiceDuration,
             context.payload,
             market,
             acc
           ) :: Nil,
-          depth+1
+          depth + 1
         )
       }
     }

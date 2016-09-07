@@ -5,8 +5,8 @@ import jaspr.core.service.{ClientContext, Service, ServiceRequest, TrustAssessme
 import scala.collection.mutable
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 trait Client extends Agent {
 
   def tick(): Unit = {
@@ -20,7 +20,10 @@ trait Client extends Agent {
   val trustAssessments: mutable.Map[ServiceRequest, TrustAssessment] = new mutable.HashMap
 
   def generateContext(): ClientContext
+
   def generateComposition(context: ClientContext): TrustAssessment
+
   def makeRequest(assessment: TrustAssessment): Unit
+
   def receiveService(service: Service): Unit
 }

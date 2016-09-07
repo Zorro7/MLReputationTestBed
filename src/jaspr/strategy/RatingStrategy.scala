@@ -6,13 +6,13 @@ import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Strategy, StrategyInit}
 
 /**
- * Created by phil on 19/03/16.
- */
+  * Created by phil on 19/03/16.
+  */
 
 class RatingStrategyInit(context: ClientContext,
                          val directRecords: Seq[Rating],
                          val witnessRecords: Seq[Rating]
-                           ) extends StrategyInit(context)
+                        ) extends StrategyInit(context)
 
 trait RatingStrategy extends Strategy {
 

@@ -10,18 +10,18 @@ import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.{AbstractClassifier, Classifier}
 
 /**
- * Created by phil on 24/03/16.
- */
+  * Created by phil on 24/03/16.
+  */
 class MlrsBasic(val baseLearner: Classifier,
-           override val numBins: Int,
-           val witnessWeight: Double = 0.5d,
-           val useAdvertProperties: Boolean = true
-            ) extends CompositionStrategy with Exploration with MlrsCore {
+                override val numBins: Int,
+                val witnessWeight: Double = 0.5d,
+                val useAdvertProperties: Boolean = true
+               ) extends CompositionStrategy with Exploration with MlrsCore {
 
 
   class Mlrs2Init(context: ClientContext, val trustModel: Option[MlrsModel]) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+"-"+numBins+"-"+witnessWeight
+  override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName + "-" + numBins + "-" + witnessWeight
 
   override val explorationProbability: Double = 0.1
 
@@ -63,7 +63,6 @@ class MlrsBasic(val baseLearner: Classifier,
       new Mlrs2Init(context, Some(model))
     }
   }
-
 
 
   def makeTrainRow(record: BuyerRecord): Seq[Any] = {

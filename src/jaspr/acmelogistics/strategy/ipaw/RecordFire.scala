@@ -10,8 +10,8 @@ import jaspr.strategy.CompositionStrategy
 import scala.math._
 
 /**
- * Created by phil on 20/03/16.
- */
+  * Created by phil on 20/03/16.
+  */
 
 class RecordStrategyInit(context: ClientContext,
                          val directRecords: Seq[ACMERecord],
@@ -25,11 +25,15 @@ class RecordFire extends Strategy with CompositionStrategy with Exploration {
   }
 
   def meanFunch(x: RatingRecord): Double = x.rating
+
   def startFunch(x: ServiceRecord): Double = (x.service.start - x.service.request.start).toDouble
+
   def endFunch(x: ServiceRecord): Double =
     x.service.request.duration.toDouble / x.service.duration.toDouble
+
   def qualityFunch(x: ServiceRecord): Double =
     x.service.payload.asInstanceOf[GoodPayload].quality - x.service.request.payload.asInstanceOf[GoodPayload].quality
+
   def quantityFunch(x: ServiceRecord): Double =
     x.service.payload.asInstanceOf[GoodPayload].quantity - x.service.request.payload.asInstanceOf[GoodPayload].quantity
 
@@ -37,20 +41,20 @@ class RecordFire extends Strategy with CompositionStrategy with Exploration {
     val init = baseInit.asInstanceOf[RecordStrategyInit]
 
     val direct: Double =
-//      trust(request, init.directRecords, init.context.round, meanFunch)
-//        trust(request, init.directRecords, init.context.round, startFunch) +
-        trust(request, init.directRecords, init.context.round, endFunch) +
+    //      trust(request, init.directRecords, init.context.round, meanFunch)
+    //        trust(request, init.directRecords, init.context.round, startFunch) +
+      trust(request, init.directRecords, init.context.round, endFunch) +
         trust(request, init.directRecords, init.context.round, qualityFunch) +
         trust(request, init.directRecords, init.context.round, quantityFunch)
 
     val witness: Double =
-//          trust(request, init.witnessRecords, init.context.round, meanFunch)
-//      trust(request, init.witnessRecords, init.context.round, startFunch) +
-        trust(request, init.witnessRecords, init.context.round, endFunch) +
+    //          trust(request, init.witnessRecords, init.context.round, meanFunch)
+    //      trust(request, init.witnessRecords, init.context.round, startFunch) +
+      trust(request, init.witnessRecords, init.context.round, endFunch) +
         trust(request, init.witnessRecords, init.context.round, qualityFunch) +
         trust(request, init.witnessRecords, init.context.round, quantityFunch)
 
-    new TrustAssessment(baseInit.context, request, direct+witness)
+    new TrustAssessment(baseInit.context, request, direct + witness)
   }
 
   val interactionWeight: Double = 0.5

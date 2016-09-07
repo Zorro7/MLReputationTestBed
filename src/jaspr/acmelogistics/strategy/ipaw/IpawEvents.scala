@@ -10,8 +10,8 @@ import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 19/03/16.
- */
+  * Created by phil on 19/03/16.
+  */
 class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Exploration with IpawCore {
 
   override val explorationProbability: Double = 0.1
@@ -21,7 +21,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
   baseLearner.setSplitAttIndex(1)
   val discreteClass: Boolean = disc
 
-  override val name = this.getClass.getSimpleName+"_"+baseLearner.getClassifier().getClass.getSimpleName
+  override val name = this.getClass.getSimpleName + "_" + baseLearner.getClassifier().getClass.getSimpleName
 
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
@@ -34,20 +34,20 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
 
         val baseModels: Seq[IpawModel] =
           buildBaseModel(records.filter(_.service.request.provider.getClass == requests.head.provider.getClass), endFunch) ::
-          buildBaseModel(records.filter(_.service.request.provider.getClass == requests.head.provider.getClass), qualityFunch) ::
-          buildBaseModel(records.filter(_.service.request.provider.getClass == requests.head.provider.getClass), quantityFunch) ::
-          Nil
+            buildBaseModel(records.filter(_.service.request.provider.getClass == requests.head.provider.getClass), qualityFunch) ::
+            buildBaseModel(records.filter(_.service.request.provider.getClass == requests.head.provider.getClass), quantityFunch) ::
+            Nil
 
         val topModels: Seq[Seq[IpawModel]] =
           requests.drop(1).map(request =>
             buildTopModel(records.filter(_.service.request.provider.getClass == request.provider.getClass), endFunch) ::
-            buildTopModel(records.filter(_.service.request.provider.getClass == request.provider.getClass), qualityFunch) ::
-            buildTopModel(records.filter(_.service.request.provider.getClass == request.provider.getClass), quantityFunch) ::
-            Nil
+              buildTopModel(records.filter(_.service.request.provider.getClass == request.provider.getClass), qualityFunch) ::
+              buildTopModel(records.filter(_.service.request.provider.getClass == request.provider.getClass), quantityFunch) ::
+              Nil
           )
 
         baseModels :: topModels.toList
-    } else Nil
+      } else Nil
 
     val eventLikelihoods =
       records.groupBy(x =>
@@ -57,7 +57,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
         }
       ).mapValues(_.size.toDouble / records.size)
 
-//    println(eventLikelihoods)
+    //    println(eventLikelihoods)
     new IpawInit(context, records, models, eventLikelihoods)
   }
 
@@ -82,7 +82,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
 
     var preds: List[Double] = currentPreds.toList
 
-    for ((model,request) <- init.models.drop(1) zip requests.drop(1)) {
+    for ((model, request) <- init.models.drop(1) zip requests.drop(1)) {
       currentPreds =
         if (model.forall(_ != null)) {
           val test = events.map(event =>
@@ -97,8 +97,8 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
       preds = currentPreds.toList ++ preds
     }
 
-//        println(preds.filterNot(_.isNaN).sum, currentPreds.filterNot(_.isNaN).sum,
-//                  preds, currentPreds)
+    //        println(preds.filterNot(_.isNaN).sum, currentPreds.filterNot(_.isNaN).sum,
+    //                  preds, currentPreds)
 
     new TrustAssessment(superInit.context, request, currentPreds.filter(!_.isNaN).sum)
   }
@@ -115,7 +115,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
 
   def buildBaseModel(records: Iterable[ServiceRecord with RatingRecord],
                      labelfunch: ServiceRecord with RatingRecord => Double
-                      ): IpawModel = {
+                    ): IpawModel = {
     val train: Iterable[List[Any]] =
       records.map(x => {
         makeRow(
@@ -135,7 +135,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
 
   def buildTopModel(records: Iterable[ServiceRecord with RatingRecord],
                     labelfunch: ServiceRecord with RatingRecord => Double
-                     ): IpawModel = {
+                   ): IpawModel = {
     val train: Iterable[List[Any]] =
       records.withFilter(!_.service.serviceContext.provenanceEmpty).map(x => {
         val dependency: SubproviderRecord = x.service.serviceContext.getProvenance(x.service.serviceContext).head
@@ -149,17 +149,15 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
           x.service.request.duration.toDouble,
           x.service.request.payload.asInstanceOf[GoodPayload].quality,
           x.service.request.payload.asInstanceOf[GoodPayload].quantity
-//          ,meanFunch(dependency)
+          //          ,meanFunch(dependency)
           //          , startFunch(mineDependency)
-          ,endFunch(dependency)
-          ,qualityFunch(dependency),
+          , endFunch(dependency)
+          , qualityFunch(dependency),
           quantityFunch(dependency)
         ) ++ x.service.request.provider.advertProperties.values.map(_.value).toList
       })
     build(train)
   }
-
-
 
 
 }

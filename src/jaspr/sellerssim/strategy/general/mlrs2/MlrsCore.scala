@@ -14,8 +14,8 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 /**
- * Created by phil on 03/11/15.
- */
+  * Created by phil on 03/11/15.
+  */
 trait MlrsCore extends Discretization {
 
   override val upper = 1d
@@ -26,15 +26,15 @@ trait MlrsCore extends Discretization {
 
   class MlrsModel(val model: Classifier,
                   val train: Instances,
-                  val attVals: Iterable[mutable.Map[Any,Double]]
-                   )
+                  val attVals: Iterable[mutable.Map[Any, Double]]
+                 )
 
   def makeMlrsModel[T <: Record](records: Seq[T], baseModel: Classifier,
-                    makeTrainRow: T => Seq[Any],
-                    makeWeight: T => Double = null): MlrsModel = {
+                                 makeTrainRow: T => Seq[Any],
+                                 makeWeight: T => Double = null): MlrsModel = {
     val rows = records.map(makeTrainRow)
     val weights = if (makeWeight == null) Nil else records.map(makeWeight)
-    val directAttVals: Iterable[mutable.Map[Any,Double]] = List.fill(rows.head.size)(mutable.Map[Any,Double]())
+    val directAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(rows.head.size)(mutable.Map[Any, Double]())
     val doubleRows = convertRowsToDouble(rows, directAttVals)
     val atts = makeAtts(rows.head, directAttVals)
     val train = makeInstances(atts, doubleRows, weights)
@@ -54,9 +54,9 @@ trait MlrsCore extends Discretization {
   }
 
   def cut[A](xs: Seq[A], n: Int): List[Seq[A]] = {
-    val (quot,rem) =
-      if (xs.size <= n) (1,0)
-      else (xs.size/n,xs.size % n)
+    val (quot, rem) =
+      if (xs.size <= n) (1, 0)
+      else (xs.size / n, xs.size % n)
     val (smaller, bigger) = xs.splitAt(xs.size - rem * (quot + 1))
     (smaller.grouped(quot) ++ bigger.grouped(quot + 1)).toList
   }
@@ -80,7 +80,7 @@ trait MlrsCore extends Discretization {
       val aucs = preds.map(x => EvaluatingUtils.weightedAUC(new util.ArrayList(x)))
       val df = new DecimalFormat("#.##")
       println(aucs.map(df.format))
-//      EvaluatingUtils.weightedAUC(new util.ArrayList(preds.flatten))
+      //      EvaluatingUtils.weightedAUC(new util.ArrayList(preds.flatten))
       aucs.sum / aucs.size
     }
   }
@@ -95,7 +95,7 @@ trait MlrsCore extends Discretization {
     } else model.model.classifyInstance(query)
   }
 
-  def lookup[T](map: mutable.Map[T,Double], item: T): Double = {
+  def lookup[T](map: mutable.Map[T, Double], item: T): Double = {
     if (map.contains(item)) map(item)
     else {
       map(item) = map.size
@@ -103,13 +103,13 @@ trait MlrsCore extends Discretization {
     }
   }
 
-  def convertRowsToDouble(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any,Double]], classIndex: Int = classIndex, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Iterable[Seq[Double]] = {
+  def convertRowsToDouble(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any, Double]], classIndex: Int = classIndex, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Iterable[Seq[Double]] = {
     for (row <- rows) yield {
       convertRowToDouble(row, attVals, classIndex, discreteClass, numBins)
     }
   }
 
-  def convertRowToDouble(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]], classIndex: Int = classIndex, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Seq[Double] = {
+  def convertRowToDouble(row: Seq[Any], attVals: Iterable[mutable.Map[Any, Double]], classIndex: Int = classIndex, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Seq[Double] = {
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) yield {
       item match {
         case x: Int => if (i == classIndex) x else lookup(vals, x)
@@ -120,12 +120,12 @@ trait MlrsCore extends Discretization {
     }
   }
 
-  def convertRowsToInstances(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances, weights: Iterable[Double] = Nil): Iterable[Instance] = {
+  def convertRowsToInstances(rows: Iterable[Seq[Any]], attVals: Iterable[mutable.Map[Any, Double]], dataset: Instances, weights: Iterable[Double] = Nil): Iterable[Instance] = {
     if (weights.isEmpty) rows.map(convertRowToInstance(_, attVals, dataset))
     else (rows zip weights).map(r => convertRowToInstance(r._1, attVals, dataset, r._2))
   }
 
-  def convertRowToInstance(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances, weight: Double = 1d): Instance = {
+  def convertRowToInstance(row: Seq[Any], attVals: Iterable[mutable.Map[Any, Double]], dataset: Instances, weight: Double = 1d): Instance = {
     val inst = new DenseInstance(dataset.numAttributes())
     inst.setDataset(dataset)
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) {
@@ -141,9 +141,9 @@ trait MlrsCore extends Discretization {
     inst
   }
 
-  def makeAtts(row: Seq[Any], attVals: Iterable[mutable.Map[Any,Double]], classIndex: Int = classIndex, discreteClass: Boolean = discreteClass): Iterable[Attribute] = {
-    for (((item,vals),i) <- row.zip(attVals).zipWithIndex) yield {
-      if (i==classIndex) if (discreteClass) new Attribute("target", discVals) else new Attribute("target")
+  def makeAtts(row: Seq[Any], attVals: Iterable[mutable.Map[Any, Double]], classIndex: Int = classIndex, discreteClass: Boolean = discreteClass): Iterable[Attribute] = {
+    for (((item, vals), i) <- row.zip(attVals).zipWithIndex) yield {
+      if (i == classIndex) if (discreteClass) new Attribute("target", discVals) else new Attribute("target")
       else {
         item match {
           case x: Double => new Attribute(i.toString)

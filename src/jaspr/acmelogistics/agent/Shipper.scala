@@ -6,8 +6,8 @@ import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{Service, TrustAssessment}
 
 /**
- * Created by phil on 17/03/16.
- */
+  * Created by phil on 17/03/16.
+  */
 class Shipper(simulation: ACMESimulation) extends Subprovider(simulation) {
   override def affectService(service: Service): Unit = {
     properties.foreach(p => p._1 match {

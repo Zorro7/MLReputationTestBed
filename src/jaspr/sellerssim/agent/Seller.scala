@@ -10,8 +10,8 @@ import jaspr.utilities.Chooser
 import scala.collection.immutable.SortedMap
 
 /**
- * Created by phil on 21/03/16.
- */
+  * Created by phil on 21/03/16.
+  */
 class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override def receiveRequest(request: ServiceRequest): Boolean = {
@@ -41,7 +41,7 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override val properties: SortedMap[String, Property] = simulation.config.properties(this)
   override val advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
-  val capabilities: Map[String,ProductPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
+  val capabilities: Map[String, ProductPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
 
   override def capableOf(payload: Payload, duration: Int): Boolean = {
     capabilities.contains(payload.name)

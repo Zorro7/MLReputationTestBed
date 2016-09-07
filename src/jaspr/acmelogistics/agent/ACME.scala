@@ -7,8 +7,8 @@ import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{ClientContext, Service, TrustAssessment}
 
 /**
- * Created by phil on 17/03/16.
- */
+  * Created by phil on 17/03/16.
+  */
 class ACME(override val simulation: ACMESimulation) extends Client {
 
   override def generateContext(): ClientContext = {
@@ -25,7 +25,7 @@ class ACME(override val simulation: ACMESimulation) extends Client {
         jaspr.debug(10, "UTILITY: ", simulation.round, this, utility, gain)
         utility += gain
         x
-      case None => throw new Exception("Request "+service.request+" not found.")
+      case None => throw new Exception("Request " + service.request + " not found.")
     }
     recordProvenance(new ACMERecord(service, assessment))
   }

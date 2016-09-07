@@ -3,9 +3,10 @@ package jaspr.utilities
 import scala.collection.immutable.{SortedMap, TreeMap}
 import scala.collection.mutable
 import scala.language.implicitConversions
+
 /**
- * Created by phil on 26/01/16.
- */
+  * Created by phil on 26/01/16.
+  */
 
 object NamedEntity {
 
@@ -17,11 +18,12 @@ object NamedEntity {
     x
   }
 
-  implicit def toMap[T <: NamedEntity](nes: List[T]): Map[String,T] = {
+  implicit def toMap[T <: NamedEntity](nes: List[T]): Map[String, T] = {
     nes.map(x => x.name -> x).toMap
   }
-  implicit def toSortedMap[T <: NamedEntity](nes: List[T]): SortedMap[String,T] = {
-    TreeMap[String,T](nes.map(x => x.name -> x):_*)
+
+  implicit def toSortedMap[T <: NamedEntity](nes: List[T]): SortedMap[String, T] = {
+    TreeMap[String, T](nes.map(x => x.name -> x): _*)
   }
 }
 

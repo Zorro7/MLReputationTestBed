@@ -36,16 +36,16 @@ import java.util.Random;
 import java.util.Vector;
 
 /**
- <!-- globalinfo-start -->
+ * <!-- globalinfo-start -->
  * Class for performing parameter selection by cross-validation for any classifier.<br/>
  * <br/>
  * For more information, see:<br/>
  * <br/>
  * R. Kohavi (1995). Wrappers for Performance Enhancement and Oblivious Decision Graphs. Department of Computer Science, Stanford University.
  * <p/>
- <!-- globalinfo-end -->
- *
- <!-- technical-bibtex-start -->
+ * <!-- globalinfo-end -->
+ * <p>
+ * <!-- technical-bibtex-start -->
  * BibTeX:
  * <pre>
  * &#64;phdthesis{Kohavi1995,
@@ -57,14 +57,14 @@ import java.util.Vector;
  * }
  * </pre>
  * <p/>
- <!-- technical-bibtex-end -->
- *
- <!-- options-start -->
+ * <!-- technical-bibtex-end -->
+ * <p>
+ * <!-- options-start -->
  * Valid options are: <p/>
- *
+ * <p>
  * <pre> -X &lt;number of folds&gt;
  *  Number of folds used for cross validation (default 10).</pre>
- *
+ * <p>
  * <pre> -P &lt;classifier parameter&gt;
  *  Classifier parameter options.
  *  eg: "N 1 5 10" Sets an optimisation parameter for the
@@ -75,39 +75,41 @@ import java.util.Vector;
  *  respectively. This parameter may be supplied more than
  *  once to optimise over several classifier options
  *  simultaneously.</pre>
- *
+ * <p>
  * <pre> -S &lt;num&gt;
  *  Random number seed.
  *  (default 1)</pre>
- *
+ * <p>
  * <pre> -D
  *  If set, classifier is run in debug mode and
  *  may output additional info to the console</pre>
- *
+ * <p>
  * <pre> -W
  *  Full name of base classifier.
  *  (default: weka.classifiers.rules.ZeroR)</pre>
- *
- * <pre> 
+ * <p>
+ * <pre>
  * Options specific to classifier weka.classifiers.rules.ZeroR:
  * </pre>
- *
+ * <p>
  * <pre> -D
  *  If set, classifier is run in debug mode and
  *  may output additional info to the console</pre>
- *
- <!-- options-end -->
- *
+ * <p>
+ * <!-- options-end -->
+ * <p>
  * Options after -- are passed to the designated sub-classifier. <p>
  *
  * @author Len Trigg (trigg@cs.waikato.ac.nz)
- * @version $Revision: 5928 $ 
+ * @version $Revision: 5928 $
  */
 public class ParamSelection
         extends RandomizableSingleClassifierEnhancer
         implements Drawable, Summarizable, TechnicalInformationHandler {
 
-    /** for serialization */
+    /**
+     * for serialization
+     */
     static final long serialVersionUID = -6529603380876641265L;
 
     /**
@@ -117,28 +119,44 @@ public class ParamSelection
     protected class CVParameter
             implements Serializable, RevisionHandler {
 
-        /** for serialization */
+        /**
+         * for serialization
+         */
         static final long serialVersionUID = -4668812017709421953L;
 
-        /**  Char used to identify the option of interest */
+        /**
+         * Char used to identify the option of interest
+         */
         private char m_ParamChar;
 
-        /**  Lower bound for the CV search */
+        /**
+         * Lower bound for the CV search
+         */
         private double m_Lower;
 
-        /**  Upper bound for the CV search */
+        /**
+         * Upper bound for the CV search
+         */
         private double m_Upper;
 
-        /**  Number of steps during the search */
+        /**
+         * Number of steps during the search
+         */
         private double m_Steps;
 
-        /**  The parameter value with the best performance */
+        /**
+         * The parameter value with the best performance
+         */
         private double m_ParamValue;
 
-        /**  True if the parameter should be added at the end of the argument list */
+        /**
+         * True if the parameter should be added at the end of the argument list
+         */
         private boolean m_AddAtEnd;
 
-        /**  True if the parameter should be rounded to an integer */
+        /**
+         * True if the parameter should be rounded to an integer
+         */
         private boolean m_RoundParam;
 
         /**
@@ -200,7 +218,7 @@ public class ParamSelection
         public String toString() {
 
             String result = m_ParamChar + " " + m_Lower + " ";
-            switch ((int)(m_Lower - m_Upper + 0.5)) {
+            switch ((int) (m_Lower - m_Upper + 0.5)) {
                 case 1:
                     result += "A";
                     break;
@@ -221,7 +239,7 @@ public class ParamSelection
         /**
          * Returns the revision string.
          *
-         * @return		the revision
+         * @return the revision
          */
         public String getRevision() {
             return RevisionUtils.extract("$Revision: 5928 $");
@@ -236,28 +254,42 @@ public class ParamSelection
      * The base classifier options (not including those being set
      * by cross-validation)
      */
-    protected String [] m_ClassifierOptions;
+    protected String[] m_ClassifierOptions;
 
-    /** The set of all classifier options as determined by cross-validation */
-    protected String [] m_BestClassifierOptions;
+    /**
+     * The set of all classifier options as determined by cross-validation
+     */
+    protected String[] m_BestClassifierOptions;
 
-    /** The set of all options at initialization time. So that getOptions
-     can return this. */
-    protected String [] m_InitOptions;
+    /**
+     * The set of all options at initialization time. So that getOptions
+     * can return this.
+     */
+    protected String[] m_InitOptions;
 
-    /** The cross-validated performance of the best options */
+    /**
+     * The cross-validated performance of the best options
+     */
     protected double m_BestPerformance;
 
-    /** The set of parameters to cross-validate over */
+    /**
+     * The set of parameters to cross-validate over
+     */
     protected FastVector m_CVParams = new FastVector();
 
-    /** The number of attributes in the data */
+    /**
+     * The number of attributes in the data
+     */
     protected int m_NumAttributes;
 
-    /** The number of instances in a training fold */
+    /**
+     * The number of instances in a training fold
+     */
     protected int m_TrainFoldSize;
 
-    /** The number of folds used in cross-validation */
+    /**
+     * The number of folds used in cross-validation
+     */
     protected int m_NumFolds = 10;
 
     /**
@@ -267,15 +299,15 @@ public class ParamSelection
      *
      * @return the options array
      */
-    protected String [] createOptions() {
+    protected String[] createOptions() {
 
-        String [] options = new String [m_ClassifierOptions.length
+        String[] options = new String[m_ClassifierOptions.length
                 + 2 * m_CVParams.size()];
         int start = 0, end = options.length;
 
         // Add the cross-validation parameters and their values
         for (int i = 0; i < m_CVParams.size(); i++) {
-            CVParameter cvParam = (CVParameter)m_CVParams.elementAt(i);
+            CVParameter cvParam = (CVParameter) m_CVParams.elementAt(i);
             double paramValue = cvParam.m_ParamValue;
             if (cvParam.m_RoundParam) {
                 //	paramValue = (double)((int) (paramValue + 0.5));
@@ -283,12 +315,12 @@ public class ParamSelection
             }
             if (cvParam.m_AddAtEnd) {
                 options[--end] = "" +
-                        Utils.doubleToString(paramValue,4);
+                        Utils.doubleToString(paramValue, 4);
                 options[--end] = "-" + cvParam.m_ParamChar;
             } else {
                 options[start++] = "-" + cvParam.m_ParamChar;
                 options[start++] = ""
-                        + Utils.doubleToString(paramValue,4);
+                        + Utils.doubleToString(paramValue, 4);
             }
         }
         // Add the static parameters
@@ -303,9 +335,9 @@ public class ParamSelection
      * Finds the best parameter combination. (recursive for each parameter
      * being optimised).
      *
-     * @param depth the index of the parameter to be optimised at this level
+     * @param depth     the index of the parameter to be optimised at this level
      * @param trainData the data the search is based on
-     * @param random a random number generator
+     * @param random    a random number generator
      * @throws Exception if an error occurs
      */
     protected void findParamsByCrossValidation(int depth, Instances trainData,
@@ -313,10 +345,10 @@ public class ParamSelection
             throws Exception {
 
         if (depth < m_CVParams.size()) {
-            CVParameter cvParam = (CVParameter)m_CVParams.elementAt(depth);
+            CVParameter cvParam = (CVParameter) m_CVParams.elementAt(depth);
 
             double upper;
-            switch ((int)(cvParam.m_Lower - cvParam.m_Upper + 0.5)) {
+            switch ((int) (cvParam.m_Lower - cvParam.m_Upper + 0.5)) {
                 case 1:
                     upper = m_NumAttributes;
                     break;
@@ -328,9 +360,9 @@ public class ParamSelection
                     break;
             }
             double increment = (upper - cvParam.m_Lower) / (cvParam.m_Steps - 1);
-            for(cvParam.m_ParamValue = cvParam.m_Lower;
-                cvParam.m_ParamValue <= upper;
-                cvParam.m_ParamValue += increment) {
+            for (cvParam.m_ParamValue = cvParam.m_Lower;
+                 cvParam.m_ParamValue <= upper;
+                 cvParam.m_ParamValue += increment) {
                 findParamsByCrossValidation(depth + 1, trainData, random);
             }
         } else {
@@ -338,7 +370,7 @@ public class ParamSelection
             Evaluation evaluation = new Evaluation(trainData);
 
             // Set the classifier options
-            String [] options = createOptions();
+            String[] options = createOptions();
             if (m_Debug) {
                 System.out.print("Setting options for "
                         + m_Classifier.getClass().getName() + ":");
@@ -347,7 +379,7 @@ public class ParamSelection
                 }
                 System.out.println("");
             }
-            ((OptionHandler)m_Classifier).setOptions(options);
+            ((OptionHandler) m_Classifier).setOptions(options);
             for (int j = 0; j < m_NumFolds; j++) {
 
                 // We want to randomize the data the same way for every
@@ -369,11 +401,11 @@ public class ParamSelection
             } else throw new Exception("Evaluation Metric wasn't computed correctly or doesn't exist");
             if (m_Debug) {
                 if (m_EvaluationMetric == EvaluationMetric.AUC) {
-                    System.out.println("Cross-validated AUC: "+Utils.doubleToString(score, 6, 4));
+                    System.out.println("Cross-validated AUC: " + Utils.doubleToString(score, 6, 4));
                 } else if (m_EvaluationMetric == EvaluationMetric.SR) {
-                    System.out.println("Cross-validated success rate: "+Utils.doubleToString(score, 6, 4));
+                    System.out.println("Cross-validated success rate: " + Utils.doubleToString(score, 6, 4));
                 } else if (m_EvaluationMetric == EvaluationMetric.ER) {
-                    System.out.println("Cross-validated error rate: "+Utils.doubleToString(score, 6, 4));
+                    System.out.println("Cross-validated error rate: " + Utils.doubleToString(score, 6, 4));
                 }
             }
             if (m_EvaluationMetric == EvaluationMetric.AUC ||
@@ -394,11 +426,12 @@ public class ParamSelection
 
     /**
      * Returns a string describing this classifier
+     *
      * @return a description of the classifier suitable for
      * displaying in the explorer/experimenter gui
      */
     public String globalInfo() {
-        return    "Class for performing parameter selection by cross-validation "
+        return "Class for performing parameter selection by cross-validation "
                 + "for any classifier.\n\n"
                 + "For more information, see:\n\n"
                 + getTechnicalInformation().toString();
@@ -412,7 +445,7 @@ public class ParamSelection
      * @return the technical information about this class
      */
     public TechnicalInformation getTechnicalInformation() {
-        TechnicalInformation 	result;
+        TechnicalInformation result;
 
         result = new TechnicalInformation(Type.PHDTHESIS);
         result.setValue(Field.AUTHOR, "R. Kohavi");
@@ -459,13 +492,13 @@ public class ParamSelection
 
     /**
      * Parses a given list of options. <p/>
-     *
-     <!-- options-start -->
+     * <p>
+     * <!-- options-start -->
      * Valid options are: <p/>
-     *
+     * <p>
      * <pre> -X &lt;number of folds&gt;
      *  Number of folds used for cross validation (default 10).</pre>
-     *
+     * <p>
      * <pre> -P &lt;classifier parameter&gt;
      *  Classifier parameter options.
      *  eg: "N 1 5 10" Sets an optimisation parameter for the
@@ -476,29 +509,29 @@ public class ParamSelection
      *  respectively. This parameter may be supplied more than
      *  once to optimise over several classifier options
      *  simultaneously.</pre>
-     *
+     * <p>
      * <pre> -S &lt;num&gt;
      *  Random number seed.
      *  (default 1)</pre>
-     *
+     * <p>
      * <pre> -D
      *  If set, classifier is run in debug mode and
      *  may output additional info to the console</pre>
-     *
+     * <p>
      * <pre> -W
      *  Full name of base classifier.
      *  (default: weka.classifiers.rules.ZeroR)</pre>
-     *
+     * <p>
      * <pre>
      * Options specific to classifier weka.classifiers.rules.ZeroR:
      * </pre>
-     *
+     * <p>
      * <pre> -D
      *  If set, classifier is run in debug mode and
      *  may output additional info to the console</pre>
-     *
-     <!-- options-end -->
-     *
+     * <p>
+     * <!-- options-end -->
+     * <p>
      * Options after -- are passed to the designated sub-classifier. <p>
      *
      * @param options the list of options as an array of strings
@@ -537,15 +570,15 @@ public class ParamSelection
      *
      * @return an array of strings suitable for passing to setOptions
      */
-    public String [] getOptions() {
+    public String[] getOptions() {
 
         String[] superOptions;
 
         if (m_InitOptions != null) {
             try {
-                ((OptionHandler)m_Classifier).setOptions(m_InitOptions.clone());
+                ((OptionHandler) m_Classifier).setOptions(m_InitOptions.clone());
                 superOptions = super.getOptions();
-                ((OptionHandler)m_Classifier).setOptions(m_BestClassifierOptions.clone());
+                ((OptionHandler) m_Classifier).setOptions(m_BestClassifierOptions.clone());
             } catch (Exception e) {
                 throw new RuntimeException("CVParameterSelection: could not set options " +
                         "in getOptions().");
@@ -553,14 +586,17 @@ public class ParamSelection
         } else {
             superOptions = super.getOptions();
         }
-        String [] options = new String [superOptions.length + m_CVParams.size() * 2 + 2];
+        String[] options = new String[superOptions.length + m_CVParams.size() * 2 + 2];
 
         int current = 0;
         for (int i = 0; i < m_CVParams.size(); i++) {
-            options[current++] = "-P"; options[current++] = "" + getCVParameter(i);
+            options[current++] = "-P";
+            options[current++] = "" + getCVParameter(i);
         }
-        options[current++] = "-X"; options[current++] = "" + getNumFolds();
-        options[current++] = "-E"; options[current++] = "" + getEvaluationMetric();
+        options[current++] = "-X";
+        options[current++] = "" + getNumFolds();
+        options[current++] = "-E";
+        options[current++] = "" + getEvaluationMetric();
 
         System.arraycopy(superOptions, 0, options, current,
                 superOptions.length);
@@ -580,7 +616,7 @@ public class ParamSelection
     /**
      * Returns default capabilities of the classifier.
      *
-     * @return      the capabilities of this classifier
+     * @return the capabilities of this classifier
      */
     public Capabilities getCapabilities() {
         Capabilities result = super.getCapabilities();
@@ -608,7 +644,7 @@ public class ParamSelection
         if (!(m_Classifier instanceof OptionHandler)) {
             throw new IllegalArgumentException("Base classifier should be OptionHandler.");
         }
-        m_InitOptions = ((OptionHandler)m_Classifier).getOptions();
+        m_InitOptions = ((OptionHandler) m_Classifier).getOptions();
         m_BestPerformance = -99;
         if (m_EvaluationMetric == EvaluationMetric.AUC ||
                 m_EvaluationMetric == EvaluationMetric.SR) {
@@ -635,17 +671,17 @@ public class ParamSelection
 
         // Set up m_ClassifierOptions -- take getOptions() and remove
         // those being optimised.
-        m_ClassifierOptions = ((OptionHandler)m_Classifier).getOptions();
+        m_ClassifierOptions = ((OptionHandler) m_Classifier).getOptions();
         for (int i = 0; i < m_CVParams.size(); i++) {
-            Utils.getOption(((CVParameter)m_CVParams.elementAt(i)).m_ParamChar,
+            Utils.getOption(((CVParameter) m_CVParams.elementAt(i)).m_ParamChar,
                     m_ClassifierOptions);
         }
         findParamsByCrossValidation(0, trainData, random);
 
-        System.out.println("The best options were: "+Utils.joinOptions(getBestClassifierOptions()));
+        System.out.println("The best options were: " + Utils.joinOptions(getBestClassifierOptions()));
 
-        String [] options = m_BestClassifierOptions.clone();
-        ((OptionHandler)m_Classifier).setOptions(options);
+        String[] options = m_BestClassifierOptions.clone();
+        ((OptionHandler) m_Classifier).setOptions(options);
         m_Classifier.buildClassifier(trainData);
     }
 
@@ -667,10 +703,10 @@ public class ParamSelection
      * by cross-validation
      *
      * @param cvParam the string representation of a scheme parameter. The
-     * format is: <br>
-     * param_char lower_bound upper_bound number_of_steps <br>
-     * eg to search a parameter -P from 1 to 10 by increments of 1: <br>
-     * P 1 10 11 <br>
+     *                format is: <br>
+     *                param_char lower_bound upper_bound number_of_steps <br>
+     *                eg to search a parameter -P from 1 to 10 by increments of 1: <br>
+     *                P 1 10 11 <br>
      * @throws Exception if the parameter specifier is of the wrong format
      */
     public void addCVParameter(String cvParam) throws Exception {
@@ -696,15 +732,16 @@ public class ParamSelection
 
     /**
      * Returns the tip text for this property
+     *
      * @return tip text for this property suitable for
      * displaying in the explorer/experimenter gui
      */
     public String CVParametersTipText() {
-        return "Sets the scheme parameters which are to be set "+
-                "by cross-validation.\n"+
-                "The format for each string should be:\n"+
-                "param_char lower_bound upper_bound number_of_steps\n"+
-                "eg to search a parameter -P from 1 to 10 by increments of 1:\n"+
+        return "Sets the scheme parameters which are to be set " +
+                "by cross-validation.\n" +
+                "The format for each string should be:\n" +
+                "param_char lower_bound upper_bound number_of_steps\n" +
+                "eg to search a parameter -P from 1 to 10 by increments of 1:\n" +
                 "    \"P 1 10 10\" ";
     }
 
@@ -719,7 +756,7 @@ public class ParamSelection
 
         String params[] = new String[CVParams.length];
 
-        for(int i=0; i<CVParams.length; i++)
+        for (int i = 0; i < CVParams.length; i++)
             params[i] = CVParams[i].toString();
 
         return params;
@@ -737,16 +774,19 @@ public class ParamSelection
         FastVector backup = m_CVParams;
         m_CVParams = new FastVector();
 
-        for(int i=0; i<params.length; i++) {
-            try{
-                addCVParameter((String)params[i]);
+        for (int i = 0; i < params.length; i++) {
+            try {
+                addCVParameter((String) params[i]);
+            } catch (Exception ex) {
+                m_CVParams = backup;
+                throw ex;
             }
-            catch(Exception ex) { m_CVParams = backup; throw ex; }
         }
     }
 
     /**
      * Returns the tip text for this property
+     *
      * @return tip text for this property suitable for
      * displaying in the explorer/experimenter gui
      */
@@ -792,15 +832,15 @@ public class ParamSelection
     }
 
     /**
-     *  Returns the type of graph this classifier
-     *  represents.
+     * Returns the type of graph this classifier
+     * represents.
      *
-     *  @return the type of graph this classifier represents
+     * @return the type of graph this classifier represents
      */
     public int graphType() {
 
         if (m_Classifier instanceof Drawable)
-            return ((Drawable)m_Classifier).graphType();
+            return ((Drawable) m_Classifier).graphType();
         else
             return Drawable.NOT_DRAWABLE;
     }
@@ -814,7 +854,7 @@ public class ParamSelection
     public String graph() throws Exception {
 
         if (m_Classifier instanceof Drawable)
-            return ((Drawable)m_Classifier).graph();
+            return ((Drawable) m_Classifier).graph();
         else throw new Exception("Classifier: " +
                 m_Classifier.getClass().getName() + " " +
                 Utils.joinOptions(m_BestClassifierOptions)
@@ -835,12 +875,12 @@ public class ParamSelection
                 + "Classifier: " + m_Classifier.getClass().getName() + "\n";
         try {
             for (int i = 0; i < m_CVParams.size(); i++) {
-                CVParameter cvParam = (CVParameter)m_CVParams.elementAt(i);
+                CVParameter cvParam = (CVParameter) m_CVParams.elementAt(i);
                 result += "Cross-validation Parameter: '-"
                         + cvParam.m_ParamChar + "'"
                         + " ranged from " + cvParam.m_Lower
                         + " to ";
-                switch ((int)(cvParam.m_Lower - cvParam.m_Upper + 0.5)) {
+                switch ((int) (cvParam.m_Lower - cvParam.m_Upper + 0.5)) {
                     case 1:
                         result += m_NumAttributes;
                         break;
@@ -877,7 +917,7 @@ public class ParamSelection
     /**
      * Returns the revision string.
      *
-     * @return		the revision
+     * @return the revision
      */
     public String getRevision() {
         return RevisionUtils.extract("$Revision: 5928 $");
@@ -888,7 +928,7 @@ public class ParamSelection
      *
      * @param argv the options
      */
-    public static void main(String [] argv) {
+    public static void main(String[] argv) {
         runClassifier(new ParamSelection(), argv);
     }
 }

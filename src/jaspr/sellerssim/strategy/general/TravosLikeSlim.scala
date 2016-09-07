@@ -9,8 +9,8 @@ import jaspr.utilities.Dirichlet
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 30/06/16.
- */
+  * Created by phil on 30/06/16.
+  */
 class TravosLikeSlim(baseLearner: Classifier, numBins: Int) extends TravosLike(baseLearner, numBins) {
 
   override val explorationProbability: Double = 0.1
@@ -46,7 +46,7 @@ class TravosLikeSlim(baseLearner: Classifier, numBins: Int) extends TravosLike(b
         val preds = queries.map(trustModel.model.classifyInstance)
         val result =
           if (discreteClass) preds.map(x => trustModel.train.classAttribute().value(x.toInt).toDouble).sum / preds.size
-          else preds.sum/preds.size
+          else preds.sum / preds.size
         new TrustAssessment(baseInit.context, request, result) with Opinions {
           override val opinions = witnessOpinions
         }
@@ -55,7 +55,7 @@ class TravosLikeSlim(baseLearner: Classifier, numBins: Int) extends TravosLike(b
 
   def makeTrainRows(baseRecord: Record, witnesses: Seq[Client]): Seq[Seq[Any]] = {
     val record = baseRecord.asInstanceOf[ServiceRecord with TrustAssessmentRecord with RatingRecord]
-    val opinions: Map[Client,Dirichlet] = record.assessment.asInstanceOf[Opinions].opinions
+    val opinions: Map[Client, Dirichlet] = record.assessment.asInstanceOf[Opinions].opinions
     val direct = (if (discreteClass) discretizeInt(record.rating) else record.rating) ::
       record.service.request.provider.id.toString ::
       Nil
@@ -64,7 +64,7 @@ class TravosLikeSlim(baseLearner: Classifier, numBins: Int) extends TravosLike(b
     )
   }
 
-  def makeTestRows(init: TravosLikeInit, request: ServiceRequest, opinions: Map[Client,Dirichlet]): Seq[Seq[Any]] = {
+  def makeTestRows(init: TravosLikeInit, request: ServiceRequest, opinions: Map[Client, Dirichlet]): Seq[Seq[Any]] = {
     val direct = 0d :: request.provider.id.toString :: Nil
     init.witnesses.map(x => direct ++
       (x.id :: opinions.getOrElse(x, new Dirichlet(numBins)).alpha.toList)

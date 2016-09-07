@@ -11,8 +11,8 @@ import weka.classifiers.Classifier
 import weka.classifiers.bayes.NaiveBayes
 
 /**
- * Created by phil on 29/06/16.
- */
+  * Created by phil on 29/06/16.
+  */
 trait SingleModelStrategy extends CompositionStrategy with Exploration with MlrsCore {
 
   override val explorationProbability: Double = 0.1
@@ -32,7 +32,7 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
 
   class BasicInit(context: ClientContext,
                   val trustModel: Option[MlrsModel]
-                   ) extends StrategyInit(context)
+                 ) extends StrategyInit(context)
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val records = getRecords(network, context)

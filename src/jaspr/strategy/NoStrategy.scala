@@ -6,8 +6,8 @@ import jaspr.core.strategy.{NoExploration, Strategy, StrategyInit}
 import jaspr.utilities.Chooser
 
 /**
- * Created by phil on 16/03/16.
- */
+  * Created by phil on 16/03/16.
+  */
 class NoStrategy extends Strategy with NoExploration {
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
@@ -15,7 +15,7 @@ class NoStrategy extends Strategy with NoExploration {
   }
 
   override def computeAssessment(init: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    new TrustAssessment(init.context, request, Chooser.randomDouble(0,1))
+    new TrustAssessment(init.context, request, Chooser.randomDouble(0, 1))
   }
 
   override def rank(init: StrategyInit, requests: Seq[ServiceRequest]): Seq[TrustAssessment] = {

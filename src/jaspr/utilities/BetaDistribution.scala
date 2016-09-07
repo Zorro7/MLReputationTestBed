@@ -13,7 +13,7 @@ class BetaDistribution(val alpha: Double = 0, val beta: Double = 0) {
   }
 
   def /(that: BetaDistribution): BetaDistribution = {
-    new BetaDistribution(alpha/that.alpha, beta/that.beta)
+    new BetaDistribution(alpha / that.alpha, beta / that.beta)
   }
 
   def integrate(low: Double, high: Double): Double = {
@@ -21,7 +21,7 @@ class BetaDistribution(val alpha: Double = 0, val beta: Double = 0) {
   }
 
   def numEvents(): Double = {
-    alpha+beta
+    alpha + beta
   }
 
   def expected(): Double = {
@@ -34,7 +34,7 @@ class BetaDistribution(val alpha: Double = 0, val beta: Double = 0) {
 
   def numer(): Double = alpha
 
-  def denom(): Double = alpha+beta
+  def denom(): Double = alpha + beta
 
   def getBin(nbins: Int): Double = {
     (expected * nbins).floor / nbins

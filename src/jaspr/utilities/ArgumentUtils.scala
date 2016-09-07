@@ -5,8 +5,8 @@ import jaspr.weka.core.LearnerFactory
 import scala.util.Try
 
 /**
- * Created by phil on 31/03/16.
- */
+  * Created by phil on 31/03/16.
+  */
 object ArgumentUtils {
 
   def convargs(sargs: Seq[String]): Seq[AnyRef] = {

@@ -4,8 +4,8 @@ import jaspr.core.service.Service
 import jaspr.utilities.{NamedEntity, Tickable}
 
 /**
- * Created by phil on 17/03/16.
- */
+  * Created by phil on 17/03/16.
+  */
 trait Event extends NamedEntity with Tickable {
 
   val providers: Seq[Provider]
@@ -22,5 +22,6 @@ trait Event extends NamedEntity with Tickable {
   }
 
   def affect(service: Service)
+
   def affect(provider: Provider)
 }

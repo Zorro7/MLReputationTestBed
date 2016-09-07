@@ -6,8 +6,8 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 trait Provider extends Agent with AdvertProperties {
 
   val currentServices: mutable.ListBuffer[Service] = new ListBuffer[Service]
@@ -18,7 +18,7 @@ trait Provider extends Agent with AdvertProperties {
     tryDeliverServices()
   }
 
-  def tryStartServices(): Unit  = {
+  def tryStartServices(): Unit = {
     for (service <- currentServices) {
       tryStartService(service)
     }
@@ -40,6 +40,8 @@ trait Provider extends Agent with AdvertProperties {
   }
 
   def capableOf(payload: Payload, duration: Int): Boolean
+
   def receiveRequest(request: ServiceRequest): Boolean
+
   def affectService(service: Service): Unit
 }

@@ -9,25 +9,25 @@ import weka.core.Instances
 import scala.collection.mutable
 
 /**
- * Created by phil on 30/03/16.
- */
+  * Created by phil on 30/03/16.
+  */
 
 class MlrsDirectInit(context: ClientContext,
                      val directModel: Classifier,
                      val directTrain: Instances,
-                     val directAttVals: Iterable[mutable.Map[Any,Double]],
+                     val directAttVals: Iterable[mutable.Map[Any, Double]],
                      val freakEventLikelihood: Map[String, Double]
-                      ) extends StrategyInit(context)
+                    ) extends StrategyInit(context)
 
 class MlrsWitnessInit(context: ClientContext,
                       val witnessModel: Classifier,
                       val witnessTrain: Instances,
-                      val witnessAttVals: Iterable[mutable.Map[Any,Double]],
+                      val witnessAttVals: Iterable[mutable.Map[Any, Double]],
                       val witnessRatings: Seq[BuyerRecord],
                       val freakEventLikelihood: Map[String, Double]
-                       ) extends StrategyInit(context)
+                     ) extends StrategyInit(context)
 
 class MlrsInit(context: ClientContext,
                val directInit: MlrsDirectInit,
                val witnessInit: MlrsWitnessInit
-                ) extends StrategyInit(context)
+              ) extends StrategyInit(context)

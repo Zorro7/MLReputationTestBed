@@ -2,11 +2,10 @@ package jaspr.simplesim.agent
 
 import jaspr.core.agent.Market
 import jaspr.core.service.Service
-import jaspr.core.simulation.Simulation
 
 /**
- * Created by phil on 17/03/16.
- */
+  * Created by phil on 17/03/16.
+  */
 object SimpleMarket extends Market {
 
   override def deliver(service: Service): Double = {

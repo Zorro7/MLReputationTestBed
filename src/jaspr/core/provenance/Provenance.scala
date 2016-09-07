@@ -1,11 +1,12 @@
 package jaspr.core.provenance
 
 /**
- * Created by phil on 16/03/16.
- */
+  * Created by phil on 16/03/16.
+  */
 trait Provenance {
 
   val memoryLimit: Int
+
   def provenanceEmpty = provenance.isEmpty
 
   protected var provenance: List[Record] = Nil
@@ -16,5 +17,6 @@ trait Provenance {
   }
 
   def getProvenance[T <: Record](agent: Provenance): Seq[T]
+
   protected[this] def getProvenance[T <: Record]: Seq[T] = getProvenance[T](this)
 }

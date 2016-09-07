@@ -6,8 +6,8 @@ import jaspr.utilities.NamedEntity
 import scala.annotation.tailrec
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 
 
 class ServiceRequest(val client: Client,
@@ -17,7 +17,7 @@ class ServiceRequest(val client: Client,
                      val payload: Payload,
                      val market: Market,
                      val dependencies: Seq[ServiceRequest] = Nil
-                      ) extends NamedEntity {
+                    ) extends NamedEntity {
 
   def flatten(): Seq[ServiceRequest] = {
     @tailrec
@@ -32,9 +32,11 @@ class ServiceRequest(val client: Client,
 
   private var delivered = false
   private var started = false
+
   def isDelivered = {
     delivered
   }
+
   def isStarted = {
     started
   }
@@ -58,6 +60,6 @@ class ServiceRequest(val client: Client,
   }
 
   override def toString: String = {
-    super.toString+"["+client+","+provider+","+start+","+duration+","+payload+"]"
+    super.toString + "[" + client + "," + provider + "," + start + "," + duration + "," + payload + "]"
   }
 }

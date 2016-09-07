@@ -14,8 +14,8 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable
 
 /**
- * Created by phil on 19/03/16.
- */
+  * Created by phil on 19/03/16.
+  */
 trait IpawCore extends Discretization {
   val classIndex: Int = 0 // DO NOT CHANGE THIS (LOOK AT MAKEROW)
 
@@ -24,18 +24,21 @@ trait IpawCore extends Discretization {
   override val upper: Double = 1d
   override val numBins: Int = 5
   override val lower: Double = -1d
-  
+
 
   def meanFunch(x: RatingRecord): Double = x.rating
+
   def startFunch(x: ServiceRecord): Double = (x.service.start - x.service.request.start).toDouble
+
   def endFunch(x: ServiceRecord): Double =
     x.service.request.duration.toDouble / x.service.duration.toDouble
+
   //    (x.service.end - x.service.request.end).toDouble / x.service.request.duration.toDouble
   def qualityFunch(x: ServiceRecord): Double =
-    x.service.payload.asInstanceOf[GoodPayload].quality - x.service.request.payload.asInstanceOf[GoodPayload].quality
+  x.service.payload.asInstanceOf[GoodPayload].quality - x.service.request.payload.asInstanceOf[GoodPayload].quality
+
   def quantityFunch(x: ServiceRecord): Double =
     x.service.payload.asInstanceOf[GoodPayload].quantity - x.service.request.payload.asInstanceOf[GoodPayload].quantity
-
 
 
   class IpawModel(val model: Classifier, val attVals: Iterable[mutable.Map[Any, Double]], val train: Instances) {
@@ -43,14 +46,14 @@ trait IpawCore extends Discretization {
   }
 
   class IpawInit(
-                 context: ClientContext,
-                 val directRecords: Seq[ServiceRecord with RatingRecord],
-                 val models: Seq[Seq[IpawModel]],
-                 val eventLikelihoods: Map[String,Double]
-                   ) extends StrategyInit(context)
+                  context: ClientContext,
+                  val directRecords: Seq[ServiceRecord with RatingRecord],
+                  val models: Seq[Seq[IpawModel]],
+                  val eventLikelihoods: Map[String, Double]
+                ) extends StrategyInit(context)
 
 
-  def lookup[T](map: mutable.Map[T,Double], item: T): Double = {
+  def lookup[T](map: mutable.Map[T, Double], item: T): Double = {
     if (map.contains(item)) map(item)
     else {
       map(item) = map.size
@@ -62,13 +65,13 @@ trait IpawCore extends Discretization {
     (if (discreteClass) discretizeInt(classVal) else classVal) :: inputs.toList
   }
 
-  def convertRowsToDouble(rows: Iterable[List[Any]], attVals: Iterable[mutable.Map[Any,Double]]): Iterable[List[Double]] = {
+  def convertRowsToDouble(rows: Iterable[List[Any]], attVals: Iterable[mutable.Map[Any, Double]]): Iterable[List[Double]] = {
     for (row <- rows) yield {
       convertRowToDouble(row, attVals)
     }
   }
 
-  def convertRowToDouble(row: List[Any], attVals: Iterable[mutable.Map[Any,Double]]): List[Double] = {
+  def convertRowToDouble(row: List[Any], attVals: Iterable[mutable.Map[Any, Double]]): List[Double] = {
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) yield {
       item match {
         case x: Int => if (i == classIndex) x else lookup(vals, x)
@@ -79,11 +82,11 @@ trait IpawCore extends Discretization {
     }
   }
 
-  def convertRowsToInstances(rows: Iterable[List[Any]], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances): Iterable[Instance] = {
+  def convertRowsToInstances(rows: Iterable[List[Any]], attVals: Iterable[mutable.Map[Any, Double]], dataset: Instances): Iterable[Instance] = {
     rows.map(convertRowToInstance(_, attVals, dataset))
   }
 
-  def convertRowToInstance(row: List[Any], attVals: Iterable[mutable.Map[Any,Double]], dataset: Instances): Instance = {
+  def convertRowToInstance(row: List[Any], attVals: Iterable[mutable.Map[Any, Double]], dataset: Instances): Instance = {
     val inst = new DenseInstance(dataset.numAttributes())
     inst.setDataset(dataset)
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) {
@@ -93,20 +96,20 @@ trait IpawCore extends Discretization {
           else inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue()))
         case x: Double => inst.setValue(i, x)
         case x: String => inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue()))
-        case whatever => throw new Exception("Unknown type to build attribute from: "+whatever.getClass)
+        case whatever => throw new Exception("Unknown type to build attribute from: " + whatever.getClass)
       }
     }
     inst
   }
 
-  def makeAtts(row: List[Any], attVals: Iterable[mutable.Map[Any,Double]]): Iterable[Attribute] = {
-    for (((item,vals),i) <- row.zip(attVals).zipWithIndex) yield {
-      if (i==classIndex) if (discreteClass) new Attribute("target", discVals) else new Attribute("target")
+  def makeAtts(row: List[Any], attVals: Iterable[mutable.Map[Any, Double]]): Iterable[Attribute] = {
+    for (((item, vals), i) <- row.zip(attVals).zipWithIndex) yield {
+      if (i == classIndex) if (discreteClass) new Attribute("target", discVals) else new Attribute("target")
       else {
         item match {
-          case x: Double => new Attribute("A"+i)
-          case x: Int => new Attribute("A"+i, vals.toList.sortBy(_._2).map(_._1.toString))
-          case x: String => new Attribute("A"+i, vals.toList.sortBy(_._2).map(_._1.toString))
+          case x: Double => new Attribute("A" + i)
+          case x: Int => new Attribute("A" + i, vals.toList.sortBy(_._2).map(_._1.toString))
+          case x: String => new Attribute("A" + i, vals.toList.sortBy(_._2).map(_._1.toString))
           case whatever => throw new Exception("Unknown type to build attribute from.")
         }
       }
@@ -136,9 +139,9 @@ trait IpawCore extends Discretization {
     }
   }
 
-  def predicts(model: IpawModel, testRows: Iterable[List[Any]], events: Map[String,Double]): Double = {
-//    println(testRows.map(row => row(1)+": "+events.getOrElse(row(1).toString, 0d)))
-//    println(testRows.map(row => predict(model, row)+" * "+events.getOrElse(row(1).toString, 0d)))
+  def predicts(model: IpawModel, testRows: Iterable[List[Any]], events: Map[String, Double]): Double = {
+    //    println(testRows.map(row => row(1)+": "+events.getOrElse(row(1).toString, 0d)))
+    //    println(testRows.map(row => predict(model, row)+" * "+events.getOrElse(row(1).toString, 0d)))
     val preds = testRows.map(row => predict(model, row) * events.getOrElse(row(1).toString, 0d))
     preds.sum / testRows.size.toDouble
   }

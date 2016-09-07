@@ -5,8 +5,8 @@ import jaspr.core.simulation.{Network, Simulation}
 import jaspr.utilities.Chooser
 
 /**
- * Created by phil on 21/03/16.
- */
+  * Created by phil on 21/03/16.
+  */
 object SellerSimulation extends App {
   val results = Simulation(new StaticSellerMultiConfiguration)
 }

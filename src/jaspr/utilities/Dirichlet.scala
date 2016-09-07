@@ -10,7 +10,9 @@ object Dirichlet {
     x.map(Statistics.lnGamma).sum - Statistics.lnGamma(x.sum)
   }
 
-  val rand: RandomVariates = new RandomVariates(); // alpha, lambda, engine.
+  val rand: RandomVariates = new RandomVariates();
+
+  // alpha, lambda, engine.
 
   def apply(alphaVals: Double*) = {
     new Dirichlet(alphaVals)
@@ -23,7 +25,9 @@ class Dirichlet(val alpha: RowVector, val domain: RowVector) {
   import Dirichlet._
 
   def this(alpha: Seq[Double]) = this(alpha, Range.Double(0, alpha.size, 1))
+
   def this(dim: Int, value: Double) = this(Seq.fill(dim)(value))
+
   def this(dim: Int) = this(dim, 1d)
 
   def mean(): RowVector = {
@@ -31,15 +35,15 @@ class Dirichlet(val alpha: RowVector, val domain: RowVector) {
     alpha.map(_ / sum)
   }
 
-  def expval(funch: RowVector=>RowVector = x=>x) = {
+  def expval(funch: RowVector => RowVector = x => x) = {
     (mean @* funch(domain)).sum
   }
 
-  def expvar(funch: RowVector=>RowVector = x=>x) = {
+  def expvar(funch: RowVector => RowVector = x => x) = {
     (mean @* ((funch(domain) @^ 2) @- expval(funch))).sum
   }
 
-  def stderr(funch: RowVector=>RowVector = x=>x) = {
+  def stderr(funch: RowVector => RowVector = x => x) = {
     Math.sqrt(expvar(funch))
   }
 
@@ -47,8 +51,9 @@ class Dirichlet(val alpha: RowVector, val domain: RowVector) {
     lnbeta(this.alpha @+ that.alpha @+ 1) - lnbeta(this.alpha) - lnbeta(that.alpha)
   }
 
-  def observe(data: Seq[Double]): Dirichlet = { // this method may be inefficient?
-    val tmp = (alpha zip domain).map(x=> (x._1+data.count(_ == x._2), x._2)).unzip
+  def observe(data: Seq[Double]): Dirichlet = {
+    // this method may be inefficient?
+    val tmp = (alpha zip domain).map(x => (x._1 + data.count(_ == x._2), x._2)).unzip
     new Dirichlet(tmp._1, tmp._2)
   }
 
@@ -56,13 +61,13 @@ class Dirichlet(val alpha: RowVector, val domain: RowVector) {
     lnbeta(observe(data).alpha) - lnbeta(this.alpha)
   }
 
-//  def sample(): RowVector = {
-//    alpha.map(rand.nextGamma) // alpha, lambda = 1 TODO check
-//  }
+  //  def sample(): RowVector = {
+  //    alpha.map(rand.nextGamma) // alpha, lambda = 1 TODO check
+  //  }
 
-//  def sample(n: Int): Seq[RowVector] = {
-//    for (i <- 1 to n) yield sample()
-//  }
+  //  def sample(n: Int): Seq[RowVector] = {
+  //    for (i <- 1 to n) yield sample()
+  //  }
 
 
   def size = {
@@ -70,6 +75,6 @@ class Dirichlet(val alpha: RowVector, val domain: RowVector) {
   }
 
   override def toString: String = {
-    alpha+", "+domain
+    alpha + ", " + domain
   }
 }

@@ -11,53 +11,53 @@ import jaspr.utilities.Chooser
 import scala.collection.immutable.SortedMap
 
 /**
- * Created by phil on 21/03/16.
- */
+  * Created by phil on 21/03/16.
+  */
 object StaticSellerMultiConfiguration extends App {
 
   val parser = new scopt.OptionParser[StaticSellerMultiConfiguration]("SellerConfiguration") {
-    opt[Seq[String]]("strategy") required() action {(x,c) => c.copy(strategies = x)}
-    opt[Int]("numRounds") required() action {(x,c) => c.copy(numRounds = x)}
-    opt[Int]("numSimulations") required() action {(x,c) => c.copy(numSimulations = x)}
-    opt[Double]("clientInvolvementLikelihood") required() action {(x,c) => c.copy(clientInvolvementLikelihood = x)}
-    opt[Int]("memoryLimit") required() action {(x,c) => c.copy(memoryLimit = x)}
-    opt[Int]("numClients") required() action {(x,c) => c.copy(numClients = x)}
-    opt[Int]("numProviders") required() action {(x,c) => c.copy(numProviders = x)}
-    opt[Int]("numSimCapabilities") required() action {(x,c) => c.copy(numSimCapabilities = x)}
-    opt[Int]("numProviderCapabilities") required() action {(x,c) => c.copy(numProviderCapabilities = x)}
-    opt[Double]("noiseRange") required() action {(x,c) => c.copy(noiseRange = x)}
-    opt[Int]("numTerms") required() action {(x,c) => c.copy(numTerms = x)}
-    opt[Int]("numAdverts") required() action {(x,c) => c.copy(numAdverts = x)}
-    opt[Boolean]("usePreferences") required() action {(x,c) => c.copy(usePreferences = x)}
-    opt[Double]("eventLikelihood") required() action {(x,c) => c.copy(eventLikelihood = x)}
-    opt[Double]("eventEffects") required() action {(x,c) => c.copy(eventEffects = x)}
-    opt[Double]("honestWitnessLikelihood") required() action {(x,c) => c.copy(honestWitnessLikelihood = x)}
-    opt[Double]("pessimisticWitnessLikelihood") required() action {(x,c) => c.copy(pessimisticWitnessLikelihood = x)}
-    opt[Double]("optimisticWitnessLikelihood") required() action {(x,c) => c.copy(optimisticWitnessLikelihood = x)}
-    opt[Double]("negationWitnessLikelihood") required() action {(x,c) => c.copy(negationWitnessLikelihood = x)}
-    opt[Double]("randomWitnessLikelihood") required() action {(x,c) => c.copy(randomWitnessLikelihood = x)}
-    opt[Double]("promotionWitnessLikelihood") required() action {(x,c) => c.copy(promotionWitnessLikelihood = x)}
-    opt[Double]("slanderWitnessLikelihood") required() action {(x,c) => c.copy(slanderWitnessLikelihood = x)}
-    opt[Double]("providersToPromote") required() action {(x,c) => c.copy(providersToPromote = x)}
-    opt[Double]("providersToSlander") required() action {(x,c) => c.copy(providersToSlander = x)}
-    opt[Double]("witnessRequestLikelihood") required() action {(x,c) => c.copy(witnessRequestLikelihood = x)}
+    opt[Seq[String]]("strategy") required() action { (x, c) => c.copy(strategies = x) }
+    opt[Int]("numRounds") required() action { (x, c) => c.copy(numRounds = x) }
+    opt[Int]("numSimulations") required() action { (x, c) => c.copy(numSimulations = x) }
+    opt[Double]("clientInvolvementLikelihood") required() action { (x, c) => c.copy(clientInvolvementLikelihood = x) }
+    opt[Int]("memoryLimit") required() action { (x, c) => c.copy(memoryLimit = x) }
+    opt[Int]("numClients") required() action { (x, c) => c.copy(numClients = x) }
+    opt[Int]("numProviders") required() action { (x, c) => c.copy(numProviders = x) }
+    opt[Int]("numSimCapabilities") required() action { (x, c) => c.copy(numSimCapabilities = x) }
+    opt[Int]("numProviderCapabilities") required() action { (x, c) => c.copy(numProviderCapabilities = x) }
+    opt[Double]("noiseRange") required() action { (x, c) => c.copy(noiseRange = x) }
+    opt[Int]("numTerms") required() action { (x, c) => c.copy(numTerms = x) }
+    opt[Int]("numAdverts") required() action { (x, c) => c.copy(numAdverts = x) }
+    opt[Boolean]("usePreferences") required() action { (x, c) => c.copy(usePreferences = x) }
+    opt[Double]("eventLikelihood") required() action { (x, c) => c.copy(eventLikelihood = x) }
+    opt[Double]("eventEffects") required() action { (x, c) => c.copy(eventEffects = x) }
+    opt[Double]("honestWitnessLikelihood") required() action { (x, c) => c.copy(honestWitnessLikelihood = x) }
+    opt[Double]("pessimisticWitnessLikelihood") required() action { (x, c) => c.copy(pessimisticWitnessLikelihood = x) }
+    opt[Double]("optimisticWitnessLikelihood") required() action { (x, c) => c.copy(optimisticWitnessLikelihood = x) }
+    opt[Double]("negationWitnessLikelihood") required() action { (x, c) => c.copy(negationWitnessLikelihood = x) }
+    opt[Double]("randomWitnessLikelihood") required() action { (x, c) => c.copy(randomWitnessLikelihood = x) }
+    opt[Double]("promotionWitnessLikelihood") required() action { (x, c) => c.copy(promotionWitnessLikelihood = x) }
+    opt[Double]("slanderWitnessLikelihood") required() action { (x, c) => c.copy(slanderWitnessLikelihood = x) }
+    opt[Double]("providersToPromote") required() action { (x, c) => c.copy(providersToPromote = x) }
+    opt[Double]("providersToSlander") required() action { (x, c) => c.copy(providersToSlander = x) }
+    opt[Double]("witnessRequestLikelihood") required() action { (x, c) => c.copy(witnessRequestLikelihood = x) }
   }
 
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
         "jaspr.strategy.NoStrategy," +
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;true),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
-//        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
+        //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
+        //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;true),"+
+        //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
+        //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
         "jaspr.strategy.fire.Fire(0.0)," +
         "jaspr.strategy.fire.Fire(0.5)," +
         "jaspr.strategy.betareputation.BetaReputation," +
-        "jaspr.strategy.betareputation.Travos,"+
-//          "jaspr.strategy.blade.Blade(2)," +
-//        "jaspr.strategy.habit.Habit(2),"+
-//        "jaspr.strategy.stereotype.Burnett,"+
+        "jaspr.strategy.betareputation.Travos," +
+        //          "jaspr.strategy.blade.Blade(2)," +
+        //        "jaspr.strategy.habit.Habit(2),"+
+        //        "jaspr.strategy.stereotype.Burnett,"+
         " --numSimulations 10 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -83,50 +83,49 @@ object StaticSellerMultiConfiguration extends App {
         "--usePreferences true").split(" ")
     } else args
 
-  println(argsplt.toList mkString("["," ","]"))
+  println(argsplt.toList mkString("[", " ", "]"))
 
   parser.parse(argsplt, StaticSellerMultiConfiguration()) match {
     case Some(x) =>
       val results = Simulation(x)
-      results.printChange(0,-1, _.recordsStored)
+      results.printChange(0, -1, _.recordsStored)
     case None =>
   }
 }
 
 
 case class StaticSellerMultiConfiguration(
-                               strategies: Seq[String] = Nil,
-                               numRounds: Int = 250,
-                               numSimulations: Int = 1,
-                               clientInvolvementLikelihood: Double = 0.01,
-                               witnessRequestLikelihood: Double = 0.1,
-                               memoryLimit: Int = 100,
-                               numClients: Int = 10,
-                               numProviders: Int = 25,
-                               numSimCapabilities: Int = 10,
-                               numProviderCapabilities: Int = 5,
-                               noiseRange: Double = 1d,
-                               numTerms: Int = 2,
-                               numAdverts: Int = 2,
-                               usePreferences: Boolean = true,
-                               eventLikelihood: Double = 0,
-                               eventEffects: Double = 0,
-                               honestWitnessLikelihood: Double = 0.1,
-                               pessimisticWitnessLikelihood: Double = 0.1,
-                               optimisticWitnessLikelihood: Double = 0.1,
-                               negationWitnessLikelihood: Double = 0.1,
-                               randomWitnessLikelihood: Double = 0.1,
-                               promotionWitnessLikelihood: Double = 0.1,
-                               slanderWitnessLikelihood: Double = 0.1,
-                               providersToPromote: Double = 0.1,
-                               providersToSlander: Double = 0.1
-                                ) extends MultiConfiguration {
+                                           strategies: Seq[String] = Nil,
+                                           numRounds: Int = 250,
+                                           numSimulations: Int = 1,
+                                           clientInvolvementLikelihood: Double = 0.01,
+                                           witnessRequestLikelihood: Double = 0.1,
+                                           memoryLimit: Int = 100,
+                                           numClients: Int = 10,
+                                           numProviders: Int = 25,
+                                           numSimCapabilities: Int = 10,
+                                           numProviderCapabilities: Int = 5,
+                                           noiseRange: Double = 1d,
+                                           numTerms: Int = 2,
+                                           numAdverts: Int = 2,
+                                           usePreferences: Boolean = true,
+                                           eventLikelihood: Double = 0,
+                                           eventEffects: Double = 0,
+                                           honestWitnessLikelihood: Double = 0.1,
+                                           pessimisticWitnessLikelihood: Double = 0.1,
+                                           optimisticWitnessLikelihood: Double = 0.1,
+                                           negationWitnessLikelihood: Double = 0.1,
+                                           randomWitnessLikelihood: Double = 0.1,
+                                           promotionWitnessLikelihood: Double = 0.1,
+                                           slanderWitnessLikelihood: Double = 0.1,
+                                           providersToPromote: Double = 0.1,
+                                           providersToSlander: Double = 0.1
+                                         ) extends MultiConfiguration {
   override val directComparison = true
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-//  override val _seed = 1
-
+  //  override val _seed = 1
 
 
   override lazy val configs: Seq[Configuration] =
@@ -160,8 +159,6 @@ case class StaticSellerMultiConfiguration(
       )
     })
 }
-
-
 
 
 abstract class SellerConfiguration extends Configuration {
@@ -202,8 +199,6 @@ abstract class SellerConfiguration extends Configuration {
 }
 
 
-
-
 class StaticSellerConfiguration(val _strategy: Strategy,
                                 override val numRounds: Int,
                                 override val numSimulations: Int,
@@ -229,34 +224,37 @@ class StaticSellerConfiguration(val _strategy: Strategy,
                                 val slanderWitnessLikelihood: Double,
                                 val providersToPromote: Double,
                                 val providersToSlander: Double
-                           ) extends SellerConfiguration {
+                               ) extends SellerConfiguration {
   override def newSimulation(): Simulation = {
     new SellerSimulation(this)
   }
+
   override def network(simulation: SellerSimulation): SellerNetwork = {
     new StaticSellerNetwork(simulation)
   }
+
   override def strategy(agent: Client): Strategy = _strategy
 
 
-  override val baseUtility: Double = 1d/2d
+  override val baseUtility: Double = 1d / 2d
 
-//  val baseUtility = if (usePreferences) 2d/3d else 1d/2d
-//  val baseUtility = 1d
+  //  val baseUtility = if (usePreferences) 2d/3d else 1d/2d
+  //  val baseUtility = 1d
 
   def addNoise(x: Double): Double = {
     //    Chooser.bound(x + Chooser.randomDouble(-noiseRange/2d, noiseRange/2d), -1, 1)
-    val ret = (x + Chooser.randomDouble(-1*noiseRange,1*noiseRange))/2d
-//    val ret = (x + Chooser.nextGaussian()*noiseRange)/2d
-//    val ret = (x+noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1)
+    val ret = (x + Chooser.randomDouble(-1 * noiseRange, 1 * noiseRange)) / 2d
+    //    val ret = (x + Chooser.nextGaussian()*noiseRange)/2d
+    //    val ret = (x+noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1)
     //    Chooser.bound(x + Chooser.randomDouble(-1,1), -1, 1)
-//    println(x, ret)
-//   val ret =  x + Chooser.randomDouble(-1d,1d)
+    //    println(x, ret)
+    //   val ret =  x + Chooser.randomDouble(-1d,1d)
     ret
   }
 
   // Services that exist in the simulation
   override var simcapabilities: Seq[ProductPayload] = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
+
   // Services that a given provider is capable of providing - and with associated performance properties.
   def capabilities(provider: Provider): Seq[ProductPayload] = {
     var caps = Chooser.sample(simcapabilities, numProviderCapabilities)
@@ -265,7 +263,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
         x._1 -> addNoise(x._2.doubleValue)
       )
     ))
-//    println(provider, caps)
+    //    println(provider, caps)
     caps
   }
 
@@ -280,20 +278,19 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   }
 
 
-
   // Properties of a provider agent
-  def properties(agent: Agent): SortedMap[String,Property] = {
-    (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
+  def properties(agent: Agent): SortedMap[String, Property] = {
+    (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
   }
 
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
-  def preferences(agent: Client): SortedMap[String,Property] = {
-    if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d,1d))).toList
-    else Nil//(1 to numTerms).map(x => new Property(x.toString, 0d)).toList
+  def preferences(agent: Client): SortedMap[String, Property] = {
+    if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
+    else Nil //(1 to numTerms).map(x => new Property(x.toString, 0d)).toList
   }
 
-  def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
+  def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
     agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
   }
 
@@ -305,8 +302,8 @@ class StaticSellerConfiguration(val _strategy: Strategy,
         new OptimisticWitnessModel ::
         new NegationWitnessModel ::
         new RandomWitnessModel ::
-        new PromotionWitnessModel(Chooser.sample(network.providers, (providersToPromote*numProviders).toInt)) ::
-        new SlanderWitnessModel(Chooser.sample(network.providers, (providersToSlander*numProviders).toInt)) ::
+        new PromotionWitnessModel(Chooser.sample(network.providers, (providersToPromote * numProviders).toInt)) ::
+        new SlanderWitnessModel(Chooser.sample(network.providers, (providersToSlander * numProviders).toInt)) ::
         Nil,
       honestWitnessLikelihood ::
         pessimisticWitnessLikelihood ::

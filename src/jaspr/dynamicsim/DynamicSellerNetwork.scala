@@ -5,8 +5,8 @@ import jaspr.sellerssim.agent.{Buyer, Seller, SellerMarket}
 import jaspr.sellerssim.{SellerNetwork, SellerSimulation}
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 class DynamicSellerNetwork(override val simulation: SellerSimulation) extends SellerNetwork {
 
   override val clients: Seq[Buyer] = List.fill(simulation.config.numClients)(new Buyer(simulation))

@@ -5,8 +5,8 @@ import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.strategy.{CompositionStrategy, RatingStrategy, RatingStrategyInit}
 
 /**
- * Created by phil on 19/03/16.
- */
+  * Created by phil on 19/03/16.
+  */
 class BetaReputation extends RatingStrategy with CompositionStrategy with Exploration with BetaCore {
   override val explorationProbability: Double = 0.1
   val eps: Double = 0.1

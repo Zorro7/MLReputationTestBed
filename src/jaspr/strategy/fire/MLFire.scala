@@ -12,11 +12,11 @@ import weka.classifiers.rules.OneR
 import scala.math._
 
 /**
- * Created by phil on 30/03/16.
- */
+  * Created by phil on 30/03/16.
+  */
 class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with Exploration with MlrsCore {
 
-  override val name = this.getClass.getSimpleName+"-"+witnessWeight
+  override val name = this.getClass.getSimpleName + "-" + witnessWeight
   override val numBins: Int = 10
 
   val baseModel = new OneR
@@ -31,20 +31,20 @@ class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with E
   class MLFireInit(context: ClientContext,
                    val directModel: MlrsModel,
                    val witnessModel: MlrsModel
-                    ) extends StrategyInit(context)
+                  ) extends StrategyInit(context)
 
   override def initStrategy(network: Network, context: ClientContext) = {
     val direct = context.client.getProvenance(context.client)
     val directModel =
       if (direct.isEmpty) null
-      else makeMlrsModel(direct, baseModel, makeTrainRows, makeTrainWeight(context, _:ServiceRecord))
+      else makeMlrsModel(direct, baseModel, makeTrainRows, makeTrainWeight(context, _: ServiceRecord))
 
     val witnessModel =
       if (witnessWeight == 0d) null
       else {
         val witness = network.gatherProvenance(context.client)
         if (witness.isEmpty) null
-        else makeMlrsModel(witness, baseModel, makeTrainRows, makeTrainWeight(context, _:ServiceRecord))
+        else makeMlrsModel(witness, baseModel, makeTrainRows, makeTrainWeight(context, _: ServiceRecord))
       }
 
     new MLFireInit(context, directModel, witnessModel)
@@ -68,12 +68,12 @@ class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with E
         undiscretize(new Dirichlet(x).expval())
       } else 0d
 
-    new TrustAssessment(baseInit.context, request, (1-witnessWeight)*direct + witnessWeight*witness)
+    new TrustAssessment(baseInit.context, request, (1 - witnessWeight) * direct + witnessWeight * witness)
   }
 
   def makeTrainWeight(context: ClientContext, record: ServiceRecord): Double = {
-//    1d / (context.round - record.asInstanceOf[ServiceRecord].service.end).toDouble
-//    weightRating(record.service.end, context.round)
+    //    1d / (context.round - record.asInstanceOf[ServiceRecord].service.end).toDouble
+    //    weightRating(record.service.end, context.round)
     1d
   }
 

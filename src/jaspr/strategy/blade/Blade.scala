@@ -9,11 +9,11 @@ import jaspr.utilities.Dirichlet
 import jaspr.utilities.matrix.{Matrix, RowVector}
 
 /**
- * Created by phil on 25/03/16.
- */
+  * Created by phil on 25/03/16.
+  */
 class Blade(override val numBins: Int) extends CompositionStrategy with RatingStrategy with Exploration with BladeCore {
 
-  override val name: String = this.getClass.getSimpleName+"-"+numBins
+  override val name: String = this.getClass.getSimpleName + "-" + numBins
 
   override val explorationProbability: Double = 0.1
 
@@ -33,11 +33,11 @@ class Blade(override val numBins: Int) extends CompositionStrategy with RatingSt
 
     val repModels = this.getRepModels(witness, trustees, witnesses)
 
-    val repMatrix: Map[(Client,Provider),Matrix] =
+    val repMatrix: Map[(Client, Provider), Matrix] =
       (for (tr <- witnesses; te <- trustees) yield {
-        val model = repModels.getOrElse((tr,te), repPrior)
+        val model = repModels.getOrElse((tr, te), repPrior)
         val opinionObs: RowVector = model.alpha @- repPrior.alpha
-        (tr,te) -> dirModels.getOrElse(te, dirPrior).mean().transpose() @* opinionObs
+        (tr, te) -> dirModels.getOrElse(te, dirPrior).mean().transpose() @* opinionObs
       }).toMap
 
     new BladeInit(
@@ -65,13 +65,13 @@ class Blade(override val numBins: Int) extends CompositionStrategy with RatingSt
     val likelihoods = for (tr <- witnesses) yield {
       val cpt: Matrix = repMatrix
         .filter(x => x._1._1 == tr && x._1._2 != trustee).values
-        .foldLeft(new Matrix(dirModelPrior.size,repModelPrior.size,1d))(_ @+ _)
+        .foldLeft(new Matrix(dirModelPrior.size, repModelPrior.size, 1d))(_ @+ _)
 
       val cptnorm = cpt @/ cpt.colsum().sum
 
       val rcond: Matrix = divRcondRows(divMeanPrior(priorModel, cptDivRowSum(cptnorm)))
 
-      val sourceAlpha: RowVector = repModels.getOrElse((tr,trustee), repModelPrior).alpha @- 1d
+      val sourceAlpha: RowVector = repModels.getOrElse((tr, trustee), repModelPrior).alpha @- 1d
 
       (rcond @* sourceAlpha).rowsum().transpose() // total likelihood
     }

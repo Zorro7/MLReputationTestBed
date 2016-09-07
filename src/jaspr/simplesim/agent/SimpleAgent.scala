@@ -11,12 +11,13 @@ import jaspr.utilities.Chooser
 import scala.collection.immutable.{SortedMap, TreeMap}
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 class SimpleAgent(override val simulation: Simulation) extends Client with Provider {
   override def capableOf(payload: Payload, duration: Int): Boolean = true
 
   private var currentUtility: Double = 0d
+
   override def utility = currentUtility
 
   override def tick(): Unit = {
@@ -25,6 +26,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
   }
 
   def providerTick() = super[Provider].tick()
+
   def clientTick() = super[Client].tick()
 
   override def generateContext(): ClientContext = {
@@ -58,12 +60,12 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
     service.duration += properties.values.map(_.intValue).sum
   }
 
-  override val properties: SortedMap[String,Property] =
-    Property("Timeliness", Chooser.randomInt(0,2)) ::
-    Nil
+  override val properties: SortedMap[String, Property] =
+    Property("Timeliness", Chooser.randomInt(0, 2)) ::
+      Nil
 
-  override def advertProperties: SortedMap[String,Property] = TreeMap()
-  
+  override def advertProperties: SortedMap[String, Property] = TreeMap()
+
   override val memoryLimit: Int = 50
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {

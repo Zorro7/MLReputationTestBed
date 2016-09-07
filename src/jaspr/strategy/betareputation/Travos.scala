@@ -9,8 +9,8 @@ import jaspr.strategy.{CompositionStrategy, Rating, RatingStrategy}
 import jaspr.utilities.BetaDistribution
 
 /**
- * Created by phil on 11/02/16.
- */
+  * Created by phil on 11/02/16.
+  */
 class Travos extends RatingStrategy with CompositionStrategy with Exploration with BetaCore with TravosCore {
 
   val explorationProbability = 0.1
@@ -21,23 +21,23 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
 
   override def initStrategy(network: Network, context: ClientContext) = {
     val direct = context.client.getProvenance[ServiceRecord with RatingRecord with TrustAssessmentRecord](context.client).map(x =>
-        new Rating(
-          x.service.request.client,
-          x.service.request.provider,
-          x.service.end,
-          x.rating
-        ) with BetaOpinions {
-          override val opinions: List[(Agent,BetaDistribution)] =
-            x.assessment match {
-              case ass: TravosTrustAssessment =>
-                ass.opinions.getOrElse(x.service.request, new BetaOpinions {
-                  override val opinions: List[(Agent, BetaDistribution)] = Nil
-                }).opinions
-              case ass: TrustAssessment =>
-                Nil
-            }
-        }
-      )
+      new Rating(
+        x.service.request.client,
+        x.service.request.provider,
+        x.service.end,
+        x.rating
+      ) with BetaOpinions {
+        override val opinions: List[(Agent, BetaDistribution)] =
+          x.assessment match {
+            case ass: TravosTrustAssessment =>
+              ass.opinions.getOrElse(x.service.request, new BetaOpinions {
+                override val opinions: List[(Agent, BetaDistribution)] = Nil
+              }).opinions
+            case ass: TrustAssessment =>
+              Nil
+          }
+      }
+    )
     val witness = toRatings(network.gatherProvenance(context.client))
     new TravosInit(
       context,
@@ -62,7 +62,7 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
     val interactionConfidence: Double =
       interactionTrust.integrate(interactionTrust.expected - eps, interactionTrust.expected + eps)
 
-    val witnessOpinions: Map[Client,BetaDistribution] =
+    val witnessOpinions: Map[Client, BetaDistribution] =
       if (interactionConfidence < confidenceThreshold) // if interaction trust confidence is low, use witness opinions
         makeWitnessBetaDistribution(
           init.witnessRecords.filter(_.provider == request.provider)
@@ -71,15 +71,15 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
 
     // Observations in client's provenance about witness opinion providers
     val observations: Map[Agent, Seq[(Boolean, BetaDistribution)]] =
-      if (interactionConfidence < confidenceThreshold) // if interaction trust confidence is low, use witness opinions
-        init.asInstanceOf[TravosInit].observations
-      else
-        Map()
+    if (interactionConfidence < confidenceThreshold) // if interaction trust confidence is low, use witness opinions
+      init.asInstanceOf[TravosInit].observations
+    else
+      Map()
 
     // weight the witness opinions by their expected accuracy
     val weightedOpinions: Iterable[BetaDistribution] = witnessOpinions.map(x =>
       weightOpinion(x._2, observations.getOrElse(x._1, List()), numBins
-    ))
+      ))
 
     val combinedOpinions = getCombinedOpinions(interactionTrust, weightedOpinions)
 

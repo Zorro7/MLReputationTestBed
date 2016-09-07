@@ -10,8 +10,8 @@ import jaspr.utilities.Chooser
 import scala.annotation.tailrec
 
 /**
- * Created by phil on 21/03/16.
- */
+  * Created by phil on 21/03/16.
+  */
 class StaticSellerNetwork(override val simulation: SellerSimulation) extends SellerNetwork {
 
   override val clients: Seq[Client] = List.fill(simulation.config.numClients)(
@@ -34,7 +34,7 @@ abstract class SellerNetwork extends Network with NetworkMarket {
   @tailrec
   override final def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     val p = providers.withFilter(
-      _.capableOf(context.payload, 0)// && Chooser.nextDouble() < simulation.config.clientInvolvementLikelihood
+      _.capableOf(context.payload, 0) // && Chooser.nextDouble() < simulation.config.clientInvolvementLikelihood
     ).map(x =>
       new ServiceRequest(
         context.client, x, simulation.round, 0, context.payload, context.market

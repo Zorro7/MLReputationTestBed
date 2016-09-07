@@ -5,23 +5,24 @@ import jaspr.utilities.NamedEntity
 import scala.collection.immutable.SortedMap
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 
 trait Properties {
 
-  def properties: SortedMap[String,Property]
+  def properties: SortedMap[String, Property]
 
   def property(key: String): Property = {
     properties.get(key).get
   }
-//  val df = new DecimalFormat("0.00")
-//  override def toString: String = super.toString+":"+properties.values.map(x => df.format(x.doubleValue)).toString
+
+  //  val df = new DecimalFormat("0.00")
+  //  override def toString: String = super.toString+":"+properties.values.map(x => df.format(x.doubleValue)).toString
 }
 
 trait AdvertProperties extends Properties {
 
-  def advertProperties: SortedMap[String,Property]
+  def advertProperties: SortedMap[String, Property]
 
   def advert(key: String): Property = {
     advertProperties.get(key).get
@@ -31,11 +32,11 @@ trait AdvertProperties extends Properties {
 case class Property(override val name: String, value: AnyVal) extends NamedEntity {
 
   // todo consider implementing float byte Value etc.
-//  def floatValue: Float = value.asInstanceOf[Float]
-//  def byteValue: Byte = value.asInstanceOf[Byte]
-//  def shortValue: Short = value.asInstanceOf[Short]
-//  def longValue: Long = value.asInstanceOf[Long]
-//  def charValue: Char = value.asInstanceOf[Char]
+  //  def floatValue: Float = value.asInstanceOf[Float]
+  //  def byteValue: Byte = value.asInstanceOf[Byte]
+  //  def shortValue: Short = value.asInstanceOf[Short]
+  //  def longValue: Long = value.asInstanceOf[Long]
+  //  def charValue: Char = value.asInstanceOf[Char]
   def booleanValue: Boolean = {
     doubleValue > 0
   }

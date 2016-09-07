@@ -45,13 +45,13 @@ public class LearnerFactory {
             if (ret instanceof SingleClassifierEnhancer) {
                 String[] next = Arrays.copyOfRange(l, 1, l.length);
                 Classifier base = makeLearner(next, debug);
-                ((SingleClassifierEnhancer)ret).setClassifier(base);
-                ((SingleClassifierEnhancer)ret).setDebug(debug);
+                ((SingleClassifierEnhancer) ret).setClassifier(base);
+                ((SingleClassifierEnhancer) ret).setDebug(debug);
             } else if (ret instanceof MultipleClassifiersCombiner) {
                 throw new UnsupportedOperationException();
             }
         }
-        System.out.println("Making learner: "+l[0]);
+        System.out.println("Making learner: " + l[0]);
         return ret;
     }
 
@@ -64,14 +64,14 @@ public class LearnerFactory {
         }
 
         String beforeBrace = arg.substring(0, openBrace).trim();
-        String afterBrace = arg.substring(closeBrace+1).trim();
-        String[] betweenBrace = splitForBrackets(arg.substring(openBrace+1, closeBrace).trim());
+        String afterBrace = arg.substring(closeBrace + 1).trim();
+        String[] betweenBrace = splitForBrackets(arg.substring(openBrace + 1, closeBrace).trim());
 
-        int retlen = betweenBrace.length + (beforeBrace.isEmpty()?0:1) + (afterBrace.isEmpty()?0:1);
+        int retlen = betweenBrace.length + (beforeBrace.isEmpty() ? 0 : 1) + (afterBrace.isEmpty() ? 0 : 1);
         String[] ret = new String[retlen];
         if (!beforeBrace.isEmpty()) ret[0] = beforeBrace;
-        System.arraycopy(betweenBrace, 0, ret, beforeBrace.isEmpty()?0:1, betweenBrace.length);
-        if (!afterBrace.isEmpty()) ret[ret.length-1] = afterBrace;
+        System.arraycopy(betweenBrace, 0, ret, beforeBrace.isEmpty() ? 0 : 1, betweenBrace.length);
+        if (!afterBrace.isEmpty()) ret[ret.length - 1] = afterBrace;
 
         return ret;
     }

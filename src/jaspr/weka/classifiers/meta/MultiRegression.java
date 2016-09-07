@@ -15,7 +15,8 @@ import java.io.Serializable;
  */
 public class MultiRegression extends SingleClassifierEnhancer implements Classifier, Serializable {
 
-    public MultiRegression() {}
+    public MultiRegression() {
+    }
 
     private String[] splitValues;
     private Classifier[] models;
@@ -26,6 +27,7 @@ public class MultiRegression extends SingleClassifierEnhancer implements Classif
     public void setClassifier(Classifier base) {
         this.m_Classifier = base;
     }
+
     public void setSplitAttIndex(int index) {
         this.splitAttIndex = index;
     }
@@ -33,7 +35,7 @@ public class MultiRegression extends SingleClassifierEnhancer implements Classif
     @Override
     public void buildClassifier(Instances instances) throws Exception {
         if (splitAttIndex < 0) {
-            splitAttIndex = instances.numAttributes()-2-splitAttIndex;
+            splitAttIndex = instances.numAttributes() - 2 - splitAttIndex;
         }
         if (!instances.attribute(splitAttIndex).isNominal()) {
             throw new Exception("Non-nominal attribute cannot be split on.");
@@ -48,10 +50,10 @@ public class MultiRegression extends SingleClassifierEnhancer implements Classif
         splitValues = new String[models.length];
         trains = new Instances[models.length];
 
-        for (int i=0;i<data.attribute(splitAttIndex).numValues();i++) {
+        for (int i = 0; i < data.attribute(splitAttIndex).numValues(); i++) {
             Instances splitdata = new Instances(instances, 0, 0);
-            for (Instance inst: data) {
-                if ((int)inst.value(splitAttIndex) == i) {
+            for (Instance inst : data) {
+                if ((int) inst.value(splitAttIndex) == i) {
                     splitdata.add(inst);
                 }
             }
@@ -74,11 +76,11 @@ public class MultiRegression extends SingleClassifierEnhancer implements Classif
     public double classifyInstance(Instance instance) throws Exception {
         Instance copy = new DenseInstance(instance);
         copy.deleteAttributeAt(splitAttIndex);
-        copy.setDataset(trains[(int)instance.value(splitAttIndex)]);
-        if (models[(int)instance.value(splitAttIndex)] != null) {
+        copy.setDataset(trains[(int) instance.value(splitAttIndex)]);
+        if (models[(int) instance.value(splitAttIndex)] != null) {
 //            System.out.println(trains[(int)instance.value(splitAttIndex)]);
 //            try {
-                return models[(int) instance.value(splitAttIndex)].classifyInstance(copy);
+            return models[(int) instance.value(splitAttIndex)].classifyInstance(copy);
 //            } catch(Exception ex) {
 //                return -1;
 //            }
@@ -91,8 +93,8 @@ public class MultiRegression extends SingleClassifierEnhancer implements Classif
     public double[] distributionForInstance(Instance instance) throws Exception {
         Instance copy = new DenseInstance(instance);
         copy.deleteAttributeAt(splitAttIndex);
-        copy.setDataset(trains[(int)instance.value(splitAttIndex)]);
-        if (models[(int)instance.value(splitAttIndex)] != null) {
+        copy.setDataset(trains[(int) instance.value(splitAttIndex)]);
+        if (models[(int) instance.value(splitAttIndex)] != null) {
             return models[(int) instance.value(splitAttIndex)].distributionForInstance(copy);
         } else {
             return new double[instance.numClasses()];
@@ -106,9 +108,9 @@ public class MultiRegression extends SingleClassifierEnhancer implements Classif
 
     @Override
     public String toString() {
-        if (models == null) return "MultiRegression&"+m_Classifier;
+        if (models == null) return "MultiRegression&" + m_Classifier;
         StringBuilder ret = new StringBuilder();
-        for (int i=0;i<models.length;i++) {
+        for (int i = 0; i < models.length; i++) {
             ret.append(i).append(" ").append(splitValues[i]).append(":::\n")
                     .append(models[i].toString()).append("\n");
         }

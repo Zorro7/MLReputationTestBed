@@ -9,11 +9,11 @@ import jaspr.utilities.Dirichlet
 import jaspr.utilities.matrix.RowVector
 
 /**
- * Created by phil on 24/03/16.
- */
+  * Created by phil on 24/03/16.
+  */
 class Habit(override val numBins: Int) extends CompositionStrategy with RatingStrategy with Exploration with HabitCore {
 
-  override val name: String = this.getClass.getSimpleName+"-"+numBins
+  override val name: String = this.getClass.getSimpleName + "-" + numBins
 
   override val explorationProbability: Double = 0.1
 
@@ -62,14 +62,14 @@ class Habit(override val numBins: Int) extends CompositionStrategy with RatingSt
     // Observe direct observations of this trustee for components containing information about other trustees.
     val mixComponents: Seq[Dirichlet] = (trustees zip directComponent).map(x =>
       if (x._1 == trustee) x._2
-      else x._2.observe(directObs.getOrElse(trustee,Seq()))
+      else x._2.observe(directObs.getOrElse(trustee, Seq()))
     )
 
 
     // Now calculate the log weights based on each reported opinion distribution, and sum them for each component
-    val repWeights: Map[Provider, Double] = (for (((w,te),model) <- repModels) yield {
-      if (te == trustee) (w,trustee) -> model.logweight(priorDist)
-      else (w,te) -> model.logweight(repModels.getOrElse((w, trustee), priorDist))
+    val repWeights: Map[Provider, Double] = (for (((w, te), model) <- repModels) yield {
+      if (te == trustee) (w, trustee) -> model.logweight(priorDist)
+      else (w, te) -> model.logweight(repModels.getOrElse((w, trustee), priorDist))
     }).groupBy(x => x._1._2).mapValues(x => x.values.sum)
 
     val weights: RowVector = (trustees zip directWeights).map(x => x._2 + repWeights.getOrElse(x._1, 0d))

@@ -9,8 +9,8 @@ import scala.collection.immutable.SortedMap
 import scala.collection.mutable
 
 /**
- * Created by phil on 17/03/16.
- */
+  * Created by phil on 17/03/16.
+  */
 abstract class Subprovider(override val simulation: ACMESimulation) extends Client with Provider {
 
   override def tick(): Unit = {
@@ -20,6 +20,7 @@ abstract class Subprovider(override val simulation: ACMESimulation) extends Clie
   override def capableOf(payload: Payload, duration: Int): Boolean = true
 
   def generateContext(): ClientContext = ???
+
   def generateComposition(context: ClientContext): TrustAssessment = ???
 
   def receiveRequest(request: ServiceRequest): Boolean = {
@@ -45,7 +46,7 @@ abstract class Subprovider(override val simulation: ACMESimulation) extends Clie
         affectService(x, service)
         tryStartService(x)
       case None =>
-        throw new Exception("Service "+service+" not found.")
+        throw new Exception("Service " + service + " not found.")
     }
   }
 

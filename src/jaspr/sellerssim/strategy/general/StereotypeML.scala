@@ -8,8 +8,8 @@ import jaspr.core.strategy.StrategyInit
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 30/06/16.
- */
+  * Created by phil on 30/06/16.
+  */
 trait StereotypeML extends SingleModelStrategy {
 
   val baseStrategy: SingleModelStrategy

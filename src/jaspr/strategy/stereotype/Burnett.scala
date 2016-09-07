@@ -10,8 +10,8 @@ import jaspr.strategy.{CompositionStrategy, Rating, RatingStrategy}
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 05/07/16.
- */
+  * Created by phil on 05/07/16.
+  */
 class Burnett extends CompositionStrategy with Exploration with BetaCore with RatingStrategy with SingleModelStrategy {
 
   override val numBins: Int = 0
@@ -22,7 +22,7 @@ class Burnett extends CompositionStrategy with Exploration with BetaCore with Ra
   class BurnettInit(context: ClientContext,
                     trustModel: Option[MlrsModel],
                     val ratings: Seq[Rating]
-                     ) extends BasicInit(context, trustModel)
+                   ) extends BasicInit(context, trustModel)
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val records = getRecords(network, context)
@@ -43,7 +43,7 @@ class Burnett extends CompositionStrategy with Exploration with BetaCore with Ra
 
     val betadist = makeBetaDistribution(init.ratings.filter(_.provider == request.provider).map(_.success))
     val belief = betadist.expected()
-    val uncert = betadist.uncertainty()*2 // Burnett's paper states 2/(r+s+2) where r and s are [un]successful interactions
+    val uncert = betadist.uncertainty() * 2 // Burnett's paper states 2/(r+s+2) where r and s are [un]successful interactions
 
     val stereotype = init.trustModel match {
       case None => 0.5
@@ -55,7 +55,7 @@ class Burnett extends CompositionStrategy with Exploration with BetaCore with Ra
         else pred
     }
 
-    new TrustAssessment(init.context, request, belief + stereotype*uncert)
+    new TrustAssessment(init.context, request, belief + stereotype * uncert)
   }
 
   override def makeTrainRow(baseRecord: Record): Seq[Any] = {

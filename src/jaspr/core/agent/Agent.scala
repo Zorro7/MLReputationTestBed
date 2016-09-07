@@ -5,8 +5,8 @@ import jaspr.core.simulation.{Configuration, Simulation}
 import jaspr.utilities.{NamedEntity, Tickable}
 
 /**
- * Created by phil on 26/01/16.
- */
+  * Created by phil on 26/01/16.
+  */
 abstract class Agent extends NamedEntity with Tickable with Provenance {
 
   def utility: Double

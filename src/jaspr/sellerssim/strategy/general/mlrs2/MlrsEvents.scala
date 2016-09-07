@@ -14,29 +14,29 @@ import scala.collection.mutable
 
 
 /**
- * Created by phil on 24/03/16.
- */
+  * Created by phil on 24/03/16.
+  */
 class MlrsEvents(val baseLearner: Classifier,
-                override val numBins: Int,
-                val witnessWeight: Double = 0.5d,
-                val reinterpretationContext: Boolean = true
-                  ) extends CompositionStrategy with Exploration with MlrsCore {
+                 override val numBins: Int,
+                 val witnessWeight: Double = 0.5d,
+                 val reinterpretationContext: Boolean = true
+                ) extends CompositionStrategy with Exploration with MlrsCore {
 
 
   class Mlrs2Init(
                    context: ClientContext,
                    val trustModel: Option[MlrsModel],
-                   val reinterpretationModels: Option[Map[Client,MlrsModel]],
-                   val feLikelihood: Map[String,Double]
-                   ) extends StrategyInit(context)
+                   val reinterpretationModels: Option[Map[Client, MlrsModel]],
+                   val feLikelihood: Map[String, Double]
+                 ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName+"2-"+baseLearner.getClass.getSimpleName+"-"+witnessWeight+"-"+reinterpretationContext
+  override val name = this.getClass.getSimpleName + "2-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext
 
   override val explorationProbability: Double = 0.1
 
   if (baseLearner.isInstanceOf[NaiveBayes]) baseLearner.asInstanceOf[NaiveBayes].setUseSupervisedDiscretization(true)
 
-//  val baseTrustModel = AbstractClassifier.makeCopy(baseLearner)
+  //  val baseTrustModel = AbstractClassifier.makeCopy(baseLearner)
   val baseTrustModel = new MultiRegression
   baseTrustModel.setClassifier(AbstractClassifier.makeCopy(baseLearner))
   baseTrustModel.setSplitAttIndex(1)
@@ -64,7 +64,7 @@ class MlrsEvents(val baseLearner: Classifier,
             })
             val directResult = directResults.sum
             val witnessResults =
-              for ((witness,reint) <- reinterpretationModels.filter(_._1 != request.client)) yield {
+              for ((witness, reint) <- reinterpretationModels.filter(_._1 != request.client)) yield {
                 val wRes = init.feLikelihood.map(event => {
                   val row = makeTestRow(request, witness, event._1)
                   val query = convertRowToInstance(row, model.attVals, model.train)
@@ -77,7 +77,7 @@ class MlrsEvents(val baseLearner: Classifier,
             val witnessResult: Double = if (witnessResults.isEmpty) 0d else witnessResults.sum / witnessResults.size.toDouble
             val score =
               if (witnessWeight < 0d || witnessWeight > 1d) directResult + witnessResults.sum
-              else (1-witnessWeight)*directResult + witnessWeight*witnessResult
+              else (1 - witnessWeight) * directResult + witnessWeight * witnessResult
             new TrustAssessment(baseInit.context, request, score)
         }
     }
@@ -109,23 +109,23 @@ class MlrsEvents(val baseLearner: Classifier,
 
   def makeReinterpretationModel(directRecords: Seq[BuyerRecord], witnessRecords: Seq[BuyerRecord], client: Client, witness: Client, model: MlrsModel): MlrsModel = {
     val reinterpretationRows: Seq[Seq[Any]] =
-//      directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
-//        witnessRecords.withFilter(_.client == witness).map(record => makeReinterpretationRow(record, model, witness, client))
-//      directRecords.map(record => makeClientReinterpretationRow(record, model, witness)) ++
-//        witnessRecords.map(record => makeWitnessReinterpretationRow(record, model, client))
-//    directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
-//      witnessRecords.withFilter(_.client == witness).map(record => makeReinterpretationRow(record, model, witness, client))
+    //      directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
+    //        witnessRecords.withFilter(_.client == witness).map(record => makeReinterpretationRow(record, model, witness, client))
+    //      directRecords.map(record => makeClientReinterpretationRow(record, model, witness)) ++
+    //        witnessRecords.map(record => makeWitnessReinterpretationRow(record, model, client))
+    //    directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
+    //      witnessRecords.withFilter(_.client == witness).map(record => makeReinterpretationRow(record, model, witness, client))
       directRecords.map(record => makeClientReinterpretationRow(record, model, witness)) ++
         witnessRecords.map(record => makeWitnessReinterpretationRow(record, model, client))
 
-    val reinterpretationAttVals: Iterable[mutable.Map[Any,Double]] = List.fill(reinterpretationRows.head.size)(mutable.Map[Any,Double]())
+    val reinterpretationAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(reinterpretationRows.head.size)(mutable.Map[Any, Double]())
     val doubleRows = convertRowsToDouble(reinterpretationRows, reinterpretationAttVals, classIndex)
     val atts = makeAtts(reinterpretationRows.head, reinterpretationAttVals, classIndex)
     val reinterpretationTrain = makeInstances(atts, doubleRows)
     reinterpretationTrain.setClassIndex(classIndex)
     val reinterpretationModel = AbstractClassifier.makeCopy(baseReinterpretationModel)
     reinterpretationModel.buildClassifier(reinterpretationTrain)
-//    println(client, witness, reinterpretationTrain, reinterpretationModel)
+    //    println(client, witness, reinterpretationTrain, reinterpretationModel)
     new MlrsModel(reinterpretationModel, reinterpretationTrain, reinterpretationAttVals)
   }
 
@@ -160,7 +160,7 @@ class MlrsEvents(val baseLearner: Classifier,
       record.payload.name ::
         record.provider.name ::
         Nil
-//        adverts(record.provider)
+      //        adverts(record.provider)
     } else {
       Nil
     }
@@ -172,7 +172,7 @@ class MlrsEvents(val baseLearner: Classifier,
       request.payload.name ::
         request.provider.name ::
         Nil
-//        adverts(request.provider)
+      //        adverts(request.provider)
     } else {
       Nil
     }
@@ -183,8 +183,8 @@ class MlrsEvents(val baseLearner: Classifier,
       record.client.name ::
       record.service.request.payload.name :: // service identifier (client context)
       record.event.name ::
-//      record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-        adverts(record.service.request.provider)
+      //      record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
+      adverts(record.service.request.provider)
   }
 
   def makeTestRow(request: ServiceRequest, witness: Client, serviceContext: String): Seq[Any] = {
@@ -192,8 +192,8 @@ class MlrsEvents(val baseLearner: Classifier,
       witness.name ::
       request.payload.name ::
       serviceContext ::
-//      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-        adverts(request.provider)
+      //      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
+      adverts(request.provider)
   }
 
   def makeTestRow(request: ServiceRequest, serviceContext: String): Seq[Any] = {
@@ -201,8 +201,8 @@ class MlrsEvents(val baseLearner: Classifier,
       request.client.name ::
       request.payload.name ::
       serviceContext ::
-//      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-        adverts(request.provider)
+      //      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
+      adverts(request.provider)
   }
 
   def makeTestRow(record: BuyerRecord, witness: Client): Seq[Any] = {
@@ -210,7 +210,7 @@ class MlrsEvents(val baseLearner: Classifier,
       witness.name ::
       record.service.request.payload.name :: // service identifier (client context)
       record.event.name ::
-//            record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
+      //            record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       adverts(record.service.request.provider)
   }
 

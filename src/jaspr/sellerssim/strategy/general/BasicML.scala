@@ -7,22 +7,22 @@ import jaspr.core.strategy.StrategyInit
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 29/06/16.
- */
+  * Created by phil on 29/06/16.
+  */
 class BasicML(override val baseLearner: Classifier, override val numBins: Int) extends SingleModelStrategy {
 
-//
-//  = {
-//    (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
-//      record.service.request.provider.name :: // service identifier (client context)
-//      Nil
-//  }
-//
-//    = {
-//    0d ::
-//      request.provider.name ::
-//      Nil
-//  }
+  //
+  //  = {
+  //    (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
+  //      record.service.request.provider.name :: // service identifier (client context)
+  //      Nil
+  //  }
+  //
+  //    = {
+  //    0d ::
+  //      request.provider.name ::
+  //      Nil
+  //  }
   override def getRecords(network: Network, context: ClientContext): Seq[Record] = {
     context.client.getProvenance(context.client)
   }
@@ -34,7 +34,7 @@ class BasicML(override val baseLearner: Classifier, override val numBins: Int) e
       Nil
   }
 
-  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]  = {
+  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     0d ::
       request.provider.name ::
       Nil

@@ -9,7 +9,7 @@ import scala.math._
 
 class Fire(val witnessWeight: Double = 0.5) extends RatingStrategy with CompositionStrategy with Exploration {
 
-  override val name = this.getClass.getSimpleName+"-"+witnessWeight
+  override val name = this.getClass.getSimpleName + "-" + witnessWeight
   override val explorationProbability: Double = 0.1
 
   // In recency scaling, the number of rounds before an interaction rating should be half that of the current round
@@ -21,11 +21,11 @@ class Fire(val witnessWeight: Double = 0.5) extends RatingStrategy with Composit
     pow(E, -((currentRound - ratingRound) / RecencyScalingFactor))
   }
 
-//  override def initStrategy(network: Network, context: ClientContext) = {
-//    val x = super.initStrategy(network, context)
-//    println(x.asInstanceOf[RatingStrategyInit].directRecords.map(_.provider).distinct)
-//    x
-//  }
+  //  override def initStrategy(network: Network, context: ClientContext) = {
+  //    val x = super.initStrategy(network, context)
+  //    println(x.asInstanceOf[RatingStrategyInit].directRecords.map(_.provider).distinct)
+  //    x
+  //  }
   def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[RatingStrategyInit]
     val direct = init.directRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
@@ -33,8 +33,8 @@ class Fire(val witnessWeight: Double = 0.5) extends RatingStrategy with Composit
       if (witnessWeight == 0d) Nil
       else init.witnessRecords.withFilter(_.provider == request.provider).map(x => weightRating(x.round, init.context.round) * x.rating)
     val result =
-      (1-witnessWeight) * direct.sum / (direct.size+1) +
-      witnessWeight * witness.sum / (witness.size+1)
+      (1 - witnessWeight) * direct.sum / (direct.size + 1) +
+        witnessWeight * witness.sum / (witness.size + 1)
     new TrustAssessment(baseInit.context, request, result)
   }
 }

@@ -4,8 +4,8 @@ import jaspr.core.service.{ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{Strategy, StrategyInit}
 
 /**
- * Created by phil on 19/03/16.
- */
+  * Created by phil on 19/03/16.
+  */
 trait CompositionStrategy extends Strategy {
 
   override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {

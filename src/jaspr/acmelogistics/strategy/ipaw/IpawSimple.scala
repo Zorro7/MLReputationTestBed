@@ -9,8 +9,8 @@ import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 04/04/16.
- */
+  * Created by phil on 04/04/16.
+  */
 class IpawSimple(learner: Classifier, disc: Boolean) extends Strategy with Exploration with IpawCore {
 
   override val explorationProbability: Double = 0.1
@@ -18,7 +18,7 @@ class IpawSimple(learner: Classifier, disc: Boolean) extends Strategy with Explo
   val baseLearner = learner
   val discreteClass: Boolean = disc
 
-  override val name = this.getClass.getSimpleName+"_"+baseLearner.getClass.getSimpleName
+  override val name = this.getClass.getSimpleName + "_" + baseLearner.getClass.getSimpleName
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val records: Seq[ServiceRecord with RatingRecord] =
@@ -49,7 +49,7 @@ class IpawSimple(learner: Classifier, disc: Boolean) extends Strategy with Explo
 
     var preds: List[Double] = Nil
 
-    for ((model,request) <- init.models zip requests) {
+    for ((model, request) <- init.models zip requests) {
       val currentPreds =
         if (model.forall(_ != null)) {
           val test =
@@ -76,7 +76,7 @@ class IpawSimple(learner: Classifier, disc: Boolean) extends Strategy with Explo
 
   def buildBaseModel(records: Iterable[ServiceRecord with RatingRecord],
                      labelfunch: ServiceRecord with RatingRecord => Double
-                      ): IpawModel = {
+                    ): IpawModel = {
     val train: Iterable[List[Any]] =
       records.map(x => {
         makeRow(

@@ -5,19 +5,24 @@ import jaspr.core.provenance.Record
 import jaspr.core.service.{ClientContext, ServiceRequest}
 
 /**
- * Created by phil on 15/03/16.
- */
+  * Created by phil on 15/03/16.
+  */
 abstract class Network {
 
   val simulation: Simulation
 
   def utility(): Double
+
   def agents: Seq[Agent]
+
   def clients: Seq[Client]
+
   def providers: Seq[Provider]
+
   def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
     agents.withFilter(_ != agent).flatMap(_.getProvenance[T](agent))
   }
+
   def possibleRequests(context: ClientContext): Seq[ServiceRequest]
 }
 
@@ -28,6 +33,7 @@ trait NetworkEvents {
 trait NetworkMarket {
   def market: Market
 }
+
 trait NetworkMarkets {
   def market: Seq[Market]
 }

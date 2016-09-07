@@ -7,8 +7,8 @@ import jaspr.core.strategy.StrategyInit
 import weka.classifiers.Classifier
 
 /**
- * Created by phil on 29/06/16.
- */
+  * Created by phil on 29/06/16.
+  */
 class FireLike(override val baseLearner: Classifier, override val numBins: Int) extends SingleModelStrategy {
   override def getRecords(network: Network, context: ClientContext): Seq[Record] = {
     context.client.getProvenance(context.client) ++ network.gatherProvenance(context.client)
@@ -21,7 +21,7 @@ class FireLike(override val baseLearner: Classifier, override val numBins: Int) 
       Nil
   }
 
-  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]  = {
+  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     0d ::
       request.provider.name ::
       Nil

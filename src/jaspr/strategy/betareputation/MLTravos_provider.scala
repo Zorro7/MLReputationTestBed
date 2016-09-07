@@ -14,8 +14,8 @@ import weka.classifiers.bayes.NaiveBayes
 import scala.math._
 
 /**
- * Created by phil on 29/06/16.
- */
+  * Created by phil on 29/06/16.
+  */
 class MLTravos_provider extends CompositionStrategy with Exploration with MlrsCore with TravosCore with RatingStrategy {
   override val name = this.getClass.getSimpleName
   override val numBins: Int = 10
@@ -32,16 +32,17 @@ class MLTravos_provider extends CompositionStrategy with Exploration with MlrsCo
   class MLTravosInit(context: ClientContext,
                      val directRatings: Seq[TravosRating with BetaOpinions],
                      val witnessRatings: Seq[Rating]
-                      ) extends StrategyInit(context)
+                    ) extends StrategyInit(context)
 
   class TravosRating(val service: Service, val rating: Double) extends Record
+
   override def initStrategy(network: Network, context: ClientContext) = {
     val direct = context.client.getProvenance[ServiceRecord with RatingRecord with TrustAssessmentRecord](context.client).map(x =>
       new TravosRating(
         x.service,
         x.rating
       ) with BetaOpinions {
-        override val opinions: List[(Agent,BetaDistribution)] =
+        override val opinions: List[(Agent, BetaDistribution)] =
           x.assessment.asInstanceOf[TravosTrustAssessment]
             .opinions.getOrElse(x.service.request, new BetaOpinions {
             override val opinions: List[(Agent, BetaDistribution)] = Nil
@@ -62,7 +63,7 @@ class MLTravos_provider extends CompositionStrategy with Exploration with MlrsCo
   def compute(baseInit: StrategyInit, request: ServiceRequest): TravosTrustAssessment = {
     val init = baseInit.asInstanceOf[MLTravosInit]
 
-    val witnessOpinions: Map[Client,BetaDistribution] =
+    val witnessOpinions: Map[Client, BetaDistribution] =
       makeWitnessBetaDistribution(
         init.witnessRatings.filter(_.provider == request.provider)
       )
@@ -73,7 +74,7 @@ class MLTravos_provider extends CompositionStrategy with Exploration with MlrsCo
       if (direct.isEmpty) 0d
       else {
         val witnesses = witnessOpinions.map(_._1).toSeq.sortBy(_.id)
-        val travosModel = makeMlrsModel(direct, baseModel, makeTrainRows(_: TravosRating with BetaOpinions, witnesses), makeTrainWeight(init.context, _:TravosRating))
+        val travosModel = makeMlrsModel(direct, baseModel, makeTrainRows(_: TravosRating with BetaOpinions, witnesses), makeTrainWeight(init.context, _: TravosRating))
         val testRow = makeTestRow(request, witnessOpinions, witnesses)
         val directQuery = convertRowToInstance(testRow, travosModel.attVals, travosModel.train)
         val x = travosModel.model.distributionForInstance(directQuery)
@@ -95,11 +96,11 @@ class MLTravos_provider extends CompositionStrategy with Exploration with MlrsCo
     val opinions = record.opinions.toMap
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
       record.service.request.provider.id.toString :: // provider identifier
-      witnesses.map(x => opinions.getOrElse(x, new BetaDistribution(0,0))).map(x=> x.alpha :: x.beta :: Nil).toList.flatten
+      witnesses.map(x => opinions.getOrElse(x, new BetaDistribution(0, 0))).map(x => x.alpha :: x.beta :: Nil).toList.flatten
   }
 
   def makeTestRow(request: ServiceRequest, opinions: Map[Client, BetaDistribution], witnesses: Seq[Client]): List[Any] = {
     0d :: request.provider.id.toString ::
-      witnesses.map(x => opinions.getOrElse(x, new BetaDistribution(0,0))).map(x=> x.alpha :: x.beta :: Nil).toList.flatten
+      witnesses.map(x => opinions.getOrElse(x, new BetaDistribution(0, 0))).map(x => x.alpha :: x.beta :: Nil).toList.flatten
   }
 }
