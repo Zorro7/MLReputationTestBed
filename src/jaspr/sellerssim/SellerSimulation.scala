@@ -1,7 +1,7 @@
 package jaspr.sellerssim
 
 import jaspr.core.results.Result
-import jaspr.core.simulation.{Network, Simulation}
+import jaspr.core.simulation.{Network, NetworkMarket, Simulation}
 import jaspr.utilities.Chooser
 
 /**
@@ -13,7 +13,7 @@ object SellerSimulation extends App {
 
 class SellerSimulation(val config: SellerConfiguration) extends Simulation {
 
-  override val network: Network = config.network(this)
+  override val network: Network with NetworkMarket = config.network(this)
 
   override def act(): Result = {
     for (client <- network.clients) {

@@ -1,4 +1,4 @@
-package jaspr.dynamicsim
+package jaspr.dynamicsellersim
 
 import jaspr.core.agent._
 import jaspr.sellerssim.agent.{Buyer, Seller, SellerMarket}

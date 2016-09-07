@@ -1,7 +1,7 @@
 package jaspr.acmelogistics
 
 import jaspr.core.results.Result
-import jaspr.core.simulation.{Network, NetworkEvents, Simulation}
+import jaspr.core.simulation.{Network, NetworkEvents, NetworkMarket, Simulation}
 
 /**
   * Created by phil on 17/03/16.
@@ -12,7 +12,7 @@ object ACMESimulation extends App {
 
 class ACMESimulation(override val config: ACMEConfiguration) extends Simulation {
 
-  override val network: Network with NetworkEvents = new ACMENetwork(this)
+  override val network: Network with NetworkEvents with NetworkMarket = new ACMENetwork(this)
 
   override def act(): Result = {
     for (client <- network.clients) {
