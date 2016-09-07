@@ -6,11 +6,9 @@ import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.strategy.MlrsCore
-import jaspr.strategy.{CompositionStrategy, Rating}
-import jaspr.strategy.betareputation.BetaCore
-import jaspr.utilities.{BetaDistribution, Dirichlet}
+import jaspr.strategy.CompositionStrategy
+import jaspr.utilities.Dirichlet
 import weka.classifiers.Classifier
-import weka.classifiers.bayes.NaiveBayes
 
 /**
  * Created by phil on 29/06/16.

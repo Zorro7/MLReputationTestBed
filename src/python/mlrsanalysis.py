@@ -1,6 +1,5 @@
-from util import *
 from analysis import *
-from sys import argv
+from util import *
 
 
 def justprint(s):

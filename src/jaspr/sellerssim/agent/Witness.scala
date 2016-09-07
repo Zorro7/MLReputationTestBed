@@ -1,6 +1,6 @@
 package jaspr.sellerssim.agent
 
-import jaspr.core.agent.{Provider, Client}
+import jaspr.core.agent.Provider
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.BuyerRecord

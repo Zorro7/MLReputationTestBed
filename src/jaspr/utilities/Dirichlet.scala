@@ -1,9 +1,9 @@
 package jaspr.utilities
 
 import jaspr.utilities.matrix.RowVector
+import weka.core.{RandomVariates, Statistics}
 
 import scala.language.implicitConversions
-import weka.core.{RandomVariates, Statistics}
 
 object Dirichlet {
   def lnbeta(x: RowVector): Double = {

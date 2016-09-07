@@ -1,6 +1,6 @@
 package jaspr.sellerssim.strategy.general
 
-import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
+import jaspr.core.provenance.Record
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}

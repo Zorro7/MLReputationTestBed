@@ -1,8 +1,6 @@
 package jaspr.acmelogistics
 
-import jaspr.core.agent.{Properties, Property}
 import jaspr.core.results.Result
-import jaspr.core.Simulation
 import jaspr.core.simulation.{Network, Simulation}
 
 /**

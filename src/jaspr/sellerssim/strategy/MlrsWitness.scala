@@ -6,11 +6,7 @@ import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.service.BuyerRecord
 import jaspr.strategy.CompositionStrategy
-import weka.classifiers.functions.LinearRegression
-import weka.classifiers.{AbstractClassifier, Classifier}
-import weka.core.Instances
-
-import scala.collection.mutable
+import weka.classifiers.Classifier
 
 /**
  * Created by phil on 04/11/15.

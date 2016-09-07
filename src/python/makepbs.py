@@ -1,4 +1,3 @@
-import sys
 from copy import copy
 
 def makecommands(base, args):

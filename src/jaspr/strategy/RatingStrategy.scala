@@ -1,6 +1,6 @@
 package jaspr.strategy
 
-import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
+import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.ClientContext
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Strategy, StrategyInit}

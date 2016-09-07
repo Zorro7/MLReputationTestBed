@@ -2,7 +2,7 @@ package jaspr.acmelogistics
 
 import jaspr.acmelogistics.agent._
 import jaspr.core.agent._
-import jaspr.core.service.{ClientContext, Service, ServiceRequest}
+import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.simulation.Network
 import jaspr.utilities.Chooser
 

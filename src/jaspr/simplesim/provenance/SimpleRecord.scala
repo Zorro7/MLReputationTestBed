@@ -1,6 +1,6 @@
 package jaspr.simplesim.provenance
 
-import jaspr.core.provenance.{ServiceRecord, RatingRecord}
+import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.Service
 
 /**

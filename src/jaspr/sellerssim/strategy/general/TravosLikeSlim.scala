@@ -4,9 +4,7 @@ import jaspr.core.agent.Client
 import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord, TrustAssessmentRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
-import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.strategy.MlrsCore
-import jaspr.strategy.CompositionStrategy
+import jaspr.core.strategy.StrategyInit
 import jaspr.utilities.Dirichlet
 import weka.classifiers.Classifier
 

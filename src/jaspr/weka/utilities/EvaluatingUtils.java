@@ -13,7 +13,6 @@ import weka.core.Instances;
 import weka.core.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  *

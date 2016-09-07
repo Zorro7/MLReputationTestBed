@@ -1,7 +1,7 @@
 package jaspr.core.service
 
 import jaspr.core.agent.Event
-import jaspr.core.provenance.{Record, Provenance}
+import jaspr.core.provenance.{Provenance, Record}
 import jaspr.utilities.NamedEntity
 
 /**

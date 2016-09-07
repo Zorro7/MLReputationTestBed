@@ -1,5 +1,5 @@
-from util import *
 from analysis import *
+from util import *
 
 
 def splttostr(splt, reskey=None, depth = 0, lines=None):

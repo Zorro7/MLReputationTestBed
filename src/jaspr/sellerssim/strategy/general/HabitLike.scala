@@ -9,7 +9,6 @@ import jaspr.sellerssim.strategy.MlrsCore
 import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.Dirichlet
 import weka.classifiers.Classifier
-import weka.classifiers.bayes.NaiveBayes
 
 /**
  * Created by phil on 30/06/16.

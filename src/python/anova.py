@@ -1,11 +1,8 @@
-from operator import mul
 import itertools
-from math import sqrt
-from copy import copy
 import numpy as np
+from copy import copy
+from operator import mul
 from scipy import stats
-
-
 
 
 ## Searches through results for the ones to plot.

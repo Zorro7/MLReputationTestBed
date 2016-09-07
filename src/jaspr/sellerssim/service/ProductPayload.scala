@@ -1,7 +1,6 @@
 package jaspr.sellerssim.service
 
 import jaspr.core.service.Payload
-import jaspr.utilities.Chooser
 
 import scala.collection.immutable.{SortedMap, TreeMap}
 

@@ -1,7 +1,6 @@
 package jaspr.acmelogistics.service
 
-import jaspr.core.agent.{Provider, Client, Property}
-import jaspr.core.service.{ClientContext, ServiceRequest, ServiceContext, Service}
+import jaspr.core.service.{Service, ServiceContext, ServiceRequest}
 
 /**
  * Created by phil on 17/03/16.

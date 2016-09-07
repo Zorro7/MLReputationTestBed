@@ -1,6 +1,6 @@
 package jaspr.sellerssim.agent
 
-import jaspr.core.agent.{Provider, Event}
+import jaspr.core.agent.{Event, Provider}
 import jaspr.core.service.Service
 
 /**

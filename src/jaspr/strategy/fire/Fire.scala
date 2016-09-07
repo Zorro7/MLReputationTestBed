@@ -1,6 +1,6 @@
 package jaspr.strategy.fire
 
-import jaspr.core.service.{TrustAssessment, ServiceRequest}
+import jaspr.core.service.{ServiceRequest, TrustAssessment}
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.strategy.{CompositionStrategy, RatingStrategy, RatingStrategyInit}
 

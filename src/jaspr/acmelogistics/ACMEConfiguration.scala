@@ -1,30 +1,14 @@
 package jaspr.acmelogistics
 
-import java.lang.reflect.Constructor
-
 import jaspr.acmelogistics.agent.{ACMEEvent, Mine, Refinery, Shipper}
 import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.agent._
 import jaspr.core.service.ClientContext
-import jaspr.core.{MultiConfiguration, Network, Simulation}
-import jaspr.core.strategy.Strategy
-import jaspr.core.strategy.Strategy
-import jaspr.strategy.betareputation.{BetaReputation, Travos}
-import jaspr.strategy.fire.Fire
-import jaspr.acmelogistics.strategy.ipaw.{Ipaw, IpawEvents, RecordFire}
 import jaspr.core.simulation.{Configuration, MultiConfiguration, Network, Simulation}
+import jaspr.core.strategy.Strategy
 import jaspr.utilities.Chooser
-import jaspr.weka.core.LearnerFactory
-import org.apache.commons.beanutils.ConstructorUtils
-import weka.classifiers.{AbstractClassifier, Classifier}
-import weka.classifiers.`lazy`.KStar
-import weka.classifiers.functions.LinearRegression
-import weka.classifiers.rules.OneR
-import weka.classifiers.trees.J48
 
 import scala.collection.immutable.{SortedMap, TreeMap}
-import scala.util.Try
-import scala.collection.JavaConversions._
 
 /**
  * Created by phil on 17/03/16.

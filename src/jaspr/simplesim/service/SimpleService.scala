@@ -1,6 +1,6 @@
 package jaspr.simplesim.service
 
-import jaspr.core.service.{ServiceContext, ServiceRequest, Service}
+import jaspr.core.service.{Service, ServiceContext, ServiceRequest}
 
 /**
  * Created by phil on 15/03/16.

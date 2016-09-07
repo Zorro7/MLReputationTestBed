@@ -1,6 +1,6 @@
 package jaspr.core.service
 
-import jaspr.core.agent.{Market, Client}
+import jaspr.core.agent.{Client, Market}
 import jaspr.utilities.NamedEntity
 
 /**

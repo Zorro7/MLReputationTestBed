@@ -1,16 +1,10 @@
 package jaspr.sellerssim.strategy
 
 import java.util
-import java.util.ArrayList
 
-import jaspr.core.agent.Provider
 import jaspr.core.provenance.Record
-import jaspr.core.provenance.Record
-import jaspr.core.service.ClientContext
-import jaspr.core.strategy.StrategyInit
-import jaspr.sellerssim.service.BuyerRecord
 import jaspr.utilities.Discretization
-import weka.classifiers.evaluation.{NumericPrediction, Prediction, NominalPrediction}
+import weka.classifiers.evaluation.{NominalPrediction, NumericPrediction, Prediction}
 import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.core.{Attribute, DenseInstance, Instance, Instances}
 

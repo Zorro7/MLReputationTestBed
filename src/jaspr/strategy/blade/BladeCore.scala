@@ -1,11 +1,11 @@
 package jaspr.strategy.blade
 
-import jaspr.core.agent.{Provider, Client}
+import jaspr.core.agent.{Client, Provider}
 import jaspr.core.service.ClientContext
 import jaspr.core.strategy.StrategyInit
 import jaspr.strategy.Rating
-import jaspr.utilities.{Dirichlet, Discretization}
 import jaspr.utilities.matrix.Matrix
+import jaspr.utilities.{Dirichlet, Discretization}
 
 /**
  * Created by phil on 01/11/15.

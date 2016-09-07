@@ -1,8 +1,8 @@
 package jaspr.sellerssim.service
 
-import jaspr.core.agent.{Client, Provider, Event}
-import jaspr.core.provenance.{RatingRecord, TrustAssessmentRecord, ServiceRecord, Record}
-import jaspr.core.service.{Payload, TrustAssessment, Service}
+import jaspr.core.agent.{Client, Event, Provider}
+import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord, TrustAssessmentRecord}
+import jaspr.core.service.{Payload, Service, TrustAssessment}
 
 /**
  * Created by phil on 23/03/16.

@@ -3,7 +3,6 @@ package jaspr.weka.classifiers.meta;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.classifiers.SingleClassifierEnhancer;
-import weka.classifiers.functions.LinearRegression;
 import weka.core.Capabilities;
 import weka.core.DenseInstance;
 import weka.core.Instance;

@@ -1,12 +1,8 @@
 package jaspr.dynamicsim
 
 import jaspr.core.agent._
-import jaspr.core.service.{ClientContext, ServiceRequest}
-import jaspr.core.simulation.Network
-import jaspr.sellerssim.{SellerNetwork, SellerSimulation}
 import jaspr.sellerssim.agent.{Buyer, Seller, SellerMarket}
-import jaspr.simplesim.agent.{SimpleAgent, SimpleEvent, SimpleMarket}
-import jaspr.utilities.Chooser
+import jaspr.sellerssim.{SellerNetwork, SellerSimulation}
 
 /**
  * Created by phil on 15/03/16.

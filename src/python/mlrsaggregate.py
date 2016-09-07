@@ -1,6 +1,5 @@
-from util import *
 from analysis import *
-from sys import argv
+from util import *
 
 if __name__ == "__main__":
 

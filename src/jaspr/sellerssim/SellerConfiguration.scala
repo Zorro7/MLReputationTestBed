@@ -1,29 +1,14 @@
 package jaspr.sellerssim
 
-import jaspr.acmelogistics.ACMEMultiConfiguration
-import jaspr.acmelogistics.ACMEMultiConfiguration._
 import jaspr.core.agent._
-import jaspr.core.service.{ClientContext, Payload}
+import jaspr.core.service.ClientContext
 import jaspr.core.simulation.{Configuration, MultiConfiguration, Network, Simulation}
-import jaspr.core.{MultiConfiguration, Network, Simulation}
 import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.agent._
 import jaspr.sellerssim.service.ProductPayload
-import jaspr.sellerssim.strategy.{Mlrs, MlrsDirect}
-import jaspr.strategy.NoStrategy
-import jaspr.strategy.betareputation.{BetaReputation, Travos}
-import jaspr.strategy.blade.Blade
-import jaspr.strategy.fire.{Fire, MLFire}
-import jaspr.strategy.habit.Habit
 import jaspr.utilities.Chooser
-import weka.classifiers.Classifier
-import weka.classifiers.`lazy`.{IBk, KStar}
-import weka.classifiers.bayes.NaiveBayes
-import weka.classifiers.functions.{MultilayerPerceptron, SMO, SMOreg}
-import weka.classifiers.rules.OneR
-import weka.classifiers.trees.{J48, RandomForest}
 
-import scala.collection.immutable.{SortedMap, TreeMap}
+import scala.collection.immutable.SortedMap
 
 /**
  * Created by phil on 21/03/16.

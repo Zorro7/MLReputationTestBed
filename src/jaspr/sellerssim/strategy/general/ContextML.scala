@@ -4,8 +4,6 @@ import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.StrategyInit
-import jaspr.sellerssim.service.ProductPayload
-import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 
 /**

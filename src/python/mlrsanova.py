@@ -1,6 +1,5 @@
-from anova import *
-from util import *
 from analysis import *
+from anova import *
 
 if __name__ == "__main__":
 	filename = "../../results/go5.4.res"

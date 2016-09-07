@@ -24,19 +24,7 @@ package jaspr.weka.classifiers.meta;
 
 import weka.classifiers.Evaluation;
 import weka.classifiers.RandomizableSingleClassifierEnhancer;
-import weka.core.Capabilities;
-import weka.core.Drawable;
-import weka.core.FastVector;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.Option;
-import weka.core.OptionHandler;
-import weka.core.RevisionHandler;
-import weka.core.RevisionUtils;
-import weka.core.Summarizable;
-import weka.core.TechnicalInformation;
-import weka.core.TechnicalInformationHandler;
-import weka.core.Utils;
+import weka.core.*;
 import weka.core.TechnicalInformation.Field;
 import weka.core.TechnicalInformation.Type;
 
@@ -240,7 +228,7 @@ public class ParamSelection
         }
     }
 
-    public enum EvaluationMetric {AUC, SR, ER};
+    public enum EvaluationMetric {AUC, SR, ER}
 
     protected EvaluationMetric m_EvaluationMetric = EvaluationMetric.SR;
 
@@ -555,9 +543,9 @@ public class ParamSelection
 
         if (m_InitOptions != null) {
             try {
-                ((OptionHandler)m_Classifier).setOptions((String[])m_InitOptions.clone());
+                ((OptionHandler)m_Classifier).setOptions(m_InitOptions.clone());
                 superOptions = super.getOptions();
-                ((OptionHandler)m_Classifier).setOptions((String[])m_BestClassifierOptions.clone());
+                ((OptionHandler)m_Classifier).setOptions(m_BestClassifierOptions.clone());
             } catch (Exception e) {
                 throw new RuntimeException("CVParameterSelection: could not set options " +
                         "in getOptions().");
@@ -586,7 +574,7 @@ public class ParamSelection
      * @return the best options
      */
     public String[] getBestClassifierOptions() {
-        return (String[]) m_BestClassifierOptions.clone();
+        return m_BestClassifierOptions.clone();
     }
 
     /**
@@ -656,7 +644,7 @@ public class ParamSelection
 
         System.out.println("The best options were: "+Utils.joinOptions(getBestClassifierOptions()));
 
-        String [] options = (String [])m_BestClassifierOptions.clone();
+        String [] options = m_BestClassifierOptions.clone();
         ((OptionHandler)m_Classifier).setOptions(options);
         m_Classifier.buildClassifier(trainData);
     }
@@ -703,7 +691,7 @@ public class ParamSelection
         if (m_CVParams.size() <= index) {
             return "";
         }
-        return ((CVParameter)m_CVParams.elementAt(index)).toString();
+        return m_CVParams.elementAt(index).toString();
     }
 
     /**

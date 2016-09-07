@@ -1,9 +1,8 @@
 package jaspr.strategy.betareputation
 
 import jaspr.core.agent.Agent
-import jaspr.core.provenance.TrustAssessmentRecord
-import jaspr.core.service.{TrustAssessment, ServiceRequest, ClientContext}
-import jaspr.strategy.{RatingStrategyInit, Rating}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.strategy.{Rating, RatingStrategyInit}
 import jaspr.utilities.BetaDistribution
 
 /**

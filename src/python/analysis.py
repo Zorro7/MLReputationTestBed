@@ -1,8 +1,9 @@
 import sys
-import parse
-import util
 from copy import copy
 from operator import *
+
+import util
+
 
 def search(results, **kwargs):
 	ret = []

@@ -3,7 +3,6 @@ package jaspr.core.results
 import java.io.PrintWriter
 import java.text.DecimalFormat
 
-import jaspr.core.Simulation
 import jaspr.core.simulation.{Configuration, Simulation}
 
 import scala.collection.mutable

@@ -6,11 +6,9 @@ import jaspr.core.service._
 import jaspr.core.simulation.Simulation
 import jaspr.simplesim.provenance.SimpleRecord
 import jaspr.simplesim.service.SimpleService
-import jaspr.strategy.NoStrategy
 import jaspr.utilities.Chooser
 
 import scala.collection.immutable.{SortedMap, TreeMap}
-import scala.collection.mutable
 
 /**
  * Created by phil on 15/03/16.

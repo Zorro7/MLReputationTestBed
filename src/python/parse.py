@@ -1,8 +1,9 @@
-import __builtin__
 import os
 import sys
-import util
 from copy import copy
+
+import util
+
 
 def parseline(line, expdic=None):
 	splt = line.split(":")

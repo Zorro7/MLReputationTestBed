@@ -1,5 +1,5 @@
 import os
-from analysis import *
+
 
 def tikzheader():
 	return "\\begin{tikzpicture}\n"

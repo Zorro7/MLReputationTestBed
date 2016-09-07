@@ -1,10 +1,8 @@
 package jaspr.core.agent
 
-import java.text.DecimalFormat
-
 import jaspr.utilities.NamedEntity
 
-import scala.collection.immutable.{SortedMap, TreeMap}
+import scala.collection.immutable.SortedMap
 
 /**
  * Created by phil on 15/03/16.

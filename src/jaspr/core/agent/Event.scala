@@ -1,7 +1,7 @@
 package jaspr.core.agent
 
 import jaspr.core.service.Service
-import jaspr.utilities.{Tickable, NamedEntity}
+import jaspr.utilities.{NamedEntity, Tickable}
 
 /**
  * Created by phil on 17/03/16.

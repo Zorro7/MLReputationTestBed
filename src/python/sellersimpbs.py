@@ -1,6 +1,4 @@
 from makepbs import *
-from functools import partial
-
 
 witLikelihoodLevels = [0,0.1,0.3,0.5]
 

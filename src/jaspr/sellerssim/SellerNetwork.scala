@@ -1,7 +1,7 @@
 package jaspr.sellerssim
 
-import jaspr.core.provenance.Record
 import jaspr.core.agent._
+import jaspr.core.provenance.Record
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.simulation.Network
 import jaspr.sellerssim.agent.{Buyer, Seller, SellerMarket}

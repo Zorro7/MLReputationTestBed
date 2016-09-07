@@ -1,6 +1,6 @@
 package jaspr.sellerssim.service
 
-import jaspr.core.service.{ServiceRequest, ServiceContext, Service}
+import jaspr.core.service.{Service, ServiceContext, ServiceRequest}
 
 /**
  * Created by phil on 23/03/16.

@@ -1,6 +1,4 @@
-from util import *
 from analysis import *
-from sys import argv
 from ploting import *
 
 

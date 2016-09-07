@@ -1,8 +1,8 @@
 package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
-import jaspr.acmelogistics.service.{SubproviderRecord, ACMEService}
-import jaspr.core.agent.{Property, Provider, Client}
+import jaspr.acmelogistics.service.{ACMEService, SubproviderRecord}
+import jaspr.core.agent.{Client, Property, Provider}
 import jaspr.core.service._
 
 import scala.collection.immutable.SortedMap

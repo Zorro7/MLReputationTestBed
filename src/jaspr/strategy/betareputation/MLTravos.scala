@@ -1,17 +1,15 @@
 package jaspr.strategy.betareputation
 
-import jaspr.core.agent.{Agent, Client, Provider}
+import jaspr.core.agent.{Agent, Client}
 import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord, TrustAssessmentRecord}
 import jaspr.core.service.{ClientContext, Service, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.agent.Buyer
 import jaspr.sellerssim.strategy.MlrsCore
 import jaspr.strategy.{CompositionStrategy, Rating, RatingStrategy}
 import jaspr.utilities.{BetaDistribution, Dirichlet}
 import weka.classifiers.Classifier
 import weka.classifiers.bayes.NaiveBayes
-import weka.classifiers.rules.OneR
 
 import scala.math._
 

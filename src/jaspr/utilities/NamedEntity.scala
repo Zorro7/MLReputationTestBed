@@ -1,6 +1,6 @@
 package jaspr.utilities
 
-import scala.collection.immutable.{TreeMap, SortedMap}
+import scala.collection.immutable.{SortedMap, TreeMap}
 import scala.collection.mutable
 import scala.language.implicitConversions
 /**

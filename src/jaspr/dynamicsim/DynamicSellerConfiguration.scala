@@ -1,13 +1,12 @@
 package jaspr.dynamicsim
 
 import jaspr.core.agent._
-import jaspr.core.service.{ClientContext, Payload}
+import jaspr.core.service.ClientContext
 import jaspr.core.simulation.{Configuration, MultiConfiguration, Network, Simulation}
 import jaspr.core.strategy.Strategy
-import jaspr.core.{MultiConfiguration, Network, Simulation}
-import jaspr.sellerssim.{SellerConfiguration, SellerNetwork, SellerSimulation}
 import jaspr.sellerssim.agent.{HonestWitnessModel, Witness, WitnessModel}
 import jaspr.sellerssim.service.ProductPayload
+import jaspr.sellerssim.{SellerConfiguration, SellerNetwork, SellerSimulation}
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.fire.Fire
 import jaspr.utilities.Chooser

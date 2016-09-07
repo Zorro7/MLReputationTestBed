@@ -1,10 +1,10 @@
 package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
-import jaspr.acmelogistics.service.{GoodPayload, ACMEService}
+import jaspr.acmelogistics.service.{ACMEService, GoodPayload}
 import jaspr.core.agent.{Property, Provider}
 import jaspr.core.provenance.{Provenance, Record}
-import jaspr.core.service.{Payload, ServiceRequest, Service}
+import jaspr.core.service.{Payload, Service, ServiceRequest}
 
 import scala.collection.immutable.SortedMap
 

@@ -2,12 +2,11 @@ package jaspr.acmelogistics.strategy.ipaw
 
 import jaspr.acmelogistics.service.{GoodPayload, SubproviderRecord}
 import jaspr.core.agent.Provider
-import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
+import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
-import jaspr.weka.classifiers.meta.MultiRegression
-import weka.classifiers.{AbstractClassifier, Classifier}
+import weka.classifiers.Classifier
 /**
  * Created by phil on 19/03/16.
  */

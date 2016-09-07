@@ -2,13 +2,9 @@ package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.ACMERecord
-import jaspr.acmelogistics.strategy.ipaw.{IpawEvents, Ipaw}
 import jaspr.core.agent.Client
-import jaspr.core.provenance.{Provenance, ServiceRecord, Record}
-import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
-import weka.classifiers.functions.LinearRegression
-
-import scala.collection.mutable
+import jaspr.core.provenance.{Provenance, Record}
+import jaspr.core.service.{ClientContext, Service, TrustAssessment}
 
 /**
  * Created by phil on 17/03/16.

@@ -1,6 +1,6 @@
 package jaspr.strategy.betareputation
 
-import jaspr.core.agent.{Client, Agent}
+import jaspr.core.agent.Client
 import jaspr.strategy.Rating
 import jaspr.utilities.BetaDistribution
 

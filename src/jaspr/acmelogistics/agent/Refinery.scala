@@ -2,12 +2,8 @@ package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.GoodPayload
-import jaspr.core.agent.Property
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service._
-import jaspr.core.simulation.Simulation
-
-import scala.collection.mutable.ListBuffer
 
 /**
  * Created by phil on 17/03/16.

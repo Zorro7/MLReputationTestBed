@@ -1,7 +1,6 @@
 package jaspr.acmelogistics.agent
 
-import jaspr.acmelogistics.service.GoodPayload
-import jaspr.core.agent.{Provider, Event}
+import jaspr.core.agent.{Event, Provider}
 import jaspr.core.service.Service
 
 /**

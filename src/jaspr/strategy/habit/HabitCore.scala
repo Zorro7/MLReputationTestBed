@@ -2,7 +2,7 @@ package jaspr.strategy.habit
 
 import jaspr.core.agent.{Client, Provider}
 import jaspr.core.service.ClientContext
-import jaspr.core.strategy.{Exploration, StrategyInit}
+import jaspr.core.strategy.StrategyInit
 import jaspr.strategy.Rating
 import jaspr.utilities.matrix.RowVector
 import jaspr.utilities.{Dirichlet, Discretization}

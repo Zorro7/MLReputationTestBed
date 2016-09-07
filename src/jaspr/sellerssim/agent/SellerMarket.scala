@@ -2,7 +2,6 @@ package jaspr.sellerssim.agent
 
 import jaspr.core.agent.Market
 import jaspr.core.service.Service
-import jaspr.core.simulation.Simulation
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.ProductPayload
 

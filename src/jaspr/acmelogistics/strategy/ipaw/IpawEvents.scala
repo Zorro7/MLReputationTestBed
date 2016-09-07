@@ -1,6 +1,5 @@
 package jaspr.acmelogistics.strategy.ipaw
 
-import jaspr.acmelogistics.agent.ACMEEvent
 import jaspr.acmelogistics.service.{GoodPayload, SubproviderRecord}
 import jaspr.core.agent.Provider
 import jaspr.core.provenance.{RatingRecord, ServiceRecord}

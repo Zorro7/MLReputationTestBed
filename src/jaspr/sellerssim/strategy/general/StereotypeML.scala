@@ -6,7 +6,6 @@ import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.StrategyInit
 import weka.classifiers.Classifier
-import weka.classifiers.bayes.NaiveBayes
 
 /**
  * Created by phil on 30/06/16.

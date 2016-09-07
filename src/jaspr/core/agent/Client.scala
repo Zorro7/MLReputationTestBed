@@ -1,6 +1,6 @@
 package jaspr.core.agent
 
-import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
+import jaspr.core.service.{ClientContext, Service, ServiceRequest, TrustAssessment}
 
 import scala.collection.mutable
 

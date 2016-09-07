@@ -1,13 +1,12 @@
 package jaspr.strategy.fire
 
-import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
+import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.strategy.MlrsCore
-import jaspr.strategy.{CompositionStrategy, RatingStrategy}
+import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.Dirichlet
-import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.rules.OneR
 
 import scala.math._

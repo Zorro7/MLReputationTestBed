@@ -1,9 +1,8 @@
 package jaspr.acmelogistics.strategy.ipaw
 
 import java.util
-import java.util.ArrayList
 
-import jaspr.acmelogistics.service.{GoodPayload, ACMERecord}
+import jaspr.acmelogistics.service.GoodPayload
 import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.ClientContext
 import jaspr.core.strategy.StrategyInit
@@ -11,8 +10,8 @@ import jaspr.utilities.Discretization
 import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.core.{Attribute, DenseInstance, Instance, Instances}
 
-import scala.collection.mutable
 import scala.collection.JavaConversions._
+import scala.collection.mutable
 
 /**
  * Created by phil on 19/03/16.

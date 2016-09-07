@@ -1,27 +1,18 @@
 package jaspr.sellerssim.strategy.general.mlrs2
 
-import java.util
-
 import jaspr.core.agent.{Client, Provider}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
-import jaspr.sellerssim.SellerSimulation
-import jaspr.sellerssim.agent.Buyer
 import jaspr.sellerssim.service.BuyerRecord
-import jaspr.strategy.{CompositionStrategy, NoStrategy}
+import jaspr.strategy.CompositionStrategy
 import jaspr.strategy.betareputation.Travos
-import jaspr.strategy.blade.Blade
-import jaspr.strategy.fire.Fire
-import jaspr.strategy.habit.Habit
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
-import jaspr.weka.utilities.EvaluatingUtils
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.{AbstractClassifier, Classifier}
 
 import scala.collection.mutable
-import scala.collection.JavaConversions._
 
 
 

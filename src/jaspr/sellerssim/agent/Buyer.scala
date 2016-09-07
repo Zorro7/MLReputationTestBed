@@ -1,14 +1,9 @@
 package jaspr.sellerssim.agent
 
-import jaspr.core.agent.{Event, Agent, Client}
-import jaspr.core.provenance.{RatingRecord, Provenance, Record}
-import jaspr.core.service.{ServiceRequest, Service, TrustAssessment, ClientContext}
-import jaspr.core.strategy.StrategyInit
+import jaspr.core.agent.Client
+import jaspr.core.service.{ClientContext, Service, TrustAssessment}
 import jaspr.sellerssim.SellerSimulation
-import jaspr.sellerssim.service.{ProductPayload, BuyerRecord}
-
-import scala.annotation.tailrec
-import scala.collection.mutable
+import jaspr.sellerssim.service.{BuyerRecord, ProductPayload}
 
 /**
  * Created by phil on 21/03/16.

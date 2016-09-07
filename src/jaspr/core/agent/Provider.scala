@@ -1,6 +1,6 @@
 package jaspr.core.agent
 
-import jaspr.core.service.{Payload, ServiceRequest, Service}
+import jaspr.core.service.{Payload, Service, ServiceRequest}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer

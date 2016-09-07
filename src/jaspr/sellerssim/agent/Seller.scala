@@ -2,7 +2,7 @@ package jaspr.sellerssim.agent
 
 import jaspr.core.agent.{Property, Provider}
 import jaspr.core.provenance.{Provenance, Record}
-import jaspr.core.service.{Payload, ServiceRequest, Service}
+import jaspr.core.service.{Payload, Service, ServiceRequest}
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.{ProductPayload, SellerService}
 import jaspr.utilities.Chooser

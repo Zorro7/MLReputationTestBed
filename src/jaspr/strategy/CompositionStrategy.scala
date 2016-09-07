@@ -1,7 +1,7 @@
 package jaspr.strategy
 
-import jaspr.core.service.{TrustAssessment, ServiceRequest}
-import jaspr.core.strategy.{StrategyInit, Strategy}
+import jaspr.core.service.{ServiceRequest, TrustAssessment}
+import jaspr.core.strategy.{Strategy, StrategyInit}
 
 /**
  * Created by phil on 19/03/16.

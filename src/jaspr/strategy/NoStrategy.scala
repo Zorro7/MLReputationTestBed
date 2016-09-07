@@ -1,6 +1,6 @@
 package jaspr.strategy
 
-import jaspr.core.service.{ClientContext, Payload, ServiceRequest, TrustAssessment}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{NoExploration, Strategy, StrategyInit}
 import jaspr.utilities.Chooser

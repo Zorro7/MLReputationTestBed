@@ -1,7 +1,7 @@
 package jaspr.acmelogistics.service
 
-import jaspr.core.provenance.{RatingRecord, TrustAssessmentRecord, ServiceRecord}
-import jaspr.core.service.{TrustAssessment, Service}
+import jaspr.core.provenance.{RatingRecord, ServiceRecord, TrustAssessmentRecord}
+import jaspr.core.service.{Service, TrustAssessment}
 
 /**
  * Created by phil on 17/03/16.

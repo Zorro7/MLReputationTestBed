@@ -7,10 +7,7 @@ import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.strategy.CompositionStrategy
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.bayes.NaiveBayes
-import weka.classifiers.rules.OneR
-import weka.classifiers.trees.{J48, RandomForest}
 import weka.classifiers.{AbstractClassifier, Classifier}
-import weka.classifiers.functions._
 
 /**
  * Created by phil on 24/03/16.
