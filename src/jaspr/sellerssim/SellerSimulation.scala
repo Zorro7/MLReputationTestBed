@@ -2,6 +2,7 @@ package jaspr.sellerssim
 
 import jaspr.core.results.Result
 import jaspr.core.simulation.{Network, NetworkMarket, Simulation}
+import jaspr.sellerssim.staticsimulation.StaticSellerMultiConfiguration
 import jaspr.utilities.Chooser
 
 /**

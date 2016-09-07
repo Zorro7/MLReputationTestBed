@@ -3,6 +3,7 @@ package jaspr.core.simulation
 import jaspr.core.agent._
 import jaspr.core.provenance.Record
 import jaspr.core.service.{ClientContext, ServiceRequest}
+import jaspr.utilities.Tickable
 
 /**
   * Created by phil on 15/03/16.
@@ -25,6 +26,8 @@ abstract class Network {
 
   def possibleRequests(context: ClientContext): Seq[ServiceRequest]
 }
+
+abstract class DynamicNetwork extends Network with Tickable
 
 trait NetworkEvents {
   def events(): Seq[Event]

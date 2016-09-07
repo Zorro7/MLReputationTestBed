@@ -1,4 +1,4 @@
-package jaspr.dynamicsellersim
+package jaspr.sellerssim.dynamicsimulation
 
 import jaspr.core.agent._
 import jaspr.core.service.ClientContext
@@ -31,6 +31,7 @@ class DynamicSellerMultiConfiguration extends MultiConfiguration {
       new DynamicSellerConfiguration(new NoStrategy) ::
       Nil
 }
+
 
 class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfiguration {
 
@@ -98,5 +99,3 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
     new HonestWitnessModel
   }
 }
-
-
