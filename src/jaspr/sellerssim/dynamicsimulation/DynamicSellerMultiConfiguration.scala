@@ -33,10 +33,10 @@ class DynamicSellerMultiConfiguration extends MultiConfiguration {
   override val resultStart: Int = -100
 
   override lazy val configs: Seq[Configuration] =
-    new DynamicSellerConfiguration(new Mlrs(new NaiveBayes, 2, 2, true, false)) ::
-    new DynamicSellerConfiguration(new Blade(2)) ::
-    new DynamicSellerConfiguration(new Habit(2)) ::
-    new DynamicSellerConfiguration(new Burnett) ::
+//    new DynamicSellerConfiguration(new Mlrs(new NaiveBayes, 2, 2, true, false)) ::
+//    new DynamicSellerConfiguration(new Blade(2)) ::
+//    new DynamicSellerConfiguration(new Habit(2)) ::
+//    new DynamicSellerConfiguration(new Burnett) ::
     new DynamicSellerConfiguration(new Fire) ::
     new DynamicSellerConfiguration(new NoStrategy) ::
       Nil
@@ -111,10 +111,15 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
     (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
   }
 
-  val usePreferences = true
+  val numPreferences = 0
   override def preferences(agent: Client): SortedMap[String, Property] = {
-    if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
-    else Nil //(1 to numTerms).map(x => new Property(x.toString, 0d)).toList
+    if (numPreferences == 0) {
+      (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
+    } else {
+      Chooser.sample(1 to numTerms, numPreferences).map(
+        x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))
+      ).toList
+    }
   }
 
   val numAdverts = 3
