@@ -43,17 +43,15 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
   def rateService(service: Service): Map[String, Double] = {
     val received = service.payload.asInstanceOf[ProductPayload].quality
     val wanted = service.request.payload.asInstanceOf[ProductPayload].quality
-    received.map(x => x._1 -> {
-      //      println(wanted.get(x._1), x._2, simulation.config.baseUtility)
-      wanted.get(x._1) match {
-        case Some(req) => simulation.config.baseUtility - Math.abs(x._2 - req)
-        case None => simulation.config.baseUtility - Math.abs(x._2)
-        //        case Some(req) => Math.max(simulation.config.baseUtility - Math.abs(x._2 - req), -1)
-        //        case None => Math.max(simulation.config.baseUtility - Math.abs(x._2), -1)
-        //        case Some(req) => simulation.config.baseUtility-Math.max(x._2, req)
-        //        case None => simulation.config.baseUtility-x._2
-      }
-    })
+//    received.map(x => x._1 -> {
+//      wanted.get(x._1) match {
+//        case Some(req) => simulation.config.baseUtility - Math.abs(x._2 - req)
+//        case None => simulation.config.baseUtility - Math.abs(x._2)
+//      }
+//    })
+    received.withFilter(x => wanted.contains(x._1)).map(x =>
+      x._1 -> (simulation.config.baseUtility - Math.abs(x._2 - wanted(x._1)))
+    )
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {

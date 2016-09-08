@@ -252,7 +252,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Client): SortedMap[String, Property] = {
     if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
-    else Nil //(1 to numTerms).map(x => new Property(x.toString, 0d)).toList
+    else (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
   }
 
   def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
