@@ -47,19 +47,19 @@ object StaticSellerMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.strategy.NoStrategy," +
+//        "jaspr.strategy.NoStrategy," +
         //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
         //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;true),"+
-        //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
+                "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
         //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
-        "jaspr.strategy.fire.Fire(0.0)," +
-        "jaspr.strategy.fire.Fire(0.5)," +
-        "jaspr.strategy.betareputation.BetaReputation," +
-        "jaspr.strategy.betareputation.Travos," +
-        //          "jaspr.strategy.blade.Blade(2)," +
+//        "jaspr.strategy.fire.Fire(0.0)," +
+//        "jaspr.strategy.fire.Fire(0.5)," +
+//        "jaspr.strategy.betareputation.BetaReputation," +
+//        "jaspr.strategy.betareputation.Travos," +
+//                  "jaspr.strategy.blade.Blade(2)," +
         //        "jaspr.strategy.habit.Habit(2),"+
         //        "jaspr.strategy.stereotype.Burnett,"+
-        " --numSimulations 10 " +
+        " --numSimulations 5 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -69,18 +69,18 @@ object StaticSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 10 --numProviders 50 " +
+        "--numClients 10 --numProviders 25 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
         "--numRounds 1000 " +
         "--memoryLimit 100 " +
-        "--numSimCapabilities 5 " +
-        "--numProviderCapabilities 5 " +
+        "--numSimCapabilities 3 " +
+        "--numProviderCapabilities 3 " +
         "--noiseRange 1. " +
-        "--numTerms 1 " +
+        "--numTerms 3 " +
         "--witnessRequestLikelihood 0.2 " +
-        "--numAdverts 1 " +
+        "--numAdverts 3 " +
         "--usePreferences true").split(" ")
     } else args
 

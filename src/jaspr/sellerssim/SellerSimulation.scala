@@ -13,7 +13,7 @@ object SellerSimulation extends App {
   val results = Simulation(new StaticSellerMultiConfiguration)
 }
 
-class SellerSimulation(val config: DynamicSellerConfiguration) extends Simulation {
+class SellerSimulation(val config: SellerConfiguration) extends Simulation {
 
   override val network: Network with NetworkMarket = config.network(this)
 

@@ -10,7 +10,9 @@ import scala.collection.mutable
 /**
   * Created by phil on 15/03/16.
   */
-class DynamicSellerNetwork(override val simulation: SellerSimulation) extends SellerNetwork with Tickable {
+class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) extends SellerNetwork with Tickable {
+
+  val config: DynamicSellerConfiguration = simulation.config.asInstanceOf[DynamicSellerConfiguration]
 
   private var _clients: Seq[Buyer] = List.fill(simulation.config.numClients)(
     new Buyer(simulation)
