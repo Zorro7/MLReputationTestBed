@@ -49,8 +49,9 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   override val numRounds: Int = 500
 
   override def numClients: Int = 25
-
   override def numProviders: Int = 25
+  def clientAttrition: Double = 0.1
+  def providerAttrition: Double = 0.1
 
   override def memoryLimit: Int = 100
 
