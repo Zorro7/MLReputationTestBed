@@ -17,17 +17,14 @@ abstract class SellerNetwork extends Network with NetworkMarket {
 
   override def agents: Seq[Agent] = clients ++ providers
 
-  @tailrec
-  override final def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
-    val p = providers.withFilter(
+  override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
+    providers.withFilter(
       _.capableOf(context.payload, 0)
     ).map(x =>
       new ServiceRequest(
         context.client, x, simulation.round, 0, context.payload, context.market
       )
     )
-    if (p.isEmpty) possibleRequests(context)
-    else p
   }
 
   override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
