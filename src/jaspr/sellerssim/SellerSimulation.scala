@@ -2,7 +2,6 @@ package jaspr.sellerssim
 
 import jaspr.core.results.Result
 import jaspr.core.simulation.{Network, NetworkMarket, Simulation}
-import jaspr.sellerssim.dynamicsimulation.DynamicSellerConfiguration
 import jaspr.sellerssim.staticsimulation.StaticSellerMultiConfiguration
 import jaspr.utilities.{Chooser, Tickable}
 

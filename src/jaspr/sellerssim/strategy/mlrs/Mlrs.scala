@@ -1,10 +1,10 @@
 package jaspr.sellerssim.strategy.mlrs
 
 import jaspr.core.agent.{Client, Provider}
+import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.core.provenance.{Record, ServiceRecord, RatingRecord}
 import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
@@ -26,10 +26,10 @@ class Mlrs(val baseLearner: Classifier,
 
 
   class MlrsInit(
-                   context: ClientContext,
-                   val trustModel: Option[MlrsModel],
-                   val reinterpretationModels: Option[Map[Client, MlrsModel]]
-                 ) extends StrategyInit(context)
+                  context: ClientContext,
+                  val trustModel: Option[MlrsModel],
+                  val reinterpretationModels: Option[Map[Client, MlrsModel]]
+                ) extends StrategyInit(context)
 
   override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts
 

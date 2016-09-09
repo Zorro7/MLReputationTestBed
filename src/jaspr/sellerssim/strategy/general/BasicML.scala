@@ -11,18 +11,6 @@ import weka.classifiers.Classifier
   */
 class BasicML(override val baseLearner: Classifier, override val numBins: Int) extends SingleModelStrategy {
 
-  //
-  //  = {
-  //    (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
-  //      record.service.request.provider.name :: // service identifier (client context)
-  //      Nil
-  //  }
-  //
-  //    = {
-  //    0d ::
-  //      request.provider.name ::
-  //      Nil
-  //  }
   override def getRecords(network: Network, context: ClientContext): Seq[Record] = {
     context.client.getProvenance(context.client)
   }

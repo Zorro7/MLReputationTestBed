@@ -1,11 +1,8 @@
 package jaspr.sellerssim.dynamicsimulation
 
-import jaspr.core.agent._
-import jaspr.sellerssim.agent.{Buyer, Seller, SellerMarket}
-import jaspr.sellerssim.{SellerNetwork, SellerSimulation}
-import jaspr.utilities.{Chooser, Tickable}
-
-import scala.collection.mutable
+import jaspr.sellerssim.SellerNetwork
+import jaspr.sellerssim.agent.{Buyer, Seller}
+import jaspr.utilities.Tickable
 
 /**
   * Created by phil on 15/03/16.
@@ -27,25 +24,26 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
   override def utility(): Double = clients.map(_.utility).sum + departedClients.map(_.utility).sum
 
   override def clients: Seq[Buyer] = _clients
+
   override def providers: Seq[Seller] = _providers
 
   override def tick(): Unit = {
     jaspr.debug(100, "tick", simulation.round)
-//    _clients = clients.map(x =>
-//      Chooser.ifHappens(simulation.config.clientAttrition)({
-//        departedClients = x :: departedClients
-//        new Buyer(simulation)
-//      })(
-//        x
-//      )
-//    )
-//    _providers = providers.map(x =>
-//      Chooser.ifHappens(simulation.config.providerAttrition)({
-//        departedProviders = x :: departedProviders
-//        new Seller(simulation)
-//      })(
-//        x
-//      )
-//    )
+    //    _clients = clients.map(x =>
+    //      Chooser.ifHappens(simulation.config.clientAttrition)({
+    //        departedClients = x :: departedClients
+    //        new Buyer(simulation)
+    //      })(
+    //        x
+    //      )
+    //    )
+    //    _providers = providers.map(x =>
+    //      Chooser.ifHappens(simulation.config.providerAttrition)({
+    //        departedProviders = x :: departedProviders
+    //        new Seller(simulation)
+    //      })(
+    //        x
+    //      )
+    //    )
   }
 }

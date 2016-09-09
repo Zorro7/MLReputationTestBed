@@ -6,6 +6,7 @@ import jaspr.core.simulation._
 import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.agent.{HonestWitnessModel, Witness, WitnessModel}
 import jaspr.sellerssim.service.ProductPayload
+import jaspr.sellerssim.strategy.general.BasicML
 import jaspr.sellerssim.strategy.mlrs.Mlrs
 import jaspr.sellerssim.{SellerConfiguration, SellerNetwork, SellerSimulation}
 import jaspr.strategy.NoStrategy
@@ -31,17 +32,18 @@ object DynamicSellerMultiConfiguration extends App {
 
 class DynamicSellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
-//  override val _seed = 1
+  //  override val _seed = 1
   override val resultStart: Int = -100
 
   override lazy val configs: Seq[Configuration] =
-    new DynamicSellerConfiguration(new NoStrategy) ::
-    new DynamicSellerConfiguration(new Mlrs(new NaiveBayes, 2, 2, true, false)) ::
-    new DynamicSellerConfiguration(new Fire(0.0)) ::
-    new DynamicSellerConfiguration(new Fire(0.5)) ::
-    new DynamicSellerConfiguration(new Blade(2)) ::
-    new DynamicSellerConfiguration(new Habit(2)) ::
-    new DynamicSellerConfiguration(new Burnett) ::
+//    new DynamicSellerConfiguration(new BasicML(new NaiveBayes, 2)) ::
+          new DynamicSellerConfiguration(new NoStrategy) ::
+          new DynamicSellerConfiguration(new Mlrs(new NaiveBayes, 2, 2, true, false)) ::
+          new DynamicSellerConfiguration(new Fire(0.0)) ::
+          new DynamicSellerConfiguration(new Fire(0.5)) ::
+          new DynamicSellerConfiguration(new Blade(2)) ::
+          new DynamicSellerConfiguration(new Habit(2)) ::
+          new DynamicSellerConfiguration(new Burnett) ::
       Nil
 }
 
@@ -62,20 +64,23 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   override val numRounds: Int = 500
 
   override def numClients: Int = 10
+
   override def numProviders: Int = 25
+
   val clientAttrition: Double = 0.0
   val providerAttrition: Double = 0.0
 
   override def memoryLimit: Int = 100
 
   override def clientInvolvementLikelihood: Double = 0.1
+
   override def witnessRequestLikelihood: Double = 0.2
 
   override def baseUtility: Double = 0.5
 
   override def eventLikelihood: Double = 0d
-  override def eventEffects: Double = 0d
 
+  override def eventEffects: Double = 0d
 
 
   override def witnessModel(witness: Witness, network: Network): WitnessModel = {
@@ -83,8 +88,9 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   }
 
   val noiseRange = 1d
+
   def addNoise(x: Double): Double = {
-//    (x + Chooser.randomDouble(-1 * noiseRange, 1 * noiseRange)) / 2d
+    //    (x + Chooser.randomDouble(-1 * noiseRange, 1 * noiseRange)) / 2d
     x
   }
 
@@ -92,6 +98,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   override var simcapabilities: Seq[ProductPayload] = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
 
   val numProviderCapabilities = 1
+
   override def capabilities(provider: Provider): Seq[ProductPayload] = {
     Chooser.sample(simcapabilities, numProviderCapabilities).map(_.copy(
       quality = provider.properties.map(x =>
@@ -111,11 +118,13 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
 
 
   val numTerms = 5
+
   override def properties(agent: Agent): SortedMap[String, Property] = {
     (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
   }
 
   val numPreferences = 2
+
   override def preferences(agent: Client): SortedMap[String, Property] = {
     if (numPreferences == 0) {
       (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
@@ -127,6 +136,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   }
 
   val numAdverts = 0
+
   override def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
     agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
   }

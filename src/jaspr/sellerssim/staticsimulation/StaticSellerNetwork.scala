@@ -1,8 +1,8 @@
 package jaspr.sellerssim.staticsimulation
 
 import jaspr.core.agent.{Client, Provider}
-import jaspr.sellerssim.{SellerNetwork, SellerSimulation}
 import jaspr.sellerssim.agent.{Buyer, Seller}
+import jaspr.sellerssim.{SellerNetwork, SellerSimulation}
 
 /**
   * Created by phil on 21/03/16.

@@ -150,7 +150,7 @@ def nwayanova(results, numreplicates, divs, measurement, nobs=None):
             # tmp =[s[measurement] for s in subset[value]]
             observations[div][value] = [s[measurement] for s in subset[value]]
             means[div][value] = findmean(subset[value], measurement)[measurement]
-        # print "\t", value, len(observations[div][value]), means[div][value], observations[div][value]
+            # print "\t", value, len(observations[div][value]), means[div][value], observations[div][value]
 
     # print means
     # print nobs, df
@@ -213,7 +213,7 @@ def nwayanova(results, numreplicates, divs, measurement, nobs=None):
             # print "+", (d, SS[d], DF[d])
             SSsum += SS[d]
             DFsum += DF[d]
-        # print "=", SSsum
+            # print "=", SSsum
     Fscore = (SSsum / DFsum) / MS[()]
     Pvalue = 1.0 - stats.f.cdf(Fscore, DFsum, DF[()])
     print "DF:", DFsum, "F:", Fscore, "P:", Pvalue, stars(Pvalue)

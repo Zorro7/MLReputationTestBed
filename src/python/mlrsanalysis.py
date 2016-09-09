@@ -176,52 +176,52 @@ if __name__ == "__main__":
         print "\\\\"
 
 
-    # print "\\begin{tikzpicture}"
-    # print "\\begin{axis}[ybar=0pt,bar width=1pt, width=\\textwidth]\n"
-    # for topi in xrange(0,len(exps)):
-    # 	print "\\addplot coordinates {"
-    # 	for boti in xrange(0,len(strategies)):
-    # 		print "("+str(boti)+","+df.format(means[topi][boti])+") +- (0,"+df.format(stderrs[topi][boti])+")"
-    # 	print "};\n"
-    # print "\n\\legend{"+',''.join([str(s) for s in strategies])+"}"
-    # print "\\end{axis}\n"
-    # print "\\end{tikzpicture}"
+        # print "\\begin{tikzpicture}"
+        # print "\\begin{axis}[ybar=0pt,bar width=1pt, width=\\textwidth]\n"
+        # for topi in xrange(0,len(exps)):
+        # 	print "\\addplot coordinates {"
+        # 	for boti in xrange(0,len(strategies)):
+        # 		print "("+str(boti)+","+df.format(means[topi][boti])+") +- (0,"+df.format(stderrs[topi][boti])+")"
+        # 	print "};\n"
+        # print "\n\\legend{"+',''.join([str(s) for s in strategies])+"}"
+        # print "\\end{axis}\n"
+        # print "\\end{tikzpicture}"
 
-    # means = zip(*means)
-    # stds = zip(*stds)
-    # stderrs = zip(*stderrs)
-    # print "\\begin{tikzpicture}"
-    # print "\\begin{axis}[ybar=0pt,bar width=1pt, width=\\textwidth]\n"
-    # for topi in xrange(0,len(strategies)):
-    # 	print "\\addplot coordinates {"
-    # 	for boti in xrange(0,len(exps)):
-    # 		print "("+str(boti)+","+df.format(means[topi][boti])+") +- (0,"+df.format(stderrs[topi][boti])+")"
-    # 	print "};\n"
-    # print "\n\\legend{"+','.join([str(s) for s in strategies])+"}"
-    # print "\\end{axis}\n"
-    # print "\\end{tikzpicture}"
-
-
+        # means = zip(*means)
+        # stds = zip(*stds)
+        # stderrs = zip(*stderrs)
+        # print "\\begin{tikzpicture}"
+        # print "\\begin{axis}[ybar=0pt,bar width=1pt, width=\\textwidth]\n"
+        # for topi in xrange(0,len(strategies)):
+        # 	print "\\addplot coordinates {"
+        # 	for boti in xrange(0,len(exps)):
+        # 		print "("+str(boti)+","+df.format(means[topi][boti])+") +- (0,"+df.format(stderrs[topi][boti])+")"
+        # 	print "};\n"
+        # print "\n\\legend{"+','.join([str(s) for s in strategies])+"}"
+        # print "\\end{axis}\n"
+        # print "\\end{tikzpicture}"
 
 
 
-    # print "\\begin{tikzpicture}"
-    # print "\\begin{axis}[xbar]"
-    # for topi,topkey in zip(xrange(0,len(topsplt)),topsplt):
-    # 	print "\\addplot coordinates {"
-    # 	topval = topsplt[topkey]
-    # 	botsplt = split(topval, *botspltkeys)
-    # 	for boti,botkey in zip(xrange(0,len(strategies)),strategies):
-    # 		if botkey not in botsplt:
-    # 			print "(0,"+str(boti)+" +- (0,0)"
-    # 			continue
-    # 		botval = botsplt[botkey]
-    # 		mn = findmean(botval, scorename)
-    # 		st = findstd(botval, scorename)
-    # 		se = st[scorename] / float(len(botval))**0.5
-    # 		print "("+df.format(mn[scorename]).zfill(5)+","+str(boti)+") +- ("+df.format(se)+",0)"
-    # 	print "};\n"
-    # 	if topi==2: break
-    # print "\\legend{"+','.join([str(s) for s in strategies])+"}"
-    # print "\n\\end{axis}"
-    # print "\n\\end{tikzpicture}"
+
+
+        # print "\\begin{tikzpicture}"
+        # print "\\begin{axis}[xbar]"
+        # for topi,topkey in zip(xrange(0,len(topsplt)),topsplt):
+        # 	print "\\addplot coordinates {"
+        # 	topval = topsplt[topkey]
+        # 	botsplt = split(topval, *botspltkeys)
+        # 	for boti,botkey in zip(xrange(0,len(strategies)),strategies):
+        # 		if botkey not in botsplt:
+        # 			print "(0,"+str(boti)+" +- (0,0)"
+        # 			continue
+        # 		botval = botsplt[botkey]
+        # 		mn = findmean(botval, scorename)
+        # 		st = findstd(botval, scorename)
+        # 		se = st[scorename] / float(len(botval))**0.5
+        # 		print "("+df.format(mn[scorename]).zfill(5)+","+str(boti)+") +- ("+df.format(se)+",0)"
+        # 	print "};\n"
+        # 	if topi==2: break
+        # print "\\legend{"+','.join([str(s) for s in strategies])+"}"
+        # print "\n\\end{axis}"
+        # print "\n\\end{tikzpicture}"

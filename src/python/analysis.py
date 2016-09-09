@@ -35,8 +35,8 @@ def compare(a, b, ndp, *orderings):
         if c not in [le, ge, lt, gt]:
             print "That is not a comparison operator", orderings
             asdf
-        ##if for all orderings a are 'better' than we have a winner (a)
-        # c(a, b) is equivalent to a *c* b
+            ##if for all orderings a are 'better' than we have a winner (a)
+            # c(a, b) is equivalent to a *c* b
     # print [(o,":",round(a[o],ndp),c.__name__,round(b[o],ndp),c(a[o], b[o])) for o,c in orderings]
     for o, c in orderings:
         if c(round(a[o], ndp), round(b[o], ndp)):

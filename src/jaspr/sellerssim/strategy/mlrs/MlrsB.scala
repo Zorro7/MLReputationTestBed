@@ -1,10 +1,10 @@
 package jaspr.sellerssim.strategy.mlrs
 
 import jaspr.core.agent.{Client, Provider}
+import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
-import jaspr.core.provenance.{Record, ServiceRecord, RatingRecord}
 import jaspr.strategy.CompositionStrategy
 import jaspr.strategy.betareputation.Travos
 import jaspr.utilities.Chooser

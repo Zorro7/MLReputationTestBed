@@ -41,14 +41,16 @@ class Results {
       results.map(_.map(funch).reverse.mkString(",")).mkString(config.toString + ": ", "\n" + config.toString + ": ", "")
     }).mkString("", "\n", "")
     new PrintWriter(filename) {
-      write(x); close()
+      write(x);
+      close()
     }
   }
 
   def saveConfig(filename: String, config: Configuration, funch: Result => Double) = lock.synchronized {
     val x = results.getOrElse(config, List()).map(_.map(funch).reverse.mkString(",")).mkString(config.toString + ": ", "\n" + config.toString + ": ", "")
     new PrintWriter(filename) {
-      write(x); close()
+      write(x);
+      close()
     }
   }
 

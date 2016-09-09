@@ -47,18 +47,18 @@ object StaticSellerMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-//        "jaspr.strategy.NoStrategy," +
+        //        "jaspr.strategy.NoStrategy," +
         //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
         //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;true),"+
-//                "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
-//        //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
-//        "jaspr.strategy.fire.Fire(0.0)," +
+        //                "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
+        //        //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
+        //        "jaspr.strategy.fire.Fire(0.0)," +
         "jaspr.strategy.fire.Fire(0.5)," +
-////        "jaspr.strategy.betareputation.BetaReputation," +
-////        "jaspr.strategy.betareputation.Travos," +
-//                  "jaspr.strategy.blade.Blade(2)," +
-//                "jaspr.strategy.habit.Habit(2),"+
-//                "jaspr.strategy.stereotype.Burnett,"+
+        ////        "jaspr.strategy.betareputation.BetaReputation," +
+        ////        "jaspr.strategy.betareputation.Travos," +
+        //                  "jaspr.strategy.blade.Blade(2)," +
+        //                "jaspr.strategy.habit.Habit(2),"+
+        //                "jaspr.strategy.stereotype.Burnett,"+
         " --numSimulations 1 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -126,7 +126,7 @@ case class StaticSellerMultiConfiguration(
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-//  override val _seed = 1
+  //  override val _seed = 1
 
 
   override lazy val configs: Seq[Configuration] =
@@ -160,8 +160,6 @@ case class StaticSellerMultiConfiguration(
       )
     })
 }
-
-
 
 
 class StaticSellerConfiguration(val _strategy: Strategy,

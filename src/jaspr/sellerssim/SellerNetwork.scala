@@ -4,11 +4,10 @@ import jaspr.core.agent._
 import jaspr.core.provenance.Record
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.simulation.{Network, NetworkMarket}
-import jaspr.sellerssim.agent.{Buyer, Seller, SellerMarket}
+import jaspr.sellerssim.agent.SellerMarket
 import jaspr.utilities.Chooser
 
 import scala.annotation.tailrec
-
 
 
 abstract class SellerNetwork extends Network with NetworkMarket {
