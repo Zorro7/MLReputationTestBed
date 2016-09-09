@@ -31,11 +31,14 @@ class Mlrs(val baseLearner: Classifier,
                    val reinterpretationModels: Option[Map[Client, MlrsModel]]
                  ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName + "2-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts
+  override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts
 
   override val explorationProbability: Double = 0.1
 
-  if (baseLearner.isInstanceOf[NaiveBayes]) baseLearner.asInstanceOf[NaiveBayes].setUseSupervisedDiscretization(true)
+  baseLearner match {
+    case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
+    case _ => // do nothing
+  }
 
   //  val baseTrustModel = AbstractClassifier.makeCopy(baseLearner)
   val baseTrustModel = new MultiRegression
