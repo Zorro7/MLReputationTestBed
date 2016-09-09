@@ -25,7 +25,7 @@ class Mlrs(val baseLearner: Classifier,
           ) extends CompositionStrategy with Exploration with MlrsCore {
 
 
-  class Mlrs2Init(
+  class MlrsInit(
                    context: ClientContext,
                    val trustModel: Option[MlrsModel],
                    val reinterpretationModels: Option[Map[Client, MlrsModel]]
@@ -44,7 +44,7 @@ class Mlrs(val baseLearner: Classifier,
   val baseReinterpretationModel = AbstractClassifier.makeCopy(baseLearner)
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    val init = baseInit.asInstanceOf[Mlrs2Init]
+    val init = baseInit.asInstanceOf[MlrsInit]
 
     (init.trustModel, init.reinterpretationModels) match {
       case (None, None) =>
@@ -84,10 +84,10 @@ class Mlrs(val baseLearner: Classifier,
     val witnesses = context.client :: witnessRecords.map(_.service.request.client).toSet.toList
     val records = directRecords ++ witnessRecords
 
-    if (witnessRecords.isEmpty && directRecords.isEmpty) new Mlrs2Init(context, None, None)
+    if (witnessRecords.isEmpty && directRecords.isEmpty) new MlrsInit(context, None, None)
     else if (witnessRecords.isEmpty || directRecords.isEmpty) {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
-      new Mlrs2Init(context, Some(model), None)
+      new MlrsInit(context, Some(model), None)
     } else {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
 
@@ -95,7 +95,7 @@ class Mlrs(val baseLearner: Classifier,
         witness -> makeReinterpretationModel(directRecords, witnessRecords, context.client, witness, model)
       ).toMap
 
-      new Mlrs2Init(context, Some(model), Some(reinterpretationModels))
+      new MlrsInit(context, Some(model), Some(reinterpretationModels))
     }
   }
 
