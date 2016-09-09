@@ -1,4 +1,4 @@
-package jaspr.sellerssim.strategy.general.mlrs2
+package jaspr.sellerssim.strategy.mlrs
 
 import jaspr.core.agent.Provider
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}

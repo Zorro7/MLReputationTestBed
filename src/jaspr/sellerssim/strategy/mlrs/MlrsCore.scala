@@ -1,4 +1,4 @@
-package jaspr.sellerssim.strategy.general.mlrs2
+package jaspr.sellerssim.strategy.mlrs
 
 import java.text.DecimalFormat
 import java.util
@@ -10,8 +10,8 @@ import weka.classifiers.evaluation.{NominalPrediction, NumericPrediction, Predic
 import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.core.{Attribute, DenseInstance, Instance, Instances}
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable
+import scala.collection.JavaConversions._
 
 /**
   * Created by phil on 03/11/15.

@@ -1,4 +1,4 @@
-package jaspr.sellerssim.strategy.general.mlrs3
+package jaspr.sellerssim.strategy.mlrsfe
 
 import java.util
 

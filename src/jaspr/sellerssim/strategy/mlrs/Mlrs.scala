@@ -1,12 +1,11 @@
-package jaspr.sellerssim.strategy.general.mlrs2
+package jaspr.sellerssim.strategy.mlrs
 
 import jaspr.core.agent.{Client, Provider}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
-import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
+import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.service.BuyerRecord
 import jaspr.strategy.CompositionStrategy
-import jaspr.strategy.betareputation.Travos
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.bayes.NaiveBayes
@@ -18,32 +17,25 @@ import scala.collection.mutable
 /**
   * Created by phil on 24/03/16.
   */
-class MlrsB(val baseLearner: Classifier,
-            override val numBins: Int,
-            val backupKind: String = "round",
-            val backupThreshold: Double = 0.5,
-            val witnessWeight: Double = 0.5d,
-            val reinterpretationContext: Boolean = true,
-            val useAdverts: Boolean = true
-           ) extends CompositionStrategy with Exploration with MlrsCore {
+class Mlrs(val baseLearner: Classifier,
+           override val numBins: Int,
+           val witnessWeight: Double = 0.5d,
+           val reinterpretationContext: Boolean = true,
+           val useAdverts: Boolean = true
+          ) extends CompositionStrategy with Exploration with MlrsCore {
 
-  val numFolds: Int = 5
 
   class Mlrs2Init(
                    context: ClientContext,
                    val trustModel: Option[MlrsModel],
-                   val reinterpretationModels: Option[Map[Client, MlrsModel]],
-                   val backupStrategyInit: Option[StrategyInit]
+                   val reinterpretationModels: Option[Map[Client, MlrsModel]]
                  ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName + "2-" + baseLearner.getClass.getSimpleName + "-" + backupKind + "-" + backupThreshold + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts
+  override val name = this.getClass.getSimpleName + "2-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts
 
   override val explorationProbability: Double = 0.1
 
-  baseLearner match {
-    case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
-    case _ => // do nothing
-  }
+  if (baseLearner.isInstanceOf[NaiveBayes]) baseLearner.asInstanceOf[NaiveBayes].setUseSupervisedDiscretization(true)
 
   //  val baseTrustModel = AbstractClassifier.makeCopy(baseLearner)
   val baseTrustModel = new MultiRegression
@@ -51,34 +43,25 @@ class MlrsB(val baseLearner: Classifier,
   baseTrustModel.setSplitAttIndex(1)
   val baseReinterpretationModel = AbstractClassifier.makeCopy(baseLearner)
 
-  val backupStrategy: Strategy = new Travos
-
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[Mlrs2Init]
 
-    (init.trustModel, init.reinterpretationModels, init.backupStrategyInit) match {
-      case (None, None, None) =>
-        //        println(init.context.round, "NOTHONG")
+    (init.trustModel, init.reinterpretationModels) match {
+      case (None, None) =>
         new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0d, 1d))
 
-      case (None, None, Some(backupInit)) =>
-        //        println(init.context.round, "backup")
-        backupStrategy.computeAssessment(backupInit, request)
-
-      case (Some(model), None, None) =>
-        //        println(init.context.round, "as is")
+      case (Some(model), None) =>
         val row = makeTestRow(request)
         val query = convertRowToInstance(row, model.attVals, model.train)
         val result = makePrediction(query, model)
         new TrustAssessment(baseInit.context, request, result)
 
-      case (Some(model), Some(reinterpretation), None) =>
-        //        println(init.context.round, "reintererrtpret")
+      case (Some(model), Some(reinterpretationModels)) =>
         val row = makeTestRow(request)
         val query = convertRowToInstance(row, model.attVals, model.train)
         val directResult = makePrediction(query, model)
         val witnessResults =
-          for ((witness, reint) <- reinterpretation.filter(_._1 != request.client)) yield {
+          for ((witness, reint) <- reinterpretationModels.filter(_._1 != request.client)) yield {
             val row = makeTestRow(request, witness)
             val query = convertRowToInstance(row, model.attVals, model.train)
             val reinterpretationRow = 0 :: makePrediction(query, model) :: makeReinterpretationContext(request)
@@ -91,7 +74,6 @@ class MlrsB(val baseLearner: Classifier,
           if (witnessWeight < 0d || witnessWeight > 1d) directResult + witnessResults.sum
           else (1 - witnessWeight) * directResult + witnessWeight * witnessResult
         new TrustAssessment(baseInit.context, request, score)
-
     }
   }
 
@@ -102,35 +84,20 @@ class MlrsB(val baseLearner: Classifier,
     val witnesses = context.client :: witnessRecords.map(_.service.request.client).toSet.toList
     val records = directRecords ++ witnessRecords
 
-    def useBackup: Boolean = {
-      val backupScore = backupKind match {
-        case "round" => context.round
-        case "auc" => crossValidate(records, baseTrustModel, makeTrainRow, numFolds)
-        case "records" => records.size
-        case "directRecords" => directRecords.size
-        case "witnessRecords" => witnessRecords.size
-      }
-      backupScore < backupThreshold
-    }
-
-    if (witnessRecords.isEmpty && directRecords.isEmpty) {
-      new Mlrs2Init(context, None, None, None)
-    } else if (useBackup) {
-      new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)))
-    } else if (witnessRecords.isEmpty || directRecords.isEmpty) {
+    if (witnessRecords.isEmpty && directRecords.isEmpty) new Mlrs2Init(context, None, None)
+    else if (witnessRecords.isEmpty || directRecords.isEmpty) {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
-      new Mlrs2Init(context, Some(model), None, None)
+      new Mlrs2Init(context, Some(model), None)
     } else {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
+
       val reinterpretationModels = witnesses.withFilter(_ != context.client).map(witness =>
         witness -> makeReinterpretationModel(directRecords, witnessRecords, context.client, witness, model)
       ).toMap
 
-      new Mlrs2Init(context, Some(model), Some(reinterpretationModels), None)
+      new Mlrs2Init(context, Some(model), Some(reinterpretationModels))
     }
-
   }
-
 
   def makeReinterpretationModel(directRecords: Seq[BuyerRecord], witnessRecords: Seq[BuyerRecord], client: Client, witness: Client, model: MlrsModel): MlrsModel = {
     val reinterpretationRows: Seq[Seq[Any]] =

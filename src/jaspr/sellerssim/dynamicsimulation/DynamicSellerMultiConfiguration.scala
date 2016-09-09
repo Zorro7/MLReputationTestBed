@@ -6,7 +6,7 @@ import jaspr.core.simulation._
 import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.agent.{HonestWitnessModel, Witness, WitnessModel}
 import jaspr.sellerssim.service.ProductPayload
-import jaspr.sellerssim.strategy.general.mlrs2.Mlrs
+import jaspr.sellerssim.strategy.mlrs.Mlrs
 import jaspr.sellerssim.{SellerConfiguration, SellerNetwork, SellerSimulation}
 import jaspr.strategy.NoStrategy
 import jaspr.strategy.blade.Blade

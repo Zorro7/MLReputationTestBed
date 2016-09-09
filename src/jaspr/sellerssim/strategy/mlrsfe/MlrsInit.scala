@@ -1,4 +1,4 @@
-package jaspr.sellerssim.strategy
+package jaspr.sellerssim.strategy.mlrsfe
 
 import jaspr.core.service.ClientContext
 import jaspr.core.strategy.StrategyInit
