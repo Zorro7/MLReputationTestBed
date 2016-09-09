@@ -4,7 +4,7 @@ import jaspr.core.agent.{Client, Provider}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.service.BuyerRecord
+import jaspr.core.provenance.{Record, ServiceRecord, RatingRecord}
 import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
@@ -82,8 +82,8 @@ class Mlrs(val baseLearner: Classifier,
 
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
-    val directRecords: Seq[BuyerRecord] = context.client.getProvenance[BuyerRecord](context.client)
-    val witnessRecords: Seq[BuyerRecord] = network.gatherProvenance[BuyerRecord](context.client)
+    val directRecords: Seq[Record with ServiceRecord with RatingRecord] = context.client.getProvenance[Record with ServiceRecord with RatingRecord](context.client)
+    val witnessRecords: Seq[Record with ServiceRecord with RatingRecord] = network.gatherProvenance[Record with ServiceRecord with RatingRecord](context.client)
     val witnesses = context.client :: witnessRecords.map(_.service.request.client).toSet.toList
     val records = directRecords ++ witnessRecords
 
@@ -102,7 +102,7 @@ class Mlrs(val baseLearner: Classifier,
     }
   }
 
-  def makeReinterpretationModel(directRecords: Seq[BuyerRecord], witnessRecords: Seq[BuyerRecord], client: Client, witness: Client, model: MlrsModel): MlrsModel = {
+  def makeReinterpretationModel(directRecords: Seq[Record with ServiceRecord with RatingRecord], witnessRecords: Seq[Record with ServiceRecord with RatingRecord], client: Client, witness: Client, model: MlrsModel): MlrsModel = {
     val reinterpretationRows: Seq[Seq[Any]] =
     //      directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
     //        witnessRecords.withFilter(_.client == witness).map(record => makeReinterpretationRow(record, model, witness, client))
@@ -124,7 +124,7 @@ class Mlrs(val baseLearner: Classifier,
     new MlrsModel(reinterpretationModel, reinterpretationTrain, reinterpretationAttVals)
   }
 
-  def makeClientReinterpretationRow(record: BuyerRecord, trustModel: MlrsModel, fromPOV: Client): Seq[Any] = {
+  def makeClientReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client): Seq[Any] = {
     val row = makeTestRow(record, fromPOV)
     val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
     (if (discreteClass) discretizeDouble(record.rating) else record.rating) ::
@@ -132,7 +132,7 @@ class Mlrs(val baseLearner: Classifier,
       makeReinterpretationContext(record)
   }
 
-  def makeWitnessReinterpretationRow(record: BuyerRecord, trustModel: MlrsModel, toPOV: Client): Seq[Any] = {
+  def makeWitnessReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, toPOV: Client): Seq[Any] = {
     val row = makeTestRow(record, toPOV)
     val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
     makePrediction(query, trustModel, false) ::
@@ -140,7 +140,7 @@ class Mlrs(val baseLearner: Classifier,
       makeReinterpretationContext(record)
   }
 
-  def makeReinterpretationRow(record: BuyerRecord, trustModel: MlrsModel, fromPOV: Client, toPOV: Client): Seq[Any] = {
+  def makeReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client, toPOV: Client): Seq[Any] = {
     val fromRow = makeTestRow(record, fromPOV)
     val fromQuery = convertRowToInstance(fromRow, trustModel.attVals, trustModel.train)
     val toRow = makeTestRow(record, toPOV)
@@ -150,7 +150,7 @@ class Mlrs(val baseLearner: Classifier,
       makeReinterpretationContext(record)
   }
 
-  def makeReinterpretationContext(record: BuyerRecord): List[Any] = {
+  def makeReinterpretationContext(record: Record with ServiceRecord with RatingRecord): List[Any] = {
     if (reinterpretationContext) {
       record.service.payload.name ::
         record.service.request.provider.name ::
@@ -173,7 +173,7 @@ class Mlrs(val baseLearner: Classifier,
     }
   }
 
-  def makeTrainRow(record: BuyerRecord): Seq[Any] = {
+  def makeTrainRow(record: Record with ServiceRecord with RatingRecord): Seq[Any] = {
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
       record.service.request.client.name ::
       record.service.request.payload.name :: // service identifier (client context)
@@ -197,7 +197,7 @@ class Mlrs(val baseLearner: Classifier,
       adverts(request.provider)
   }
 
-  def makeTestRow(record: BuyerRecord, witness: Client): Seq[Any] = {
+  def makeTestRow(record: Record with ServiceRecord with RatingRecord, witness: Client): Seq[Any] = {
     0 ::
       witness.name ::
       record.service.request.payload.name :: // service identifier (client context)
