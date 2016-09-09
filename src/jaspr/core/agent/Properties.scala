@@ -57,4 +57,8 @@ case class Property(override val name: String, value: AnyVal) extends NamedEntit
   def intValue: Int = {
     doubleValue.toInt
   }
+
+  override def toString: String = {
+    super.toString+"-"+value
+  }
 }

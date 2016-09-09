@@ -29,25 +29,23 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
   override def clients: Seq[Buyer] = _clients
   override def providers: Seq[Seller] = _providers
 
-  override val market: Market = new SellerMarket
-
   override def tick(): Unit = {
     jaspr.debug(100, "tick", simulation.round)
-    _clients = clients.map(x =>
-      Chooser.ifHappens(simulation.config.clientAttrition)({
-        departedClients = x :: departedClients
-        new Buyer(simulation)
-      })(
-        x
-      )
-    )
-    _providers = providers.map(x =>
-      Chooser.ifHappens(simulation.config.providerAttrition)({
-        departedProviders = x :: departedProviders
-        new Seller(simulation)
-      })(
-        x
-      )
-    )
+//    _clients = clients.map(x =>
+//      Chooser.ifHappens(simulation.config.clientAttrition)({
+//        departedClients = x :: departedClients
+//        new Buyer(simulation)
+//      })(
+//        x
+//      )
+//    )
+//    _providers = providers.map(x =>
+//      Chooser.ifHappens(simulation.config.providerAttrition)({
+//        departedProviders = x :: departedProviders
+//        new Seller(simulation)
+//      })(
+//        x
+//      )
+//    )
   }
 }

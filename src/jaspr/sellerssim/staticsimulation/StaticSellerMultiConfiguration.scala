@@ -50,16 +50,16 @@ object StaticSellerMultiConfiguration extends App {
 //        "jaspr.strategy.NoStrategy," +
         //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
         //        "jaspr.sellerssim.strategy.general.mlrs2.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;true),"+
-                "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
-        //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
+//                "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false),"+
+//        //        "jaspr.sellerssim.strategy.general.mlrs2.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true),"+
 //        "jaspr.strategy.fire.Fire(0.0)," +
-//        "jaspr.strategy.fire.Fire(0.5)," +
-//        "jaspr.strategy.betareputation.BetaReputation," +
-//        "jaspr.strategy.betareputation.Travos," +
+        "jaspr.strategy.fire.Fire(0.5)," +
+////        "jaspr.strategy.betareputation.BetaReputation," +
+////        "jaspr.strategy.betareputation.Travos," +
 //                  "jaspr.strategy.blade.Blade(2)," +
-        //        "jaspr.strategy.habit.Habit(2),"+
-        //        "jaspr.strategy.stereotype.Burnett,"+
-        " --numSimulations 5 " +
+//                "jaspr.strategy.habit.Habit(2),"+
+//                "jaspr.strategy.stereotype.Burnett,"+
+        " --numSimulations 1 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -69,18 +69,18 @@ object StaticSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 10 --numProviders 25 " +
+        "--numClients 10 --numProviders 10 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 1000 " +
+        "--numRounds 100 " +
         "--memoryLimit 100 " +
         "--numSimCapabilities 3 " +
         "--numProviderCapabilities 3 " +
         "--noiseRange 1. " +
         "--numTerms 3 " +
         "--witnessRequestLikelihood 0.2 " +
-        "--numAdverts 3 " +
+        "--numAdverts 0 " +
         "--usePreferences true").split(" ")
     } else args
 
@@ -126,7 +126,7 @@ case class StaticSellerMultiConfiguration(
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-  //  override val _seed = 1
+    override val _seed = 1
 
 
   override lazy val configs: Seq[Configuration] =
@@ -207,14 +207,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   //  val baseUtility = 1d
 
   def addNoise(x: Double): Double = {
-    //    Chooser.bound(x + Chooser.randomDouble(-noiseRange/2d, noiseRange/2d), -1, 1)
-    val ret = (x + Chooser.randomDouble(-1 * noiseRange, 1 * noiseRange)) / 2d
-    //    val ret = (x + Chooser.nextGaussian()*noiseRange)/2d
-    //    val ret = (x+noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1)
-    //    Chooser.bound(x + Chooser.randomDouble(-1,1), -1, 1)
-    //    println(x, ret)
-    //   val ret =  x + Chooser.randomDouble(-1d,1d)
-    ret
+    (x + Chooser.randomDouble(-1 * noiseRange, 1 * noiseRange)) / 2d
   }
 
   // Services that exist in the simulation

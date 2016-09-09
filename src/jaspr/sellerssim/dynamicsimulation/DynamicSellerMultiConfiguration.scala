@@ -26,19 +26,22 @@ import scala.collection.immutable.SortedMap
 object DynamicSellerMultiConfiguration extends App {
   val multiconfig = new DynamicSellerMultiConfiguration()
   val results = Simulation(multiconfig)
+
 }
 
 class DynamicSellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
+  override val _seed = 1
   override val resultStart: Int = -100
 
   override lazy val configs: Seq[Configuration] =
+//    new DynamicSellerConfiguration(new NoStrategy) ::
 //    new DynamicSellerConfiguration(new Mlrs(new NaiveBayes, 2, 2, true, false)) ::
+//    new DynamicSellerConfiguration(new Fire(0.0)) ::
+    new DynamicSellerConfiguration(new Fire(0.5)) ::
 //    new DynamicSellerConfiguration(new Blade(2)) ::
 //    new DynamicSellerConfiguration(new Habit(2)) ::
 //    new DynamicSellerConfiguration(new Burnett) ::
-    new DynamicSellerConfiguration(new Fire) ::
-    new DynamicSellerConfiguration(new NoStrategy) ::
       Nil
 }
 
@@ -55,11 +58,11 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 5
-  override val numRounds: Int = 1000
+  override val numSimulations: Int = 1
+  override val numRounds: Int = 100
 
   override def numClients: Int = 10
-  override def numProviders: Int = 25
+  override def numProviders: Int = 10
   val clientAttrition: Double = 0.0
   val providerAttrition: Double = 0.0
 
@@ -81,13 +84,14 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
 
   val noiseRange = 1d
   def addNoise(x: Double): Double = {
-    (x + Chooser.randomDouble(-1 * noiseRange, 1 * noiseRange)) / 2d
+//    (x + Chooser.randomDouble(-1 * noiseRange, 1 * noiseRange)) / 2d
+    x
   }
 
-  val numSimCapabilities = 10
+  val numSimCapabilities = 3
   override var simcapabilities: Seq[ProductPayload] = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
 
-  val numProviderCapabilities = 10
+  val numProviderCapabilities = 3
   override def capabilities(provider: Provider): Seq[ProductPayload] = {
     Chooser.sample(simcapabilities, numProviderCapabilities).map(_.copy(
       quality = provider.properties.map(x =>
@@ -122,7 +126,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
     }
   }
 
-  val numAdverts = 3
+  val numAdverts = 0
   override def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
     agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
   }

@@ -21,7 +21,7 @@ abstract class SellerNetwork extends Network with NetworkMarket {
   @tailrec
   override final def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     val p = providers.withFilter(
-      _.capableOf(context.payload, 0) // && Chooser.nextDouble() < simulation.config.clientInvolvementLikelihood
+      _.capableOf(context.payload, 0)
     ).map(x =>
       new ServiceRequest(
         context.client, x, simulation.round, 0, context.payload, context.market

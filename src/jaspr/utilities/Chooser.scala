@@ -30,8 +30,9 @@ object Chooser extends Random {
   }
 
   // Tests a random number against the given probability, executing ifMet if passed, ifNotMet if not
-  def ifHappens[V](probability: Double)(ifMet: => V)(ifNotMet: => V): V =
-  if (nextDouble < probability) ifMet else ifNotMet
+  def ifHappens[V](probability: Double)(ifMet: => V)(ifNotMet: => V): V = {
+    if (probability > 0 && nextDouble < probability) ifMet else ifNotMet
+  }
 
   // Tests a random number against the given probability, returning Some (ifMet) if passed, None if not
   def getIfHappens[V](probability: Double)(ifMet: => V): Option[V] =

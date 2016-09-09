@@ -47,4 +47,5 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
     capabilities.contains(payload.name)
   }
 
+  println(name+"  "+properties)
 }
