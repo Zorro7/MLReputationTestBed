@@ -46,6 +46,4 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
   override def capableOf(payload: Payload, duration: Int): Boolean = {
     capabilities.contains(payload.name)
   }
-
-  println(name+"  "+properties)
 }

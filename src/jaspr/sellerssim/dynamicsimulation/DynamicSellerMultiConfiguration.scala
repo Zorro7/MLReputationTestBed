@@ -31,17 +31,17 @@ object DynamicSellerMultiConfiguration extends App {
 
 class DynamicSellerMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
-  override val _seed = 1
+//  override val _seed = 1
   override val resultStart: Int = -100
 
   override lazy val configs: Seq[Configuration] =
-//    new DynamicSellerConfiguration(new NoStrategy) ::
-//    new DynamicSellerConfiguration(new Mlrs(new NaiveBayes, 2, 2, true, false)) ::
-//    new DynamicSellerConfiguration(new Fire(0.0)) ::
+    new DynamicSellerConfiguration(new NoStrategy) ::
+    new DynamicSellerConfiguration(new Mlrs(new NaiveBayes, 2, 2, true, false)) ::
+    new DynamicSellerConfiguration(new Fire(0.0)) ::
     new DynamicSellerConfiguration(new Fire(0.5)) ::
-//    new DynamicSellerConfiguration(new Blade(2)) ::
-//    new DynamicSellerConfiguration(new Habit(2)) ::
-//    new DynamicSellerConfiguration(new Burnett) ::
+    new DynamicSellerConfiguration(new Blade(2)) ::
+    new DynamicSellerConfiguration(new Habit(2)) ::
+    new DynamicSellerConfiguration(new Burnett) ::
       Nil
 }
 
@@ -58,11 +58,11 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 1
-  override val numRounds: Int = 100
+  override val numSimulations: Int = 10
+  override val numRounds: Int = 500
 
   override def numClients: Int = 10
-  override def numProviders: Int = 10
+  override def numProviders: Int = 25
   val clientAttrition: Double = 0.0
   val providerAttrition: Double = 0.0
 
@@ -88,10 +88,10 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
     x
   }
 
-  val numSimCapabilities = 3
+  val numSimCapabilities = 1
   override var simcapabilities: Seq[ProductPayload] = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
 
-  val numProviderCapabilities = 3
+  val numProviderCapabilities = 1
   override def capabilities(provider: Provider): Seq[ProductPayload] = {
     Chooser.sample(simcapabilities, numProviderCapabilities).map(_.copy(
       quality = provider.properties.map(x =>
@@ -110,12 +110,12 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   }
 
 
-  val numTerms = 3
+  val numTerms = 5
   override def properties(agent: Agent): SortedMap[String, Property] = {
     (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
   }
 
-  val numPreferences = 0
+  val numPreferences = 2
   override def preferences(agent: Client): SortedMap[String, Property] = {
     if (numPreferences == 0) {
       (1 to numTerms).map(x => new Property(x.toString, 0d)).toList

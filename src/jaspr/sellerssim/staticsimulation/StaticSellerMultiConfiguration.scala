@@ -126,7 +126,7 @@ case class StaticSellerMultiConfiguration(
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-    override val _seed = 1
+//  override val _seed = 1
 
 
   override lazy val configs: Seq[Configuration] =
