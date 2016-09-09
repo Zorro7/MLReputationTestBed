@@ -28,15 +28,7 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
         x
       case None => throw new Exception("Request " + service.request + " not found.")
     }
-    recordProvenance(new BuyerRecord(
-      service, assessment,
-      service.request.client, service.request.provider,
-      service.end, service.payload, service.serviceContext.events.headOption match {
-        case Some(x) => x
-        case None => new SellerEvent("NA")
-      },
-      rateService(service)
-    ))
+    recordProvenance(new BuyerRecord(service, assessment, rateService(service)))
   }
 
 

@@ -152,8 +152,8 @@ class Mlrs(val baseLearner: Classifier,
 
   def makeReinterpretationContext(record: BuyerRecord): List[Any] = {
     if (reinterpretationContext) {
-      record.payload.name ::
-        record.provider.name ::
+      record.service.payload.name ::
+        record.service.request.provider.name ::
         Nil
       //        adverts(record.provider)
     } else {
@@ -175,7 +175,7 @@ class Mlrs(val baseLearner: Classifier,
 
   def makeTrainRow(record: BuyerRecord): Seq[Any] = {
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
-      record.client.name ::
+      record.service.request.client.name ::
       record.service.request.payload.name :: // service identifier (client context)
       //      record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       adverts(record.service.request.provider)
