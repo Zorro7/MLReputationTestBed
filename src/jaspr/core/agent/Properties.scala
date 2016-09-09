@@ -13,7 +13,7 @@ trait Properties {
   def properties: SortedMap[String, Property]
 
   def property(key: String): Property = {
-    properties.get(key).get
+    properties(key)
   }
 
   //  val df = new DecimalFormat("0.00")
@@ -25,7 +25,7 @@ trait AdvertProperties extends Properties {
   def advertProperties: SortedMap[String, Property]
 
   def advert(key: String): Property = {
-    advertProperties.get(key).get
+    advertProperties(key)
   }
 }
 

@@ -17,7 +17,7 @@ import jaspr.strategy.stereotype.Burnett
 import jaspr.utilities.Chooser
 import weka.classifiers.bayes.NaiveBayes
 
-import scala.collection.immutable.SortedMap
+import scala.collection.immutable.{SortedMap, TreeMap}
 
 /**
   * Created by phil on 15/03/16.
@@ -37,12 +37,12 @@ class DynamicSellerMultiConfiguration extends MultiConfiguration {
 
   override lazy val configs: Seq[Configuration] =
 //    new DynamicSellerConfiguration(new BasicML(new NaiveBayes, 2)) ::
-          new DynamicSellerConfiguration(new NoStrategy) ::
-          new DynamicSellerConfiguration(new Mlrs(new NaiveBayes, 2, 2, true, false)) ::
-          new DynamicSellerConfiguration(new Fire(0.0)) ::
-          new DynamicSellerConfiguration(new Fire(0.5)) ::
-          new DynamicSellerConfiguration(new Blade(2)) ::
-          new DynamicSellerConfiguration(new Habit(2)) ::
+//          new DynamicSellerConfiguration(new NoStrategy) ::
+//          new DynamicSellerConfiguration(new Mlrs(new NaiveBayes, 2, 2, true, false)) ::
+//          new DynamicSellerConfiguration(new Fire(0.0)) ::
+//          new DynamicSellerConfiguration(new Fire(0.5)) ::
+//          new DynamicSellerConfiguration(new Blade(2)) ::
+//          new DynamicSellerConfiguration(new Habit(2)) ::
           new DynamicSellerConfiguration(new Burnett) ::
       Nil
 }
@@ -98,13 +98,15 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   override var simcapabilities: Seq[ProductPayload] = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
 
   val numProviderCapabilities = 1
+  val numCapabilityProperties = 2
 
   override def capabilities(provider: Provider): Seq[ProductPayload] = {
-    Chooser.sample(simcapabilities, numProviderCapabilities).map(_.copy(
-      quality = provider.properties.map(x =>
-        x._1 -> addNoise(x._2.doubleValue)
+    Chooser.sample(simcapabilities, numProviderCapabilities).map(y => {
+      val newqual = Chooser.sample(provider.properties, numCapabilityProperties).map(x => x._2.name -> addNoise(x._2.doubleValue))
+      y.copy(
+        quality = TreeMap[String,Double](newqual.toArray:_*)
       )
-    ))
+    })
   }
 
   override def clientContext(network: Network with NetworkMarket, client: Client with Preferences, round: Int) = {
@@ -135,10 +137,10 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
     }
   }
 
-  val numAdverts = 0
+  val numAdverts = 1
 
   override def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
-    agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
+    Chooser.sample(agent.properties, numAdverts).map(x => Property(x._2.name, addNoise(x._2.doubleValue))).toList
   }
 
 
