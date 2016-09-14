@@ -2,9 +2,10 @@ package jaspr.sellerssim.strategy.mlrs
 
 import jaspr.core.agent.{Client, Provider}
 import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
-import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.service.{ClientContext, Payload, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
+import jaspr.sellerssim.service.ProductPayload
 import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
@@ -21,7 +22,8 @@ class Mlrs(val baseLearner: Classifier,
            override val numBins: Int,
            val witnessWeight: Double = 0.5d,
            val reinterpretationContext: Boolean = true,
-           val useAdverts: Boolean = true
+           val useAdverts: Boolean = true,
+           val usePayloadProperties: Boolean = true
           ) extends CompositionStrategy with Exploration with MlrsCore {
 
 
@@ -31,7 +33,7 @@ class Mlrs(val baseLearner: Classifier,
                   val reinterpretationModels: Option[Map[Client, MlrsModel]]
                 ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts
+  override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts+"-"+usePayloadProperties
 
   override val explorationProbability: Double = 0.1
 
@@ -152,9 +154,9 @@ class Mlrs(val baseLearner: Classifier,
 
   def makeReinterpretationContext(record: Record with ServiceRecord with RatingRecord): List[Any] = {
     if (reinterpretationContext) {
-      record.service.payload.name ::
+//      record.service.payload.name ::
         record.service.request.provider.name ::
-        Nil
+          payload(record.service.request.payload)
       //        adverts(record.provider)
     } else {
       Nil
@@ -164,9 +166,9 @@ class Mlrs(val baseLearner: Classifier,
 
   def makeReinterpretationContext(request: ServiceRequest): List[Any] = {
     if (reinterpretationContext) {
-      request.payload.name ::
+//      request.payload.name ::
         request.provider.name ::
-        Nil
+          payload(request.payload)
       //        adverts(request.provider)
     } else {
       Nil
@@ -176,7 +178,8 @@ class Mlrs(val baseLearner: Classifier,
   def makeTrainRow(record: Record with ServiceRecord with RatingRecord): Seq[Any] = {
     (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
       record.service.request.client.name ::
-      record.service.request.payload.name :: // service identifier (client context)
+      payload(record.service.request.payload) ++
+//      record.service.request.payload.name :: // service identifier (client context)
       //      record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       adverts(record.service.request.provider)
   }
@@ -184,7 +187,8 @@ class Mlrs(val baseLearner: Classifier,
   def makeTestRow(request: ServiceRequest, witness: Client): Seq[Any] = {
     0 ::
       witness.name ::
-      request.payload.name ::
+      payload(request.payload) ++
+//      request.payload.name ::
       //      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       adverts(request.provider)
   }
@@ -192,7 +196,8 @@ class Mlrs(val baseLearner: Classifier,
   def makeTestRow(request: ServiceRequest): Seq[Any] = {
     0 ::
       request.client.name ::
-      request.payload.name ::
+      payload(request.payload) ++
+//      request.payload.name ::
       //      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       adverts(request.provider)
   }
@@ -200,9 +205,18 @@ class Mlrs(val baseLearner: Classifier,
   def makeTestRow(record: Record with ServiceRecord with RatingRecord, witness: Client): Seq[Any] = {
     0 ::
       witness.name ::
-      record.service.request.payload.name :: // service identifier (client context)
+      payload(record.service.request.payload) ++
+//      record.service.request.payload.name :: // service identifier (client context)
       //            record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
       adverts(record.service.request.provider)
+  }
+
+  def payload(payload: Payload): List[Any] = {
+    if (usePayloadProperties) {
+      payload.name :: payload.asInstanceOf[ProductPayload].properties.values.map(_.value).toList
+    } else {
+      payload.name :: Nil
+    }
   }
 
   def adverts(provider: Provider): List[Any] = {

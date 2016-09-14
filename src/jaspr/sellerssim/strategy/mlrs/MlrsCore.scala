@@ -115,7 +115,7 @@ trait MlrsCore extends Discretization {
         case x: Int => if (i == classIndex) x else lookup(vals, x)
         case x: Double => x
         case x: String => if (i == classIndex) vals(x) else lookup(vals, x)
-        case whatever => throw new Exception("Unknown type to build attrbute from.")
+        case whatever => throw new Exception("Unknown type to build attrbute from. "+whatever)
       }
     }
   }
