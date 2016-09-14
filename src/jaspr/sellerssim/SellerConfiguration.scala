@@ -23,7 +23,7 @@ abstract class SellerConfiguration extends Configuration {
 
   def witnessRequestLikelihood: Double
 
-  var simcapabilities: Seq[ProductPayload]
+  val simcapabilities: Seq[ProductPayload]
 
   def baseUtility: Double
 

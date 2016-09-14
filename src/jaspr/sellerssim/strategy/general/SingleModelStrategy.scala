@@ -1,6 +1,6 @@
 package jaspr.sellerssim.strategy.general
 
-import jaspr.core.provenance.Record
+import jaspr.core.provenance.{RatingRecord, Record}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
@@ -41,6 +41,9 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
       new BasicInit(context, None)
     } else {
       val trustModel = makeMlrsModel(records, baseLearner, makeTrainRow)
+      val tmp = records.map(_.asInstanceOf[RatingRecord].rating)
+//      println(tmp.count(_ > 0), tmp.size)
+      println(trustModel.train)
       new BasicInit(context, Some(trustModel))
     }
   }

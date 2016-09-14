@@ -95,7 +95,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   }
 
   val numSimCapabilities = 1
-  override var simcapabilities: Seq[ProductPayload] = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
+  override val simcapabilities: Seq[ProductPayload] = for (i <- 1 to numSimCapabilities) yield new ProductPayload(i.toString)
 
   val numProviderCapabilities = 1
   val numCapabilityProperties = 2
