@@ -83,10 +83,14 @@ def legend(entries):
     return line
 
 
-def latexheader():
+def latexheader(packages, tikzlibraries):
     lines = ["\\documentclass{standalone}"]
     lines.append("\\usepackage{pgfplots,amsmath}")
     lines.append("\\usepackage{color}")
+    for package in packages:
+        lines.append("\\usepackage{"+package+"}")
+    for package in tikzlibraries:
+        lines.append("\\usetikzlibrary{"+package+"}")
     lines.append("\\begin{document}")
     return '\n'.join(lines) + "\n"
 

@@ -28,7 +28,7 @@ if __name__ == "__main__":
         # ('MlrsB2-NaiveBayes-round-100.0-2.0-true',),
         # ('MlrsB2-NaiveBayes-round-250.0-2.0-true-true',),
         # ('MlrsB2-NaiveBayes-round-500.0-2.0-true-true',),
-        # # ('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
+        # # # ('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
         # ('MlrsB2-NaiveBayes-round-1000.0-2.0-true-true',)
     ]
 
@@ -83,31 +83,40 @@ if __name__ == "__main__":
 
     expsplt = split(splt, "exp")
 
-    texstr = latexheader()
+    texstr = latexheader([], ["spy"])
+
     texstr += tikzheader()
+    texstr += "[spy using outlines={circle, magnification=3, connect spies}]\n"
     texstr += axisheader(
-        # "cycle list name=linestyles*",
+        # "cycle list name=mark list",
         # "cycle multi list={linestyles*\\nextlist red,blue,green}",
         # "cycle multi list={red,green,black,blue \\nextlist linestyles}",
-        "cycle list={{green,solid},{red,solid},{red,dashed},{red,dotted},{brown,solid},{brown,dashed},{brown,dotted},{black,solid},{black,dashed},{black,dotted}}",
-        # "cycle multi list={color list\\nextlist solid,dashed,dotted}",
+        # "cycle list={{green,solid},{red,solid},{red,dashed},{red,dashed},{brown,solid},{brown,dashed},{brown,dotted},{black,solid},{black,dashed},{black,dotted}}",
+        "cycle list={{red,dotted},{brown,dotted},{brown,dashed},{brown,solid},{brown,dashdotted},{red,dashed},{black,dotted},{black,dashdotted},{black,dashed},{black,solid}}",
+        # "cycle multi list={mark list\\nextlist solid,dashed}",
         "legend columns=2",
-        "legend style={at={(0.02,0.95)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
+        "legend style={at={(0.985,0.025)},anchor=south east,/tikz/column 2/.style={column sep=5pt,}}",
         xmin="0", xmax="2500",
-        ymin="-250", ymax="2350",
+        ymin="-300", ymax="2350",
         width="15cm",
-        height="9cm",
+        height="10cm",
         xlabel="\\textbf{Round}",
         ylabel="\\textbf{Utility}"
     )
 
     step = 10
+    start = 0
     for strategy in strategies:
-        texstr += plotheader()
-        X = xrange(1, len(expsplt[strategy][0]["utilities_mean"]) + 1, step)
-        Y = expsplt[strategy][0]["utilities_mean"][::step]
+        texstr += plotheader("mark size=1.5")
+        X = xrange(start, len(expsplt[strategy][0]["utilities_mean"]) + 1, step)
+        Y = expsplt[strategy][0]["utilities_mean"][start::step]
+        # start += step / len(strategies)
         texstr += coordinates(X, Y)
     # print len(expsplt[strategy]), strategy, len(expsplt[strategy][0]["utilities_mean"])
+
+    texstr += "\\begin{scope}"
+    texstr += "\\spy[black,size=5.5cm] on (2.15,1.25) in node [fill=white] at (3.1,5.25);"   
+    texstr += "\\end{scope}"
 
     texstr += legend([strategynamelookup[s[0]] for s in strategies])
 

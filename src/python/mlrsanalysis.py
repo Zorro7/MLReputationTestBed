@@ -40,9 +40,9 @@ if __name__ == "__main__":
                   # ('MlrsB2-NaiveBayes-round-50.0-2.0-true',),
                   # ('MlrsB2-NaiveBayes-round-100.0-2.0-true',),
                   # ('MlrsB2-NaiveBayes-round-250.0-2.0-true',),
-                  # ('MlrsB2-NaiveBayes-round-500.0-2.0-true',),
-                  # ('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
-                  # ('MlrsB2-NaiveBayes-round-1000.0-2.0-true',),
+                  ('MlrsB2-NaiveBayes-round-500.0-2.0-true-true',),
+                  # ('MlrsB2-NaiveBayes-round-750.0-2.0-true-true',),
+                  ('MlrsB2-NaiveBayes-round-1000.0-2.0-true-true',),
                   # ('MlrsB2-NaiveBayes-directRecords-2.0-2.0-true',),
                   # ('MlrsB2-NaiveBayes-directRecords-5.0-2.0-true',),
                   # ('MlrsB2-NaiveBayes-directRecords-10.0-2.0-true',),
@@ -90,9 +90,9 @@ if __name__ == "__main__":
         'MlrsB2-NaiveBayes-round-50.0-2.0-true': "MLRS-50rounds\t",
         'MlrsB2-NaiveBayes-round-100.0-2.0-true': "MLRS-100rounds\t",
         'MlrsB2-NaiveBayes-round-250.0-2.0-true': "MLRS-250rounds\t",
-        'MlrsB2-NaiveBayes-round-500.0-2.0-true': "MLRS-500rounds\t",
-        'MlrsB2-NaiveBayes-round-750.0-2.0-true': "MLRS-750rounds\t",
-        'MlrsB2-NaiveBayes-round-1000.0-2.0-true': "MLRS-1000rounds\t",
+        'MlrsB2-NaiveBayes-round-500.0-2.0-true-true': "MLRS-500rounds\t",
+        'MlrsB2-NaiveBayes-round-750.0-2.0-true-true': "MLRS-750rounds\t",
+        'MlrsB2-NaiveBayes-round-1000.0-2.0-true-true': "MLRS-1000rounds\t",
     }
 
     # [('BasicML',), ('BasicStereotype',), ('BetaReputation',), ('Blade-2',), ('Fire-0.0',),  ('FireLike',), ('FireLikeStereotype',), ('Habit-2',), ('Mlrs-J48-10-0.0',), ('Mlrs-J48-10-0.5',), ('Mlrs-J48-2-0.0',),
@@ -123,6 +123,7 @@ if __name__ == "__main__":
     for topkey in exps:
         topval = topsplt[topkey]
         botsplt = split(topval, *botspltkeys)
+        print botsplt.keys()
         print [len(botsplt[botkey]) for botkey in strategies]
         mns = [botsplt[botkey][0][scorename + "_mean"] if botkey in botsplt else -9999 for botkey in strategies]
         sts = [botsplt[botkey][0][scorename + "_std"] if botkey in botsplt else -9999 for botkey in strategies]
