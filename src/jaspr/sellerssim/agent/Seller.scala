@@ -21,7 +21,7 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
   }
 
   override def affectService(service: Service): Unit = {
-    service.payload = capabilities.get(service.payload.name).get.copy()
+    service.payload = capabilities(service.payload.name).copy()
     if (Chooser.nextDouble() < simulation.config.eventLikelihood) {
       jaspr.debug("EVENT:: Storm: ", properties.mapValues(_.doubleValue),
         properties.mapValues(x => (x.doubleValue + simulation.config.eventEffects) / 2d))
@@ -46,9 +46,8 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
   override def capableOf(payload: Payload, duration: Int): Boolean = {
     payload match {
       case pp: ProductPayload =>
-        capabilities.exists(x =>
-          pp.quality.exists(y => x._2.quality.contains(y._1))
-        )
+        capabilities.contains(payload.name) &&
+          pp.quality.forall(x => capabilities(payload.name).quality.contains(x._1))
       case _ => capabilities.contains(payload.name)
     }
   }

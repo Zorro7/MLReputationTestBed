@@ -10,6 +10,7 @@ import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.bayes.NaiveBayes
+import weka.classifiers.trees.RandomForest
 import weka.classifiers.{AbstractClassifier, Classifier}
 
 import scala.collection.mutable
@@ -39,6 +40,7 @@ class Mlrs(val baseLearner: Classifier,
 
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
+    case x: RandomForest => x.setNumFeatures(-1)
     case _ => // do nothing
   }
 

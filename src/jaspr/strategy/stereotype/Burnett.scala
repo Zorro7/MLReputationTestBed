@@ -18,7 +18,6 @@ class Burnett extends CompositionStrategy with Exploration with BetaCore with Ra
   override val explorationProbability: Double = 0.1
   override val baseLearner: Classifier = new weka.classifiers.trees.M5P()
 
-
   class BurnettInit(context: ClientContext,
                     trustModel: Option[MlrsModel],
                     val ratings: Seq[Rating]

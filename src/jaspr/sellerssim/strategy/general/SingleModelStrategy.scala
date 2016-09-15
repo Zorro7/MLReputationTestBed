@@ -9,6 +9,7 @@ import jaspr.strategy.CompositionStrategy
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 import weka.classifiers.bayes.NaiveBayes
+import weka.classifiers.trees.{J48, RandomForest}
 
 /**
   * Created by phil on 29/06/16.
@@ -19,6 +20,8 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
 
   val baseLearner: Classifier
 
+  override val name: String = this.getClass.getSimpleName + (if (baseLearner != null) "-"+baseLearner.getClass.getSimpleName else "")
+
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
     case x: MultiRegression =>
@@ -26,6 +29,9 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
       bayes.setUseSupervisedDiscretization(true)
       x.setClassifier(bayes)
       x.setSplitAttIndex(-1)
+    case x: J48 => x.setUnpruned(true)
+    case x: RandomForest =>
+      x.setNumFeatures(-1)
     case _ => // do nothing
   }
 
@@ -44,7 +50,7 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
       val tmp = records.map(_.asInstanceOf[RatingRecord].rating)
 //      println(tmp.count(_ > 0), tmp.size)
 //      println(trustModel.train)
-      println(trustModel.model)
+//      println(trustModel.model)
       new BasicInit(context, Some(trustModel))
     }
   }

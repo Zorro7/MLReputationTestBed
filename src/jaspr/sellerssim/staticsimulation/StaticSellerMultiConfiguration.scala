@@ -53,20 +53,29 @@ object StaticSellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;-1.;2.0;true;true),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false;true),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;true),"+
-        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
-        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2),"+
+//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
+        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;true),"+
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;2),"+
+        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;true),"+
+//        "jaspr.sellerssim.strategy.general.BasicContext(jaspr.weka.classifiers.meta.MultiRegression;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2),"+
                 "jaspr.strategy.fire.Fire(0.0;false)," +
         "jaspr.strategy.fire.Fire(0.0;true)," +
-//        "jaspr.strategy.fire.Fire(0.5;false)," +
-//        "jaspr.strategy.fire.Fire(0.5;true)," +
-//        "jaspr.strategy.betareputation.BetaReputation," +
+//        "jaspr.strategy.fire.FireContext(0.0;false)," +
+//        "jaspr.strategy.fire.FireContext(0.0;true)," +
+        "jaspr.strategy.fire.Fire(0.5;false)," +
+        "jaspr.strategy.fire.Fire(0.5;true)," +
+        "jaspr.strategy.betareputation.BetaReputation," +
         "jaspr.strategy.betareputation.Travos," +
 //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
-//        "jaspr.strategy.stereotype.Burnett,"+
+        "jaspr.strategy.stereotype.Burnett,"+
         " --numSimulations 10 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -77,19 +86,19 @@ object StaticSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 1 --numProviders 10 " +
+        "--numClients 10 --numProviders 50 " +
         "--eventLikelihood 0 " +
-        "--clientInvolvementLikelihood 1 " +
+        "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 250 " +
+        "--numRounds 500 " +
         "--memoryLimit 100 " +
         "--numSimCapabilities 5 " +
         "--numProviderCapabilities 5 " +
-        "--noiseRange 1. " +
+        "--noiseRange 2. " +
         "--numTerms 3 " +
         "--witnessRequestLikelihood 0.2 " +
         "--numAdverts 5 " +
-        "--usePreferences false").split(" ")
+        "--usePreferences true").split(" ")
     } else args
 
   println(argsplt.toList mkString("[", " ", "]"))
@@ -207,7 +216,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   override def strategy(agent: Client): Strategy = _strategy
 
 
-  override val baseUtility: Double = 0.5
+  override val baseUtility: Double = 1d/2d
 
 
 
@@ -219,7 +228,6 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   }
 
   def addNoise(competency: SortedMap[String,Property], productProperty: SortedMap[String,Property]): SortedMap[String,Double] = {
-
     competency.map(c => c._1 -> {
       productProperty.get(c._1) match {
         case Some(x) =>
@@ -227,12 +235,12 @@ class StaticSellerConfiguration(val _strategy: Strategy,
 //          (c._2.doubleValue + x.doubleValue) / 2d
 //          addNoise((c._2.doubleValue + x.doubleValue) / 2d)
 //          addNoise(c._2.doubleValue)
+          (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1)
 //          Chooser.randomDouble(-1,1)
-//          0d
-//          addNoise(x.doubleValue) //works but stupid
+//            addNoise(x.doubleValue)
 //          ((c._2.doubleValue+x.doubleValue) / 2d) * Chooser.randomDouble(-1,1)
-          (c._2.doubleValue + x.doubleValue + Chooser.randomDouble(-1,1))/3d
-//          c._2.doubleValue
+//          (c._2.doubleValue + x.doubleValue + Chooser.randomDouble(-1,1))/3d
+//         c._2.doubleValue
 //        case None => c._2.doubleValue
       }
     })
@@ -242,7 +250,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   lazy override val simcapabilities: Seq[ProductPayload] = {
     for (i <- 1 to numSimCapabilities) yield {
       new ProductPayload(i.toString, (1 to numTerms).map(x => {
-        val y = 0d
+        val y = 0//Chooser.randomDouble(-1,1)
         new Property(x.toString, y)
       }).toList)
     }
@@ -251,21 +259,21 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   // Services that a given provider is capable of providing - and with associated performance properties.
   def capabilities(provider: Provider): Seq[ProductPayload] = {
     var caps = Chooser.sample(simcapabilities, numProviderCapabilities)
-    val goodcaps = Chooser.sample(caps, 1).map(_.name)
-    caps = caps.map(c =>
-      if (goodcaps.contains(c.name)) {
-        c.copy(
-          quality = c.properties.map(x => x._1 -> Chooser.randomDouble(-0.5,0.5))
-        )
-      } else {
-        c.copy(
-          quality = c.properties.map(x => x._1 -> Chooser.randomDouble(0.5,1))
-        )
-      })
-//    caps = caps.map(c => c.copy(
-//      quality = addNoise(provider.properties, c.properties)
-//    ))
-//        println(provider, caps)
+//    val goodcaps = Chooser.sample(caps, 1).map(_.name)
+//    caps = caps.map(c =>
+//      if (goodcaps.contains(c.name)) {
+//        c.copy(
+//          quality = c.properties.map(x => x._1 -> Chooser.randomDouble(-0.5,0.5))
+//        )
+//      } else {
+//        c.copy(
+//          quality = c.properties.map(x => x._1 -> Chooser.randomDouble(0.5,1))
+//        )
+//      })
+    caps = caps.map(c => c.copy(
+      quality = addNoise(provider.properties, c.properties)
+    ))
+//        println(provider.name, caps)
     caps
   }
 
@@ -282,15 +290,15 @@ class StaticSellerConfiguration(val _strategy: Strategy,
 
   // Properties of a provider agent
   def properties(agent: Agent): SortedMap[String, Property] = {
-    (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
+    (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1,1))).toList
   }
 
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Client): SortedMap[String, Property] = {
-//    if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
-//    else (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
-    (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
+    if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
+    else (1 to numTerms).map(x => new Property(x.toString, 0.5d)).toList
+//    (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
   }
 
   def adverts(agent: Agent with Properties): SortedMap[String, Property] = {

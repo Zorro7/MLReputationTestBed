@@ -13,7 +13,7 @@ class ProductPayload(override val name: String,
                      val quality: SortedMap[String, Double] = TreeMap()
                     ) extends Payload with Properties {
 
-  override def toString: String = name + " " + properties+"-"+quality
+  override def toString: String = name + " " + properties.values.map(_.value)+"-"+quality.values
 
   def copy(name: String = this.name,
            properties: SortedMap[String,Property] = this.properties,
