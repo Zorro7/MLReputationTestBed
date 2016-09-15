@@ -41,9 +41,11 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
     //        case None => simulation.config.baseUtility - Math.abs(x._2)
     //      }
     //    })
-    received.withFilter(x => wanted.contains(x._1)).map(x =>
+    val x = received.withFilter(x => wanted.contains(x._1)).map(x =>
       x._1 -> (simulation.config.baseUtility - Math.abs(x._2 - wanted(x._1)))
     )
+//    println(x.values.sum/x.size, wanted.values, received.values, x)
+    x
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {

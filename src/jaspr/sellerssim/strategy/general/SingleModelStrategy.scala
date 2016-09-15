@@ -43,7 +43,8 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
       val trustModel = makeMlrsModel(records, baseLearner, makeTrainRow)
       val tmp = records.map(_.asInstanceOf[RatingRecord].rating)
 //      println(tmp.count(_ > 0), tmp.size)
-      println(trustModel.train)
+//      println(trustModel.train)
+      println(trustModel.model)
       new BasicInit(context, Some(trustModel))
     }
   }
