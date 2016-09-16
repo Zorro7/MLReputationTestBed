@@ -4,6 +4,7 @@ import jaspr.core.agent.{Client, Preferences}
 import jaspr.core.service.{ClientContext, Service, TrustAssessment}
 import jaspr.sellerssim.SellerSimulation
 import jaspr.sellerssim.service.{BuyerRecord, ProductPayload}
+import jaspr.utilities.Chooser
 
 /**
   * Created by phil on 21/03/16.
@@ -42,7 +43,7 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
     //      }
     //    })
     val x = received.withFilter(x => wanted.contains(x._1)).map(x =>
-      x._1 -> (simulation.config.baseUtility - Math.abs(x._2 - wanted(x._1)))
+      x._1 -> (simulation.config.baseUtility - Math.abs(x._2 - wanted(x._1)) + Chooser.randomDouble(-.1,.1))/2d
     )
 //    println(x.values.sum/x.size, wanted.values, received.values, x)
     x

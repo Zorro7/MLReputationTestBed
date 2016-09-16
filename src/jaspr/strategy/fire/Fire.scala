@@ -14,7 +14,7 @@ class Fire(val witnessWeight: Double = 0.5, val weightRecency: Boolean = true) e
   override val explorationProbability: Double = 0.1
 
   // In recency scaling, the number of rounds before an interaction rating should be half that of the current round
-  val RecencyScalingPeriodToHalf: Double = 25
+  val RecencyScalingPeriodToHalf: Double = 5
   // FIRE's recency scaling factor for interaction ratings (lambda)
   val RecencyScalingFactor: Double = -RecencyScalingPeriodToHalf / log(0.5)
 

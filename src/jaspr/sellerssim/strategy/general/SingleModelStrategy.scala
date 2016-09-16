@@ -31,7 +31,7 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
       x.setSplitAttIndex(-1)
     case x: J48 => x.setUnpruned(true)
     case x: RandomForest =>
-      x.setNumFeatures(-1)
+      x.setNumFeatures(100)
     case _ => // do nothing
   }
 

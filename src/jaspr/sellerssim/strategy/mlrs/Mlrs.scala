@@ -40,7 +40,7 @@ class Mlrs(val baseLearner: Classifier,
 
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
-    case x: RandomForest => x.setNumFeatures(-1)
+    case x: RandomForest => x.setNumFeatures(100)
     case _ => // do nothing
   }
 

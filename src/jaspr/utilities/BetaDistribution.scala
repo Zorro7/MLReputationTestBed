@@ -16,6 +16,10 @@ class BetaDistribution(val alpha: Double = 0, val beta: Double = 0) {
     new BetaDistribution(alpha / that.alpha, beta / that.beta)
   }
 
+  def *(that: Double): BetaDistribution = {
+    new BetaDistribution(alpha * that, beta * that)
+  }
+
   def integrate(low: Double, high: Double): Double = {
     Statistics.incompleteBeta(alpha, beta, min(1, high)) - Statistics.incompleteBeta(alpha, beta, max(0, low))
   }
