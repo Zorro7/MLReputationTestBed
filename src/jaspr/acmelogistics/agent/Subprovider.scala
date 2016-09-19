@@ -56,5 +56,6 @@ abstract class Subprovider(override val simulation: ACMESimulation) extends Clie
 
   override val properties: SortedMap[String, Property] = simulation.config.properties(this)
   override val advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
+  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = advertProperties
 
 }

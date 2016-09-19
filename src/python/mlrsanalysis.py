@@ -26,16 +26,21 @@ if __name__ == "__main__":
     df = "{0:.1f}"
     strategies = [('NoStrategy',),
                   ('Fire-0.0-false',),
-                  ('Fire-0.5-false',), ('BetaReputation',), ('Travos',), ('Blade-2',), ('Habit-2',),
-                  ('Burnett',),
+                  ('Fire-0.5-false',), 
+                  ('BetaReputation-0.0',), 
+                  ('BetaReputation-0.5',), 
+                  ('Travos',), 
+                  ('Blade-2',), 
+                  ('Habit-2',),
+                  # ('Burnett',),
                   ('BasicML-RandomForest',),
-                  ('FireLike-RandomForest',),
+                  # ('FireLike-RandomForest',),
                   ('BasicContext-RandomForest',),
-                  ('FireLikeContext-RandomForest',),
+                  # ('FireLikeContext-RandomForest',),
                   ('BasicStereotype-RandomForest',),
-                  ('FireLikeStereotype-RandomForest',),
-                  # ('Mlrs-RandomForest-2.0-true-true-false',),
-                  # ('Mlrs-RandomForest-2.0-true-false-false',),
+                  # ('FireLikeStereotype-RandomForest',),
+                  ('Mlrs-RandomForest-2.0-true-true-false',),
+                  ('Mlrs-RandomForest-2.0-true-false-false',),
                   # ('MlrsB2-RandomForest-round-500.0-2.0-true-true',),
                   # ('MlrsB2-RandomForest-round-750.0-2.0-true-true',),
                   # ('MlrsB-RandomForest-round-1000.0-2.0-true-true-false',),
@@ -56,7 +61,8 @@ if __name__ == "__main__":
         "NoStrategy": "RAND\t\t",
         "Fire-0.0-false": "Basic\t\t",
         "Fire-0.5-false": "FIRE\t\t",
-        "BetaReputation": "BetaRep\t\t",
+        "BetaReputation-0.0": "BasicBeta\t",
+        "BetaReputation-0.5": "BetaRep\t\t",
         "Travos": "TRAVOS\t\t",
         "Blade-2": "BLADE\t\t",
         "Habit-2": "HABIT\t\t",
@@ -136,6 +142,13 @@ if __name__ == "__main__":
         botsplt = split(topval, *botspltkeys)
         print botsplt.keys()
         print [len(botsplt[botkey]) for botkey in strategies]
+        # del botsplt[botkey][0]['utilities_mean']
+        # del botsplt[botkey][1]['utilities_mean']
+        # del botsplt[botkey][0]['utilities_std']
+        # del botsplt[botkey][1]['utilities_std']
+        # print botsplt[botkey][0]
+        # print botsplt[botkey][1]
+        # del botsplt[botkey][0]
         mns = [botsplt[botkey][0][scorename + "_mean"] if botkey in botsplt else -9999 for botkey in strategies]
         sts = [botsplt[botkey][0][scorename + "_std"] if botkey in botsplt else -9999 for botkey in strategies]
         ses = [st / (float(botsplt[botkey][0]["iterations"]) ** 0.5) for st in sts]

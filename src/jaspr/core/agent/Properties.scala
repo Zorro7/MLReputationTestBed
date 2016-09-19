@@ -1,5 +1,6 @@
 package jaspr.core.agent
 
+import jaspr.core.service.Payload
 import jaspr.utilities.NamedEntity
 
 import scala.collection.immutable.SortedMap
@@ -27,6 +28,8 @@ trait AdvertProperties extends Properties {
   def advert(key: String): Property = {
     advertProperties(key)
   }
+
+  def payloadAdverts(payload: Payload): SortedMap[String,Property]
 }
 
 case class Property(override val name: String, value: AnyVal) extends NamedEntity {

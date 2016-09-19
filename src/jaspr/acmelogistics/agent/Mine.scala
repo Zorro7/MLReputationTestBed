@@ -34,6 +34,7 @@ class Mine(val simulation: ACMESimulation) extends Provider {
 
   override val properties: SortedMap[String, Property] = simulation.config.properties(this)
   override val advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
+  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = advertProperties
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = provenance.map(_.asInstanceOf[T])
 

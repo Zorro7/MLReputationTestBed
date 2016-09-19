@@ -40,6 +40,7 @@ abstract class SellerConfiguration extends Configuration {
   def capabilities(agent: Provider): Seq[ProductPayload]
 
   def adverts(agent: Agent with Properties): SortedMap[String, Property]
+  def adverts(payload: ProductPayload, agent: Agent with Properties): List[Property]
 
   def clientContext(network: Network with NetworkMarket, agent: Client with Preferences, round: Int): ClientContext
 

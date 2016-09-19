@@ -39,7 +39,11 @@ public class LearnerFactory {
     //Just makes it.
     public static Classifier makeLearner(String[] l, boolean debug) throws Exception {
         String clss = removeOptions(l[0]);
+        System.out.println(clss);
         String[] options = getOptions(l[0]);
+        for (String o : options) {
+            System.out.println(o);
+        }
         Classifier ret = AbstractClassifier.forName(clss, options);
         if (l.length > 1) {
             if (ret instanceof SingleClassifierEnhancer) {
@@ -77,12 +81,12 @@ public class LearnerFactory {
     }
 
     private static String[] getOptions(String learnerString) {
-        String[] temp = learnerString.split(" ");
+        String[] temp = learnerString.split("&");
         return Arrays.copyOfRange(temp, 1, temp.length);
     }
 
     private static String removeOptions(String learnerString) {
-        return learnerString.split(" ")[0].trim();
+        return learnerString.split("&")[0].trim();
     }
 
 }

@@ -18,7 +18,7 @@ object ArgumentUtils {
               Try(arg.toLong.asInstanceOf[java.lang.Long]).getOrElse(
                 Try(arg.toShort.asInstanceOf[java.lang.Short]).getOrElse(
                   Try(arg.toByte.asInstanceOf[java.lang.Byte]).getOrElse(
-                    Try(LearnerFactory.makeLearner(arg.split("&"), false)).getOrElse(
+                    Try(LearnerFactory.makeLearner(arg.split("_"), false)).getOrElse(
                       Try(Class.forName(arg)).getOrElse(arg)))))))))
   }
 }

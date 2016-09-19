@@ -9,7 +9,9 @@ import jaspr.strategy.CompositionStrategy
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 import weka.classifiers.bayes.NaiveBayes
+import weka.classifiers.meta.FilteredClassifier
 import weka.classifiers.trees.{J48, RandomForest}
+import weka.filters.supervised.attribute.Discretize
 
 /**
   * Created by phil on 29/06/16.
@@ -46,6 +48,11 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
     if (records.isEmpty) {
       new BasicInit(context, None)
     } else {
+//      val learner = new FilteredClassifier
+//      learner.setClassifier(baseLearner)
+//      val sd: Discretize = new Discretize
+//      sd.setAttributeIndices("first-last")
+//      learner.setFilter(sd)
       val trustModel = makeMlrsModel(records, baseLearner, makeTrainRow)
       val tmp = records.map(_.asInstanceOf[RatingRecord].rating)
 //      println(tmp.count(_ > 0), tmp.size)

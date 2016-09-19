@@ -41,7 +41,13 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override val properties: SortedMap[String, Property] = simulation.config.properties(this)
   override val advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
+
   val capabilities: Map[String, ProductPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
+
+  def _payloadAdverts: Map[String,List[Property]] = capabilities.values.map(x => x.name -> simulation.config.adverts(x, this)).toMap
+  override def payloadAdverts(payload: Payload): SortedMap[String,Property] = {
+    _payloadAdverts(payload.name).toList
+  }
 
   override def capableOf(payload: Payload, duration: Int): Boolean = {
     payload match {

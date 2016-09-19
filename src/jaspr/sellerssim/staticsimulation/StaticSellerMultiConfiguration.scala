@@ -1,7 +1,7 @@
 package jaspr.sellerssim.staticsimulation
 
 import jaspr.core.agent._
-import jaspr.core.service.ClientContext
+import jaspr.core.service.{Payload, ClientContext}
 import jaspr.core.simulation._
 import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.agent._
@@ -58,23 +58,26 @@ object StaticSellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;true),"+
 //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
         "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
-        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
+//        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;true),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;2),"+
         "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
-        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
+        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;true),"+
+        //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;true),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(jaspr.weka.classifiers.meta.MultiRegression;2;false),"+
-//        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.bayes.NaiveBayes;2),"+
+//        "jaspr.sellerssim.strategy.general.BasicStereotype(jaspr.weka.classifiers.meta.DiscretizeClassifier_weka.classifiers.trees.RandomForest;2),"+
+//        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2),"+
+//        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.trees.RandomForest;2),"+
         "jaspr.strategy.fire.Fire(0.0;false)," +
 //        "jaspr.strategy.fire.Fire(0.0;true)," +
 //        "jaspr.strategy.fire.FireContext(0.0;false)," +
 //        "jaspr.strategy.fire.FireContext(0.0;true)," +
-        "jaspr.strategy.fire.Fire(0.5;false)," +
+//        "jaspr.strategy.fire.Fire(0.5;false)," +
 //        "jaspr.strategy.fire.Fire(0.5;true)," +
-        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
-        "jaspr.strategy.betareputation.BetaReputation(0.5)," +
+//        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
+//        "jaspr.strategy.betareputation.BetaReputation(0.5)," +
 //        "jaspr.strategy.betareputation.Travos," +
 //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
@@ -93,12 +96,12 @@ object StaticSellerMultiConfiguration extends App {
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 1000 " +
+        "--numRounds 500 " +
         "--memoryLimit 100 " +
-        "--numSimCapabilities 5 " +
-        "--numProviderCapabilities 5 " +
-        "--noiseRange 1. " +
-        "--numTerms 3 " +
+        "--numSimCapabilities 20 " +
+        "--numProviderCapabilities 20 " +
+        "--noiseRange 2. " +
+        "--numTerms 5 " +
         "--witnessRequestLikelihood 0.2 " +
         "--numAdverts 5 " +
         "--usePreferences false").split(" ")
@@ -253,7 +256,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   lazy override val simcapabilities: Seq[ProductPayload] = {
     for (i <- 1 to numSimCapabilities) yield {
       new ProductPayload(i.toString, (1 to numTerms).map(x => {
-        val y = 0//Chooser.randomDouble(-1,1)
+        val y = Chooser.randomDouble(-1,1)
         new Property(x.toString, y)
       }).toList)
     }
@@ -312,7 +315,11 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   }
 
   def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
-    agent.properties.take(numAdverts).mapValues(x => Property(x.name, addNoise(x.doubleValue)))
+    agent.properties.take(numAdverts).mapValues(x => Property(x.name, x.doubleValue))
+  }
+
+  def adverts(payload: ProductPayload, agent: Agent with Properties): List[Property] = {
+    payload.quality.take(numAdverts).map(x => Property(x._1, addNoise(x._2))).toList
   }
 
 

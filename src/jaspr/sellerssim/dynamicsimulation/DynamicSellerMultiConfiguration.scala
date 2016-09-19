@@ -143,6 +143,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
     Chooser.sample(agent.properties, numAdverts).map(x => Property(x._2.name, addNoise(x._2.doubleValue))).toList
   }
 
+  override def adverts(payload: ProductPayload, agent: Agent with Properties): List[Property] = ???
 
   override def toString: String = _strategy.name
 }

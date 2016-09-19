@@ -65,6 +65,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
       Nil
 
   override def advertProperties: SortedMap[String, Property] = TreeMap()
+  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = TreeMap()
 
   override val memoryLimit: Int = 50
 
