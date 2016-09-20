@@ -13,6 +13,9 @@ import weka.classifiers.Classifier
 trait StereotypeML extends SingleModelStrategy {
 
   val baseStrategy: SingleModelStrategy
+  val payloadAdverts: Boolean
+
+  override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName+"-"+payloadAdverts
 
   override def getRecords(network: Network, context: ClientContext): Seq[Record] = {
     baseStrategy.getRecords(network, context)
@@ -21,24 +24,31 @@ trait StereotypeML extends SingleModelStrategy {
   override def makeTrainRow(baseRecord: Record): Seq[Any] = {
     val record = baseRecord.asInstanceOf[ServiceRecord with RatingRecord]
     baseStrategy.makeTrainRow(baseRecord) ++
-      adverts(record.service.request.provider)
+      adverts(record.service.request)
   }
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     baseStrategy.makeTestRow(init, request) ++
-      adverts(request.provider)
+      adverts(request)
   }
 
-  def adverts(provider: Provider): List[Any] = {
-    provider.advertProperties.values.map(_.value).toList
+  def adverts(request: ServiceRequest): List[Any] = {
+    if (payloadAdverts) request.provider.payloadAdverts(request.payload).values.map(_.value).toList
+    else request.provider.advertProperties.values.map(_.value).toList
   }
 }
 
-class BasicStereotype(override val baseLearner: Classifier, override val numBins: Int) extends StereotypeML {
+class BasicStereotype(override val baseLearner: Classifier,
+                      override val numBins: Int,
+                      override val payloadAdverts: Boolean
+                     ) extends StereotypeML {
   override val baseStrategy = new BasicML(baseLearner, numBins)
 }
 
-class FireLikeStereotype(override val baseLearner: Classifier, override val numBins: Int) extends StereotypeML {
+class FireLikeStereotype(override val baseLearner: Classifier,
+                         override val numBins: Int,
+                         override val payloadAdverts: Boolean
+                        ) extends StereotypeML {
   override val baseStrategy = new FireLike(baseLearner, numBins)
 }
 

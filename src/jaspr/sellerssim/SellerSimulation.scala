@@ -35,4 +35,25 @@ class SellerSimulation(val config: SellerConfiguration) extends Simulation {
     new Result(this)
   }
 
+  override def run(): List[Result] = {
+    val results = super.run()
+
+    for (client <- network.clients) {
+      val context = client.generateContext()
+      val assessment = config.strategy(client).assessReputation(network, context)
+      assessment.request.provider.receiveRequest(assessment.request)
+      assessment.request.provider.tryStartServices()
+      for (service <- assessment.request.provider.currentServices) {
+        service.tryStartService(round)
+        service.tryEndService(round)
+        service.utility()
+        println(client.id, assessment.request.provider.id, service.utility(), assessment.trustValue)
+      }
+
+
+    }
+
+    results
+  }
+
 }

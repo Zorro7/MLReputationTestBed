@@ -32,13 +32,13 @@ if __name__ == "__main__":
                   ('Travos',), 
                   ('Blade-2',), 
                   ('Habit-2',),
-                  # ('Burnett',),
+                  ('Burnett',),
                   ('BasicML-RandomForest',),
-                  # ('FireLike-RandomForest',),
+                  ('FireLike-RandomForest',),
                   ('BasicContext-RandomForest',),
-                  # ('FireLikeContext-RandomForest',),
+                  ('FireLikeContext-RandomForest',),
                   ('BasicStereotype-RandomForest',),
-                  # ('FireLikeStereotype-RandomForest',),
+                  ('FireLikeStereotype-RandomForest',),
                   ('Mlrs-RandomForest-2.0-true-true-false',),
                   ('Mlrs-RandomForest-2.0-true-false-false',),
                   # ('MlrsB2-RandomForest-round-500.0-2.0-true-true',),
@@ -117,7 +117,8 @@ if __name__ == "__main__":
 
     splt = split(results, "clientInvolvementLikelihood", "witnessRequestLikelihood", "memoryLimit", "numClients", "numProviders",
                  # "numSimCapabilities",
-                 "numTerms", "numAdverts", "usePreferences", "noiseRange", "honestWitnessLikelihood")
+                 "numTerms", "numAdverts", "usePreferences", "noiseRange", "honestWitnessLikelihood", "providersToPromote")
+
 
     # topspltkeys = ["honestWitnessLikelihood"
     # 				, "negationWitnessLikelihood"

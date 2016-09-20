@@ -13,18 +13,40 @@ import scala.annotation.tailrec
 abstract class SellerNetwork extends Network with NetworkMarket {
   override val simulation: SellerSimulation
 
-  override def utility(): Double = clients.map(_.utility).sum
+//  override def utility(): Double = clients.map(_.utility).sum
+  override def utility: Double = clients.withFilter(_.id % simulation.config.numClients < 5).map(_.utility).sum
 
   override def agents: Seq[Agent] = clients ++ providers
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
-    providers.withFilter(
-      _.capableOf(context.payload, 0)
-    ).map(x =>
-      new ServiceRequest(
-        context.client, x, simulation.round, 0, context.payload, context.market
+    if (context.client.id % simulation.config.numClients < 5) {
+      if (simulation.round < 250) {
+//        println("Specials.", context.client.name)
+        providers.withFilter(x =>
+          x.capableOf(context.payload, 0) && (x.id % simulation.config.numProviders) < 10
+        ).map(x =>
+          new ServiceRequest(
+            context.client, x, simulation.round, 0, context.payload, context.market
+          )
+        )
+      } else {
+        providers.withFilter(
+          _.capableOf(context.payload, 0)
+        ).map(x =>
+          new ServiceRequest(
+            context.client, x, simulation.round, 0, context.payload, context.market
+          )
+        )
+      }
+    } else {
+      providers.withFilter(
+        _.capableOf(context.payload, 0)
+      ).map(x =>
+        new ServiceRequest(
+          context.client, x, simulation.round, 0, context.payload, context.market
+        )
       )
-    )
+    }
   }
 
   override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {

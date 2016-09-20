@@ -24,7 +24,7 @@ class Mlrs(val baseLearner: Classifier,
            val witnessWeight: Double = 0.5d,
            val reinterpretationContext: Boolean = true,
            val useAdverts: Boolean = true,
-           val usePayloadProperties: Boolean = true
+           val usePayloadAdverts: Boolean = true
           ) extends CompositionStrategy with Exploration with MlrsCore {
 
 
@@ -34,7 +34,7 @@ class Mlrs(val baseLearner: Classifier,
                   val reinterpretationModels: Option[Map[Client, MlrsModel]]
                 ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts+"-"+usePayloadProperties
+  override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts+"-"+usePayloadAdverts
 
   override val explorationProbability: Double = 0.1
 
@@ -183,7 +183,7 @@ class Mlrs(val baseLearner: Classifier,
       payload(record.service.request.payload) ++
 //      record.service.request.payload.name :: // service identifier (client context)
       //      record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-      adverts(record.service.request.provider)
+      adverts(record.service.request)
   }
 
   def makeTestRow(request: ServiceRequest, witness: Client): Seq[Any] = {
@@ -192,7 +192,7 @@ class Mlrs(val baseLearner: Classifier,
       payload(request.payload) ++
 //      request.payload.name ::
       //      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-      adverts(request.provider)
+      adverts(request)
   }
 
   def makeTestRow(request: ServiceRequest): Seq[Any] = {
@@ -201,7 +201,7 @@ class Mlrs(val baseLearner: Classifier,
       payload(request.payload) ++
 //      request.payload.name ::
       //      request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-      adverts(request.provider)
+      adverts(request)
   }
 
   def makeTestRow(record: Record with ServiceRecord with RatingRecord, witness: Client): Seq[Any] = {
@@ -210,22 +210,20 @@ class Mlrs(val baseLearner: Classifier,
       payload(record.service.request.payload) ++
 //      record.service.request.payload.name :: // service identifier (client context)
       //            record.service.request.payload.asInstanceOf[ProductPayload].quality.values.toList ++
-      adverts(record.service.request.provider)
+      adverts(record.service.request)
   }
 
   def payload(payload: Payload): List[Any] = {
-    if (usePayloadProperties) {
-      payload.name :: payload.asInstanceOf[ProductPayload].properties.values.map(_.value).toList
-    } else {
-      payload.name :: Nil
-    }
+    payload.name :: Nil
   }
 
-  def adverts(provider: Provider): List[Any] = {
-    if (useAdverts) {
-      provider.name :: provider.advertProperties.values.map(_.value).toList
+  def adverts(request: ServiceRequest): List[Any] = {
+    if (useAdverts && usePayloadAdverts) {
+      request.provider.name :: request.provider.payloadAdverts(request.payload).values.map(_.value).toList
+    } else if (useAdverts) {
+      request.provider.name :: request.provider.advertProperties.values.map(_.value).toList
     } else {
-      provider.name :: Nil
+      request.provider.name :: Nil
     }
   }
 }

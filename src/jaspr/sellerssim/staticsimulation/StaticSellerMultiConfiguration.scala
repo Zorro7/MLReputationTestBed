@@ -51,38 +51,38 @@ object StaticSellerMultiConfiguration extends App {
         "jaspr.strategy.NoStrategy," +
 //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;-1.;2.0;true;true),"+
-//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false;false),"+
-//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;false),"+
-//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0.0;true;false;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;1.0;true;false;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false;true),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;true),"+
 //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
-        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
+//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
 //        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;true),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.J48;2),"+
-        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
-        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;true),"+
-        //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;true),"+
-//        "jaspr.sellerssim.strategy.general.BasicContext(jaspr.weka.classifiers.meta.MultiRegression;2;false),"+
-//        "jaspr.sellerssim.strategy.general.BasicStereotype(jaspr.weka.classifiers.meta.DiscretizeClassifier_weka.classifiers.trees.RandomForest;2),"+
-//        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2),"+
+//        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;true),"+
+////        "jaspr.sellerssim.strategy.general.BasicContext(jaspr.weka.classifiers.meta.MultiRegression;2;false),"+
+//        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;false),"+
+//        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;true),"+
 //        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.trees.RandomForest;2),"+
-        "jaspr.strategy.fire.Fire(0.0;false)," +
-//        "jaspr.strategy.fire.Fire(0.0;true)," +
-//        "jaspr.strategy.fire.FireContext(0.0;false)," +
-//        "jaspr.strategy.fire.FireContext(0.0;true)," +
+//        "jaspr.strategy.fire.Fire(0.0;false)," +
+////        "jaspr.strategy.fire.Fire(0.0;true)," +
+////        "jaspr.strategy.fire.FireContext(0.0;false)," +
+////        "jaspr.strategy.fire.FireContext(0.0;true)," +
 //        "jaspr.strategy.fire.Fire(0.5;false)," +
-//        "jaspr.strategy.fire.Fire(0.5;true)," +
-//        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
-//        "jaspr.strategy.betareputation.BetaReputation(0.5)," +
+////        "jaspr.strategy.fire.Fire(0.5;true)," +
+        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
+        "jaspr.strategy.betareputation.BetaReputation(0.5)," +
 //        "jaspr.strategy.betareputation.Travos," +
-//        "jaspr.strategy.blade.Blade(2)," +
-//        "jaspr.strategy.habit.Habit(2),"+
+        "jaspr.strategy.blade.Blade(2)," +
+        "jaspr.strategy.habit.Habit(2),"+
 //        "jaspr.strategy.stereotype.Burnett,"+
-        " --numSimulations 10 " +
+        " --numSimulations 5 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -92,19 +92,19 @@ object StaticSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 10 --numProviders 50 " +
+        "--numClients 10 --numProviders 20 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 500 " +
+        "--numRounds 101 " +
         "--memoryLimit 100 " +
-        "--numSimCapabilities 20 " +
-        "--numProviderCapabilities 20 " +
-        "--noiseRange 2. " +
-        "--numTerms 5 " +
-        "--witnessRequestLikelihood 0.2 " +
-        "--numAdverts 5 " +
-        "--usePreferences false").split(" ")
+        "--numSimCapabilities 5 " +
+        "--numProviderCapabilities 5 " +
+        "--noiseRange 1.5 " +
+        "--numTerms 3 " +
+        "--witnessRequestLikelihood 0.5 " +
+        "--numAdverts 3 " +
+        "--usePreferences true").split(" ")
     } else args
 
   println(argsplt.toList mkString("[", " ", "]"))
@@ -241,13 +241,24 @@ class StaticSellerConfiguration(val _strategy: Strategy,
 //          (c._2.doubleValue + x.doubleValue) / 2d
 //          addNoise((c._2.doubleValue + x.doubleValue) / 2d)
 //          addNoise(c._2.doubleValue)
-          (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1)
-//          Chooser.randomDouble(-1,1)
+//          (c._2.doubleValue + noiseRange*Chooser.randomDouble(0,1))/(noiseRange+1)
+          Chooser.randomDouble(0,1)
 //            addNoise(x.doubleValue)
 //          ((c._2.doubleValue+x.doubleValue) / 2d) * Chooser.randomDouble(-1,1)
 //          (c._2.doubleValue + x.doubleValue + Chooser.randomDouble(-1,1))/3d
 //         c._2.doubleValue
 //        case None => c._2.doubleValue
+      }
+    })
+  }
+
+
+  def addNoise2(competency: SortedMap[String,Property], productProperty: SortedMap[String,Property]): SortedMap[String,Double] = {
+    competency.map(c => c._1 -> {
+      productProperty.get(c._1) match {
+        case Some(x) =>
+//          (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,0))/(noiseRange+1)
+          Chooser.randomDouble(-1,0)
       }
     })
   }
@@ -276,10 +287,16 @@ class StaticSellerConfiguration(val _strategy: Strategy,
 //          quality = c.properties.map(x => x._1 -> Chooser.randomDouble(0.5,1))
 //        )
 //      })
-    caps = caps.map(c => c.copy(
-      quality = addNoise(provider.properties, c.properties)
-    ))
-//        println(provider.name, caps)
+    if (provider.id % numProviders < 10) {
+      caps = caps.map(c => c.copy(
+        quality = addNoise(provider.properties, c.properties)
+      ))
+    } else {
+      caps = caps.map(c => c.copy(
+        quality = addNoise2(provider.properties, c.properties)
+      ))
+    }
+        println(provider.name, caps)
     caps
   }
 
@@ -309,17 +326,18 @@ class StaticSellerConfiguration(val _strategy: Strategy,
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
   def preferences(agent: Client): SortedMap[String, Property] = {
-    if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
+    if (agent.id % numClients < 5) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 0))).toList
+    else if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
     else (1 to numTerms).map(x => new Property(x.toString, 0.5)).toList
 //    else (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
   }
 
   def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
-    agent.properties.take(numAdverts).mapValues(x => Property(x.name, x.doubleValue))
+    agent.properties.take(numAdverts).mapValues(x => Property(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d))
   }
 
   def adverts(payload: ProductPayload, agent: Agent with Properties): List[Property] = {
-    payload.quality.take(numAdverts).map(x => Property(x._1, addNoise(x._2))).toList
+    payload.quality.take(numAdverts).map(x => Property(x._1, (noiseRange*Chooser.randomDouble(-1,1)+x._2)/2d)).toList
   }
 
 
