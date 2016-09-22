@@ -59,9 +59,10 @@ class DynamicSellerConfiguration(val _strategy: Strategy) extends SellerConfigur
   }
 
   override def strategy(agent: Client): Strategy = _strategy
-
   override val numSimulations: Int = 10
   override val numRounds: Int = 500
+  override val limitClientsUntilRound: Int = -1
+
 
   override def numClients: Int = 10
 

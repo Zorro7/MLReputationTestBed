@@ -30,7 +30,7 @@ class BetaReputation(val witnessWeight: Double) extends RatingStrategy with Comp
 
     val combinedOpinions =
       if (witnessWeight == 1 || witnessWeight == 0) getCombinedOpinions(interactionTrust, opinions.values)
-      else getCombinedOpinions(interactionTrust * witnessWeight, opinions.values.map(_ * witnessWeight))
+      else getCombinedOpinions(interactionTrust * (1-witnessWeight), opinions.values.map(_ * witnessWeight))
 
     val overallTrustValue = combinedOpinions.expected()
 

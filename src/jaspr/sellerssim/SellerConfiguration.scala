@@ -13,6 +13,7 @@ import scala.collection.immutable.SortedMap
   */
 abstract class SellerConfiguration extends Configuration {
 
+  def limitClientsUntilRound: Int
   def clientInvolvementLikelihood: Double
 
   def numClients: Int
