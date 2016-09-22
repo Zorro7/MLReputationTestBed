@@ -23,6 +23,7 @@ class Mlrs(val baseLearner: Classifier,
            override val numBins: Int,
            val witnessWeight: Double = 0.5d,
            val reinterpretationContext: Boolean = true,
+           val reinterpretationProvider: Boolean = true,
            val useAdverts: Boolean = true,
            val usePayloadAdverts: Boolean = true
           ) extends CompositionStrategy with Exploration with MlrsCore {
@@ -34,7 +35,12 @@ class Mlrs(val baseLearner: Classifier,
                   val reinterpretationModels: Option[Map[Client, MlrsModel]]
                 ) extends StrategyInit(context)
 
-  override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext + "-" + useAdverts+"-"+usePayloadAdverts
+  override val name = {
+    this.getClass.getSimpleName + "-" +
+      baseLearner.getClass.getSimpleName + "-" +
+      witnessWeight + "-" +
+      reinterpretationContext + "-" + reinterpretationProvider+"-"+useAdverts+"-"+usePayloadAdverts
+  }
 
   override val explorationProbability: Double = 0.1
 
@@ -99,7 +105,7 @@ class Mlrs(val baseLearner: Classifier,
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
 
       val reinterpretationModels = witnesses.withFilter(_ != context.client).map(witness =>
-        witness -> makeReinterpretationModel(directRecords, witnessRecords, context.client, witness, model)
+        witness -> makeReinterpretationModel(directRecords, witnessRecords.filter(_.service.request.client == witness), context.client, witness, model)
       ).toMap
 
       new MlrsInit(context, Some(model), Some(reinterpretationModels))
@@ -112,10 +118,10 @@ class Mlrs(val baseLearner: Classifier,
     //        witnessRecords.withFilter(_.client == witness).map(record => makeReinterpretationRow(record, model, witness, client))
     //      directRecords.map(record => makeClientReinterpretationRow(record, model, witness)) ++
     //        witnessRecords.map(record => makeWitnessReinterpretationRow(record, model, client))
-    //    directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
-    //      witnessRecords.withFilter(_.client == witness).map(record => makeReinterpretationRow(record, model, witness, client))
-      directRecords.map(record => makeClientReinterpretationRow(record, model, witness)) ++
-        witnessRecords.map(record => makeWitnessReinterpretationRow(record, model, client))
+        directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
+          witnessRecords.map(record => makeReinterpretationRow(record, model, witness, client))
+//      directRecords.map(record => makeClientReinterpretationRow(record, model, witness)) ++
+//        witnessRecords.map(record => makeWitnessReinterpretationRow(record, model, client))
 
     val reinterpretationAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(reinterpretationRows.head.size)(mutable.Map[Any, Double]())
     val doubleRows = convertRowsToDouble(reinterpretationRows, reinterpretationAttVals, classIndex)
@@ -128,21 +134,21 @@ class Mlrs(val baseLearner: Classifier,
     new MlrsModel(reinterpretationModel, reinterpretationTrain, reinterpretationAttVals)
   }
 
-  def makeClientReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client): Seq[Any] = {
-    val row = makeTestRow(record, fromPOV)
-    val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
-    (if (discreteClass) discretizeDouble(record.rating) else record.rating) ::
-      makePrediction(query, trustModel) ::
-      makeReinterpretationContext(record)
-  }
-
-  def makeWitnessReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, toPOV: Client): Seq[Any] = {
-    val row = makeTestRow(record, toPOV)
-    val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
-    makePrediction(query, trustModel, false) ::
-      record.rating ::
-      makeReinterpretationContext(record)
-  }
+//  def makeClientReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client): Seq[Any] = {
+//    val row = makeTestRow(record, fromPOV)
+//    val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
+//    (if (discreteClass) discretizeDouble(record.rating) else record.rating) ::
+//      makePrediction(query, trustModel) ::
+//      makeReinterpretationContext(record)
+//  }
+//
+//  def makeWitnessReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, toPOV: Client): Seq[Any] = {
+//    val row = makeTestRow(record, toPOV)
+//    val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
+//    makePrediction(query, trustModel, false) ::
+//      record.rating ::
+//      makeReinterpretationContext(record)
+//  }
 
   def makeReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client, toPOV: Client): Seq[Any] = {
     val fromRow = makeTestRow(record, fromPOV)
@@ -155,26 +161,17 @@ class Mlrs(val baseLearner: Classifier,
   }
 
   def makeReinterpretationContext(record: Record with ServiceRecord with RatingRecord): List[Any] = {
-    if (reinterpretationContext) {
-//      record.service.payload.name ::
-        record.service.request.provider.name ::
-          payload(record.service.request.payload)
-      //        adverts(record.provider)
-    } else {
-      Nil
-    }
-
+    if (reinterpretationProvider && reinterpretationContext) record.service.request.provider.name :: payload(record.service.request.payload)
+    else if (reinterpretationProvider) record.service.request.provider.name :: Nil
+    else if (reinterpretationContext) payload(record.service.request.payload)
+    else Nil
   }
 
   def makeReinterpretationContext(request: ServiceRequest): List[Any] = {
-    if (reinterpretationContext) {
-//      request.payload.name ::
-        request.provider.name ::
-          payload(request.payload)
-      //        adverts(request.provider)
-    } else {
-      Nil
-    }
+    if (reinterpretationProvider && reinterpretationContext) request.provider.name :: payload(request.payload)
+    else if (reinterpretationProvider) request.provider.name :: Nil
+    else if (reinterpretationContext) payload(request.payload)
+    else Nil
   }
 
   def makeTrainRow(record: Record with ServiceRecord with RatingRecord): Seq[Any] = {

@@ -15,6 +15,8 @@ trait ContextML extends SingleModelStrategy {
   val baseStrategy: SingleModelStrategy
   val usePayloadProperties: Boolean
 
+  override val name = this.getClass.getSimpleName + "-" + baseLearner.getClass.getSimpleName +"-"+ usePayloadProperties
+
   override def getRecords(network: Network, context: ClientContext): Seq[Record] = {
     baseStrategy.getRecords(network, context)
   }
