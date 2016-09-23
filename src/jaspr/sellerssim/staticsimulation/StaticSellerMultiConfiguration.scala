@@ -5,6 +5,7 @@ import jaspr.core.service.{Payload, ClientContext}
 import jaspr.core.simulation._
 import jaspr.core.strategy.Strategy
 import jaspr.sellerssim.agent._
+import jaspr.sellerssim.dynamicsimulation.DynamicSellerNetwork
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.sellerssim.{SellerConfiguration, SellerNetwork, SellerSimulation}
 import jaspr.utilities.Chooser

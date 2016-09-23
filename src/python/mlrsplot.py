@@ -5,14 +5,14 @@ import sys
 
 if __name__ == "__main__":
 
-    filename = "../../results/jaamas3.res"
+    filename = "../../results/jaamas7.res"
 
     results = loadprocessed(filename)
 
     df = "{0:.1f}"
     strategies = [
         # ('NoStrategy',),
-        # ('Fire-0.0-false',),
+        ('Fire-0.0-false',),
         # ('Fire-0.5-false',), 
         # ('BetaReputation-0.0',), 
         # ('BetaReputation-0.5',),  
@@ -33,10 +33,10 @@ if __name__ == "__main__":
         # ('Mlrs-RandomForest-2.0-false-true-false-false',),
         #  ('Mlrs-RandomForest-2.0-true-true-false-false',),
         # ('Mlrs-RandomForest-0.0-false-false-false-false',),
-		('Mlrs-RandomForest-2.0-false-false-true-true',),
-        ('Mlrs-RandomForest-2.0-true-false-true-true',),
-        ('Mlrs-RandomForest-2.0-false-true-true-true',),
-        ('Mlrs-RandomForest-2.0-true-true-true-true',),
+		('Mlrs-RandomForest-2.0-false-false-false-false',),
+        ('Mlrs-RandomForest-2.0-true-false-false-false',),
+        ('Mlrs-RandomForest-2.0-false-true-false-false',),
+        ('Mlrs-RandomForest-2.0-true-true-false-false',),
         ('Mlrs-RandomForest-0.0-false-false-false-false',),
 
 
@@ -69,8 +69,8 @@ if __name__ == "__main__":
         "BasicContext-RandomForest-true": "PayloadContext-ML",
         "BasicStereotype": "Stereotype-ML",
         "FireLikeStereotype": "FIRE-Stereotype-ML",
-        "FireLikeContext-RandomForest-true": "FIRE-Context-ML",
-        "FireLikeContext-RandomForest-false": "FIRE-PayloadContext-ML",
+        "FireLikeContext-RandomForest-false": "FIRE-Context-ML",
+        "FireLikeContext-RandomForest-true": "FIRE-PayloadContext-ML",
         "Mlrs-RandomForest-2.0-false-false-false-false": "MLRS",
         "Mlrs-RandomForest-2.0-true-false-false-false": "MLRS-c",
         "Mlrs-RandomForest-2.0-false-true-false-false": "MLRS-p",
@@ -116,8 +116,8 @@ if __name__ == "__main__":
         # "cycle multi list={mark list\\nextlist solid,dashed}",
         "legend columns=2",
         "legend style={at={(0.1,0.9)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
-        xmin="0", xmax="2000",
-        ymin="-20", ymax="100",
+        xmin="0", xmax="1000",
+        ymin="-10", ymax="30",
         width="15cm",
         height="10cm",
         xlabel="\\textbf{Round}",
