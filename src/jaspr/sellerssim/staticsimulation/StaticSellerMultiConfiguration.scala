@@ -55,7 +55,7 @@ object StaticSellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;-1.;2.0;true;true),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;false;false;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;1.0;false;false;false),"+
-        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;false;false;false),"+
+//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;false;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false;true),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;true),"+
@@ -63,27 +63,27 @@ object StaticSellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
 //        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
-        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
 //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;true),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(jaspr.weka.classifiers.meta.MultiRegression;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;true),"+
 //        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.trees.RandomForest;2),"+
-        "jaspr.strategy.fire.Fire(0.0;false)," +
+//        "jaspr.strategy.fire.Fire(0.0;false)," +
 ////        "jaspr.strategy.fire.Fire(0.0;true)," +
 ////        "jaspr.strategy.fire.FireContext(0.0;false)," +
 ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
 //        "jaspr.strategy.fire.Fire(0.5;false)," +
 //        "jaspr.strategy.fire.Fire(0.5;true)," +
-        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
+//        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
 //        "jaspr.strategy.betareputation.BetaReputation(0.5)," +
 //        "jaspr.strategy.betareputation.BetaReputation(1d)," +
 //        "jaspr.strategy.betareputation.Travos," +
-        "jaspr.strategy.blade.Blade(2)," +
-        "jaspr.strategy.habit.Habit(2),"+
+//        "jaspr.strategy.blade.Blade(2)," +
+//        "jaspr.strategy.habit.Habit(2),"+
 //        "jaspr.strategy.stereotype.Burnett,"+
-        " --numSimulations 10 " +
+        " --numSimulations 1 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -105,7 +105,7 @@ object StaticSellerMultiConfiguration extends App {
         "--numTerms 3 " +
         "--witnessRequestLikelihood 0.5 " +
         "--numAdverts 3 " +
-        "--usePreferences true").split(" ")
+        "--usePreferences false").split(" ")
     } else args
 
   println(argsplt.toList mkString("[", " ", "]"))
@@ -151,7 +151,7 @@ case class StaticSellerMultiConfiguration(
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-//    override val _seed = 1
+    override val _seed = 1
 
 
   override lazy val configs: Seq[Configuration] =
@@ -270,6 +270,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
     caps = caps.map(c => c.copy(
       quality = addNoise(provider.properties, c.properties)
     ))
+//    println(caps)
     caps
   }
 
