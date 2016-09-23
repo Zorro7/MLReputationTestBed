@@ -111,11 +111,11 @@ object DynamicSellerMultiConfiguration extends App {
         "--eventEffects 0 " +
         "--numRounds 500 --networkTickInterval 250 " +
         "--memoryLimit 10 " +
-        "--numSimCapabilities 5 " +
+        "--numSimCapabilities 3 " +
         "--numProviderCapabilities 5 " +
         "--noiseRange 2d " +
         "--numTerms 3 " +
-        "--witnessRequestLikelihood 1 " +
+        "--witnessRequestLikelihood 0.5 " +
         "--numAdverts 3 " +
         "--numPreferences 3 " +
         "--providerAttrition 1 --clientAttrition 0").split(" ")
