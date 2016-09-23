@@ -38,7 +38,7 @@ object DynamicSellerMultiConfiguration extends App {
     opt[Double]("noiseRange") required() action { (x, c) => c.copy(noiseRange = x) }
     opt[Int]("numTerms") required() action { (x, c) => c.copy(numTerms = x) }
     opt[Int]("numAdverts") required() action { (x, c) => c.copy(numAdverts = x) }
-    opt[Boolean]("usePreferences") required() action { (x, c) => c.copy(usePreferences = x) }
+    opt[Int]("numPreferences") required() action { (x, c) => c.copy(numPreferences = x) }
     opt[Double]("eventLikelihood") required() action { (x, c) => c.copy(eventLikelihood = x) }
     opt[Double]("eventEffects") required() action { (x, c) => c.copy(eventEffects = x) }
     opt[Double]("honestWitnessLikelihood") required() action { (x, c) => c.copy(honestWitnessLikelihood = x) }
@@ -51,7 +51,9 @@ object DynamicSellerMultiConfiguration extends App {
     opt[Double]("providersToPromote") required() action { (x, c) => c.copy(providersToPromote = x) }
     opt[Double]("providersToSlander") required() action { (x, c) => c.copy(providersToSlander = x) }
     opt[Double]("witnessRequestLikelihood") required() action { (x, c) => c.copy(witnessRequestLikelihood = x) }
-    opt[Int]("limitClientsUntilRound") required() action { (x, c) => c.copy(limitClientsUntilRound = x) }
+    opt[Int]("networkTickInterval") required() action { (x, c) => c.copy(networkTickInterval = x) }
+    opt[Double]("clientAttrition") required() action { (x, c) => c.copy(clientAttrition = x) }
+    opt[Double]("providerAttrition") required() action { (x, c) => c.copy(providerAttrition = x) }
   }
 
   val argsplt =
@@ -61,8 +63,10 @@ object DynamicSellerMultiConfiguration extends App {
         "jaspr.strategy.NoStrategy," +
         //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
         //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;-1.;2.0;true;true),"+
-        //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;false;false;false;false),"+
-        //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;1.0;false;false;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;false;false;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0.0;false;false;false;false),"+
+//                "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;1.0;false;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;false;false;false),"+
         //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
         //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false;true),"+
@@ -70,7 +74,7 @@ object DynamicSellerMultiConfiguration extends App {
         //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
         //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
         //        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
-        //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
+//                "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
         //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
         //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;true),"+
@@ -78,20 +82,20 @@ object DynamicSellerMultiConfiguration extends App {
         //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;false),"+
         //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;true),"+
         //        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.trees.RandomForest;2),"+
-//        "jaspr.strategy.fire.Fire(0.0;false)," +
+        "jaspr.strategy.fire.Fire(0.0;false)," +
         ////        "jaspr.strategy.fire.Fire(0.0;true)," +
         ////        "jaspr.strategy.fire.FireContext(0.0;false)," +
         ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
-        //        "jaspr.strategy.fire.Fire(0.5;false)," +
+                "jaspr.strategy.fire.Fire(0.5;false)," +
         //        "jaspr.strategy.fire.Fire(0.5;true)," +
 //        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
-        //        "jaspr.strategy.betareputation.BetaReputation(0.5)," +
-        //        "jaspr.strategy.betareputation.BetaReputation(1d)," +
-        //        "jaspr.strategy.betareputation.Travos," +
-//        "jaspr.strategy.blade.Blade(2)," +
+//                "jaspr.strategy.betareputation.BetaReputation(0.5)," +
+//                "jaspr.strategy.betareputation.BetaReputation(1d)," +
+//                "jaspr.strategy.betareputation.Travos," +
+        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
-        //        "jaspr.strategy.stereotype.Burnett,"+
-        " --numSimulations 10 " +
+//                "jaspr.strategy.stereotype.Burnett,"+
+        " --numSimulations 5 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -101,19 +105,20 @@ object DynamicSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 10 --numProviders 25 " +
+        "--numClients 10 --numProviders 50 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 500 --limitClientsUntilRound 200 " +
-        "--memoryLimit 100 " +
-        "--numSimCapabilities 1 " +
+        "--numRounds 500 --networkTickInterval 250 " +
+        "--memoryLimit 10 " +
+        "--numSimCapabilities 5 " +
         "--numProviderCapabilities 5 " +
         "--noiseRange 2d " +
         "--numTerms 3 " +
-        "--witnessRequestLikelihood 0.5 " +
+        "--witnessRequestLikelihood 1 " +
         "--numAdverts 3 " +
-        "--usePreferences true").split(" ")
+        "--numPreferences 3 " +
+        "--providerAttrition 1 --clientAttrition 0").split(" ")
     } else args
 
   println(argsplt.toList mkString("[", " ", "]"))
@@ -140,8 +145,8 @@ case class DynamicSellerMultiConfiguration(
                                            noiseRange: Double = 1d,
                                            numTerms: Int = 2,
                                            numAdverts: Int = 2,
-                                           usePreferences: Boolean = true,
-                                           limitClientsUntilRound: Int = -1,
+                                           numPreferences: Int = 2,
+                                           networkTickInterval: Int = -1,
                                            eventLikelihood: Double = 0,
                                            eventEffects: Double = 0,
                                            honestWitnessLikelihood: Double = 0.1,
@@ -152,7 +157,9 @@ case class DynamicSellerMultiConfiguration(
                                            promotionWitnessLikelihood: Double = 0.1,
                                            slanderWitnessLikelihood: Double = 0.1,
                                            providersToPromote: Double = 0.1,
-                                           providersToSlander: Double = 0.1
+                                           providersToSlander: Double = 0.1,
+                                           clientAttrition: Double = 0.0,
+                                           providerAttrition: Double = 1
                                          ) extends MultiConfiguration {
   override val directComparison = true
 
@@ -177,8 +184,8 @@ case class DynamicSellerMultiConfiguration(
         noiseRange = noiseRange,
         numTerms = numTerms,
         numAdverts = numAdverts,
-        usePreferences = usePreferences,
-        limitClientsUntilRound = limitClientsUntilRound,
+        numPreferences = numPreferences,
+        networkTickInterval = networkTickInterval,
         eventLikelihood = eventLikelihood,
         eventEffects = eventEffects,
         honestWitnessLikelihood = honestWitnessLikelihood,
@@ -189,7 +196,9 @@ case class DynamicSellerMultiConfiguration(
         promotionWitnessLikelihood = promotionWitnessLikelihood,
         slanderWitnessLikelihood = slanderWitnessLikelihood,
         providersToPromote = providersToPromote,
-        providersToSlander = providersToSlander
+        providersToSlander = providersToSlander,
+        clientAttrition = clientAttrition,
+        providerAttrition = providerAttrition
       )
     })
 }
@@ -208,8 +217,8 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
                                 val noiseRange: Double,
                                 val numTerms: Int,
                                 val numAdverts: Int,
-                                val usePreferences: Boolean,
-                                override val limitClientsUntilRound: Int,
+                                val numPreferences: Int,
+                                val networkTickInterval: Int,
                                 override val eventLikelihood: Double,
                                 override val eventEffects: Double,
                                 val honestWitnessLikelihood: Double,
@@ -220,8 +229,10 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
                                 val promotionWitnessLikelihood: Double,
                                 val slanderWitnessLikelihood: Double,
                                 val providersToPromote: Double,
-                                val providersToSlander: Double
-                               ) extends SellerConfiguration {
+                                val providersToSlander: Double,
+                                val clientAttrition: Double,
+                                val providerAttrition: Double
+                                ) extends SellerConfiguration {
 
   override def newSimulation(): Simulation = {
     new DynamicSellerSimulation(this)
@@ -234,9 +245,6 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
   override def strategy(agent: Client): Strategy = _strategy
 
   override val baseUtility: Double = 1d/2d
-
-  val clientAttrition: Double = 0.0
-  val providerAttrition: Double = 0.0
 
   def witnessModel(witness: Witness, network: Network): WitnessModel = {
     Chooser.choose(
@@ -259,9 +267,9 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
     )
   }
 
-  def addNoise(x: Double): Double = {
-    (x + noiseRange*Chooser.randomDouble(-1, 1)) / 2
-  }
+//  def addNoise(x: Double): Double = {
+//    (x + noiseRange*Chooser.randomDouble(-1, 1)) / 2
+//  }
 
   def addNoise(competency: SortedMap[String,Property], productProperty: SortedMap[String,Property]): SortedMap[String,Double] = {
     competency.map(c => c._1 -> {
@@ -315,7 +323,6 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
     (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
   }
 
-  val numPreferences = numTerms
   override def preferences(agent: Client): SortedMap[String, Property] = {
    if (numPreferences == 0) {
       (1 to numTerms).map(x => new Property(x.toString, 0.5)).toList
