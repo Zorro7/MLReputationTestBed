@@ -83,7 +83,7 @@ object StaticSellerMultiConfiguration extends App {
 //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
 //        "jaspr.strategy.stereotype.Burnett,"+
-        " --numSimulations 1 " +
+        " --numSimulations 10 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -105,7 +105,7 @@ object StaticSellerMultiConfiguration extends App {
         "--numTerms 3 " +
         "--witnessRequestLikelihood 0.5 " +
         "--numAdverts 3 " +
-        "--usePreferences false").split(" ")
+        "--usePreferences true").split(" ")
     } else args
 
   println(argsplt.toList mkString("[", " ", "]"))
@@ -151,7 +151,7 @@ case class StaticSellerMultiConfiguration(
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-    override val _seed = 1
+//    override val _seed = 1
 
 
   override lazy val configs: Seq[Configuration] =

@@ -91,7 +91,7 @@ object DynamicSellerMultiConfiguration extends App {
 //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
         //        "jaspr.strategy.stereotype.Burnett,"+
-        " --numSimulations 1 " +
+        " --numSimulations 10 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -158,7 +158,7 @@ case class DynamicSellerMultiConfiguration(
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-      override val _seed = 1
+//      override val _seed = 1
 
 
   override lazy val configs: Seq[Configuration] =
@@ -315,7 +315,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
     (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
   }
 
-  val numPreferences = 0
+  val numPreferences = numTerms
   override def preferences(agent: Client): SortedMap[String, Property] = {
    if (numPreferences == 0) {
       (1 to numTerms).map(x => new Property(x.toString, 0.5)).toList
