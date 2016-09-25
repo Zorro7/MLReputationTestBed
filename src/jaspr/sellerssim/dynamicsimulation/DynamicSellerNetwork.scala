@@ -19,14 +19,14 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
   private var _providers: Seq[Seller] = List.fill(simulation.config.numProviders)(
     new Seller(simulation)
   )
-  private var groups: Map[Client,Seq[Provider]] = {
-    clients.map(x => x -> Chooser.sample(providers, (simulation.config.numProviders*0.2).toInt)).toMap
-  }
+//  private var groups: Map[Client,Seq[Provider]] = {
+//    clients.map(x => x -> Chooser.sample(providers, (simulation.config.numProviders*0.2).toInt)).toMap
+//  }
+//
+//  private var departedClients: List[Buyer] = Nil
+//  private var departedProviders: List[Seller] = Nil
 
-  private var departedClients: List[Buyer] = Nil
-  private var departedProviders: List[Seller] = Nil
-
-  override def utility(): Double = clients.map(_.utility).sum + departedClients.map(_.utility).sum
+  override def utility(): Double = clients.map(_.utility).sum //+ departedClients.map(_.utility).sum
 
   override def clients: Seq[Buyer] = _clients
 
@@ -35,7 +35,7 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     providers.withFilter(x =>
-      x.capableOf(context.payload, 0) && groups(context.client).contains(x)
+      x.capableOf(context.payload, 0) //&& groups(context.client).contains(x)
     ).map(x =>
       new ServiceRequest(
         context.client, x, simulation.round, 0, context.payload, context.market
@@ -61,15 +61,15 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
 //        x
 //      )
 //    )
-//    if (simulation.round % simulation.config.networkTickInterval == 0) {
-//      _providers =
-//        Chooser.sample(providers, ((1 - simulation.config.providerAttrition) * simulation.config.numProviders).toInt) ++
-//          List.fill((simulation.config.providerAttrition * simulation.config.numProviders).toInt)(
-//            new Seller(simulation)
-//          )
-//    }
-    if (simulation.round % simulation.config.networkTickInterval == 0)
-      groups = clients.map(x => x -> Chooser.sample(providers, (simulation.config.numProviders*1d).toInt)).toMap
+    if (simulation.config.networkTickInterval > 0 && simulation.round % simulation.config.networkTickInterval == 0) {
+      _providers =
+        Chooser.sample(providers, ((1 - simulation.config.providerAttrition) * simulation.config.numProviders).toInt) ++
+          List.fill((simulation.config.providerAttrition * simulation.config.numProviders).toInt)(
+            new Seller(simulation)
+          )
+    }
+//    if (simulation.round % simulation.config.networkTickInterval == 0)
+//      groups = clients.map(x => x -> Chooser.sample(providers, (simulation.config.numProviders*1d).toInt)).toMap
 
 //    println(_providers.size, departedProviders.size)
   }

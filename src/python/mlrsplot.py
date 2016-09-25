@@ -5,18 +5,18 @@ import sys
 
 if __name__ == "__main__":
 
-    filename = "../../results/jaamas7.res"
+    filename = "../../results/jaamas2.res"
 
     results = loadprocessed(filename)
 
     df = "{0:.1f}"
     strategies = [
-        # ('NoStrategy',),
+        ('NoStrategy',),
         ('Fire-0.0-false',),
-        # ('Fire-0.5-false',), 
-        # ('BetaReputation-0.0',), 
-        # ('BetaReputation-0.5',),  
-        # ('Travos',),
+        ('Fire-0.5-false',), 
+        ('BetaReputation-0.0',), 
+        ('BetaReputation-0.5',),  
+        ('Travos',),
         ('Blade-2',), 
         ('Habit-2',),
         # ('Burnett',),
@@ -24,18 +24,18 @@ if __name__ == "__main__":
         # ('FireLike',),
         ('BasicContext-RandomForest-false',),
         # ('BasicContext-RandomForest-true',),
-        # ('FireLikeContext-RandomForest-false',),
+        ('FireLikeContext-RandomForest-false',),
         # ('FireLikeContext-RandomForest-true',),
         # ('BasicStereotype',),
         # ('FireLikeStereotype',),
-        # ('Mlrs-RandomForest-2.0-false-false-false-false',),
+        ('Mlrs-RandomForest-2.0-false-false-true-true',),
+        # ('Mlrs-RandomForest-2.0-true-false-true-true',),
+        # ('Mlrs-RandomForest-2.0-false-true-true-true',),
+         ('Mlrs-RandomForest-2.0-true-true-true-true',),
+        ('Mlrs-RandomForest-0.0-false-false-true-true',),
+		('Mlrs-RandomForest-2.0-false-false-false-false',),
         # ('Mlrs-RandomForest-2.0-true-false-false-false',),
         # ('Mlrs-RandomForest-2.0-false-true-false-false',),
-        #  ('Mlrs-RandomForest-2.0-true-true-false-false',),
-        # ('Mlrs-RandomForest-0.0-false-false-false-false',),
-		('Mlrs-RandomForest-2.0-false-false-false-false',),
-        ('Mlrs-RandomForest-2.0-true-false-false-false',),
-        ('Mlrs-RandomForest-2.0-false-true-false-false',),
         ('Mlrs-RandomForest-2.0-true-true-false-false',),
         ('Mlrs-RandomForest-0.0-false-false-false-false',),
 
@@ -90,8 +90,7 @@ if __name__ == "__main__":
     }
 
     splt = split(results, "clientInvolvementLikelihood", "memoryLimit", "numClients", "numProviders",
-                 "numSimCapabilities", "limitClientsUntilRound",
-                 "numTerms", "numAdverts", "usePreferences", "honestWitnessLikelihood")
+                 "numTerms", "numPreferences", "numSimCapabilities", "networkTickInterval", "providerAttrition")
 
     # print splt.keys()
     # index = (0.1, 100, 20, 100, 10, 3, 3, "true", 1)
@@ -102,6 +101,8 @@ if __name__ == "__main__":
     # print index, len(splt)
 
     expsplt = split(splt, "exp")
+    print "%", [len(expsplt[strategy]) for strategy in strategies] 
+
 
     texstr = latexheader([], ["spy"])
 
@@ -116,8 +117,8 @@ if __name__ == "__main__":
         # "cycle multi list={mark list\\nextlist solid,dashed}",
         "legend columns=2",
         "legend style={at={(0.1,0.9)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
-        xmin="0", xmax="1000",
-        ymin="-10", ymax="30",
+        xmin="0", xmax="2000",
+        ymin="-200", ymax="200",
         width="15cm",
         height="10cm",
         xlabel="\\textbf{Round}",

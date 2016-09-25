@@ -82,11 +82,11 @@ object DynamicSellerMultiConfiguration extends App {
         //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;false),"+
         //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;true),"+
         //        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.trees.RandomForest;2),"+
-        "jaspr.strategy.fire.Fire(0.0;false)," +
-        ////        "jaspr.strategy.fire.Fire(0.0;true)," +
+//        "jaspr.strategy.fire.Fire(0.0;false)," +
+        //        "jaspr.strategy.fire.Fire(0.0;true)," +
         ////        "jaspr.strategy.fire.FireContext(0.0;false)," +
         ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
-                "jaspr.strategy.fire.Fire(0.5;false)," +
+//                "jaspr.strategy.fire.Fire(0.5;false)," +
         //        "jaspr.strategy.fire.Fire(0.5;true)," +
 //        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
 //                "jaspr.strategy.betareputation.BetaReputation(0.5)," +
@@ -105,20 +105,20 @@ object DynamicSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 10 --numProviders 50 " +
+        "--numClients 10 --numProviders 20 " +
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 500 --networkTickInterval 250 " +
-        "--memoryLimit 10 " +
-        "--numSimCapabilities 3 " +
+        "--numRounds 500 --networkTickInterval 400 " +
+        "--memoryLimit 100 " +
+        "--numSimCapabilities 1 " +
         "--numProviderCapabilities 5 " +
         "--noiseRange 2d " +
         "--numTerms 3 " +
-        "--witnessRequestLikelihood 0.5 " +
+        "--witnessRequestLikelihood 0.25 " +
         "--numAdverts 3 " +
         "--numPreferences 3 " +
-        "--providerAttrition 1 --clientAttrition 0").split(" ")
+        "--providerAttrition 0.5 --clientAttrition 0").split(" ")
     } else args
 
   println(argsplt.toList mkString("[", " ", "]"))

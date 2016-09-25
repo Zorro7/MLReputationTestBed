@@ -63,7 +63,7 @@ class Mlrs(val baseLearner: Classifier,
       case (None, None) =>
         new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0d, 1d))
 
-      case (Some(model), None) =>
+      case (Some(model), None) => // This code assumes that this case applies when witnessWeight == 0
         val row = makeTestRow(request)
         val query = convertRowToInstance(row, model.attVals, model.train)
         val result = makePrediction(query, model)
@@ -82,10 +82,9 @@ class Mlrs(val baseLearner: Classifier,
             val result = makePrediction(inst, reint)
             result
           }
-        val witnessResult: Double = if (witnessResults.isEmpty) 0d else witnessResults.sum / witnessResults.size.toDouble
         val score =
-          if (witnessWeight < 0d || witnessWeight > 1d) directResult + witnessResults.sum
-          else (1 - witnessWeight) * directResult + witnessWeight * witnessResult
+          if (witnessWeight > 1d) directResult + witnessResults.sum
+          else (1 - witnessWeight) * directResult + witnessWeight * (witnessResults.sum / witnessResults.size.toDouble)
         new TrustAssessment(baseInit.context, request, score)
     }
   }
@@ -93,7 +92,9 @@ class Mlrs(val baseLearner: Classifier,
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
     val directRecords: Seq[Record with ServiceRecord with RatingRecord] = context.client.getProvenance[Record with ServiceRecord with RatingRecord](context.client)
-    val witnessRecords: Seq[Record with ServiceRecord with RatingRecord] = network.gatherProvenance[Record with ServiceRecord with RatingRecord](context.client)
+    val witnessRecords: Seq[Record with ServiceRecord with RatingRecord] =
+      if (witnessWeight == 0) Nil
+      else network.gatherProvenance[Record with ServiceRecord with RatingRecord](context.client)
     val witnesses = context.client :: witnessRecords.map(_.service.request.client).toSet.toList
     val records = directRecords ++ witnessRecords
 
@@ -105,7 +106,7 @@ class Mlrs(val baseLearner: Classifier,
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
 
       val reinterpretationModels = witnesses.withFilter(_ != context.client).map(witness =>
-        witness -> makeReinterpretationModel(directRecords, witnessRecords.filter(_.service.request.client == witness), context.client, witness, model)
+        witness -> makeReinterpretationModel(directRecords, witnessRecords, context.client, witness, model)
       ).toMap
 
       new MlrsInit(context, Some(model), Some(reinterpretationModels))

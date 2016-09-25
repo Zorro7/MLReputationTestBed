@@ -80,11 +80,11 @@ object StaticSellerMultiConfiguration extends App {
 //        "jaspr.strategy.betareputation.BetaReputation(0.5)," +
 //        "jaspr.strategy.betareputation.BetaReputation(1d)," +
 //        "jaspr.strategy.betareputation.Travos," +
-//        "jaspr.strategy.blade.Blade(2)," +
+        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.habit.Habit(2),"+
 //        "jaspr.strategy.stereotype.Burnett,"+
         " --numSimulations 10 " +
-        "--honestWitnessLikelihood 1 " +
+        "--honestWitnessLikelihood 5 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
         "--randomWitnessLikelihood 0 " +
