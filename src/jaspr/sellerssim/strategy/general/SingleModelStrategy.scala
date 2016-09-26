@@ -6,6 +6,7 @@ import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.strategy.mlrs.MlrsCore
 import jaspr.strategy.CompositionStrategy
+import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 import weka.classifiers.bayes.NaiveBayes
@@ -54,7 +55,6 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
 //      sd.setAttributeIndices("first-last")
 //      learner.setFilter(sd)
       val trustModel = makeMlrsModel(records, baseLearner, makeTrainRow)
-      val tmp = records.map(_.asInstanceOf[RatingRecord].rating)
 //      println(tmp.count(_ > 0), tmp.size)
 //      println(trustModel.train)
 //      println(trustModel.model)
@@ -65,19 +65,11 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init: BasicInit = baseInit.asInstanceOf[BasicInit]
     init.trustModel match {
-      case None => new TrustAssessment(baseInit.context, request, 0d)
-      case Some(trustModel) =>
+      case None => new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0,1))
+      case Some(model) =>
         val row = makeTestRow(init, request)
-        val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
-
-        val result = if (discreteClass && numBins <= 2) {
-          val dist = trustModel.model.distributionForInstance(query)
-          dist.zipWithIndex.map(x => x._1 * trustModel.train.classAttribute().value(x._2).toDouble).sum
-        } else if (discreteClass) {
-          val pred = trustModel.model.classifyInstance(query)
-          trustModel.train.classAttribute().value(pred.toInt).toDouble
-        } else trustModel.model.classifyInstance(query)
-
+        val query = convertRowToInstance(row, model.attVals, model.train)
+        val result = makePrediction(query, model)
         new TrustAssessment(baseInit.context, request, result)
     }
   }

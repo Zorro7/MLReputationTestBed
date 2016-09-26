@@ -61,41 +61,40 @@ object DynamicSellerMultiConfiguration extends App {
       ("--strategy " +
         //        "jaspr.strategy.NoStrategy," +
         "jaspr.strategy.NoStrategy," +
-        //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;250.;2.0;true;false),"+
-        //        "jaspr.sellerssim.strategy.mlrs.MlrsB(weka.classifiers.bayes.NaiveBayes;2;round;-1.;2.0;true;true),"+
-        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;false;false;false),"+
+//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;false;false;false;false),"+
+//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;false;false),"+
+//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;false;false;false;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;false;false;false;false),"+
         "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
         "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0.0;false;false;false;false),"+
-//                "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;1.0;false;false;false),"+
-//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;false;false;false),"+
         //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
         //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false;true),"+
         //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;true),"+
         //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
-        //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
-        //        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
-//                "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
+        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2),"+
+        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
+//        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
-        //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
         //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;true),"+
         //        "jaspr.sellerssim.strategy.general.BasicContext(jaspr.weka.classifiers.meta.MultiRegression;2;false),"+
         //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;false),"+
         //        "jaspr.sellerssim.strategy.general.BasicStereotype(weka.classifiers.trees.RandomForest;2;true),"+
         //        "jaspr.sellerssim.strategy.general.FireLikeStereotype(weka.classifiers.trees.RandomForest;2),"+
-//        "jaspr.strategy.fire.Fire(0.0;false)," +
         //        "jaspr.strategy.fire.Fire(0.0;true)," +
         ////        "jaspr.strategy.fire.FireContext(0.0;false)," +
         ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
-//                "jaspr.strategy.fire.Fire(0.5;false)," +
-        //        "jaspr.strategy.fire.Fire(0.5;true)," +
-//        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
-//                "jaspr.strategy.betareputation.BetaReputation(0.5)," +
-//                "jaspr.strategy.betareputation.BetaReputation(1d)," +
-//                "jaspr.strategy.betareputation.Travos," +
+        "jaspr.strategy.fire.Fire(0.5;false)," +
+        "jaspr.strategy.fire.Fire(0.0;false)," +
+//        //        "jaspr.strategy.fire.Fire(0.5;true)," +
+                "jaspr.strategy.betareputation.BetaReputation(0.5)," +
+        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
+//        //                "jaspr.strategy.betareputation.BetaReputation(1d)," +
+////                "jaspr.strategy.betareputation.Travos," +
         "jaspr.strategy.blade.Blade(2)," +
-//        "jaspr.strategy.habit.Habit(2),"+
+        "jaspr.strategy.habit.Habit(2),"+
 //                "jaspr.strategy.stereotype.Burnett,"+
-        " --numSimulations 5 " +
+        " --numSimulations 10 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
         "--optimisticWitnessLikelihood 0 " +
@@ -105,20 +104,20 @@ object DynamicSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 10 --numProviders 20 " +
+        "--numClients 5 --numProviders 20 " +
         "--eventLikelihood 0 " +
-        "--clientInvolvementLikelihood 0.1 " +
+        "--clientInvolvementLikelihood 1 " +
         "--eventEffects 0 " +
-        "--numRounds 500 --networkTickInterval 400 " +
-        "--memoryLimit 100 " +
+        "--numRounds 25 --networkTickInterval 1 " +
+        "--memoryLimit 25 " +
         "--numSimCapabilities 1 " +
         "--numProviderCapabilities 5 " +
-        "--noiseRange 2d " +
+        "--noiseRange 0d " +
         "--numTerms 3 " +
-        "--witnessRequestLikelihood 0.25 " +
-        "--numAdverts 3 " +
-        "--numPreferences 3 " +
-        "--providerAttrition 0.5 --clientAttrition 0").split(" ")
+        "--witnessRequestLikelihood 1 " +
+        "--numAdverts 0 " +
+        "--numPreferences 0 " +
+        "--providerAttrition 0.25 --clientAttrition 0").split(" ")
     } else args
 
   println(argsplt.toList mkString("[", " ", "]"))
@@ -165,7 +164,7 @@ case class DynamicSellerMultiConfiguration(
 
   override val resultStart: Int = -memoryLimit
   override val resultEnd: Int = -1
-//      override val _seed = 1
+//      override val _seed = 27800974
 
 
   override lazy val configs: Seq[Configuration] =
@@ -328,7 +327,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
       (1 to numTerms).map(x => new Property(x.toString, 0.5)).toList
     } else {
       Chooser.sample(1 to numTerms, numPreferences).map(
-        x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))
+        x => new Property(x.toString, Chooser.randomDouble(0.25d, 0.75d))
       ).toList
     }
   }

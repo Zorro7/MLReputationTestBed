@@ -46,7 +46,10 @@ class Mlrs(val baseLearner: Classifier,
 
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
-    case x: RandomForest => x.setNumFeatures(100)
+    case x: RandomForest =>
+      x.setNumTrees(25)
+      x.setNumExecutionSlots(1)
+      x.setNumFeatures(100)
     case _ => // do nothing
   }
 
@@ -123,7 +126,6 @@ class Mlrs(val baseLearner: Classifier,
           witnessRecords.map(record => makeReinterpretationRow(record, model, witness, client))
 //      directRecords.map(record => makeClientReinterpretationRow(record, model, witness)) ++
 //        witnessRecords.map(record => makeWitnessReinterpretationRow(record, model, client))
-
     val reinterpretationAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(reinterpretationRows.head.size)(mutable.Map[Any, Double]())
     val doubleRows = convertRowsToDouble(reinterpretationRows, reinterpretationAttVals, classIndex)
     val atts = makeAtts(reinterpretationRows.head, reinterpretationAttVals, classIndex)
