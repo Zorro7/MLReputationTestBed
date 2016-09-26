@@ -65,14 +65,14 @@ object DynamicSellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;false;false;false;false),"+
         "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;false;false;false;false),"+
-        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
+//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
         "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0.0;false;false;false;false),"+
         //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
         //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false;true),"+
         //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;true),"+
         //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
-        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2),"+
-        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
+        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
+        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
 //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
@@ -108,16 +108,16 @@ object DynamicSellerMultiConfiguration extends App {
         "--eventLikelihood 0 " +
         "--clientInvolvementLikelihood 1 " +
         "--eventEffects 0 " +
-        "--numRounds 25 --networkTickInterval 1 " +
+        "--numRounds 50 --networkTickInterval 1 " +
         "--memoryLimit 25 " +
-        "--numSimCapabilities 1 " +
+        "--numSimCapabilities 5 " +
         "--numProviderCapabilities 5 " +
-        "--noiseRange 0d " +
+        "--noiseRange 2d " +
         "--numTerms 3 " +
         "--witnessRequestLikelihood 1 " +
-        "--numAdverts 0 " +
-        "--numPreferences 0 " +
-        "--providerAttrition 0.25 --clientAttrition 0").split(" ")
+        "--numAdverts 3 " +
+        "--numPreferences 3 " +
+        "--providerAttrition 0.1 --clientAttrition 0").split(" ")
     } else args
 
   println(argsplt.toList mkString("[", " ", "]"))
@@ -243,7 +243,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val baseUtility: Double = 1d/2d
+  override val baseUtility: Double = 0.5
 
   def witnessModel(witness: Witness, network: Network): WitnessModel = {
     Chooser.choose(
@@ -327,7 +327,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
       (1 to numTerms).map(x => new Property(x.toString, 0.5)).toList
     } else {
       Chooser.sample(1 to numTerms, numPreferences).map(
-        x => new Property(x.toString, Chooser.randomDouble(0.25d, 0.75d))
+        x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))
       ).toList
     }
   }
