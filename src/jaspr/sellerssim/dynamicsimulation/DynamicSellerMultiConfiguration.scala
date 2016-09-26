@@ -30,6 +30,7 @@ object DynamicSellerMultiConfiguration extends App {
     opt[Int]("numRounds") required() action { (x, c) => c.copy(numRounds = x) }
     opt[Int]("numSimulations") required() action { (x, c) => c.copy(numSimulations = x) }
     opt[Double]("clientInvolvementLikelihood") required() action { (x, c) => c.copy(clientInvolvementLikelihood = x) }
+    opt[Double]("providerAvailabilityLikelihood") required() action { (x, c) => c.copy(providerAvailabilityLikelihood = x) }
     opt[Int]("memoryLimit") required() action { (x, c) => c.copy(memoryLimit = x) }
     opt[Int]("numClients") required() action { (x, c) => c.copy(numClients = x) }
     opt[Int]("numProviders") required() action { (x, c) => c.copy(numProviders = x) }
@@ -67,12 +68,9 @@ object DynamicSellerMultiConfiguration extends App {
         "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;false;false;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
         "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0.0;false;false;false;false),"+
-        //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
-        //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;false;true),"+
-        //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;true),"+
         //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
-        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
-        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
+//        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
+//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
 //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
@@ -104,20 +102,20 @@ object DynamicSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 5 --numProviders 20 " +
+        "--numClients 10 --numProviders 100 " +
         "--eventLikelihood 0 " +
-        "--clientInvolvementLikelihood 1 " +
+        "--clientInvolvementLikelihood 1 --providerAvailabilityLikelihood 0.1 " +
         "--eventEffects 0 " +
         "--numRounds 50 --networkTickInterval 1 " +
         "--memoryLimit 25 " +
-        "--numSimCapabilities 5 " +
+        "--numSimCapabilities 1 " +
         "--numProviderCapabilities 5 " +
-        "--noiseRange 2d " +
+        "--noiseRange 1d " +
         "--numTerms 3 " +
         "--witnessRequestLikelihood 1 " +
         "--numAdverts 3 " +
         "--numPreferences 3 " +
-        "--providerAttrition 0.1 --clientAttrition 0").split(" ")
+        "--providerAttrition 0.0 --clientAttrition 0").split(" ")
     } else args
 
   println(argsplt.toList mkString("[", " ", "]"))
@@ -135,6 +133,7 @@ case class DynamicSellerMultiConfiguration(
                                            numRounds: Int = 250,
                                            numSimulations: Int = 1,
                                            clientInvolvementLikelihood: Double = 0.01,
+                                           providerAvailabilityLikelihood: Double = 0.1,
                                            witnessRequestLikelihood: Double = 0.1,
                                            memoryLimit: Int = 100,
                                            numClients: Int = 10,
@@ -174,6 +173,7 @@ case class DynamicSellerMultiConfiguration(
         numRounds = numRounds,
         numSimulations = numSimulations,
         clientInvolvementLikelihood = clientInvolvementLikelihood,
+        providerAvailabilityLikelihood = providerAvailabilityLikelihood,
         witnessRequestLikelihood = witnessRequestLikelihood,
         memoryLimit = memoryLimit,
         numClients = numClients,
@@ -207,6 +207,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
                                 override val numRounds: Int,
                                 override val numSimulations: Int,
                                 override val clientInvolvementLikelihood: Double,
+                                val providerAvailabilityLikelihood: Double,
                                 override val witnessRequestLikelihood: Double,
                                 override val memoryLimit: Int,
                                 override val numClients: Int,
@@ -293,8 +294,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
   lazy override val simcapabilities: Seq[ProductPayload] = {
     for (i <- 1 to numSimCapabilities) yield {
       new ProductPayload(i.toString, (1 to numTerms).map(x => {
-        val y = Chooser.randomDouble(-1,1)
-        new Property(x.toString, y)
+        new Property(x.toString, Chooser.randomDouble(-1,1))
       }).toList)
     }
   }

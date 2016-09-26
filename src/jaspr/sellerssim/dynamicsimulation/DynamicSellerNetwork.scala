@@ -34,13 +34,15 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
 
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
-    providers.withFilter(x =>
-      x.capableOf(context.payload, 0) //&& groups(context.client).contains(x)
+    val requests = providers.withFilter(x =>
+      x.capableOf(context.payload, 0) && Chooser.nextDouble() < simulation.config.providerAvailabilityLikelihood
     ).map(x =>
       new ServiceRequest(
         context.client, x, simulation.round, 0, context.payload, context.market
       )
     )
+    if (requests.isEmpty) possibleRequests(context)
+    else requests
   }
 
   override def tick(): Unit = {
