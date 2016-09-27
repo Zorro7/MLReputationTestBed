@@ -5,9 +5,13 @@ import sys
 
 if __name__ == "__main__":
 
-    filename = "../../results/jaamas2.res"
 
-    results = loadprocessed(filename)
+    args = sys.argv[1:]
+    files = args[:args.index(':')]
+    args = args[args.index(':')+1:]
+    results = []
+    for filename in files:
+        results.extend(loadprocessed(filename))
 
     df = "{0:.1f}"
     strategies = [
@@ -28,16 +32,17 @@ if __name__ == "__main__":
         # ('FireLikeContext-RandomForest-true',),
         # ('BasicStereotype',),
         # ('FireLikeStereotype',),
-        ('Mlrs-RandomForest-2.0-false-false-true-true',),
+        # ('Mlrs-RandomForest-2.0-false-false-true-true',),
         # ('Mlrs-RandomForest-2.0-true-false-true-true',),
         # ('Mlrs-RandomForest-2.0-false-true-true-true',),
-         ('Mlrs-RandomForest-2.0-true-true-true-true',),
+        ('Mlrs-RandomForest-0.0-false-false-false-false',),
         ('Mlrs-RandomForest-0.0-false-false-true-true',),
-		('Mlrs-RandomForest-2.0-false-false-false-false',),
+        ('Mlrs-RandomForest-2.0-false-false-false-false',),
+        ('Mlrs-RandomForest-2.0-true-true-false-false',),
+         ('Mlrs-RandomForest-2.0-true-true-true-true',),
         # ('Mlrs-RandomForest-2.0-true-false-false-false',),
         # ('Mlrs-RandomForest-2.0-false-true-false-false',),
-        ('Mlrs-RandomForest-2.0-true-true-false-false',),
-        ('Mlrs-RandomForest-0.0-false-false-false-false',),
+        
 
 
         # ('Mlrs-RandomForest-0.0-true-false-false-false',),
@@ -94,14 +99,14 @@ if __name__ == "__main__":
 
     # print splt.keys()
     # index = (0.1, 100, 20, 100, 10, 3, 3, "true", 1)
-    index = tuple([typeset(x) for x in sys.argv[1:]])
+    index = tuple([typeset(x) for x in args])
 
     splt = splt[index]
 
     # print index, len(splt)
 
     expsplt = split(splt, "exp")
-    print "%", [len(expsplt[strategy]) for strategy in strategies] 
+    print "%", [len(expsplt[strategy]) for strategy in strategies if strategy in expsplt] 
 
 
     texstr = latexheader([], ["spy"])
@@ -128,6 +133,8 @@ if __name__ == "__main__":
     step = 10
     start = 0
     for strategy in strategies:
+        if strategy not in expsplt:
+            continue
         texstr += plotheader("mark size=1.5")
         X = xrange(start, len(expsplt[strategy][0]["utilities_mean"]) + 1, step)
         Y = expsplt[strategy][0]["utilities_mean"][start::step]
@@ -139,7 +146,7 @@ if __name__ == "__main__":
     # texstr += "\\spy[black,size=5.5cm] on (2.15,1.25) in node [fill=white] at (3.1,5.25);"   
     # texstr += "\\end{scope}"
 
-    texstr += legend([strategynamelookup[s[0]] for s in strategies])
+    texstr += legend([strategynamelookup[s[0]] for s in strategies if s in expsplt])
 
     texstr += axisfooter()
     texstr += tikzfooter()

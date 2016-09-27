@@ -10,7 +10,6 @@ import weka.classifiers.Classifier
   * Created by phil on 29/06/16.
   */
 class BasicML(override val baseLearner: Classifier, override val numBins: Int) extends SingleModelStrategy {
-
   override def getRecords(network: Network, context: ClientContext): Seq[Record] = {
     context.client.getProvenance(context.client)
   }

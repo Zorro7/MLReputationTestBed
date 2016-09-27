@@ -10,6 +10,7 @@ import jaspr.strategy.CompositionStrategy
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.bayes.NaiveBayes
+import weka.classifiers.functions.LinearRegression
 import weka.classifiers.trees.RandomForest
 import weka.classifiers.{AbstractClassifier, Classifier}
 
@@ -46,7 +47,10 @@ class Mlrs(val baseLearner: Classifier,
 
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
-    case x: RandomForest => x.setNumFeatures(100)
+    case x: RandomForest =>
+      x.setNumTrees(25)
+      x.setNumExecutionSlots(1)
+      x.setNumFeatures(100)
     case _ => // do nothing
   }
 
@@ -54,7 +58,9 @@ class Mlrs(val baseLearner: Classifier,
   val baseTrustModel = new MultiRegression
   baseTrustModel.setClassifier(AbstractClassifier.makeCopy(baseLearner))
   baseTrustModel.setSplitAttIndex(1)
-  val baseReinterpretationModel = AbstractClassifier.makeCopy(baseLearner)
+  val baseReinterpretationModel = new LinearRegression
+  val reinterpretationDiscrete = false
+//  val baseReinterpretationModel = AbstractClassifier.makeCopy(baseLearner)
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[MlrsInit]
@@ -73,18 +79,27 @@ class Mlrs(val baseLearner: Classifier,
         val row = makeTestRow(request)
         val query = convertRowToInstance(row, model.attVals, model.train)
         val directResult = makePrediction(query, model)
+        val rawWitnessResults =
+          for ((witness, reint) <- reinterpretationModels.filter(_._1 != request.client)) yield {
+            val row = makeTestRow(request, witness)
+            val query = convertRowToInstance(row, model.attVals, model.train)
+            makePrediction(query, model)
+          }
         val witnessResults =
           for ((witness, reint) <- reinterpretationModels.filter(_._1 != request.client)) yield {
             val row = makeTestRow(request, witness)
             val query = convertRowToInstance(row, model.attVals, model.train)
             val reinterpretationRow = 0 :: makePrediction(query, model) :: makeReinterpretationContext(request)
             val inst = convertRowToInstance(reinterpretationRow, reint.attVals, reint.train)
-            val result = makePrediction(inst, reint)
+            val result = makePrediction(inst, reint, discreteClass = reinterpretationDiscrete)
             result
           }
+//        println(row, model.train.size, directResult, rawWitnessResults, witnessResults)
         val score =
-          if (witnessWeight > 1d) directResult + witnessResults.sum
+          if (witnessWeight > 1d) (directResult + witnessResults.sum)/(witnessResults.size+1d)
           else (1 - witnessWeight) * directResult + witnessWeight * (witnessResults.sum / witnessResults.size.toDouble)
+        val rawScore = (directResult + rawWitnessResults.sum)/(witnessResults.size+1d)
+//        println(score, rawScore, score-rawScore)
         new TrustAssessment(baseInit.context, request, score)
     }
   }
@@ -115,48 +130,41 @@ class Mlrs(val baseLearner: Classifier,
 
   def makeReinterpretationModel(directRecords: Seq[Record with ServiceRecord with RatingRecord], witnessRecords: Seq[Record with ServiceRecord with RatingRecord], client: Client, witness: Client, model: MlrsModel): MlrsModel = {
     val reinterpretationRows: Seq[Seq[Any]] =
-    //      directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
-    //        witnessRecords.withFilter(_.client == witness).map(record => makeReinterpretationRow(record, model, witness, client))
-    //      directRecords.map(record => makeClientReinterpretationRow(record, model, witness)) ++
-    //        witnessRecords.map(record => makeWitnessReinterpretationRow(record, model, client))
         directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
           witnessRecords.map(record => makeReinterpretationRow(record, model, witness, client))
-//      directRecords.map(record => makeClientReinterpretationRow(record, model, witness)) ++
-//        witnessRecords.map(record => makeWitnessReinterpretationRow(record, model, client))
-
+//    val reinterpretationRows: Seq[Seq[Any]] = directRecords.map(record => makeReinterpretationRow(record, model, witness))
     val reinterpretationAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(reinterpretationRows.head.size)(mutable.Map[Any, Double]())
-    val doubleRows = convertRowsToDouble(reinterpretationRows, reinterpretationAttVals, classIndex)
-    val atts = makeAtts(reinterpretationRows.head, reinterpretationAttVals, classIndex)
+    val doubleRows = convertRowsToDouble(reinterpretationRows, reinterpretationAttVals, classIndex, discreteClass = reinterpretationDiscrete)
+    val atts = makeAtts(reinterpretationRows.head, reinterpretationAttVals, classIndex, discreteClass = reinterpretationDiscrete)
     val reinterpretationTrain = makeInstances(atts, doubleRows)
     reinterpretationTrain.setClassIndex(classIndex)
+//    println(atts, doubleRows)
     val reinterpretationModel = AbstractClassifier.makeCopy(baseReinterpretationModel)
     reinterpretationModel.buildClassifier(reinterpretationTrain)
 //        println(client, witness, reinterpretationTrain, reinterpretationModel)
     new MlrsModel(reinterpretationModel, reinterpretationTrain, reinterpretationAttVals)
   }
 
-//  def makeClientReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client): Seq[Any] = {
-//    val row = makeTestRow(record, fromPOV)
-//    val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
-//    (if (discreteClass) discretizeDouble(record.rating) else record.rating) ::
-//      makePrediction(query, trustModel) ::
-//      makeReinterpretationContext(record)
-//  }
-//
-//  def makeWitnessReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, toPOV: Client): Seq[Any] = {
-//    val row = makeTestRow(record, toPOV)
-//    val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
-//    makePrediction(query, trustModel, false) ::
-//      record.rating ::
-//      makeReinterpretationContext(record)
-//  }
+  def makeReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client): Seq[Any] = {
+    val fromRow = makeTestRow(record, fromPOV)
+    val fromQuery = convertRowToInstance(fromRow, trustModel.attVals, trustModel.train)
+//    (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
+    record.rating ::
+      makePrediction(fromQuery, trustModel) ::
+      makeReinterpretationContext(record)
+  }
 
   def makeReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client, toPOV: Client): Seq[Any] = {
     val fromRow = makeTestRow(record, fromPOV)
     val fromQuery = convertRowToInstance(fromRow, trustModel.attVals, trustModel.train)
     val toRow = makeTestRow(record, toPOV)
     val toQuery = convertRowToInstance(toRow, trustModel.attVals, trustModel.train)
-    makePrediction(toQuery, trustModel, false) ::
+//    println(makePrediction(toQuery, trustModel, false), makePrediction(toQuery, trustModel, true, 5), makePrediction(toQuery, trustModel))
+//    println(makePrediction(toQuery, trustModel, true, 5).toInt ::
+//      makePrediction(fromQuery, trustModel) ::
+//      makeReinterpretationContext(record))
+    (if (reinterpretationDiscrete) makePrediction(toQuery, trustModel, discreteClass = false)
+    else makePrediction(toQuery, trustModel)) ::
       makePrediction(fromQuery, trustModel) ::
       makeReinterpretationContext(record)
   }
