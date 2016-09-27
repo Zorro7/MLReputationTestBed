@@ -59,6 +59,7 @@ class Mlrs(val baseLearner: Classifier,
   baseTrustModel.setClassifier(AbstractClassifier.makeCopy(baseLearner))
   baseTrustModel.setSplitAttIndex(1)
   val baseReinterpretationModel = new LinearRegression
+  val reinterpretationDiscrete = false
 //  val baseReinterpretationModel = AbstractClassifier.makeCopy(baseLearner)
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
@@ -90,8 +91,7 @@ class Mlrs(val baseLearner: Classifier,
             val query = convertRowToInstance(row, model.attVals, model.train)
             val reinterpretationRow = 0 :: makePrediction(query, model) :: makeReinterpretationContext(request)
             val inst = convertRowToInstance(reinterpretationRow, reint.attVals, reint.train)
-            val result = makePrediction(inst, reint, discreteClass = false)
-//            val result = makePrediction(inst, reint)
+            val result = makePrediction(inst, reint, discreteClass = reinterpretationDiscrete)
             result
           }
 //        println(row, model.train.size, directResult, rawWitnessResults, witnessResults)
@@ -134,8 +134,8 @@ class Mlrs(val baseLearner: Classifier,
           witnessRecords.map(record => makeReinterpretationRow(record, model, witness, client))
 //    val reinterpretationRows: Seq[Seq[Any]] = directRecords.map(record => makeReinterpretationRow(record, model, witness))
     val reinterpretationAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(reinterpretationRows.head.size)(mutable.Map[Any, Double]())
-    val doubleRows = convertRowsToDouble(reinterpretationRows, reinterpretationAttVals, classIndex, discreteClass = false)
-    val atts = makeAtts(reinterpretationRows.head, reinterpretationAttVals, classIndex, discreteClass = false)
+    val doubleRows = convertRowsToDouble(reinterpretationRows, reinterpretationAttVals, classIndex, discreteClass = reinterpretationDiscrete)
+    val atts = makeAtts(reinterpretationRows.head, reinterpretationAttVals, classIndex, discreteClass = reinterpretationDiscrete)
     val reinterpretationTrain = makeInstances(atts, doubleRows)
     reinterpretationTrain.setClassIndex(classIndex)
 //    println(atts, doubleRows)
@@ -163,8 +163,8 @@ class Mlrs(val baseLearner: Classifier,
 //    println(makePrediction(toQuery, trustModel, true, 5).toInt ::
 //      makePrediction(fromQuery, trustModel) ::
 //      makeReinterpretationContext(record))
-//    makePrediction(toQuery, trustModel, discreteClass = false).toInt ::
-    makePrediction(toQuery, trustModel) ::
+    (if (reinterpretationDiscrete) makePrediction(toQuery, trustModel, discreteClass = false)
+    else makePrediction(toQuery, trustModel)) ::
       makePrediction(fromQuery, trustModel) ::
       makeReinterpretationContext(record)
   }
