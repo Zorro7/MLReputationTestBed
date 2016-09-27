@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
     df = "{0:.1f}"
     strategies = [
-        ('NoStrategy',),
+        # ('NoStrategy',),
         ('Fire-0.0-false',),
         ('Fire-0.5-false',), 
         ('BetaReputation-0.0',), 
@@ -26,9 +26,9 @@ if __name__ == "__main__":
         # ('Burnett',),
         # ('BasicML',),
         # ('FireLike',),
-        ('BasicContext-RandomForest-false',),
+        # ('BasicContext-RandomForest-false',),
         # ('BasicContext-RandomForest-true',),
-        ('FireLikeContext-RandomForest-false',),
+        # ('FireLikeContext-RandomForest-false',),
         # ('FireLikeContext-RandomForest-true',),
         # ('BasicStereotype',),
         # ('FireLikeStereotype',),
@@ -38,8 +38,8 @@ if __name__ == "__main__":
         ('Mlrs-RandomForest-0.0-false-false-false-false',),
         ('Mlrs-RandomForest-0.0-false-false-true-true',),
         ('Mlrs-RandomForest-2.0-false-false-false-false',),
-        ('Mlrs-RandomForest-2.0-true-true-false-false',),
-         ('Mlrs-RandomForest-2.0-true-true-true-true',),
+        # ('Mlrs-RandomForest-2.0-true-true-false-false',),
+         # ('Mlrs-RandomForest-2.0-false-false-true-true',),
         # ('Mlrs-RandomForest-2.0-true-false-false-false',),
         # ('Mlrs-RandomForest-2.0-false-true-false-false',),
         
@@ -94,8 +94,9 @@ if __name__ == "__main__":
         "Mlrs-RandomForest-0.0-true-true-true-true": "MLRS-0cpa",
     }
 
-    splt = split(results, "clientInvolvementLikelihood", "memoryLimit", "numClients", "numProviders",
-                 "numTerms", "numPreferences", "numSimCapabilities", "networkTickInterval", "providerAttrition")
+    splt = split(results, "memoryLimit", "numClients", "numProviders",
+                 "numTerms", "witnessRequestLikelihood", "noiseRange", 
+                 "numPreferences", "numSimCapabilities", "providerAvailabilityLikelihood")
 
     # print splt.keys()
     # index = (0.1, 100, 20, 100, 10, 3, 3, "true", 1)
@@ -122,8 +123,8 @@ if __name__ == "__main__":
         # "cycle multi list={mark list\\nextlist solid,dashed}",
         "legend columns=2",
         "legend style={at={(0.1,0.9)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
-        xmin="0", xmax="2000",
-        ymin="-200", ymax="200",
+        xmin="0", xmax="250",
+        ymin="-200", ymax="500",
         width="15cm",
         height="10cm",
         xlabel="\\textbf{Round}",
