@@ -8,8 +8,20 @@ import jaspr.core.simulation.{Configuration, Network, Simulation}
   */
 class BootSimulation(override val config: BootConfiguration) extends Simulation {
 
-  override val network: Network = new BootNetwork(this)
+  override val network: BootNetwork = new BootNetwork(this)
 
-  override def act(): Result = ???
+  override def act(): Result = {
+    network.tick()
+
+    for (client <- network.clients) {
+      client.tick()
+    }
+
+    for (provider <- network.providers) {
+      provider.tick()
+    }
+
+    new Result(this)
+  }
 
 }

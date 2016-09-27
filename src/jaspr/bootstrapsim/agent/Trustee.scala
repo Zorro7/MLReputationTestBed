@@ -11,11 +11,16 @@ import scala.collection.immutable.SortedMap
   * Created by phil on 27/09/2016.
   */
 class Trustee(override val simulation: Simulation) extends Provider {
-  override def capableOf(payload: Payload, duration: Int): Boolean = ???
+  override def capableOf(payload: Payload, duration: Int): Boolean = {
+    true
+  }
 
-  override def receiveRequest(request: ServiceRequest): Boolean = ???
+  override def receiveRequest(request: ServiceRequest): Boolean = {
+    currentServices += new BootService(request)
+    true
+  }
 
-  override def affectService(service: Service): Unit = ???
+  override def affectService(service: Service): Unit = {}
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = ???
 
