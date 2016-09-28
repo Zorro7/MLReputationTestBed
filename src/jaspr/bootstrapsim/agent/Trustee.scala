@@ -1,5 +1,6 @@
 package jaspr.bootstrapsim.agent
 
+import jaspr.bootstrapsim.BootSimulation
 import jaspr.core.agent.{Property, Provider}
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{ServiceRequest, Service, Payload}
@@ -10,7 +11,7 @@ import scala.collection.immutable.SortedMap
 /**
   * Created by phil on 27/09/2016.
   */
-class Trustee(override val simulation: Simulation) extends Provider {
+class Trustee(override val simulation: BootSimulation) extends Provider {
   override def capableOf(payload: Payload, duration: Int): Boolean = {
     true
   }
@@ -24,7 +25,7 @@ class Trustee(override val simulation: Simulation) extends Provider {
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = ???
 
-  override val memoryLimit: Int = 100
+  override val memoryLimit: Int = simulation.config.memoryLimit
 
   override def payloadAdverts(payload: Payload): SortedMap[String, Property] = ???
 

@@ -1,5 +1,6 @@
 package jaspr.bootstrapsim.agent
 
+import jaspr.bootstrapsim.BootSimulation
 import jaspr.core.agent.Client
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{Payload, Service, TrustAssessment, ClientContext}
@@ -8,7 +9,7 @@ import jaspr.core.simulation.Simulation
 /**
   * Created by phil on 27/09/2016.
   */
-class Truster(override val simulation: Simulation) extends Client {
+class Truster(override val simulation: BootSimulation) extends Client {
 
   override def generateContext(): ClientContext = {
     new ClientContext(this, simulation.round, new Payload, new BootMarket)
@@ -33,5 +34,5 @@ class Truster(override val simulation: Simulation) extends Client {
     Nil
   }
 
-  override val memoryLimit: Int = 100
+  override val memoryLimit: Int = simulation.config.memoryLimit
 }

@@ -57,6 +57,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   override val numSimulations: Int = 1
   val numClients = 10
   val numProviders = 10
+  val memoryLimit: Int = 100
 
   override val numAgents: Int = numClients + numProviders
   override val numRounds: Int = 10
