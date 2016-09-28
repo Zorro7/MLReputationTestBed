@@ -88,7 +88,8 @@ object DynamicSellerMultiConfiguration extends App {
 ////                "jaspr.strategy.betareputation.Travos," +
         "jaspr.strategy.blade.Blade(2)," +
         "jaspr.strategy.habit.Habit(2),"+
-        "jaspr.strategy.stereotype.Burnett,"+
+//        "jaspr.strategy.stereotype.Burnett(false),"+
+//        "jaspr.strategy.stereotype.Burnett(true),"+
         " --numSimulations 1 " +
         "--eventLikelihood 0 " +
         "--honestWitnessLikelihood 1 " +
@@ -105,7 +106,7 @@ object DynamicSellerMultiConfiguration extends App {
         "--eventEffects 0 " +
         "--numRounds 100 --networkTickInterval 0 " +
         "--memoryLimit 100 " +
-        "--numSimCapabilities 10 --numProviderCapabilities 5 " +
+        "--numSimCapabilities 10 --numProviderCapabilities 10 " +
         "--noiseRange 2d " +
         "--numTerms 3 --numAdverts 3 --numPreferences 3 " +
         "--providerAttrition 0.0 --clientAttrition 0").split(" ")
@@ -154,7 +155,7 @@ case class DynamicSellerMultiConfiguration(
                                          ) extends MultiConfiguration {
   override val directComparison = true
 
-  override val resultStart: Int = -memoryLimit
+  override val resultStart: Int = -Math.min(numRounds, memoryLimit)
   override val resultEnd: Int = -1
 //      override val _seed = 27800974
 
@@ -331,7 +332,8 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
 //
 //  override def adverts(payload: ProductPayload, agent: Agent with Properties): List[Property] = ???
   def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
-    agent.properties.take(numAdverts).mapValues(x => Property(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d))
+//    agent.properties.take(numAdverts).mapValues(x => Property(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d))
+    agent.properties.take(numAdverts).mapValues(x => Property(x.name, x.doubleValue))
   }
 
   def adverts(payload: ProductPayload, agent: Agent with Properties): List[Property] = {

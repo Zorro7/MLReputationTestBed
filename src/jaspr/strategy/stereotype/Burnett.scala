@@ -12,11 +12,13 @@ import weka.classifiers.Classifier
 /**
   * Created by phil on 05/07/16.
   */
-class Burnett extends CompositionStrategy with Exploration with BetaCore with RatingStrategy with SingleModelStrategy {
+class Burnett(val usePayloadAdverts: Boolean = false) extends CompositionStrategy with Exploration with BetaCore with RatingStrategy with SingleModelStrategy {
 
   override val numBins: Int = 0
   override val explorationProbability: Double = 0.1
   override val baseLearner: Classifier = new weka.classifiers.trees.M5P()
+
+  override val name: String = this.getClass.getSimpleName+"-"+usePayloadAdverts
 
   class BurnettInit(context: ClientContext,
                     trustModel: Option[MlrsModel],
@@ -60,13 +62,21 @@ class Burnett extends CompositionStrategy with Exploration with BetaCore with Ra
   override def makeTrainRow(baseRecord: Record): Seq[Any] = {
     val record = baseRecord.asInstanceOf[ServiceRecord with RatingRecord]
     (if (discreteClass) discretizeInt(record.rating) else record.rating) ::
-      record.service.request.provider.advertProperties.values.map(_.value).toList
-//      record.service.request.provider.payloadAdverts(record.service.request.payload).values.map(_.value).toList
+      adverts(record.service.request)
+    //      record.service.request.provider.payloadAdverts(record.service.request.payload).values.map(_.value).toList
   }
 
   def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
-    0 :: request.provider.advertProperties.values.map(_.value).toList
-//    0 :: request.provider.payloadAdverts(request.payload).values.map(_.value).toList
+    0 :: adverts(request)
+    //    0 :: request.provider.payloadAdverts(request.payload).values.map(_.value).toList
+  }
+
+  def adverts(request: ServiceRequest): List[Any] = {
+    if (usePayloadAdverts) {
+      request.provider.name :: request.provider.payloadAdverts(request.payload).values.map(_.value).toList
+    } else {
+      request.provider.name :: request.provider.advertProperties.values.map(_.value).toList
+    }
   }
 
   def getRecords(network: Network, context: ClientContext): Seq[Record] = {

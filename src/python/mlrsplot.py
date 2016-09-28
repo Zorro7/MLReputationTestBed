@@ -26,9 +26,9 @@ if __name__ == "__main__":
         # ('Burnett',),
         # ('BasicML',),
         # ('FireLike',),
-        # ('BasicContext-RandomForest-false',),
+        ('BasicContext-RandomForest-false',),
         # ('BasicContext-RandomForest-true',),
-        # ('FireLikeContext-RandomForest-false',),
+        ('FireLikeContext-RandomForest-false',),
         # ('FireLikeContext-RandomForest-true',),
         # ('BasicStereotype',),
         # ('FireLikeStereotype',),
@@ -98,7 +98,7 @@ if __name__ == "__main__":
                  "numTerms", "witnessRequestLikelihood", "noiseRange", 
                  "numPreferences", "numSimCapabilities", "providerAvailabilityLikelihood")
 
-    print splt.keys()
+    print "%", splt.keys()
     # index = (0.1, 100, 20, 100, 10, 3, 3, "true", 1)
     index = tuple([typeset(x) for x in args])
 
@@ -123,8 +123,8 @@ if __name__ == "__main__":
         # "cycle multi list={mark list\\nextlist solid,dashed}",
         "legend columns=2",
         "legend style={at={(0.1,0.9)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
-        xmin="0", xmax="250",
-        ymin="-200", ymax="1000",
+        xmin="0", xmax="500",
+        ymin="-1000", ymax="1000",
         width="15cm",
         height="10cm",
         xlabel="\\textbf{Round}",
