@@ -1,8 +1,10 @@
 package jaspr.bootstrapsim
 
+import jaspr.bootstrapsim.agent.Trustee
 import jaspr.core.agent._
 import jaspr.core.simulation.{MultiConfiguration, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
+import jaspr.utilities.Chooser
 
 import scala.collection.immutable.SortedMap
 
@@ -68,12 +70,24 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   override val numRounds: Int = 10
 
 
-  def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
-    agent.properties
+  def adverts(agent: Trustee): SortedMap[String, Property] = {
+    agent.properties.head._2 match {
+      case GaussianProperty(_,0.9,_) => FixedProperty("1", true) :: FixedProperty("6", true) :: Nil
+      case GaussianProperty(_,0.6,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: Nil
+      case GaussianProperty(_,0.4,_) => FixedProperty("3", true) :: FixedProperty("4", true) :: Nil
+      case GaussianProperty(_,0.3,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil
+      case GaussianProperty(_,0.5,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: FixedProperty("6", true) :: Nil
+    }
   }
 
-  def properties(agent: Agent): SortedMap[String, FixedProperty] = {
-    Nil
+  def properties(agent: Agent): SortedMap[String, Property] = {
+    Chooser.choose(
+      GaussianProperty("a", 0.9, 0.05) :: Nil,
+      GaussianProperty("a", 0.6, 0.15) :: Nil,
+      GaussianProperty("a", 0.4, 0.15) :: Nil,
+      GaussianProperty("a", 0.3, 0.05) :: Nil, //0.3,0
+      GaussianProperty("a", 0.5, 1) :: Nil //0.1 1
+    )
   }
 
 
