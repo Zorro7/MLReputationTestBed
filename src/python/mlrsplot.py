@@ -124,7 +124,7 @@ if __name__ == "__main__":
         "legend columns=2",
         "legend style={at={(0.1,0.9)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
         xmin="0", xmax="250",
-        ymin="-200", ymax="500",
+        ymin="-200", ymax="1000",
         width="15cm",
         height="10cm",
         xlabel="\\textbf{Round}",
