@@ -233,7 +233,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
     (x + Chooser.randomDouble(-1, 1)*noiseRange) / 2d
   }
 
-  def addNoise(competency: SortedMap[String,FixedProperty], productProperty: SortedMap[String,FixedProperty]): SortedMap[String,Double] = {
+  def addNoise(competency: SortedMap[String,Property], productProperty: SortedMap[String,Property]): SortedMap[String,Double] = {
     competency.map(c => c._1 -> {
       productProperty.get(c._1) match {
         case Some(x) =>

@@ -11,9 +11,9 @@ import scala.collection.immutable.SortedMap
 
 trait Properties {
 
-  def properties: SortedMap[String, FixedProperty]
+  def properties: SortedMap[String, Property]
 
-  def property(key: String): FixedProperty = {
+  def property(key: String): Property = {
     properties(key)
   }
 
@@ -23,21 +23,19 @@ trait Properties {
 
 trait AdvertProperties extends Properties {
 
-  def advertProperties: SortedMap[String, FixedProperty]
+  def advertProperties: SortedMap[String, Property]
 
-  def advert(key: String): FixedProperty = {
+  def advert(key: String): Property = {
     advertProperties(key)
   }
 
-  def payloadAdverts(payload: Payload): SortedMap[String,FixedProperty]
+  def payloadAdverts(payload: Payload): SortedMap[String,Property]
 }
 
 abstract class Property() extends NamedEntity {
 
   def value: AnyVal
-}
 
-case class FixedProperty(override val name: String, override val value: AnyVal) extends Property {
   def booleanValue: Boolean = {
     doubleValue > 0
   }
@@ -63,6 +61,8 @@ case class FixedProperty(override val name: String, override val value: AnyVal) 
     super.toString + "-" + value
   }
 }
+
+case class FixedProperty(override val name: String, override val value: AnyVal) extends Property
 
 
 case class GaussianProperty(override val name: String, mean: Double, std: Double) extends Property {

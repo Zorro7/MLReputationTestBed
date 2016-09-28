@@ -1,6 +1,6 @@
 package jaspr.bootstrapsim
 
-import jaspr.core.agent.{Properties, FixedProperty, Agent, Client}
+import jaspr.core.agent._
 import jaspr.core.simulation.{MultiConfiguration, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
 
@@ -68,7 +68,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   override val numRounds: Int = 10
 
 
-  def adverts(agent: Agent with Properties): SortedMap[String, FixedProperty] = {
+  def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
     agent.properties
   }
 
