@@ -41,7 +41,7 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
 
   override def tick(): Unit = {
     _clients = clients.map(x =>
-      Chooser.ifHappens(0.0)({
+      Chooser.ifHappens(simulation.config.trusterLeaveLikelihood)({
         departedClients = x :: departedClients
         new Truster(simulation)
       })(
@@ -49,7 +49,7 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
       )
     )
     _providers = providers.map(x =>
-      Chooser.ifHappens(0.0)({
+      Chooser.ifHappens(simulation.config.trusteeLeaveLikelihood)({
         departedProviders = x :: departedProviders
         new Trustee(simulation)
       })(
