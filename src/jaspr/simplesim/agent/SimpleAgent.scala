@@ -1,6 +1,6 @@
 package jaspr.simplesim.agent
 
-import jaspr.core.agent.{Client, Property, Provider}
+import jaspr.core.agent.{Client, FixedProperty, Provider}
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service._
 import jaspr.core.simulation.Simulation
@@ -60,12 +60,12 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
     service.duration += properties.values.map(_.intValue).sum
   }
 
-  override val properties: SortedMap[String, Property] =
-    Property("Timeliness", Chooser.randomInt(0, 2)) ::
+  override val properties: SortedMap[String, FixedProperty] =
+    FixedProperty("Timeliness", Chooser.randomInt(0, 2)) ::
       Nil
 
-  override def advertProperties: SortedMap[String, Property] = TreeMap()
-  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = TreeMap()
+  override def advertProperties: SortedMap[String, FixedProperty] = TreeMap()
+  override def payloadAdverts(payload: Payload): SortedMap[String, FixedProperty] = TreeMap()
 
   override val memoryLimit: Int = 50
 

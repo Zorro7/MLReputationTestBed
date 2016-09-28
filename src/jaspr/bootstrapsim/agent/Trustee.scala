@@ -1,7 +1,7 @@
 package jaspr.bootstrapsim.agent
 
 import jaspr.bootstrapsim.BootSimulation
-import jaspr.core.agent.{Property, Provider}
+import jaspr.core.agent.{FixedProperty, Provider}
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{ServiceRequest, Service, Payload}
 import jaspr.core.simulation.Simulation
@@ -27,11 +27,11 @@ class Trustee(override val simulation: BootSimulation) extends Provider {
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 
-  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = advertProperties
+  override def payloadAdverts(payload: Payload): SortedMap[String, FixedProperty] = advertProperties
 
-  override def advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
+  override def advertProperties: SortedMap[String, FixedProperty] = simulation.config.adverts(this)
 
-  override def properties: SortedMap[String, Property] = simulation.config.properties(this)
+  override def properties: SortedMap[String, FixedProperty] = simulation.config.properties(this)
 
   override def utility: Double = ???
 }
