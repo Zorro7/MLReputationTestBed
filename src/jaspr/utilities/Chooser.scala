@@ -9,7 +9,7 @@ import scala.util.Random
 object Chooser extends Random {
 
   // Selects a random value from a list (throws exception IndexOutOfBoundsException if the list is empty)
-  def choose[V](items: Seq[V]): V = items(nextInt(items.size))
+  def choose[V](items: V*): V = items(nextInt(items.size))
 
   def choose[V](items: Seq[V], likelihoods: Seq[Double]): V = {
     assert(items.size == likelihoods.size)
