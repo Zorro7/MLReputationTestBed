@@ -22,6 +22,7 @@ import scala.collection.mutable
   */
 class Mlrs(val baseLearner: Classifier,
            override val numBins: Int,
+           val reinterpretationLearner: Classifier,
            val witnessWeight: Double = 0.5d,
            val reinterpretationContext: Boolean = true,
            val reinterpretationProvider: Boolean = true,
@@ -54,13 +55,18 @@ class Mlrs(val baseLearner: Classifier,
     case _ => // do nothing
   }
 
+  val reinterpretationDiscrete = reinterpretationLearner match {
+    case x: NaiveBayes => true
+    case x: RandomForest => true
+    case x: LinearRegression => false
+  }
+
   //  val baseTrustModel = AbstractClassifier.makeCopy(baseLearner)
   val baseTrustModel = new MultiRegression
   baseTrustModel.setClassifier(AbstractClassifier.makeCopy(baseLearner))
   baseTrustModel.setSplitAttIndex(1)
-  val baseReinterpretationModel = new LinearRegression
-  val reinterpretationDiscrete = false
-//  val baseReinterpretationModel = AbstractClassifier.makeCopy(baseLearner)
+  val baseReinterpretationModel = AbstractClassifier.makeCopy(reinterpretationLearner)
+
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[MlrsInit]

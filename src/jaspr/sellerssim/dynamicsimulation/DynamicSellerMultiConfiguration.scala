@@ -60,35 +60,35 @@ object DynamicSellerMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        //        "jaspr.strategy.NoStrategy," +
+        "jaspr.strategy.NoStrategy," +
 //        "jaspr.strategy.NoStrategy," +
 ////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;false;false;false;false),"+
 ////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;false;false),"+
 ////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;false;false;false;false),"+
-//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;false;false;false;false),"+
-////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;2.0;true;true;false;false),"+
-//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0.0;false;false;false;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
+//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.RandomForest;2.0;true;true;false;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;0.0;false;false;false;false),"+
 ////        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2),"+
 ////        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
 ////        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
 ////        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;false),"+
-//        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
-//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
-//        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
+        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2),"+
+        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
+        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
+        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
 //        //        "jaspr.strategy.fire.Fire(0.0;true)," +
 //        ////        "jaspr.strategy.fire.FireContext(0.0;false)," +
 //        ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
         "jaspr.strategy.fire.Fire(0.5;false)," +
-//        "jaspr.strategy.fire.Fire(0.0;false)," +
+        "jaspr.strategy.fire.Fire(0.0;false)," +
 ////        //        "jaspr.strategy.fire.Fire(0.5;true)," +
-//                "jaspr.strategy.betareputation.BetaReputation(0.5)," +
-//        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
+                "jaspr.strategy.betareputation.BetaReputation(0.5)," +
+        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
 ////        //                "jaspr.strategy.betareputation.BetaReputation(1d)," +
-//////                "jaspr.strategy.betareputation.Travos," +
-//        "jaspr.strategy.blade.Blade(2)," +
-//        "jaspr.strategy.habit.Habit(2),"+
-//                "jaspr.strategy.stereotype.Burnett,"+
+////                "jaspr.strategy.betareputation.Travos," +
+        "jaspr.strategy.blade.Blade(2)," +
+        "jaspr.strategy.habit.Habit(2),"+
+        "jaspr.strategy.stereotype.Burnett,"+
         " --numSimulations 1 " +
         "--eventLikelihood 0 " +
         "--honestWitnessLikelihood 1 " +
@@ -101,13 +101,13 @@ object DynamicSellerMultiConfiguration extends App {
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
         "--numClients 10 --numProviders 100 " +
-        "--clientInvolvementLikelihood 1 --witnessRequestLikelihood 1 --providerAvailabilityLikelihood 0.2 " +
+        "--clientInvolvementLikelihood 1 --witnessRequestLikelihood 1 --providerAvailabilityLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 500 --networkTickInterval 0 " +
-        "--memoryLimit 500 " +
-        "--numSimCapabilities 1 --numProviderCapabilities 1 " +
+        "--numRounds 100 --networkTickInterval 0 " +
+        "--memoryLimit 100 " +
+        "--numSimCapabilities 10 --numProviderCapabilities 5 " +
         "--noiseRange 2d " +
-        "--numTerms 3 --numAdverts 3 --numPreferences 0 " +
+        "--numTerms 3 --numAdverts 3 --numPreferences 3 " +
         "--providerAttrition 0.0 --clientAttrition 0").split(" ")
     } else args
 
