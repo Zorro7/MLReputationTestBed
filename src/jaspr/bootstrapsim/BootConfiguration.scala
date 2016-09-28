@@ -1,8 +1,10 @@
 package jaspr.bootstrapsim
 
-import jaspr.core.agent.Client
+import jaspr.core.agent.{Properties, Property, Agent, Client}
 import jaspr.core.simulation.{MultiConfiguration, Simulation, Configuration}
 import jaspr.core.strategy.Strategy
+
+import scala.collection.immutable.SortedMap
 
 /**
   * Created by phil on 27/09/2016.
@@ -60,10 +62,20 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   val memoryLimit: Int = 100
 
   val trusteeLeaveLikelihood = 0.0
-  val trusterLeaveLikleihood = 0.0
+  val trusterLeaveLikelihood = 0.0
 
   override val numAgents: Int = numClients + numProviders
   override val numRounds: Int = 10
+
+
+  def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
+    agent.properties
+  }
+
+  def properties(agent: Agent): SortedMap[String, Property] = {
+    Nil
+  }
+
 
   override def toString: String = _strategy.name
 }

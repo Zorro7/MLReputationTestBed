@@ -27,11 +27,11 @@ class Trustee(override val simulation: BootSimulation) extends Provider {
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 
-  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = ???
+  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = advertProperties
 
-  override def advertProperties: SortedMap[String, Property] = ???
+  override def advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
 
-  override def properties: SortedMap[String, Property] = ???
+  override def properties: SortedMap[String, Property] = simulation.config.properties(this)
 
   override def utility: Double = ???
 }
