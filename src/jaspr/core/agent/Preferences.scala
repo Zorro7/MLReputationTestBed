@@ -7,9 +7,9 @@ import scala.collection.immutable.SortedMap
   */
 trait Preferences {
 
-  def preferences: SortedMap[String, FixedProperty]
+  def preferences: SortedMap[String, Property]
 
-  def preference(key: String): FixedProperty = {
+  def preference(key: String): Property = {
     preferences.get(key).get
   }
 
