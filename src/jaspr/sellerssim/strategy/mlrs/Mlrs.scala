@@ -227,7 +227,7 @@ class Mlrs(val baseLearner: Classifier,
     if (useAdverts && usePayloadAdverts) {
       request.provider.name :: request.provider.payloadAdverts(request.payload).values.map(_.value).toList
     } else if (useAdverts) {
-      request.provider.name :: request.provider.advertProperties.values.map(_.value).toList
+      request.provider.name :: request.provider.generalAdverts.values.map(_.value).toList
     } else {
       request.provider.name :: Nil
     }

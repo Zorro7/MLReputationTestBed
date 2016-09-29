@@ -60,12 +60,12 @@ class Burnett extends CompositionStrategy with Exploration with BetaCore with Ra
   override def makeTrainRow(baseRecord: Record): Seq[Any] = {
     val record = baseRecord.asInstanceOf[ServiceRecord with RatingRecord]
     (if (discreteClass) discretizeInt(record.rating) else record.rating) ::
-      record.service.request.provider.advertProperties.values.map(_.value).toList
+      record.service.request.provider.generalAdverts.values.map(_.value).toList
 //      record.service.request.provider.payloadAdverts(record.service.request.payload).values.map(_.value).toList
   }
 
   def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
-    0 :: request.provider.advertProperties.values.map(_.value).toList
+    0 :: request.provider.generalAdverts.values.map(_.value).toList
 //    0 :: request.provider.payloadAdverts(request.payload).values.map(_.value).toList
   }
 

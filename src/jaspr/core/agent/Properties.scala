@@ -23,13 +23,17 @@ trait Properties {
 
 trait AdvertProperties extends Properties {
 
-  def advertProperties: SortedMap[String, Property]
+  def generalAdverts: SortedMap[String, Property]
 
-  def advert(key: String): Property = {
-    advertProperties(key)
+  def generalAdvert(key: String): Property = {
+    generalAdverts(key)
   }
 
   def payloadAdverts(payload: Payload): SortedMap[String,Property]
+
+  def payloadAdvert(payload: Payload, key: String): Property = {
+    payloadAdverts(payload)(key)
+  }
 }
 
 abstract class Property() extends NamedEntity {

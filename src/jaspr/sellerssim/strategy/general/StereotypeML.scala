@@ -34,7 +34,7 @@ trait StereotypeML extends SingleModelStrategy {
 
   def adverts(request: ServiceRequest): List[Any] = {
     if (payloadAdverts) request.provider.payloadAdverts(request.payload).values.map(_.value).toList
-    else request.provider.advertProperties.values.map(_.value).toList
+    else request.provider.generalAdverts.values.map(_.value).toList
   }
 }
 

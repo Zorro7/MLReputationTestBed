@@ -31,8 +31,8 @@ class Trustee(override val simulation: BootSimulation) extends Provider {
 
 
   override val properties: SortedMap[String, Property] = simulation.config.properties(this)
-  override val advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
-  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = advertProperties
+  override val generalAdverts: SortedMap[String, Property] = simulation.config.adverts(this)
+  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = generalAdverts
 
   override def utility: Double = ???
 }

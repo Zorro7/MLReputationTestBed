@@ -64,7 +64,7 @@ class SimpleAgent(override val simulation: Simulation) extends Client with Provi
     FixedProperty("Timeliness", Chooser.randomInt(0, 2)) ::
       Nil
 
-  override def advertProperties: SortedMap[String, FixedProperty] = TreeMap()
+  override def generalAdverts: SortedMap[String, FixedProperty] = TreeMap()
   override def payloadAdverts(payload: Payload): SortedMap[String, FixedProperty] = TreeMap()
 
   override val memoryLimit: Int = 50
