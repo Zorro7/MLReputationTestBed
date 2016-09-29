@@ -2,6 +2,7 @@ package jaspr.bootstrapsim
 
 import jaspr.core.results.Result
 import jaspr.core.simulation.{Configuration, Network, Simulation}
+import jaspr.utilities.Chooser
 
 /**
   * Created by phil on 27/09/2016.
@@ -14,7 +15,9 @@ class BootSimulation(override val config: BootConfiguration) extends Simulation 
     network.tick()
 
     for (client <- network.clients) {
-      client.tick()
+      Chooser.ifHappens(config.trusterParticipationLikelihood)(
+        client.tick()
+      )()
     }
 
     for (provider <- network.providers) {

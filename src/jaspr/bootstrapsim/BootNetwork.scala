@@ -29,7 +29,7 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     val requests = providers.withFilter(x =>
-      x.capableOf(context.payload, 0)
+      x.capableOf(context.payload, 0) && Chooser.nextDouble() < simulation.config.trusteeAvailableLikleihood
     ).map(x =>
       new ServiceRequest(
         context.client, x, simulation.round, 0, context.payload, context.market
