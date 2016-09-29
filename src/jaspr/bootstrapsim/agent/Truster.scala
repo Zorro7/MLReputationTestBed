@@ -3,8 +3,7 @@ package jaspr.bootstrapsim.agent
 import jaspr.bootstrapsim.BootSimulation
 import jaspr.core.agent.{Property, Preferences, Client}
 import jaspr.core.provenance.{Provenance, Record}
-import jaspr.core.service.{Payload, Service, TrustAssessment, ClientContext}
-import jaspr.core.simulation.Simulation
+import jaspr.core.service.{Service, TrustAssessment, ClientContext}
 
 import scala.collection.immutable.SortedMap
 
@@ -18,7 +17,13 @@ class Truster(override val simulation: BootSimulation) extends Client with Prefe
   }
 
   override def receiveService(service: Service): Unit = {
+    jaspr.debug("RECEIVE: ", service)
     _utility += service.utility()
+    trustAssessments.remove(service.request) match {
+      case Some(assessment) =>
+        recordProvenance(new BootRecord(assessment, service))
+      case None => throw new Exception("Request " + service.request + " not found.")
+    }
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {
@@ -33,7 +38,7 @@ class Truster(override val simulation: BootSimulation) extends Client with Prefe
   override def utility: Double = _utility
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {
-    Nil
+    provenance.map(_.asInstanceOf[T])
   }
 
   override val memoryLimit: Int = simulation.config.memoryLimit
