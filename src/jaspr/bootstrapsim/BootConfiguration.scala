@@ -89,7 +89,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
     fullAds
   }
 
-  def properties(agent: Agent): SortedMap[String, Property] = {
+  def properties(agent: Agent): SortedMap[String,Property] = {
     Chooser.select(
       GaussianProperty("a", 0.9, 0.05) :: Nil,
       GaussianProperty("a", 0.6, 0.15) :: Nil,
@@ -97,6 +97,10 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
       GaussianProperty("a", 0.3, 0.05) :: Nil, //0.3,0
       GaussianProperty("a", 0.5, 1) :: Nil //0.1 1
     )
+  }
+
+  def preferences(agent: Agent): SortedMap[String,Property] = {
+    FixedProperty("a", 0.5) :: Nil
   }
 
 
