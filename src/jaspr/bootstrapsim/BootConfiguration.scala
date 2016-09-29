@@ -85,7 +85,6 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
         FixedProperty(x.toString, false)
       }
     ).toList
-    println(fullAds)
     fullAds
   }
 
