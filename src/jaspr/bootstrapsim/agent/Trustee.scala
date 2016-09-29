@@ -21,7 +21,9 @@ class Trustee(override val simulation: BootSimulation) extends Provider {
     true
   }
 
-  override def affectService(service: Service): Unit = {}
+  override def affectService(service: Service): Unit = {
+    service.payload = service.payload.asInstanceOf[BootPayload]copy(properties = properties)
+  }
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = ???
 

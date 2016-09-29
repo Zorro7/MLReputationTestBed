@@ -12,7 +12,7 @@ import jaspr.core.simulation.Simulation
 class Truster(override val simulation: BootSimulation) extends Client {
 
   override def generateContext(): ClientContext = {
-    new ClientContext(this, simulation.round, new Payload, new BootMarket)
+    new ClientContext(this, simulation.round, new BootPayload("stuff"), new BootMarket)
   }
 
   override def receiveService(service: Service): Unit = {

@@ -90,7 +90,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   }
 
   def properties(agent: Agent): SortedMap[String, Property] = {
-    Chooser.choose(
+    Chooser.select(
       GaussianProperty("a", 0.9, 0.05) :: Nil,
       GaussianProperty("a", 0.6, 0.15) :: Nil,
       GaussianProperty("a", 0.4, 0.15) :: Nil,

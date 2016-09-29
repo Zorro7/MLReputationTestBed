@@ -8,6 +8,7 @@ import jaspr.core.service.Service
   */
 class BootMarket extends Market {
   override def deliver(service: Service): Double = {
-    1d
+    println(service.payload.asInstanceOf[BootPayload].properties)
+    service.payload.asInstanceOf[BootPayload].properties.values.count(x => x.doubleValue > 0.5)
   }
 }
