@@ -8,7 +8,14 @@ import jaspr.core.service.Service
   */
 class BootMarket extends Market {
   override def deliver(service: Service): Double = {
-    println(service.payload.asInstanceOf[BootPayload].properties)
-    service.payload.asInstanceOf[BootPayload].properties.values.count(x => x.doubleValue > 0.5)
+    val delivered = service.payload.asInstanceOf[BootPayload]
+    val requested = service.request.payload.asInstanceOf[BootPayload]
+    val disparity = requested.properties.map(r =>
+      delivered.properties.get(r._1) match {
+        case Some(d) => d.doubleValue - r._2.doubleValue
+        case None => 0
+      }
+    )
+    disparity.count(_ > 0) / disparity.size.toDouble
   }
 }
