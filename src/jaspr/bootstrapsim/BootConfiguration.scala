@@ -71,13 +71,22 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 
 
   def adverts(agent: Trustee): SortedMap[String, Property] = {
-    agent.properties.head._2 match {
+    val ads: SortedMap[String,Property] = agent.properties.head._2 match {
       case GaussianProperty(_,0.9,_) => FixedProperty("1", true) :: FixedProperty("6", true) :: Nil
       case GaussianProperty(_,0.6,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: Nil
       case GaussianProperty(_,0.4,_) => FixedProperty("3", true) :: FixedProperty("4", true) :: Nil
       case GaussianProperty(_,0.3,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil
       case GaussianProperty(_,0.5,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: FixedProperty("6", true) :: Nil
     }
+    val fullAds: SortedMap[String,Property] = (1 to 6).map(x =>
+      if (ads.contains(x.toString)) {
+        ads(x.toString)
+      } else {
+        FixedProperty(x.toString, false)
+      }
+    ).toList
+    println(fullAds)
+    fullAds
   }
 
   def properties(agent: Agent): SortedMap[String, Property] = {
