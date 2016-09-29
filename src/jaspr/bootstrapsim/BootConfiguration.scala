@@ -67,6 +67,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   val trusterLeaveLikelihood = 0.0
   val trusteeAvailableLikleihood = 0.1
   val trusterParticipationLikelihood = 1
+  val witnessRequestLikelihood = 0.1
 
   override val numAgents: Int = numClients + numProviders
   override val numRounds: Int = 10

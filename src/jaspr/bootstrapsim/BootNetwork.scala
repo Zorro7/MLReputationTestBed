@@ -2,6 +2,7 @@ package jaspr.bootstrapsim
 
 import jaspr.bootstrapsim.agent.{Truster, Trustee}
 import jaspr.core.agent.{Agent, Client, Provider}
+import jaspr.core.provenance.Record
 import jaspr.core.service.{ServiceRequest, ClientContext}
 import jaspr.core.simulation.{Simulation, Network}
 import jaspr.utilities.{Chooser, Tickable}
@@ -26,6 +27,13 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
   override def providers: Seq[Trustee] = _providers
 
   override def utility(): Double = clients.map(_.utility).sum + departedClients.map(_.utility).sum
+
+  override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
+    clients.withFilter(x =>
+      x != agent && Chooser.nextDouble() < simulation.config.witnessRequestLikelihood
+    ).flatMap(_.getProvenance[T](agent))
+  }
+
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     val requests = providers.withFilter(x =>
