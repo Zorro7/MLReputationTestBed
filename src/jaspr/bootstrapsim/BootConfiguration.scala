@@ -20,6 +20,8 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
+          "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;0.5;0.1)," +
+          "jaspr.strategy.betareputation.BetaReputation(0.5)," +
           "jaspr.strategy.NoStrategy," +
         "").split(" ")
     } else args
@@ -60,17 +62,17 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 
   override val numSimulations: Int = 1
   val numClients = 10
-  val numProviders = 10
+  val numProviders = 100
   val memoryLimit: Int = 100
 
   val trusteeLeaveLikelihood = 0.0
   val trusterLeaveLikelihood = 0.0
   val trusteeAvailableLikleihood = 0.1
   val trusterParticipationLikelihood = 1
-  val witnessRequestLikelihood = 0.1
+  val witnessRequestLikelihood = 1
 
   override val numAgents: Int = numClients + numProviders
-  override val numRounds: Int = 10
+  override val numRounds: Int = 100
 
 
   def adverts(agent: Trustee): SortedMap[String, Property] = {
