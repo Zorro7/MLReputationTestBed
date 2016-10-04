@@ -2,23 +2,25 @@ package jaspr.bootstrapsim.strategy
 
 import jaspr.bootstrapsim.agent.BootRecord
 import jaspr.core.agent.Client
-import jaspr.core.provenance.{RatingRecord, ServiceRecord}
-import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
+import jaspr.core.provenance.{RatingRecord, ServiceRecord, Record}
+import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
 import jaspr.core.simulation.Network
-import jaspr.core.strategy.{Exploration, StrategyInit}
+import jaspr.core.strategy.{StrategyInit, Exploration}
+import jaspr.sellerssim.strategy.general.SingleModelStrategy
 import jaspr.sellerssim.strategy.mlrs.MlrsCore
 import jaspr.strategy.betareputation.BetaCore
-import jaspr.strategy.{CompositionStrategy, RatingStrategy}
+import jaspr.strategy.{Rating, RatingStrategy, CompositionStrategy}
+import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 
 /**
   * Created by phil on 30/09/2016.
   */
-class Burnett(baseLearner: Classifier,
-              override val numBins: Int,
-              val witnessWeight: Double = 0.5,
-              override val explorationProbability: Double = 0.1
+class BurnettInteractions(baseLearner: Classifier,
+                          override val numBins: Int,
+                          val witnessWeight: Double = 0.5,
+                          override val explorationProbability: Double = 0.1
              ) extends CompositionStrategy with Exploration with RatingStrategy with BetaCore with MlrsCore {
 
   class BurnettInit(context: ClientContext,
