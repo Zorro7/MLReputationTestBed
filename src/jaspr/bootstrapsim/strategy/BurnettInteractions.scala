@@ -37,7 +37,7 @@ class BurnettInteractions(baseLearner: Classifier,
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[BurnettInit]
 
-    val betadist = makeBetaDistribution(init.directRecords.map(_.success))
+    val betadist = makeBetaDistribution(init.directRecords.filter(_.service.request.provider == request.provider).map(_.success))
     val belief = betadist.expected()
     val uncert = betadist.uncertainty() * 2 // Burnett's paper states 2/(r+s+2) where r and s are [un]successful interactions
 
