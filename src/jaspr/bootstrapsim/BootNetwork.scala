@@ -26,7 +26,9 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
   )
   override def providers: Seq[Trustee] = _providers
 
-  override def utility(): Double = clients.map(_.utility).sum + departedClients.map(_.utility).sum
+  override def utility(): Double = {
+    (clients.map(_.utility).sum + departedClients.map(_.utility).sum) / (simulation.round * clients.size)
+  }
 
   override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
     clients.withFilter(x =>

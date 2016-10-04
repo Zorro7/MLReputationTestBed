@@ -63,16 +63,17 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   override val numSimulations: Int = 1
   val numClients = 10
   val numProviders = 100
-  val memoryLimit: Int = 100
+
 
   val trusteeLeaveLikelihood = 0.0
   val trusterLeaveLikelihood = 0.0
-  val trusteeAvailableLikleihood = 0.1
+  val trusteeAvailableLikleihood = 0.05
   val trusterParticipationLikelihood = 1
-  val witnessRequestLikelihood = 1
+  val witnessRequestLikelihood = 0.5
 
   override val numAgents: Int = numClients + numProviders
-  override val numRounds: Int = 100
+  override val numRounds: Int = 50
+  val memoryLimit: Int = numRounds
 
 
   def adverts(agent: Trustee): SortedMap[String, Property] = {
@@ -81,7 +82,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
       case GaussianProperty(_,0.6,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: Nil
       case GaussianProperty(_,0.4,_) => FixedProperty("3", true) :: FixedProperty("4", true) :: Nil
       case GaussianProperty(_,0.3,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil
-      case GaussianProperty(_,0.5,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: FixedProperty("6", true) :: Nil
+      case GaussianProperty(_,0.5,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
     }
     val fullAds: SortedMap[String,Property] = (1 to 6).map(x =>
       if (ads.contains(x.toString)) {
