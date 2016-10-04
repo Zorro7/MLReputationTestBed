@@ -1,19 +1,16 @@
 package jaspr.bootstrapsim.strategy
 
 import jaspr.bootstrapsim.agent.BootRecord
-import jaspr.core.agent.{Client, Provider}
-import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
+import jaspr.core.agent.Client
+import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.strategy.mlrs.MlrsCore
 import jaspr.strategy.betareputation.BetaCore
 import jaspr.strategy.{CompositionStrategy, RatingStrategy}
-import jaspr.utilities.BetaDistribution
 import jaspr.weka.classifiers.meta.MultiRegression
-import weka.classifiers.{AbstractClassifier, Classifier}
-
-import scala.collection.mutable
+import weka.classifiers.Classifier
 
 /**
   * Created by phil on 30/09/2016.
@@ -26,9 +23,8 @@ class Burnett(baseLearner: Classifier,
 
   class BurnettInit(context: ClientContext,
                     val stereotypeModel: Option[MlrsModel],
-                    val directBetas: Map[Provider,BetaDistribution],
-                    val witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
-                    val witnessRMSEs: Map[Client,Double],
+                    val directRecords: Seq[BootRecord],
+                    val witnessRecords: Seq[BootRecord],
                     val witnesses: Seq[Client]
                    ) extends StrategyInit(context)
 
@@ -39,12 +35,9 @@ class Burnett(baseLearner: Classifier,
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[BurnettInit]
 
-    val directBeta = init.directBetas.get(request.provider) match {
-      case None => new BetaDistribution(1,1)
-      case Some(dist) => dist
-    }
-
-    val combinedBeta = getCombinedOpinions(directBeta, init.witnessBetas.values.flatMap(_.values))
+    val betadist = makeBetaDistribution(init.directRecords.filter(_.service.request.provider == request.provider).map(_.success))
+    val belief = betadist.expected()
+    val uncert = betadist.uncertainty() * 2 // Burnett's paper states 2/(r+s+2) where r and s are [un]successful interactions
 
     val stereotype = init.stereotypeModel match {
       case None => 0.5
@@ -52,12 +45,12 @@ class Burnett(baseLearner: Classifier,
         val gatheredStereotypes = init.witnesses.map(witness => {
           val row = makeTestRow(init, witness, request)
           val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
-          init.witnessRMSEs(witness) * makePrediction(query, trustModel)
+          makePrediction(query, trustModel)
         })
-        gatheredStereotypes.sum / init.witnessRMSEs.values.sum
+        gatheredStereotypes.sum / gatheredStereotypes.size.toDouble+1
     }
 
-    val score = combinedBeta.expected() + stereotype * combinedBeta.uncertainty()
+    val score = belief + stereotype * uncert
 
     new TrustAssessment(init.context, request, score)
   }
@@ -71,66 +64,23 @@ class Burnett(baseLearner: Classifier,
     val witnesses: Seq[Client] = witnessRecords.map(_.service.request.client).distinct
 
     if (directRecords.isEmpty && witnessRecords.isEmpty) {
-      new BurnettInit(context, None, Map(), Map(), Map(), Nil)
+      new BurnettInit(context, None, Nil, Nil, Nil)
     } else {
-
-      val directBetas: Map[Provider,BetaDistribution] = directRecords.groupBy(
-        x => x.service.request.provider
-      ).mapValues(
-        records => makeBetaDistribution(records.map(_.success))
-      )
-
-      val witnessProviderRecords: Map[Client,Seq[BootRecord]] = witnessRecords.groupBy(_.service.request.client)
-
-      val witnessBetas: Map[Client,Map[Provider,BetaDistribution]] = witnessProviderRecords.mapValues(
-        x => x.groupBy(
-          _.service.request.provider
-        ).mapValues(
-          records => makeBetaDistribution(records.map(_.success))
-        )
-      )
-
-      val witnesses: Seq[Client] = witnessRecords.map(_.service.request.client).distinct
-
-      val rows: Iterable[Seq[Any]] =
-        directBetas.map(x => makeTrainRow(context.client, x._1, x._2)) ++ //client, provider, beta
-        witnessBetas.map(w => w._2.flatMap(x => makeTrainRow(w._1, x._1, x._2)).toList) //witness, provider, beta
-      val directAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(rows.head.size)(mutable.Map[Any, Double]())
-      val doubleRows = convertRowsToDouble(rows, directAttVals)
-      val atts = makeAtts(rows.head, directAttVals)
-      val train = makeInstances(atts, doubleRows)
-      val directModel = AbstractClassifier.makeCopy(baseLearner)
-      directModel.buildClassifier(train)
-      val stereotypeModel = new MlrsModel(directModel, train, directAttVals)
-
-      val witnessRMSEs: Map[Client,Double] = witnesses.map(w => {
-        val numRecords = witnessBetas(w).size
-        val tops: Iterable[Double] = witnessBetas(w).map(p => {
-          val row = makeTrainRow(w, p._1, p._2)
-          val query = convertRowToInstance(row, stereotypeModel.attVals, stereotypeModel.train)
-          val pred = makePrediction(query, stereotypeModel)
-          val exp = p._2.expected()
-          (pred - exp)*(pred-exp)
-        })
-        w -> (1 - Math.sqrt(tops.sum / numRecords))
-      }).toMap
-
-
+      val stereotypeModel = makeMlrsModel(directRecords ++ witnessRecords, baseLearner, makeTrainRow)
       new BurnettInit(
         context,
         Some(stereotypeModel),
-        directBetas,
-        witnessBetas,
-        witnessRMSEs,
+        directRecords,
+        witnessRecords,
         witnesses
       )
     }
   }
 
-  def makeTrainRow(witness: Client, provider: Provider, beta: BetaDistribution): Seq[Any] = {
-    beta.expected() ::
-      witness.name ::
-      provider.generalAdverts.values.map(_.value.toString).toList
+  def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
+    record.rating ::
+      record.service.request.client.name ::
+      record.service.request.provider.generalAdverts.values.map(_.value.toString).toList
   }
 
   def makeTestRow(init: StrategyInit, pov: Client, request: ServiceRequest): Seq[Any] = {
