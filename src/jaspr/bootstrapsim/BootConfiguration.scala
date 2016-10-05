@@ -72,8 +72,8 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   val witnessRequestLikelihood = 0.5
 
   override val numAgents: Int = numClients + numProviders
-  override val numRounds: Int = 50
-  val memoryLimit: Int = numRounds
+  override val numRounds: Int = 100
+  val memoryLimit: Int = 25
 
 
   def adverts(agent: Trustee): SortedMap[String, Property] = {

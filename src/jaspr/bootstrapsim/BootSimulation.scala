@@ -12,6 +12,9 @@ class BootSimulation(override val config: BootConfiguration) extends Simulation 
   override val network: BootNetwork = new BootNetwork(this)
 
   override def act(): Result = {
+    if (round % 100 == 0) println(".")
+    else print(".")
+
     network.tick()
 
     for (client <- network.clients) {

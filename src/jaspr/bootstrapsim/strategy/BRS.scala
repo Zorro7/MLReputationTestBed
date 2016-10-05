@@ -14,7 +14,9 @@ import jaspr.utilities.BetaDistribution
   */
 class BRS(witnessWeight: Double = 2d,
           override val explorationProbability: Double = 0.1
-         ) extends CompositionStrategy with Exploration with BetaCore {
+         ) extends CompositionStrategy with Exploration with BRSCore {
+
+  val prior = 0.5
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[BRSInit]
@@ -35,8 +37,11 @@ class BRS(witnessWeight: Double = 2d,
       if (witnessWeight == 0 || witnessWeight == 1 || witnessWeight == 2) getCombinedOpinions(direct, opinions)
       else getCombinedOpinions(direct * (1-witnessWeight), opinions.map(_ * witnessWeight))
 
-    val belief = combinedBeta.expected()
-    new TrustAssessment(init.context, request, belief)
+    val belief = combinedBeta.belief()
+    val uncertainty = combinedBeta.uncertainty()
+
+    val score = belief + prior*uncertainty
+    new TrustAssessment(init.context, request, score)
   }
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
@@ -47,30 +52,12 @@ class BRS(witnessWeight: Double = 2d,
       else network.gatherProvenance[BootRecord](context.client)
 
     val directBetas: Map[Provider,BetaDistribution] =
-      if (witnessWeight != 1) {
-        directRecords.groupBy(
-          _.service.request.provider
-        ).mapValues(
-          rs => makeBetaDistribution(rs.map(_.success))
-        )
-      } else {
-        Map()
-      }
+      if (witnessWeight != 1) makeOpinions(directRecords, r => r.service.request.provider)
+      else Map()
 
     val witnessBetas: Map[Client, Map[Provider, BetaDistribution]] =
-      if (witnessWeight > 0) {
-        witnessRecords.groupBy(
-          _.service.request.client
-        ).mapValues(
-          x => x.groupBy(
-            _.service.request.provider
-          ).mapValues(
-            rs => makeBetaDistribution(rs.map(_.success))
-          )
-        )
-      } else {
-        Map()
-      }
+      if (witnessWeight > 0) makeOpinions(witnessRecords, r => r.service.request.client, r => r.service.request.provider)
+      else Map()
 
     new BRSInit(context, directBetas, witnessBetas)
   }

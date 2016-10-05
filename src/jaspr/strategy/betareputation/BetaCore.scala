@@ -1,6 +1,7 @@
 package jaspr.strategy.betareputation
 
 import jaspr.core.agent.Client
+import jaspr.core.provenance.Record
 import jaspr.strategy.Rating
 import jaspr.utilities.BetaDistribution
 
