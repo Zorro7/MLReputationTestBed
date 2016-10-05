@@ -21,3 +21,9 @@ class BurnettInit(context: ClientContext,
                   val stereotypeModels: Map[Client,MlrModel],
                   val RMSEs: Map[Client,Double]
                  ) extends BRSInit(context, directBetas, witnessBetas)
+
+class StageInit(context: ClientContext,
+                  directBetas: Map[Provider,BetaDistribution],
+                  witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
+                  val stereotypeModel: MlrModel
+               ) extends BRSInit(context, directBetas, witnessBetas)

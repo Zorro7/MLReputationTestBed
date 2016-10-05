@@ -2,31 +2,28 @@ package jaspr.bootstrapsim.strategy
 
 import jaspr.bootstrapsim.agent.BootRecord
 import jaspr.core.agent.{Client, Provider}
-import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.strategy.betareputation.BetaCore
-import jaspr.strategy.mlr.{MlrModel, MlrCore}
-import jaspr.strategy.{CompositionStrategy, RatingStrategy}
+import jaspr.strategy.CompositionStrategy
+import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.utilities.BetaDistribution
-import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 
 /**
-  * Created by phil on 30/09/2016.
+  * Created by phil on 05/10/16.
   */
-class Burnett(baseLearner: Classifier,
-              override val numBins: Int,
-              val witnessWeight: Double = 2d,
-              val witnessStereotypes: Boolean = true,
-              val weightStereotypes: Boolean = true,
-              override val explorationProbability: Double = 0.1
-             ) extends CompositionStrategy with Exploration with BRSCore with MlrCore {
+class Stage(baseLearner: Classifier,
+            override val numBins: Int,
+            val witnessWeight: Double = 2d,
+            val witnessStereotypes: Boolean = true,
+            val weightStereotypes: Boolean = true,
+            override val explorationProbability: Double = 0.1
+           ) extends CompositionStrategy with Exploration with BRSCore with MlrCore {
 
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    val init = baseInit.asInstanceOf[BurnettInit]
+    val init = baseInit.asInstanceOf[StageInit]
 
     val direct = init.directBetas.get(request.provider) match {
       case Some(dist) => dist
@@ -49,15 +46,11 @@ class Burnett(baseLearner: Classifier,
     val uncert = combinedBeta.uncertainty()
 
     val prior =
-      if (init.stereotypeModels.isEmpty) 0.5
+      if (init.stereotypeModel == null) 0.5
       else {
-        val gatheredStereotypes = init.stereotypeModels.map(x => {
-          val row = makeTestRow(init, request)
-          val query = convertRowToInstance(row, x._2.attVals, x._2.train)
-          makePrediction(query, x._2) * init.RMSEs.getOrElse(x._1, 1d)
-        })
-        val totalRMSE: Double = if (weightStereotypes) init.RMSEs.values.sum else init.stereotypeModels.size
-        gatheredStereotypes.sum / totalRMSE
+        val row = makeTestRow(init, request)
+        val query = convertRowToInstance(row, init.stereotypeModel.attVals, init.stereotypeModel.train)
+        makePrediction(query, init.stereotypeModel)
       }
 
     val score = belief + prior * uncert
@@ -72,15 +65,13 @@ class Burnett(baseLearner: Classifier,
       if (witnessWeight == 0) Nil
       else network.gatherProvenance[BootRecord](context.client)
     val records = directRecords ++ witnessRecords
-    val witnesses: Seq[Client] = witnessRecords.map(_.service.request.client).distinct
-    val trustees: Seq[Provider] = records.map(_.service.request.provider).distinct
 
-    val stereotypeModels: Map[Client,MlrModel] =
-      (if (witnessStereotypes) records else directRecords).groupBy(
-        _.service.request.client
-      ).mapValues(
-        rs => makeMlrsModel(rs, baseLearner, makeTrainRow)
-      )
+    val stereotypeModel: MlrModel =
+      if (directRecords.nonEmpty) {
+        makeMlrsModel(directRecords, baseLearner, makeTrainRow)
+      } else {
+        null
+      }
 
     val directBetas: Map[Provider,BetaDistribution] =
       if (witnessWeight != 1) makeOpinions(directRecords, r => r.service.request.provider)
@@ -90,24 +81,12 @@ class Burnett(baseLearner: Classifier,
       if (witnessWeight > 0) makeOpinions(witnessRecords, r => r.service.request.client, r => r.service.request.provider)
       else Map()
 
-    val RMSEs: Map[Client,Double] =
-      if (weightStereotypes) {
-        stereotypeModels.map(sm => sm._1 ->
-          computeRMSE(sm._2,
-            if (sm._1 == context.client) directBetas
-            else witnessBetas(sm._1)
-          )
-        )
-      } else {
-        Map()
-      }
 
-    new BurnettInit(
+    new StageInit(
       context,
       directBetas,
       witnessBetas,
-      stereotypeModels,
-      RMSEs
+      stereotypeModel
     )
   }
 
@@ -133,4 +112,5 @@ class Burnett(baseLearner: Classifier,
   def adverts(provider: Provider) = {
     provider.generalAdverts.values.map(_.value.toString).toList
   }
+
 }
