@@ -6,6 +6,7 @@ import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.sellerssim.strategy.general.SingleModelStrategy
 import jaspr.strategy.betareputation.BetaCore
+import jaspr.strategy.mlr.MlrModel
 import jaspr.strategy.{CompositionStrategy, Rating, RatingStrategy}
 import weka.classifiers.Classifier
 
@@ -19,7 +20,7 @@ class Burnett extends CompositionStrategy with Exploration with BetaCore with Ra
   override val baseLearner: Classifier = new weka.classifiers.trees.M5P()
 
   class BurnettInit(context: ClientContext,
-                    trustModel: Option[MlrsModel],
+                    trustModel: Option[MlrModel],
                     val ratings: Seq[Rating]
                    ) extends BasicInit(context, trustModel)
 

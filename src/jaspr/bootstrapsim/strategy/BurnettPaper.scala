@@ -6,8 +6,8 @@ import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.strategy.mlrs.MlrsCore
 import jaspr.strategy.betareputation.BetaCore
+import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.strategy.{CompositionStrategy, RatingStrategy}
 import jaspr.utilities.BetaDistribution
 import jaspr.weka.classifiers.meta.MultiRegression
@@ -22,10 +22,10 @@ class BurnettPaper(baseLearner: Classifier,
                    override val numBins: Int,
                    val witnessWeight: Double = 0.5,
                    override val explorationProbability: Double = 0.1
-             ) extends CompositionStrategy with Exploration with RatingStrategy with BetaCore with MlrsCore {
+             ) extends CompositionStrategy with Exploration with RatingStrategy with BetaCore with MlrCore {
 
   class BurnettInit(context: ClientContext,
-                    val stereotypeModel: Option[MlrsModel],
+                    val stereotypeModel: Option[MlrModel],
                     val directBetas: Map[Provider,BetaDistribution],
                     val witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
                     val witnessRMSEs: Map[Client,Double],
@@ -101,7 +101,7 @@ class BurnettPaper(baseLearner: Classifier,
       val train = makeInstances(atts, doubleRows)
       val directModel = AbstractClassifier.makeCopy(baseLearner)
       directModel.buildClassifier(train)
-      val stereotypeModel = new MlrsModel(directModel, train, directAttVals)
+      val stereotypeModel = new MlrModel(directModel, train, directAttVals)
 
       val witnessRMSEs: Map[Client,Double] = witnesses.map(w => {
         val numRecords = witnessBetas(w).size

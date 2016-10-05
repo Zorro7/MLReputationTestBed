@@ -4,8 +4,8 @@ import jaspr.core.provenance.{RatingRecord, Record}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.strategy.mlrs.MlrsCore
 import jaspr.strategy.CompositionStrategy
+import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
@@ -17,7 +17,7 @@ import weka.filters.supervised.attribute.Discretize
 /**
   * Created by phil on 29/06/16.
   */
-trait SingleModelStrategy extends CompositionStrategy with Exploration with MlrsCore {
+trait SingleModelStrategy extends CompositionStrategy with Exploration with MlrCore {
 
   override val explorationProbability: Double = 0.1
 
@@ -40,7 +40,7 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with Mlrs
 
 
   class BasicInit(context: ClientContext,
-                  val trustModel: Option[MlrsModel]
+                  val trustModel: Option[MlrModel]
                  ) extends StrategyInit(context)
 
   override def initStrategy(network: Network, context: ClientContext): StrategyInit = {

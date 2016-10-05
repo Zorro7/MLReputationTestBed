@@ -12,12 +12,9 @@ import jaspr.utilities.BetaDistribution
 /**
   * Created by phil on 05/10/16.
   */
-class BRS(witnessWeight: Double = 0.5, override val explorationProbability: Double = 0.1) extends CompositionStrategy with Exploration with BetaCore {
-
-  class BRSInit(context: ClientContext,
-                val directBetas: Map[Provider,BetaDistribution],
-                val witnessBetas: Map[Client,Map[Provider,BetaDistribution]]
-               ) extends StrategyInit(context)
+class BRS(witnessWeight: Double = 2d,
+          override val explorationProbability: Double = 0.1
+         ) extends CompositionStrategy with Exploration with BetaCore {
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[BRSInit]

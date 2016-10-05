@@ -5,7 +5,7 @@ import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord, TrustAssessme
 import jaspr.core.service.{ClientContext, Service, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.strategy.mlrs.MlrsCore
+import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.strategy.{CompositionStrategy, Rating, RatingStrategy}
 import jaspr.utilities.{BetaDistribution, Dirichlet}
 import weka.classifiers.Classifier
@@ -16,7 +16,7 @@ import scala.math._
 /**
   * Created by phil on 28/06/16.
   */
-class MLTravos extends CompositionStrategy with Exploration with MlrsCore with TravosCore with RatingStrategy {
+class MLTravos extends CompositionStrategy with Exploration with MlrCore with TravosCore with RatingStrategy {
   override val name = this.getClass.getSimpleName
   override val numBins: Int = 10
 
@@ -30,7 +30,7 @@ class MLTravos extends CompositionStrategy with Exploration with MlrsCore with T
   val RecencyScalingFactor = -RecencyScalingPeriodToHalf / log(0.5)
 
   class MLTravosInit(context: ClientContext,
-                     val travosModel: MlrsModel,
+                     val travosModel: MlrModel,
                      val witnessRatings: Seq[Rating],
                      val witnesses: Seq[Client]
                     ) extends StrategyInit(context)
