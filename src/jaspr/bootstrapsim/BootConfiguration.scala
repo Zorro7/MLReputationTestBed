@@ -20,7 +20,8 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-          "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;0.5;0.1)," +
+//          "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;0.0;0.1)," +
+          "jaspr.bootstrapsim.strategy.BRS(1d;0.1)," +
           "jaspr.strategy.betareputation.BetaReputation(0.5)," +
           "jaspr.strategy.NoStrategy," +
         "").split(" ")
