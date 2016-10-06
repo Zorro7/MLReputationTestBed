@@ -18,8 +18,10 @@ class BRSInit(context: ClientContext,
 class BurnettInit(context: ClientContext,
                   directBetas: Map[Provider,BetaDistribution],
                   witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
-                  val stereotypeModels: Map[Client,MlrModel],
-                  val RMSEs: Map[Client,Double]
+                  val directStereotypeModel: Option[MlrModel],
+                  val witnessStereotypeModels: Map[Client,MlrModel],
+                  val directStereotypeWeight: Double,
+                  val witnessStereotypeWeights: Map[Client,Double]
                  ) extends BRSInit(context, directBetas, witnessBetas)
 
 class StageInit(context: ClientContext,

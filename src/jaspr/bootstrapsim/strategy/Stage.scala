@@ -21,6 +21,7 @@ class Stage(baseLearner: Classifier,
 
   val goodOpinionThreshold = 0.7
   val badOpinionThreshold = 0.3
+  val prior = 0.5
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[StageInit]
@@ -37,9 +38,7 @@ class Stage(baseLearner: Classifier,
       }
     )
 
-    val combinedBeta =
-      if (witnessWeight == 0 || witnessWeight == 1 || witnessWeight == 2) getCombinedOpinions(direct, opinions)
-      else getCombinedOpinions(direct * (1-witnessWeight), opinions.map(_ * witnessWeight))
+    val combinedBeta = getCombinedOpinions(direct, opinions, witnessWeight)
 
     val belief = combinedBeta.belief()
 

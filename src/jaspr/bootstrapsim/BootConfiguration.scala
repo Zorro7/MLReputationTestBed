@@ -20,11 +20,13 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.bootstrapsim.strategy.Stage(weka.classifiers.trees.M5P;0;2d;0.1)," +
-          "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;0.1)," +
-          "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
-          "jaspr.bootstrapsim.strategy.BRS(2d;false;0.1)," +
-          "jaspr.strategy.NoStrategy," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.BRS(2d;false;0.1)," +
+        "jaspr.strategy.NoStrategy," +
         "").split(" ")
     } else args
 
@@ -62,7 +64,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 25
+  override val numSimulations: Int = 10
   val numClients = 10
   val numProviders = 100
 
