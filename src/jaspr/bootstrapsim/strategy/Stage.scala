@@ -16,11 +16,11 @@ import weka.classifiers.Classifier
 class Stage(baseLearner: Classifier,
             override val numBins: Int,
             val witnessWeight: Double = 2d,
-            val witnessStereotypes: Boolean = true,
-            val weightStereotypes: Boolean = true,
             override val explorationProbability: Double = 0.1
            ) extends CompositionStrategy with Exploration with BRSCore with MlrCore {
 
+  val goodOpinionThreshold = 0.7
+  val badOpinionThreshold = 0.3
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[StageInit]
@@ -81,11 +81,30 @@ class Stage(baseLearner: Classifier,
       if (witnessWeight > 0) makeOpinions(witnessRecords, r => r.service.request.client, r => r.service.request.provider)
       else Map()
 
+    val witnessWeightings: Map[Client,BetaDistribution] = witnessBetas.map(wb => {
+      wb._1 -> wb._2.map(x => {
+        val directOpinion = directBetas.getOrElse(x._1, new BetaDistribution(0,0))
+        if (x._2.belief > goodOpinionThreshold) directOpinion
+        else if (x._2.belief < badOpinionThreshold) new BetaDistribution(directOpinion.beta, directOpinion.alpha) //swap the alphas for agreement with witnessOpinion
+        else new BetaDistribution(0,0)
+      }).foldLeft(new BetaDistribution)(_ + _)
+    })
+
+    val weightedWitnessBetas: Map[Client, Map[Provider, BetaDistribution]] = witnessBetas.map(wb => wb._1 -> {
+      val tdist = witnessWeightings(wb._1)
+      val t = tdist.belief + 0.5*tdist.uncertainty
+      wb._2.mapValues(x => {
+        new BetaDistribution(
+          (2*x.belief()*t)/(1 - x.belief()*t - x.disbelief()*t),
+          (2*x.disbelief()*t)/(1 - x.belief()*t - x.disbelief()*t)
+        )
+      })
+    })
 
     new StageInit(
       context,
       directBetas,
-      witnessBetas,
+      weightedWitnessBetas,
       stereotypeModel
     )
   }

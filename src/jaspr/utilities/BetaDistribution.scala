@@ -70,5 +70,5 @@ class BetaDistribution(val alpha: Double = 0, val beta: Double = 0) {
     )
   }
 
-  override def toString = "Beta[" + alpha + "," + beta + "]=" + expected
+  override def toString = "Beta[" + alpha + "," + beta + "]=" + belief
 }

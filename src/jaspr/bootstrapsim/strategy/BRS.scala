@@ -13,6 +13,7 @@ import jaspr.utilities.BetaDistribution
   * Created by phil on 05/10/16.
   */
 class BRS(witnessWeight: Double = 2d,
+          weightWitnessOpinions: Boolean = false,
           override val explorationProbability: Double = 0.1
          ) extends CompositionStrategy with Exploration with BRSCore {
 
@@ -59,6 +60,32 @@ class BRS(witnessWeight: Double = 2d,
       if (witnessWeight > 0) makeOpinions(witnessRecords, r => r.service.request.client, r => r.service.request.provider)
       else Map()
 
-    new BRSInit(context, directBetas, witnessBetas)
+    val weightedWitnessBetas: Map[Client, Map[Provider, BetaDistribution]] =
+      if (weightWitnessOpinions) {
+        val goodOpinionThreshold = 0.5
+
+        val witnessWeightings: Map[Client, BetaDistribution] = witnessBetas.map(wb => {
+          wb._1 -> wb._2.map(x => {
+            val directOpinion = directBetas.getOrElse(x._1, new BetaDistribution(0, 0))
+            if (x._2.belief > goodOpinionThreshold) directOpinion
+            else new BetaDistribution(directOpinion.beta, directOpinion.alpha) //swap the alphas for agreement with witnessOpinion
+          }).foldLeft(new BetaDistribution)(_ + _)
+        })
+
+        witnessBetas.map(wb => wb._1 -> {
+          val tdist = witnessWeightings(wb._1)
+          val t = tdist.belief + 0.5 * tdist.uncertainty
+          wb._2.mapValues(x => {
+            new BetaDistribution(
+              (2 * x.belief() * t) / (1 - x.belief() * t - x.disbelief() * t),
+              (2 * x.disbelief() * t) / (1 - x.belief() * t - x.disbelief() * t)
+            )
+          })
+        })
+      } else {
+        witnessBetas
+      }
+
+    new BRSInit(context, directBetas, weightedWitnessBetas)
   }
 }

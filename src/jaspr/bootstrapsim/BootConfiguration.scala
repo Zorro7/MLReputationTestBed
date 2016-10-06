@@ -20,9 +20,10 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.bootstrapsim.strategy.Stage(weka.classifiers.trees.M5P;0;2d;false;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.Stage(weka.classifiers.trees.M5P;0;2d;0.1)," +
           "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;0.1)," +
-          "jaspr.bootstrapsim.strategy.BRS(2d;0.1)," +
+          "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
+          "jaspr.bootstrapsim.strategy.BRS(2d;false;0.1)," +
           "jaspr.strategy.NoStrategy," +
         "").split(" ")
     } else args
@@ -61,7 +62,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 1
+  override val numSimulations: Int = 25
   val numClients = 10
   val numProviders = 100
 
@@ -106,7 +107,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   }
 
   def preferences(agent: Agent): SortedMap[String,Property] = {
-    FixedProperty("a", 0.5) :: Nil
+    Chooser.ifHappens(0.5)(FixedProperty("a", 0.1) :: Nil)(FixedProperty("a", 0.9) :: Nil)
   }
 
 
