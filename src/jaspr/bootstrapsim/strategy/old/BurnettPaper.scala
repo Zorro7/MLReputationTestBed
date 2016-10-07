@@ -1,8 +1,7 @@
-package jaspr.bootstrapsim.strategy
+package jaspr.bootstrapsim.strategy.old
 
 import jaspr.bootstrapsim.agent.BootRecord
 import jaspr.core.agent.{Client, Provider}
-import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}

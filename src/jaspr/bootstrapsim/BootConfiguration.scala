@@ -26,6 +26,7 @@ object BootMultiConfiguration extends App {
         "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;true;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0.1)," +
+        "jaspr.bootstrapsim.strategy.BRS(0d;true;0.1)," +
         "jaspr.strategy.NoStrategy," +
         "").split(" ")
     } else args
@@ -109,7 +110,8 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   }
 
   def preferences(agent: Agent): SortedMap[String,Property] = {
-    Chooser.ifHappens(0.5)(FixedProperty("a", 0.1) :: Nil)(FixedProperty("a", 0.9) :: Nil)
+    FixedProperty("a", 0.5) :: Nil
+//    Chooser.ifHappens(0.5)(FixedProperty("a", 0.1) :: Nil)(FixedProperty("a", 0.9) :: Nil)
   }
 
 

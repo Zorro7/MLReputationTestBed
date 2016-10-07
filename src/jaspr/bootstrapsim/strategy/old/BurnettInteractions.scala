@@ -1,16 +1,14 @@
-package jaspr.bootstrapsim.strategy
+package jaspr.bootstrapsim.strategy.old
 
 import jaspr.bootstrapsim.agent.BootRecord
 import jaspr.core.agent.Client
-import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
+import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.strategy.general.SingleModelStrategy
 import jaspr.strategy.betareputation.BetaCore
 import jaspr.strategy.mlr.{MlrCore, MlrModel}
-import jaspr.strategy.{CompositionStrategy, Rating, RatingStrategy}
-import jaspr.utilities.Chooser
+import jaspr.strategy.{CompositionStrategy, RatingStrategy}
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.Classifier
 
