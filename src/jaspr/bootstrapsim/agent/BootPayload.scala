@@ -8,7 +8,7 @@ import scala.collection.immutable.{SortedMap, TreeMap}
 /**
   * Created by phil on 29/09/2016.
   */
-class BootPayload(override val name: String, val properties: SortedMap[String, Property] = Nil, val quality: SortedMap[String, Property] = Nil) extends Payload {
+class BootPayload(override val name: String, val quality: SortedMap[String, Property] = Nil) extends Payload {
 
   override def toString: String = name + " " + quality.values.map(_.value)+"-"+quality.values
 

@@ -1,16 +1,16 @@
 package jaspr.bootstrapsim.agent
 
 import jaspr.bootstrapsim.BootSimulation
-import jaspr.core.agent.{Property, Preferences, Client}
+import jaspr.core.agent.{Client, Preferences, Properties, Property}
 import jaspr.core.provenance.{Provenance, Record}
-import jaspr.core.service.{Service, TrustAssessment, ClientContext}
+import jaspr.core.service.{ClientContext, Service, TrustAssessment}
 
 import scala.collection.immutable.SortedMap
 
 /**
   * Created by phil on 27/09/2016.
   */
-class Truster(override val simulation: BootSimulation) extends Client with Preferences {
+class Truster(override val simulation: BootSimulation) extends Client with Properties with Preferences {
 
   override def generateContext(): ClientContext = {
     simulation.config.clientContext(this, simulation.round)
@@ -44,4 +44,6 @@ class Truster(override val simulation: BootSimulation) extends Client with Prefe
   override val memoryLimit: Int = simulation.config.memoryLimit
 
   override val preferences: SortedMap[String,Property] = simulation.config.preferences(this)
+
+  override val properties: SortedMap[String,Property] = simulation.config.observations(this)
 }

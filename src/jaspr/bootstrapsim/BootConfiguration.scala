@@ -1,6 +1,6 @@
 package jaspr.bootstrapsim
 
-import jaspr.bootstrapsim.agent.{BootMarket, BootPayload, Trustee}
+import jaspr.bootstrapsim.agent.{BootMarket, BootPayload, Trustee, Truster}
 import jaspr.core.agent._
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.simulation.{Configuration, MultiConfiguration, Simulation}
@@ -21,10 +21,12 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;true;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;true;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;true;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;false;0.1)," +
+//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;0.1)," +
+//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;true;0.1)," +
+//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;true;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(0d;true;0.1)," +
@@ -42,8 +44,7 @@ object BootMultiConfiguration extends App {
   }
 }
 
-case class BootMultiConfiguration(strategies: Seq[String] = Nil
-                                          ) extends MultiConfiguration {
+case class BootMultiConfiguration(strategies: Seq[String] = Nil) extends MultiConfiguration {
   override val directComparison = true
 
   override val resultStart: Int = 0
@@ -66,7 +67,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 10
+  override val numSimulations: Int = 5
   val numClients = 10
   val numProviders = 100
 
@@ -107,6 +108,24 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
       }
     ).toList
     fullAds
+  }
+
+  def observations(agent: Truster): SortedMap[String,Property] = {
+    val obs: SortedMap[String,Property] = Chooser.select(
+      FixedProperty("1", true) :: FixedProperty("6", true) :: Nil,
+      FixedProperty("2", true) :: FixedProperty("4", true) :: Nil,
+      FixedProperty("3", true) :: FixedProperty("4", true) :: Nil,
+      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil,
+      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
+    )
+    val fullObs: SortedMap[String,Property] = (1 to 6).map(x =>
+      if (obs.contains(x.toString)) {
+        obs(x.toString)
+      } else {
+        FixedProperty(x.toString, false)
+      }
+    ).toList
+    fullObs
   }
 
   def properties(agent: Agent): SortedMap[String,Property] = {
