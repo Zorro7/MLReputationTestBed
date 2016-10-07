@@ -1,19 +1,19 @@
 package jaspr.bootstrapsim.agent
 
-import jaspr.core.agent.{Properties, Property}
+import jaspr.core.agent.{AdvertProperties, Properties, Property}
 import jaspr.core.service.Payload
 
-import scala.collection.immutable.{TreeMap, SortedMap}
+import scala.collection.immutable.{SortedMap, TreeMap}
 
 /**
   * Created by phil on 29/09/2016.
   */
-class BootPayload(override val name: String, override val properties: SortedMap[String,Property] = Nil) extends Payload with Properties {
+class BootPayload(override val name: String, val properties: SortedMap[String, Property] = Nil, val quality: SortedMap[String, Property] = Nil) extends Payload {
 
-  override def toString: String = name + " " + properties.values.map(_.value)+"-"+properties.values
+  override def toString: String = name + " " + quality.values.map(_.value)+"-"+quality.values
 
   def copy(name: String = this.name,
-           properties: SortedMap[String,Property] = this.properties) = {
-    new BootPayload(name, properties)
+           properties: SortedMap[String,Property] = this.quality) = {
+    new BootPayload(name, quality = properties)
   }
 }

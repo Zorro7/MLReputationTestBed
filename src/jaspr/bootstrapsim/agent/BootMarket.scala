@@ -10,8 +10,8 @@ class BootMarket extends Market {
   override def deliver(service: Service): Double = {
     val delivered = service.payload.asInstanceOf[BootPayload]
     val requested = service.request.payload.asInstanceOf[BootPayload]
-    val disparity = requested.properties.map(r =>
-      delivered.properties.get(r._1) match {
+    val disparity = requested.quality.map(r =>
+      delivered.quality.get(r._1) match {
         case Some(d) => d.doubleValue - r._2.doubleValue
         case None => 0
       }

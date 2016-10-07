@@ -14,16 +14,6 @@ import weka.classifiers.Classifier
   */
 trait StereotypeCore extends MlrCore {
 
-  def computeStereotypeWeight(model: MlrModel, betas: Map[Provider,BetaDistribution]): Double = {
-    val sqrdiff = betas.map(b => {
-      val exp = b._2.expected()
-      val row = 0d :: adverts(b._1)
-      val query = convertRowToInstance(row, model.attVals, model.train)
-      val pred = makePrediction(query, model)
-      (exp-pred)*(exp-pred)
-    }).sum
-    1-Math.sqrt(sqrdiff / model.train.size.toDouble)
-  }
 
   def makeStereotypeModels(records: Seq[BootRecord],
                            baseLearner: Classifier,
@@ -36,15 +26,15 @@ trait StereotypeCore extends MlrCore {
     )
   }
 
-  def makeTrainRow(record: BootRecord): Seq[Any] = {
-    record.rating :: adverts(record.service.request.provider)
-  }
+  def makeTrainRow(record: BootRecord): Seq[Any]
 
-  def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
-    0d :: adverts(request.provider)
-  }
+  def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]
 
-  def adverts(provider: Provider) = {
+  def adverts(provider: Provider): List[Any] = {
     provider.generalAdverts.values.map(_.value.toString).toList
+  }
+
+  def adverts(request: ServiceRequest): List[Any] = {
+    request.properties.values.map(_.value.toString).toList
   }
 }

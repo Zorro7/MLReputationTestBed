@@ -1,8 +1,9 @@
 package jaspr.bootstrapsim
 
-import jaspr.bootstrapsim.agent.Trustee
+import jaspr.bootstrapsim.agent.{BootMarket, BootPayload, Trustee}
 import jaspr.core.agent._
-import jaspr.core.simulation.{MultiConfiguration, Simulation, Configuration}
+import jaspr.core.service.{ClientContext, ServiceRequest}
+import jaspr.core.simulation.{Configuration, MultiConfiguration, Simulation}
 import jaspr.core.strategy.Strategy
 import jaspr.utilities.Chooser
 
@@ -69,7 +70,6 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   val numClients = 10
   val numProviders = 100
 
-
   val trusteeLeaveLikelihood = 0.0
   val trusterLeaveLikelihood = 0.0
   val trusteeAvailableLikleihood = 0.05
@@ -80,6 +80,16 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   override val numRounds: Int = 100
   val memoryLimit: Int = 25
 
+
+  def clientContext(client: Client with Preferences, round: Int): ClientContext = {
+    new ClientContext(client, round, new BootPayload("stuff", quality = client.preferences), new BootMarket)
+  }
+
+  def request(context: ClientContext, provider: Provider): ServiceRequest = {
+    new ServiceRequest(
+      context.client, provider, context.round, 0, context.payload, context.market, provider.payloadAdverts(context.payload)
+    )
+  }
 
   def adverts(agent: Trustee): SortedMap[String, Property] = {
     val ads: SortedMap[String,Property] = agent.properties.head._2 match {

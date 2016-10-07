@@ -112,5 +112,24 @@ class Burnett(baseLearner: Classifier,
     )
   }
 
+  def makeTrainRow(record: BootRecord): Seq[Any] = {
+    record.rating :: adverts(record.service.request.provider)
+  }
+
+  def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+    0d :: adverts(request.provider)
+  }
+
+  def computeStereotypeWeight(model: MlrModel, betas: Map[Provider,BetaDistribution]): Double = {
+    val sqrdiff = betas.map(b => {
+      val exp = b._2.expected()
+      val row = 0d :: adverts(b._1)
+      val query = convertRowToInstance(row, model.attVals, model.train)
+      val pred = makePrediction(query, model)
+      (exp-pred)*(exp-pred)
+    }).sum
+    1-Math.sqrt(sqrdiff / model.train.size.toDouble)
+  }
+
 
 }

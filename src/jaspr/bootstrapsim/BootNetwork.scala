@@ -41,9 +41,7 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
     val requests = providers.withFilter(x =>
       x.capableOf(context.payload, 0) && Chooser.nextDouble() < simulation.config.trusteeAvailableLikleihood
     ).map(x =>
-      new ServiceRequest(
-        context.client, x, simulation.round, 0, context.payload, context.market, x.payloadAdverts(context.payload)
-      )
+      simulation.config.request(context, x)
     )
     if (requests.isEmpty) possibleRequests(context)
     else requests

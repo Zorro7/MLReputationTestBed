@@ -13,7 +13,7 @@ import scala.collection.immutable.SortedMap
 class Truster(override val simulation: BootSimulation) extends Client with Preferences {
 
   override def generateContext(): ClientContext = {
-    new ClientContext(this, simulation.round, new BootPayload("stuff", properties = preferences), new BootMarket)
+    simulation.config.clientContext(this, simulation.round)
   }
 
   override def receiveService(service: Service): Unit = {

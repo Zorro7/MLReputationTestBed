@@ -10,6 +10,9 @@ class BootRecord(override val assessment: TrustAssessment,
                  override val service: Service
                 ) extends Record with TrustAssessmentRecord with ServiceRecord with RatingRecord {
 
+  val truster: Truster = service.request.client.asInstanceOf[Truster]
+  val trustee: Trustee = service.request.provider.asInstanceOf[Trustee]
+
   override def rating: Double = service.utility()
   def success: Boolean = rating > 0.5
 }
