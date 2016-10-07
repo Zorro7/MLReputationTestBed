@@ -87,11 +87,11 @@ class ContractStereotype(baseLearner: Classifier,
   }
 
   def makeTrainRow(record: BootRecord): Seq[Any] = {
-    record.rating :: adverts(record.service.request.provider)
+    record.rating :: adverts(record.service.request)
   }
 
   def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
-    0d :: adverts(request.provider)
+    0d :: adverts(request)
   }
 
 }

@@ -21,15 +21,15 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;true;0.1)," +
+//        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;true;0.1)," +
         "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;false;0.1)," +
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;true;0.1)," +
         "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;0.1)," +
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;true;0.1)," +
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;true;0.1)," +
-        "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
+//        "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0.1)," +
-        "jaspr.bootstrapsim.strategy.BRS(0d;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.BRS(0d;false;0.1)," +
         "jaspr.strategy.NoStrategy," +
         "").split(" ")
     } else args
@@ -67,7 +67,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 5
+  override val numSimulations: Int = 25
   val numClients = 10
   val numProviders = 100
 
@@ -87,8 +87,13 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   }
 
   def request(context: ClientContext, provider: Provider): ServiceRequest = {
+    val truster = context.client.asInstanceOf[Truster]
+    val features: SortedMap[String,Property] = provider.generalAdverts.map(x => {
+      if (truster.properties.contains(x._1)) x._2
+      else FixedProperty(x._1, false)
+    }).toList
     new ServiceRequest(
-      context.client, provider, context.round, 0, context.payload, context.market, provider.payloadAdverts(context.payload)
+      context.client, provider, context.round, 0, context.payload, context.market, features
     )
   }
 
@@ -118,14 +123,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
       FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil,
       FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
     )
-    val fullObs: SortedMap[String,Property] = (1 to 6).map(x =>
-      if (obs.contains(x.toString)) {
-        obs(x.toString)
-      } else {
-        FixedProperty(x.toString, false)
-      }
-    ).toList
-    fullObs
+    obs
   }
 
   def properties(agent: Agent): SortedMap[String,Property] = {
