@@ -22,6 +22,8 @@ class BRS(override val witnessWeight: Double = 2d,
   override val goodOpinionThreshold: Double = 0.7
   override val badOpinionThreshold: Double = 0.3
 
+  override val name: String = this.getClass.getSimpleName+"-"+weightWitnessOpinions
+  
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[BRSInit]
 
