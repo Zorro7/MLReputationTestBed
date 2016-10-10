@@ -17,7 +17,7 @@ class ContractStereotype(baseLearner: Classifier,
                          override val numBins: Int,
                          val witnessWeight: Double = 2d,
                          val discountOpinions: Boolean = false,
-                         val witnessStereotype: Boolean = true,
+                         val witnessStereotypes: Boolean = true,
                          override val explorationProbability: Double = 0.1
                         ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
 
@@ -25,6 +25,8 @@ class ContractStereotype(baseLearner: Classifier,
   override val prior: Double = 0.5
   override val goodOpinionThreshold: Double = 0.3
   override val badOpinionThreshold: Double = 0.7
+
+  override val name: String = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+"-"+discountOpinions+"-"+witnessStereotypes
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[ContractInit]
@@ -77,7 +79,7 @@ class ContractStereotype(baseLearner: Classifier,
       else Some(makeMlrsModel(directRecords, baseLearner, makeTrainRow))
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
-      if (witnessStereotype) makeStereotypeModels(witnessRecords, baseLearner, makeTrainRow)
+      if (witnessStereotypes) makeStereotypeModels(witnessRecords, baseLearner, makeTrainRow)
       else Map()
 
     new ContractInit(
