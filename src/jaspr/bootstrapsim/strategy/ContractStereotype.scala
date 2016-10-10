@@ -14,10 +14,11 @@ import weka.classifiers.Classifier
   * Created by phil on 07/10/16.
   */
 class ContractStereotype(baseLearner: Classifier,
-                        override val numBins: Int,
-                        val witnessWeight: Double = 2d,
-                        val discountOpinions: Boolean = false,
-                        override val explorationProbability: Double = 0.1
+                         override val numBins: Int,
+                         val witnessWeight: Double = 2d,
+                         val discountOpinions: Boolean = false,
+                         val witnessStereotype: Boolean = true,
+                         override val explorationProbability: Double = 0.1
                         ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
 
 
@@ -75,7 +76,9 @@ class ContractStereotype(baseLearner: Classifier,
       if (directRecords.isEmpty) None
       else Some(makeMlrsModel(directRecords, baseLearner, makeTrainRow))
 
-    val witnessStereotypeModels: Map[Client,MlrModel] = makeStereotypeModels(witnessRecords, baseLearner, makeTrainRow)
+    val witnessStereotypeModels: Map[Client,MlrModel] =
+      if (witnessStereotype) makeStereotypeModels(witnessRecords, baseLearner, makeTrainRow)
+      else Map()
 
     new ContractInit(
       context,

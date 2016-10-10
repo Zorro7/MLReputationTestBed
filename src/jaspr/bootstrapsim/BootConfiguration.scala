@@ -22,11 +22,12 @@ object BootMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
 //        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;true;0.1)," +
-        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;false;0.1)," +
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;true;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;0.1)," +
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;true;0.1)," +
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;false;true;0.1)," +
+        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;false;false;0.1)," +
+//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;0.1)," +
+//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;0.1)," +
 //        "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(0d;false;0.1)," +
@@ -67,7 +68,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 25
+  override val numSimulations: Int = 5
   val numClients = 10
   val numProviders = 100
 
@@ -89,8 +90,11 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   def request(context: ClientContext, provider: Provider): ServiceRequest = {
     val truster = context.client.asInstanceOf[Truster]
     val features: SortedMap[String,Property] = provider.generalAdverts.map(x => {
-      if (truster.properties.contains(x._1)) x._2
-      else FixedProperty(x._1, false)
+      if (truster.properties.contains(x._1) && truster.properties(x._1).booleanValue) {
+        x._2
+      } else if (truster.properties.contains(x._1) && !truster.properties(x._1).booleanValue) {
+        FixedProperty(x._1, !x._2.booleanValue)
+      } else FixedProperty(x._1, false)
     }).toList
     new ServiceRequest(
       context.client, provider, context.round, 0, context.payload, context.market, features
@@ -111,19 +115,23 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
       } else {
         FixedProperty(x.toString, false)
       }
-    ).toList
+    ).toList ++ (7 to 20).map(x => FixedProperty(x.toString, Chooser.nextBoolean)).toList
     fullAds
   }
 
   def observations(agent: Truster): SortedMap[String,Property] = {
-    val obs: SortedMap[String,Property] = Chooser.select(
-      FixedProperty("1", true) :: FixedProperty("6", true) :: Nil,
-      FixedProperty("2", true) :: FixedProperty("4", true) :: Nil,
-      FixedProperty("3", true) :: FixedProperty("4", true) :: Nil,
-      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil,
-      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
-    )
-    obs
+//    val obs: SortedMap[String,Property] = Chooser.select(
+//      FixedProperty("1", true) :: FixedProperty("6", true) :: Nil,
+//      FixedProperty("2", true) :: FixedProperty("4", true) :: Nil,
+//      FixedProperty("3", true) :: FixedProperty("4", true) :: Nil,
+//      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil,
+//      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
+//    ) ++
+
+    val obs = (1 to 20).map(x => FixedProperty(x.toString, Chooser.randomBoolean(0.25)))
+//    obs.filter(_.booleanValue).toList
+    val samplesize = (obs.size*0.25).toInt
+    Chooser.sample(obs, samplesize).toList
   }
 
   def properties(agent: Agent): SortedMap[String,Property] = {
