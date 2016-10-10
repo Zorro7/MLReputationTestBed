@@ -21,6 +21,8 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
+//        "jaspr.bootstrapsim.strategy.POStereotype(weka.classifiers.trees.M5P;0;2d;false;true;0.1)," +
+//        "jaspr.bootstrapsim.strategy.POStereotype(weka.classifiers.trees.M5P;0;2d;false;false;0.1)," +
 //        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;true;0.1)," +
         "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;false;true;0.1)," +
         "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;false;false;0.1)," +
@@ -128,9 +130,9 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 //      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
 //    ) ++
 
-    val obs = (1 to 20).map(x => FixedProperty(x.toString, Chooser.randomBoolean(0.25)))
+    val obs = (1 to 20).map(x => FixedProperty(x.toString, Chooser.randomBoolean(0.75)))
 //    obs.filter(_.booleanValue).toList
-    val samplesize = (obs.size*0.25).toInt
+    val samplesize = (obs.size*0.5).toInt
     Chooser.sample(obs, samplesize).toList
   }
 

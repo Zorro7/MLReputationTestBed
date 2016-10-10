@@ -47,8 +47,8 @@ object Chooser extends Random {
   def randomInt(minimum: Int, maximum: Int) =
   nextInt(maximum - minimum) + minimum
 
-  def randomBoolean(trueThreshold: Double): Boolean = {
-    nextDouble() < trueThreshold
+  def randomBoolean(pTrue: Double): Boolean = {
+    nextDouble() < pTrue
   }
 
   def bound(value: Double, lower: Double, upper: Double) = {
