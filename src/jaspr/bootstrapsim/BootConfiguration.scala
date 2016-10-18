@@ -21,11 +21,6 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-//        "jaspr.bootstrapsim.strategy.POStereotype(weka.classifiers.trees.M5P;0;2d;false;true;0.1)," +
-//        "jaspr.bootstrapsim.strategy.POStereotype(weka.classifiers.trees.M5P;0;2d;false;false;0.1)," +
-//        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;true;0.1)," +
-        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;false;true;0.1)," +
-        "jaspr.bootstrapsim.strategy.ContractStereotype(weka.classifiers.trees.M5P;0;2d;false;false;0.1)," +
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;0.1)," +
         "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;0.1)," +
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;0.1)," +

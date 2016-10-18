@@ -30,9 +30,3 @@ class StageInit(context: ClientContext,
                   val stereotypeModel: MlrModel
                ) extends BRSInit(context, directBetas, witnessBetas)
 
-class ContractInit(context: ClientContext,
-                  directBetas: Map[Provider,BetaDistribution],
-                  witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
-                  val directStereotypeModel: Option[MlrModel],
-                  val witnessStereotypeModels: Map[Client,MlrModel]
-                 ) extends BRSInit(context, directBetas, witnessBetas)
