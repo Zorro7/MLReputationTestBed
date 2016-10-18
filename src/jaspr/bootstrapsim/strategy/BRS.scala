@@ -13,7 +13,7 @@ import jaspr.utilities.BetaDistribution
   * Created by phil on 05/10/16.
   */
 class BRS(override val witnessWeight: Double = 2d,
-          weightWitnessOpinions: Boolean = false,
+          discountOpinions: Boolean = false,
           override val explorationProbability: Double = 0.1
          ) extends CompositionStrategy with Exploration with BRSCore {
 
@@ -22,8 +22,10 @@ class BRS(override val witnessWeight: Double = 2d,
   override val goodOpinionThreshold: Double = 0.7
   override val badOpinionThreshold: Double = 0.3
 
-  override val name: String = this.getClass.getSimpleName+"-"+weightWitnessOpinions
-  
+  override val name: String =
+    this.getClass.getSimpleName+"-"+
+    (if (discountOpinions) "-discountOpinions" else "")
+
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[BRSInit]
 
@@ -46,7 +48,7 @@ class BRS(override val witnessWeight: Double = 2d,
     val witnessBetas: Map[Client, Map[Provider, BetaDistribution]] = makeWitnessBetas(witnessRecords)
 
     val weightedWitnessBetas: Map[Client, Map[Provider, BetaDistribution]] =
-      if (weightWitnessOpinions) weightWitnessBetas(witnessBetas, directBetas)
+      if (discountOpinions) weightWitnessBetas(witnessBetas, directBetas)
       else witnessBetas
 
     new BRSInit(context, directBetas, weightedWitnessBetas)

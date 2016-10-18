@@ -29,7 +29,11 @@ class Burnett(baseLearner: Classifier,
   val badOpinionThreshold = 0.3
   val prior = 0.5
 
-  override val name: String = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+"-"+discountOpinions+"-"+witnessStereotypes+"-"+weightStereotypes
+  override val name: String =
+    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
+      (if (discountOpinions) "-discountOpinions" else "")+
+      (if (witnessStereotypes) "-witnessStereotypes" else "")+
+      (if (weightStereotypes) "-weightStereotypes" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[BurnettInit]

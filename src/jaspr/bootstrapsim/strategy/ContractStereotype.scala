@@ -26,7 +26,10 @@ class ContractStereotype(baseLearner: Classifier,
   override val goodOpinionThreshold: Double = 0.3
   override val badOpinionThreshold: Double = 0.7
 
-  override val name: String = this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+"-"+discountOpinions+"-"+witnessStereotypes
+  override val name: String =
+    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
+      (if (discountOpinions) "-discountOpinions" else "")+
+      (if (witnessStereotypes) "-witnessStereotypes" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[ContractInit]

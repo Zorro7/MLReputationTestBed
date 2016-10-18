@@ -70,7 +70,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 5
+  override val numSimulations: Int = 1
   val numClients = 10
   val numProviders = 100
 
@@ -81,7 +81,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   val witnessRequestLikelihood = 0.5
 
   override val numAgents: Int = numClients + numProviders
-  override val numRounds: Int = 100
+  override val numRounds: Int = 25
   val memoryLimit: Int = 25
 
 
