@@ -100,7 +100,7 @@ class MlrsB(val baseLearner: Classifier,
   }
 
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val directRecords: Seq[Record with ServiceRecord with RatingRecord] = context.client.getProvenance[Record with ServiceRecord with RatingRecord](context.client)
     val witnessRecords: Seq[Record with ServiceRecord with RatingRecord] = network.gatherProvenance[Record with ServiceRecord with RatingRecord](context.client)
     val witnesses = context.client :: witnessRecords.map(_.service.request.client).toSet.toList
@@ -120,7 +120,7 @@ class MlrsB(val baseLearner: Classifier,
     if (witnessRecords.isEmpty && directRecords.isEmpty) {
       new Mlrs2Init(context, None, None, None)
     } else if (useBackup) {
-      new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)))
+      new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context, requests)))
     } else if (witnessRecords.isEmpty || directRecords.isEmpty) {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
       new Mlrs2Init(context, Some(model), None, None)

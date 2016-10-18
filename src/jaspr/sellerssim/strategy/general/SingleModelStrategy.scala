@@ -43,7 +43,7 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with MlrC
                   val trustModel: Option[MlrModel]
                  ) extends StrategyInit(context)
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val records = getRecords(network, context)
 
     if (records.isEmpty) {

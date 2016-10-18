@@ -95,7 +95,7 @@ class MlrsEvents(val baseLearner: Classifier,
     }
   }
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val directRecords: Seq[Record with ServiceRecord with RatingRecord] = context.client.getProvenance[Record with ServiceRecord with RatingRecord](context.client)
     val witnessRecords: Seq[Record with ServiceRecord with RatingRecord] = network.gatherProvenance[Record with ServiceRecord with RatingRecord](context.client)
     val witnesses = context.client :: witnessRecords.map(_.service.request.client).toSet.toList

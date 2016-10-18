@@ -20,7 +20,7 @@ class Blade(override val numBins: Int) extends CompositionStrategy with RatingSt
   override val lower: Double = -1d
   override val upper: Double = 1d
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val direct = toRatings(context.client.getProvenance(context.client))
     val witness = toRatings(network.gatherProvenance(context.client))
 

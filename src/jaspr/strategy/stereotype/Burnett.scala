@@ -24,7 +24,7 @@ class Burnett extends CompositionStrategy with Exploration with BetaCore with Ra
                     val ratings: Seq[Rating]
                    ) extends BasicInit(context, trustModel)
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val records = getRecords(network, context)
     if (records.isEmpty) {
       new BurnettInit(context, None, Nil)

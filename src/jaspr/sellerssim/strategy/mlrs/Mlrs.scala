@@ -106,7 +106,7 @@ class Mlrs(val baseLearner: Classifier,
   }
 
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val directRecords: Seq[Record with ServiceRecord with RatingRecord] = context.client.getProvenance[Record with ServiceRecord with RatingRecord](context.client)
     val witnessRecords: Seq[Record with ServiceRecord with RatingRecord] =
       if (witnessWeight == 0) Nil

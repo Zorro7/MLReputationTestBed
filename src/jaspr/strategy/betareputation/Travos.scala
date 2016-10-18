@@ -19,7 +19,7 @@ class Travos extends RatingStrategy with CompositionStrategy with Exploration wi
   val eps = 0.1
 
 
-  override def initStrategy(network: Network, context: ClientContext) = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]) = {
     val direct = context.client.getProvenance[ServiceRecord with RatingRecord with TrustAssessmentRecord](context.client).map(x =>
       new Rating(
         x.service.request.client,

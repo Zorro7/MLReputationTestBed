@@ -40,7 +40,7 @@ class BRS(override val witnessWeight: Double = 2d,
     new TrustAssessment(init.context, request, score)
   }
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val directRecords: Seq[BootRecord] = getDirectRecords(network, context)
     val witnessRecords: Seq[BootRecord] = getWitnessRecords(network, context)
 

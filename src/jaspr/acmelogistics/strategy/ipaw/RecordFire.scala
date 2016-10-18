@@ -18,7 +18,7 @@ class RecordStrategyInit(context: ClientContext,
                          val witnessRecords: Seq[SubproviderRecord]) extends StrategyInit(context)
 
 class RecordFire extends Strategy with CompositionStrategy with Exploration {
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val direct = context.client.getProvenance(context.client)
     val witness = network.gatherProvenance(context.client)
     new RecordStrategyInit(context, direct, witness)

@@ -33,7 +33,7 @@ class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with E
                    val witnessModel: MlrModel
                   ) extends StrategyInit(context)
 
-  override def initStrategy(network: Network, context: ClientContext) = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]) = {
     val direct = context.client.getProvenance(context.client)
     val directModel =
       if (direct.isEmpty) null

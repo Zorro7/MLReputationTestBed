@@ -36,7 +36,7 @@ class MLTravos_provider extends CompositionStrategy with Exploration with MlrCor
 
   class TravosRating(val service: Service, val rating: Double) extends Record
 
-  override def initStrategy(network: Network, context: ClientContext) = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]) = {
     val direct = context.client.getProvenance[ServiceRecord with RatingRecord with TrustAssessmentRecord](context.client).map(x =>
       new TravosRating(
         x.service,

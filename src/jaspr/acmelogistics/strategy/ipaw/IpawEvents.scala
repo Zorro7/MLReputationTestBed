@@ -24,7 +24,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
   override val name = this.getClass.getSimpleName + "_" + baseLearner.getClassifier().getClass.getSimpleName
 
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val records: Seq[ServiceRecord with RatingRecord] =
       context.client.getProvenance(context.client) ++ network.gatherProvenance(context.client)
 
