@@ -130,10 +130,11 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 //      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
 //    ) ++
 
-    val obs = (1 to 20).map(x => FixedProperty(x.toString, Chooser.randomBoolean(0.75)))
-//    obs.filter(_.booleanValue).toList
-    val samplesize = (obs.size*0.5).toInt
-    Chooser.sample(obs, samplesize).toList
+//    val obs = (1 to 20).map(x => FixedProperty(x.toString, Chooser.randomBoolean(0.75)))
+////    obs.filter(_.booleanValue).toList
+//    val samplesize = (obs.size*0.5).toInt
+//    Chooser.sample(obs, samplesize).toList
+    (1 to 20).map(x => FixedProperty(x.toString, true)).toList
   }
 
   def properties(agent: Agent): SortedMap[String,Property] = {

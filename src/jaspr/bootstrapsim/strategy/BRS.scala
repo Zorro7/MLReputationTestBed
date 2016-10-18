@@ -23,7 +23,7 @@ class BRS(override val witnessWeight: Double = 2d,
   override val badOpinionThreshold: Double = 0.3
 
   override val name: String =
-    this.getClass.getSimpleName+"-"+
+    this.getClass.getSimpleName+
     (if (discountOpinions) "-discountOpinions" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
