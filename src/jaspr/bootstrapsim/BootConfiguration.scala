@@ -21,14 +21,15 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.bootstrapsim.strategy.JasprStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;0d;false;false;false;false;0.1)," +
-//        "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
-        "jaspr.bootstrapsim.strategy.BRS(2d;false;0.1)," +
-        "jaspr.bootstrapsim.strategy.BRS(0d;false;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0d)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;true;0d)," +
+        "jaspr.bootstrapsim.strategy.JasprStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0d)," +
+//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false;0d)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false;0d)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;0d;false;false;false;false;0d)," +
+//        "jaspr.bootstrapsim.strategy.BRS(2d;true;0d)," +
+        "jaspr.bootstrapsim.strategy.BRS(2d;false;0d)," +
+        "jaspr.bootstrapsim.strategy.BRS(0d;false;0d)," +
         "jaspr.strategy.NoStrategy," +
         "").split(" ")
     } else args
@@ -71,14 +72,14 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   val numProviders = 100
 
   val trusteeLeaveLikelihood = 0.0
-  val trusterLeaveLikelihood = 0.0
-  val trusteeAvailableLikleihood = 0.05
+  val trusterLeaveLikelihood = 0.05
+  val trusteeAvailableLikleihood = 0.1
   val trusterParticipationLikelihood = 1
-  val witnessRequestLikelihood = 0.5
+  val witnessRequestLikelihood = 1
 
   override val numAgents: Int = numClients + numProviders
   override val numRounds: Int = 100
-  val memoryLimit: Int = 25
+  val memoryLimit: Int = 100
 
 
   def clientContext(client: Client with Preferences, round: Int): ClientContext = {
@@ -100,20 +101,27 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   }
 
   def adverts(agent: Trustee): SortedMap[String, Property] = {
+//    val ads: SortedMap[String,Property] = agent.properties.head._2 match {
+//      case GaussianProperty(_,0.9,_) => FixedProperty("1", true) :: FixedProperty("5", true) :: Nil
+//      case GaussianProperty(_,0.6,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: Nil
+//      case GaussianProperty(_,0.4,_) => FixedProperty("3", true) :: FixedProperty("4", true) :: Nil
+//      case GaussianProperty(_,0.3,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: Nil
+//      case GaussianProperty(_,0.5,_) => FixedProperty("1", true) :: FixedProperty("2", true) :: Nil
+//    }
     val ads: SortedMap[String,Property] = agent.properties.head._2 match {
-      case GaussianProperty(_,0.9,_) => FixedProperty("1", true) :: FixedProperty("6", true) :: Nil
-      case GaussianProperty(_,0.6,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: Nil
-      case GaussianProperty(_,0.4,_) => FixedProperty("3", true) :: FixedProperty("4", true) :: Nil
-      case GaussianProperty(_,0.3,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil
-      case GaussianProperty(_,0.5,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
+      case GaussianProperty(_,0.9,_) => (1 to 4).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.6,_) => (3 to 7).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.4,_) => (6 to 10).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.3,_) => (9 to 13).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.5,_) => (12 to 15).map(x => FixedProperty(x.toString, true)).toList
     }
-    val fullAds: SortedMap[String,Property] = (1 to 6).map(x =>
+    val fullAds: SortedMap[String,Property] = (1 to 15).map(x =>
       if (ads.contains(x.toString)) {
         ads(x.toString)
       } else {
         FixedProperty(x.toString, false)
       }
-    ).toList ++ (7 to 6).map(x => FixedProperty(x.toString, Chooser.nextBoolean)).toList
+    ).toList ++ (16 to 20).map(x => FixedProperty(x.toString, Chooser.nextBoolean)).toList
     fullAds
   }
 
@@ -126,13 +134,19 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 //      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil,
 //      FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
 //    ) ++
-
+//      val obs: SortedMap[String,Property] = Chooser.select(
+//        FixedProperty("1", true) :: FixedProperty("2", true) :: Nil,
+//        FixedProperty("4", true) :: FixedProperty("5", true) :: Nil,
+//        FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("4", true) :: Nil,
+//        (1 to 5).map(x => FixedProperty(x.toString,true)).toList
+//      )
 //    val obs = (1 to 20).map(x => FixedProperty(x.toString, Chooser.randomBoolean(0.75)))
 ////    obs.filter(_.booleanValue).toList
 //    val samplesize = (obs.size*0.5).toInt
 //    Chooser.sample(obs, samplesize).toList
-    val obs = (1 to 6).map(x => FixedProperty(x.toString, true))
+    val obs = (1 to 10).map(x => FixedProperty(x.toString, true))
     Chooser.sample(obs, (obs.size*observability).toInt).toList
+//    obs
   }
 
   def properties(agent: Agent): SortedMap[String,Property] = {

@@ -1,18 +1,19 @@
 package jaspr.bootstrapsim.strategy
 
-import jaspr.bootstrapsim.agent.{Trustee, BootRecord}
-import jaspr.core.agent.{Client, Provider}
+import jaspr.bootstrapsim.agent.{BootRecord, Trustee, Truster}
+import jaspr.core.agent.{Client, FixedProperty, Property, Provider}
 import jaspr.core.provenance.Record
-import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
+import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
-import jaspr.core.strategy.{StrategyInit, Strategy, Exploration}
+import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
 import jaspr.strategy.CompositionStrategy
 import jaspr.strategy.mlr.MlrModel
 import jaspr.utilities.BetaDistribution
-import meka.classifiers.multilabel.{MultiLabelClassifier, BR}
+import meka.classifiers.multilabel.{BR, MultiLabelClassifier}
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.{AbstractClassifier, Classifier}
 
+import scala.collection.immutable.SortedMap
 import scala.collection.mutable
 
 /**
@@ -61,11 +62,22 @@ class JasprStereotype(baseLearner: Classifier,
 
     val witnessStereotypes = init.witnessStereotypeModels.map(x => {
       val translatedRow = init.translationModels.get(x._1) match {
-        case Some(model) => 0d :: translate(row.tail, model).toList
+        case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList
         case None => row
       }
       val query = convertRowToInstance(translatedRow, x._2.attVals, x._2.train)
-      makePrediction(query, x._2) * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
+      val origQuery = convertRowToInstance(row, x._2.attVals, x._2.train)
+      val gtRow = featureTest(x._1, request.provider)
+      val gtQuery = convertRowToInstance(gtRow, x._2.attVals, x._2.train)
+//      println(x._2.train)
+      val origRes = makePrediction(origQuery, x._2)
+      val transRes = makePrediction(query, x._2)
+      val gtRes = makePrediction(gtQuery, x._2)
+//      println("OQ ",origQuery, makePrediction(origQuery, x._2))
+//      println("TQ ",query, makePrediction(query, x._2))
+//      println("GTQ ", gtQuery, makePrediction(gtQuery, x._2), (gtRes - origRes), (gtRes - transRes))
+      println(Math.abs(gtRes - transRes))
+      gtRes * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
     })
     val witnessPrior = witnessStereotypes.sum
 
@@ -137,34 +149,40 @@ class JasprStereotype(baseLearner: Classifier,
                             requests: Seq[ServiceRequest],
                             witnessRecords: Seq[BootRecord],
                             baseLearner: Classifier): Map[Client,MlrModel] = {
-    val x = witnessRecords.groupBy(
+    val directStereotypeObs: Seq[BootRecord] =
+      if (contractStereotypes) directRecords
+      else distinctBy[BootRecord,Trustee](directRecords, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
+    witnessRecords.groupBy(
       _.service.request.client
     ).mapValues(
       rs => {
-        val stereotypeObs: Seq[BootRecord] =
+        val witnessStereotypeObs: Seq[BootRecord] =
           if (contractStereotypes) rs
           else distinctBy[BootRecord,Trustee](rs, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
 
         val numClasses = makeRecordTranslation(rs.head).size
         val rows: Iterable[Seq[Any]] = requests.flatMap(req =>
-          witnessRecords.withFilter(
+          witnessStereotypeObs.withFilter(
             rec => rec.service.request.provider == req.provider
           ).map(
             rec => makeRecordTranslation(rec) ++ makeRequestTranslation(req)
           )
+        ) ++ directStereotypeObs.flatMap(drec =>
+          witnessStereotypeObs.withFilter(
+            wrec => wrec.service.request.provider == drec.service.request.provider
+          ).map(
+            wrec => makeRecordTranslation(wrec) ++ makeRecordTranslation(drec)
+          )
         )
         if (rows.isEmpty) None
         else {
-          println("obssize: " + stereotypeObs.size, rows.size)
+//          println("obssize: " + stereotypeObs.size, rows.size)
           val translateLearner: BR = new meka.classifiers.multilabel.BR
           translateLearner.setClassifier(new NaiveBayes())
-          println(rows)
           Some(makeTranslationModel(rows, numClasses, translateLearner))
         }
       }
     ).filterNot(_._2.isEmpty).mapValues(_.get)
-    println(x.keys)
-    x
   }
 
   def makeTranslationModel(rows: Iterable[Seq[Any]],
@@ -180,23 +198,26 @@ class JasprStereotype(baseLearner: Classifier,
 //    println(train)
 //    println(directModel.getClass)
     directModel.buildClassifier(train)
+//    println(train)
     new MlrModel(directModel, train, directAttVals)
   }
 
   def translate(row: Seq[Any], model: MlrModel): Seq[Any] = {
-    val query = convertRowToInstance(row++row, model.attVals, model.train)
-    println("Q "+query)
+    val query = convertRowToInstance(List.fill(model.train.classIndex())("false")++row, model.attVals, model.train)
+//    println(model.train)
+//    println("OQ "+row, model.model.distributionForInstance(query).toList)
     val ret = model.model.distributionForInstance(query).map(r => (r > 0.5).toString).toList
-    println("R "+ret)
+//    println("TQ "+ret)
     ret
   }
 
-
   def makeRecordTranslation(record: BootRecord): Seq[Any] = {
+//    println(record.truster.id, record.trustee.id, adverts(record.service.request))
     adverts(record.service.request)
   }
 
   def makeRequestTranslation(request: ServiceRequest): Seq[Any] = {
+//    println("\t", request.client.id, request.provider.id, adverts(request))
     adverts(request)
   }
 

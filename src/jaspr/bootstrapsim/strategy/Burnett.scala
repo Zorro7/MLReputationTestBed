@@ -22,20 +22,22 @@ class Burnett(baseLearner: Classifier,
               val discountOpinions: Boolean = false,
               val witnessStereotypes: Boolean = true,
               val weightStereotypes: Boolean = true,
-              override val contractStereotypes: Boolean = false,
+              val subjectiveStereotypes: Boolean = false,
               override val explorationProbability: Double = 0.1
              ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
 
   val goodOpinionThreshold = 0.7
   val badOpinionThreshold = 0.3
   val prior = 0.5
+  override val contractStereotypes = false
 
   override val name: String =
     this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
       (if (discountOpinions) "-discountOpinions" else "")+
       (if (witnessStereotypes) "-witnessStereotypes" else "")+
       (if (weightStereotypes) "-weightStereotypes" else "")+
-      (if (contractStereotypes) "-contractStereotypes" else "")
+      (if (contractStereotypes) "-contractStereotypes" else "")+
+      (if (subjectiveStereotypes) "-subjectiveStereotypes" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[BurnettInit]
@@ -57,9 +59,17 @@ class Burnett(baseLearner: Classifier,
     }
 
     val witnessStereotypes = init.witnessStereotypeModels.map(x => {
-      val row = makeTestRow(init, request)
+      val row =
+        if (subjectiveStereotypes) makeTestRow(init, request)
+        else 0 :: featureTest(x._1, request.provider)
       val query = convertRowToInstance(row, x._2.attVals, x._2.train)
-      makePrediction(query, x._2) * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
+      val gtRow = 0 :: featureTest(x._1, request.provider)
+      val gtQuery = convertRowToInstance(gtRow, x._2.attVals, x._2.train)
+      val res = makePrediction(query, x._2)
+      val gtRes = makePrediction(gtQuery, x._2)
+//      println(row, gtRow, res, gtRes, Math.abs(gtRes-res))
+      println(Math.abs(gtRes-res))
+      res * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
     })
     val witnessPrior = witnessStereotypes.sum
 

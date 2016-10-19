@@ -1,13 +1,15 @@
 package jaspr.bootstrapsim.strategy
 
-import jaspr.bootstrapsim.agent.{Trustee, BootRecord}
-import jaspr.core.agent.{Client, Provider}
+import jaspr.bootstrapsim.agent.{BootRecord, Trustee, Truster}
+import jaspr.core.agent.{Client, FixedProperty, Property, Provider}
 import jaspr.core.provenance.Record
 import jaspr.core.service.ServiceRequest
 import jaspr.core.strategy.StrategyInit
 import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.utilities.BetaDistribution
 import weka.classifiers.Classifier
+
+import scala.collection.immutable.SortedMap
 
 
 /**
@@ -54,6 +56,22 @@ trait StereotypeCore extends MlrCore {
   def makeTrainRow(record: BootRecord): Seq[Any]
 
   def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]
+
+
+  // Returns the features of provider from the perspective of client.
+  // Used for testing only!!!
+  def featureTest(client: Client, provider: Provider) = {
+    val truster = client.asInstanceOf[Truster]
+    val features: SortedMap[String,Property] = provider.generalAdverts.map(x => {
+      if (truster.properties.contains(x._1) && truster.properties(x._1).booleanValue) {
+        x._2
+      } else if (truster.properties.contains(x._1) && !truster.properties(x._1).booleanValue) {
+        FixedProperty(x._1, !x._2.booleanValue)
+      } else FixedProperty(x._1, false)
+    }).toList
+    features.values.map(_.value.toString).toList
+  }
+
 
   def adverts(provider: Provider): List[Any] = {
     provider.generalAdverts.values.map(_.value.toString).toList
