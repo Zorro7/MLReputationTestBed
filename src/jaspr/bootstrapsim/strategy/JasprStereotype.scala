@@ -1,0 +1,210 @@
+package jaspr.bootstrapsim.strategy
+
+import jaspr.bootstrapsim.agent.{Trustee, BootRecord}
+import jaspr.core.agent.{Client, Provider}
+import jaspr.core.provenance.Record
+import jaspr.core.service.{ClientContext, TrustAssessment, ServiceRequest}
+import jaspr.core.simulation.Network
+import jaspr.core.strategy.{StrategyInit, Strategy, Exploration}
+import jaspr.strategy.CompositionStrategy
+import jaspr.strategy.mlr.MlrModel
+import jaspr.utilities.BetaDistribution
+import meka.classifiers.multilabel.{MultiLabelClassifier, BR}
+import weka.classifiers.bayes.NaiveBayes
+import weka.classifiers.{AbstractClassifier, Classifier}
+
+import scala.collection.mutable
+
+/**
+  * Created by phil on 18/10/2016.
+  */
+class JasprStereotype(baseLearner: Classifier,
+                      override val numBins: Int,
+                      val witnessWeight: Double = 2d,
+                      val discountOpinions: Boolean = false,
+                      val witnessStereotypes: Boolean = true,
+                      val weightStereotypes: Boolean = true,
+                      override val contractStereotypes: Boolean = false,
+                      override val explorationProbability: Double = 0.1
+                     ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
+
+  override val goodOpinionThreshold: Double = 0
+  override val prior: Double = 0.5
+  override val badOpinionThreshold: Double = 0
+
+  override val name: String =
+    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
+      (if (discountOpinions) "-discountOpinions" else "")+
+      (if (witnessStereotypes) "-witnessStereotypes" else "")+
+      (if (weightStereotypes) "-weightStereotypes" else "")+
+      (if (contractStereotypes) "-contractStereotypes" else "")
+
+  override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
+    val init = baseInit.asInstanceOf[JasprStereotypeInit]
+
+    val direct = init.directBetas.getOrElse(request.provider, new BetaDistribution(1,1)) // 1,1 for uniform
+    val opinions = init.witnessBetas.values.map(
+        _.getOrElse(request.provider, new BetaDistribution(0,0)) // 0,0 if the witness had no information about provider
+      )
+
+    val beta = getCombinedOpinions(direct, opinions, witnessWeight)
+
+    val row = makeTestRow(init, request)
+
+    val directPrior: Double = init.directStereotypeModel match {
+      case Some(model) =>
+        val query = convertRowToInstance(row, model.attVals, model.train)
+        makePrediction(query, model)
+      case None =>
+        this.prior
+    }
+
+    val witnessStereotypes = init.witnessStereotypeModels.map(x => {
+      val translatedRow = init.translationModels.get(x._1) match {
+        case Some(model) => 0d :: translate(row.tail, model).toList
+        case None => row
+      }
+      val query = convertRowToInstance(translatedRow, x._2.attVals, x._2.train)
+      makePrediction(query, x._2) * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
+    })
+    val witnessPrior = witnessStereotypes.sum
+
+    val witnessPriorWeight = if (weightStereotypes) init.witnessStereotypeWeights.values.sum else init.witnessStereotypeModels.size.toDouble
+
+    val prior = (directPrior + witnessPrior) / (init.directStereotypeWeight + witnessPriorWeight)
+
+    val score = beta.belief + prior * beta.uncertainty
+
+    new TrustAssessment(init.context, request, score)
+  }
+
+
+
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
+
+    val directRecords: Seq[BootRecord] = getDirectRecords(network, context)
+    val witnessRecords: Seq[BootRecord] = getWitnessRecords(network, context)
+
+    val directBetas: Map[Provider,BetaDistribution] = makeDirectBetas(directRecords)
+    val witnessBetas: Map[Client, Map[Provider, BetaDistribution]] = makeWitnessBetas(witnessRecords)
+
+    val weightedWitnessBetas: Map[Client, Map[Provider, BetaDistribution]] =
+      if (discountOpinions) weightWitnessBetas(witnessBetas, directBetas)
+      else witnessBetas
+
+    val directStereotypeModel: Option[MlrModel] =
+      if (directRecords.isEmpty) None
+      else Some(makeMlrsModel(directRecords, baseLearner, makeTrainRow))
+
+    val witnessStereotypeModels: Map[Client,MlrModel] =
+      if (witnessStereotypes) makeStereotypeModels(witnessRecords, baseLearner, makeTrainRow)
+      else Map()
+
+    val translationModels: Map[Client,MlrModel] =
+      if (witnessStereotypes) makeTranslationModels(directRecords, requests, witnessRecords, baseLearner)
+      else Map()
+
+    val directStereotypeWeight: Double =
+      if (weightStereotypes) directStereotypeModel match {
+        case Some(x) => computeStereotypeWeight(x, directBetas)
+        case None => 0d
+      } else {
+        1d
+      }
+
+    val witnessStereotypeWeights: Map[Client,Double] =
+      if (weightStereotypes) {
+        witnessStereotypeModels.map(sm => sm._1 ->
+          computeStereotypeWeight(sm._2,  witnessBetas(sm._1))
+        )
+      } else {
+        Map()
+      }
+
+    new JasprStereotypeInit(
+      context,
+      directBetas,
+      weightedWitnessBetas,
+      directStereotypeModel,
+      witnessStereotypeModels,
+      directStereotypeWeight,
+      witnessStereotypeWeights,
+      translationModels
+    )
+  }
+
+  def makeTranslationModels(directRecords: Seq[BootRecord],
+                            requests: Seq[ServiceRequest],
+                            witnessRecords: Seq[BootRecord],
+                            baseLearner: Classifier): Map[Client,MlrModel] = {
+    val x = witnessRecords.groupBy(
+      _.service.request.client
+    ).mapValues(
+      rs => {
+        val stereotypeObs: Seq[BootRecord] =
+          if (contractStereotypes) rs
+          else distinctBy[BootRecord,Trustee](rs, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
+
+        val numClasses = makeRecordTranslation(rs.head).size
+        val rows: Iterable[Seq[Any]] = requests.flatMap(req =>
+          witnessRecords.withFilter(
+            rec => rec.service.request.provider == req.provider
+          ).map(
+            rec => makeRecordTranslation(rec) ++ makeRequestTranslation(req)
+          )
+        )
+        if (rows.isEmpty) None
+        else {
+          println("obssize: " + stereotypeObs.size, rows.size)
+          val translateLearner: BR = new meka.classifiers.multilabel.BR
+          translateLearner.setClassifier(new NaiveBayes())
+          println(rows)
+          Some(makeTranslationModel(rows, numClasses, translateLearner))
+        }
+      }
+    ).filterNot(_._2.isEmpty).mapValues(_.get)
+    println(x.keys)
+    x
+  }
+
+  def makeTranslationModel(rows: Iterable[Seq[Any]],
+                           numClasses: Int,
+                           baseModel: Classifier): MlrModel = {
+    val directAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(rows.head.size)(mutable.Map[Any, Double]("true" -> 1.0, "false" -> 0.0))
+//    println(directAttVals)
+    val doubleRows = convertRowsToDouble(rows, directAttVals, classIndex = -1, discreteClass = true)
+    val atts = makeAtts(rows.head, directAttVals, classIndex = -1, discreteClass = true)
+    val train = makeInstances(atts, doubleRows)
+    train.setClassIndex(numClasses)
+    val directModel = AbstractClassifier.makeCopy(baseModel)
+//    println(train)
+//    println(directModel.getClass)
+    directModel.buildClassifier(train)
+    new MlrModel(directModel, train, directAttVals)
+  }
+
+  def translate(row: Seq[Any], model: MlrModel): Seq[Any] = {
+    val query = convertRowToInstance(row++row, model.attVals, model.train)
+    println("Q "+query)
+    val ret = model.model.distributionForInstance(query).map(r => (r > 0.5).toString).toList
+    println("R "+ret)
+    ret
+  }
+
+
+  def makeRecordTranslation(record: BootRecord): Seq[Any] = {
+    adverts(record.service.request)
+  }
+
+  def makeRequestTranslation(request: ServiceRequest): Seq[Any] = {
+    adverts(request)
+  }
+
+  def makeTrainRow(record: BootRecord): Seq[Any] = {
+    record.rating :: adverts(record.service.request)
+  }
+
+  def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+    0d :: adverts(request)
+  }
+}

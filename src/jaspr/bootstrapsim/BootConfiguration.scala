@@ -21,10 +21,11 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;0.1)," +
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;0.1)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;0.1)," +
+        "jaspr.bootstrapsim.strategy.JasprStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false;0.1)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;0d;false;false;false;false;0.1)," +
 //        "jaspr.bootstrapsim.strategy.BRS(2d;true;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0.1)," +
         "jaspr.bootstrapsim.strategy.BRS(0d;false;0.1)," +
@@ -76,7 +77,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   val witnessRequestLikelihood = 0.5
 
   override val numAgents: Int = numClients + numProviders
-  override val numRounds: Int = 25
+  override val numRounds: Int = 100
   val memoryLimit: Int = 25
 
 
@@ -112,10 +113,11 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
       } else {
         FixedProperty(x.toString, false)
       }
-    ).toList ++ (7 to 20).map(x => FixedProperty(x.toString, Chooser.nextBoolean)).toList
+    ).toList ++ (7 to 6).map(x => FixedProperty(x.toString, Chooser.nextBoolean)).toList
     fullAds
   }
 
+  val observability = 0.25
   def observations(agent: Truster): SortedMap[String,Property] = {
 //    val obs: SortedMap[String,Property] = Chooser.select(
 //      FixedProperty("1", true) :: FixedProperty("6", true) :: Nil,
@@ -129,7 +131,8 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 ////    obs.filter(_.booleanValue).toList
 //    val samplesize = (obs.size*0.5).toInt
 //    Chooser.sample(obs, samplesize).toList
-    (1 to 20).map(x => FixedProperty(x.toString, true)).toList
+    val obs = (1 to 6).map(x => FixedProperty(x.toString, true))
+    Chooser.sample(obs, (obs.size*observability).toInt).toList
   }
 
   def properties(agent: Agent): SortedMap[String,Property] = {

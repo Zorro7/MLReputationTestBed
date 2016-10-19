@@ -30,3 +30,13 @@ class StageInit(context: ClientContext,
                   val stereotypeModel: MlrModel
                ) extends BRSInit(context, directBetas, witnessBetas)
 
+
+class JasprStereotypeInit(context: ClientContext,
+                  directBetas: Map[Provider,BetaDistribution],
+                  witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
+                  val directStereotypeModel: Option[MlrModel],
+                  val witnessStereotypeModels: Map[Client,MlrModel],
+                  val directStereotypeWeight: Double,
+                  val witnessStereotypeWeights: Map[Client,Double],
+                  val translationModels: Map[Client,MlrModel]
+                 ) extends BRSInit(context, directBetas, witnessBetas)

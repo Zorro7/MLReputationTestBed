@@ -1,7 +1,8 @@
 package jaspr.bootstrapsim.strategy
 
-import jaspr.bootstrapsim.agent.BootRecord
+import jaspr.bootstrapsim.agent.{Trustee, BootRecord}
 import jaspr.core.agent.{Client, Provider}
+import jaspr.core.provenance.Record
 import jaspr.core.service.ServiceRequest
 import jaspr.core.strategy.StrategyInit
 import jaspr.strategy.mlr.{MlrCore, MlrModel}
@@ -14,6 +15,7 @@ import weka.classifiers.Classifier
   */
 trait StereotypeCore extends MlrCore {
 
+  val contractStereotypes: Boolean
 
   def makeStereotypeModels(records: Seq[BootRecord],
                            baseLearner: Classifier,
@@ -22,8 +24,31 @@ trait StereotypeCore extends MlrCore {
     records.groupBy(
       _.service.request.client
     ).mapValues(
-      rs => makeMlrsModel(rs, baseLearner, makeTrainRow)
+      rs => {
+        val stereotypeObs: Seq[BootRecord] =
+          if (contractStereotypes) rs
+          else distinctBy[BootRecord,Trustee](rs, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
+        makeMlrsModel[BootRecord](stereotypeObs, baseLearner, makeTrainRow)
+      }
     )
+  }
+
+  def distinctBy[T,P](xs: Iterable[T], f: T => P) = {
+    xs.foldRight((List[T](), Set[P]())) {
+      case (o, cum@(objects, props)) =>
+        if (props(f(o))) cum else (o :: objects, props + f(o))
+    }._1
+  }
+
+  def computeStereotypeWeight(model: MlrModel, betas: Map[Provider,BetaDistribution]): Double = {
+    val sqrdiff = betas.map(b => {
+      val exp = b._2.expected()
+      val row = 0d :: adverts(b._1)
+      val query = convertRowToInstance(row, model.attVals, model.train)
+      val pred = makePrediction(query, model)
+      (exp-pred)*(exp-pred)
+    }).sum
+    1-Math.sqrt(sqrdiff / model.train.size.toDouble)
   }
 
   def makeTrainRow(record: BootRecord): Seq[Any]

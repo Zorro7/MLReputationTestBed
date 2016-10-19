@@ -22,6 +22,7 @@ class Burnett(baseLearner: Classifier,
               val discountOpinions: Boolean = false,
               val witnessStereotypes: Boolean = true,
               val weightStereotypes: Boolean = true,
+              override val contractStereotypes: Boolean = false,
               override val explorationProbability: Double = 0.1
              ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
 
@@ -33,7 +34,8 @@ class Burnett(baseLearner: Classifier,
     this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
       (if (discountOpinions) "-discountOpinions" else "")+
       (if (witnessStereotypes) "-witnessStereotypes" else "")+
-      (if (weightStereotypes) "-weightStereotypes" else "")
+      (if (weightStereotypes) "-weightStereotypes" else "")+
+      (if (contractStereotypes) "-contractStereotypes" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[BurnettInit]
@@ -125,17 +127,5 @@ class Burnett(baseLearner: Classifier,
   def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     0d :: adverts(request)
   }
-
-  def computeStereotypeWeight(model: MlrModel, betas: Map[Provider,BetaDistribution]): Double = {
-    val sqrdiff = betas.map(b => {
-      val exp = b._2.expected()
-      val row = 0d :: adverts(b._1)
-      val query = convertRowToInstance(row, model.attVals, model.train)
-      val pred = makePrediction(query, model)
-      (exp-pred)*(exp-pred)
-    }).sum
-    1-Math.sqrt(sqrdiff / model.train.size.toDouble)
-  }
-
 
 }
