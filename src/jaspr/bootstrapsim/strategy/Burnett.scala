@@ -68,7 +68,7 @@ class Burnett(baseLearner: Classifier,
       val res = makePrediction(query, x._2)
       val gtRes = makePrediction(gtQuery, x._2)
 //      println(row, gtRow, res, gtRes, Math.abs(gtRes-res))
-      println(Math.abs(gtRes-res))
+//      println(Math.abs(gtRes-res))
       res * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
     })
     val witnessPrior = witnessStereotypes.sum

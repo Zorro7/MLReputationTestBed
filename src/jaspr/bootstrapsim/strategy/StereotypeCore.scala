@@ -7,9 +7,10 @@ import jaspr.core.service.ServiceRequest
 import jaspr.core.strategy.StrategyInit
 import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.utilities.BetaDistribution
-import weka.classifiers.Classifier
+import weka.classifiers.{AbstractClassifier, Classifier}
 
 import scala.collection.immutable.SortedMap
+import scala.collection.mutable
 
 
 /**
@@ -33,6 +34,20 @@ trait StereotypeCore extends MlrCore {
         makeMlrsModel[BootRecord](stereotypeObs, baseLearner, makeTrainRow)
       }
     )
+  }
+
+  override def makeMlrsModel[T <: Record](records: Seq[T], baseModel: Classifier,
+                                 makeTrainRow: T => Seq[Any],
+                                 makeWeight: T => Double = null): MlrModel = {
+    val rows = records.map(makeTrainRow)
+    val weights = if (makeWeight == null) Nil else records.map(makeWeight)
+    val directAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(rows.head.size)(mutable.Map[Any, Double]("true" -> 1.0, "false" -> 0.0))
+    val doubleRows = convertRowsToDouble(rows, directAttVals)
+    val atts = makeAtts(rows.head, directAttVals)
+    val train = makeInstances(atts, doubleRows, weights)
+    val directModel = AbstractClassifier.makeCopy(baseModel)
+    directModel.buildClassifier(train)
+    new MlrModel(directModel, train, directAttVals)
   }
 
   def distinctBy[T,P](xs: Iterable[T], f: T => P) = {

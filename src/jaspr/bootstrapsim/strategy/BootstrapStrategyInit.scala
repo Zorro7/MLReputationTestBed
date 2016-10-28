@@ -1,7 +1,7 @@
 package jaspr.bootstrapsim.strategy
 
 import jaspr.core.agent.{Client, Provider}
-import jaspr.core.service.ClientContext
+import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.strategy.StrategyInit
 import jaspr.strategy.mlr.MlrModel
 import jaspr.utilities.BetaDistribution
@@ -32,11 +32,12 @@ class StageInit(context: ClientContext,
 
 
 class JasprStereotypeInit(context: ClientContext,
-                  directBetas: Map[Provider,BetaDistribution],
-                  witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
-                  val directStereotypeModel: Option[MlrModel],
-                  val witnessStereotypeModels: Map[Client,MlrModel],
-                  val directStereotypeWeight: Double,
-                  val witnessStereotypeWeights: Map[Client,Double],
-                  val translationModels: Map[Client,MlrModel]
-                 ) extends BRSInit(context, directBetas, witnessBetas)
+                          directBetas: Map[Provider,BetaDistribution],
+                          witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
+                          val directStereotypeModel: Option[MlrModel],
+                          val witnessStereotypeModels: Map[Client,MlrModel],
+                          val directStereotypeWeight: Double,
+                          val witnessStereotypeWeights: Map[Client,Double],
+                          val translationModels: Map[Client,MlrModel]
+                          ) extends BRSInit(context, directBetas, witnessBetas)
+

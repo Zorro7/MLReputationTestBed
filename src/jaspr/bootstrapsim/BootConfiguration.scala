@@ -21,9 +21,10 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
+        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;0d)," +
+        "jaspr.bootstrapsim.strategy.JasprStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0d)," +
         "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0d)," +
         "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;true;0d)," +
-        "jaspr.bootstrapsim.strategy.JasprStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0d)," +
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false;0d)," +
         "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false;0d)," +
         "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;0d;false;false;false;false;0d)," +
@@ -67,15 +68,15 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 1
-  val numClients = 10
+  override val numSimulations: Int = 5
+  val numClients = 5
   val numProviders = 100
 
-  val trusteeLeaveLikelihood = 0.0
+  val trusteeLeaveLikelihood = 0.05
   val trusterLeaveLikelihood = 0.05
   val trusteeAvailableLikleihood = 0.1
   val trusterParticipationLikelihood = 1
-  val witnessRequestLikelihood = 1
+  val witnessRequestLikelihood =  1
 
   override val numAgents: Int = numClients + numProviders
   override val numRounds: Int = 100
@@ -89,12 +90,13 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   def request(context: ClientContext, provider: Provider): ServiceRequest = {
     val truster = context.client.asInstanceOf[Truster]
     val features: SortedMap[String,Property] = provider.generalAdverts.map(x => {
-      if (truster.properties.contains(x._1) && truster.properties(x._1).booleanValue) {
+      if (truster.properties.contains(x._1) && truster.properties(x._1).booleanValue) { //if it is observed and is objective
         x._2
-      } else if (truster.properties.contains(x._1) && !truster.properties(x._1).booleanValue) {
+      } else if (truster.properties.contains(x._1) && !truster.properties(x._1).booleanValue) { //if it is observed and is subjective
         FixedProperty(x._1, !x._2.booleanValue)
-      } else FixedProperty(x._1, false)
+      } else FixedProperty(x._1, false) //if is is not observed
     }).toList
+//    println(features.size, provider.generalAdverts.size, truster.properties.size, features.map(_._2.value))
     new ServiceRequest(
       context.client, provider, context.round, 0, context.payload, context.market, features
     )
@@ -109,23 +111,24 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 //      case GaussianProperty(_,0.5,_) => FixedProperty("1", true) :: FixedProperty("2", true) :: Nil
 //    }
     val ads: SortedMap[String,Property] = agent.properties.head._2 match {
-      case GaussianProperty(_,0.9,_) => (1 to 4).map(x => FixedProperty(x.toString, true)).toList
-      case GaussianProperty(_,0.6,_) => (3 to 7).map(x => FixedProperty(x.toString, true)).toList
-      case GaussianProperty(_,0.4,_) => (6 to 10).map(x => FixedProperty(x.toString, true)).toList
-      case GaussianProperty(_,0.3,_) => (9 to 13).map(x => FixedProperty(x.toString, true)).toList
-      case GaussianProperty(_,0.5,_) => (12 to 15).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.9,_) => (1 to 2).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.6,_) => (2 to 4).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.4,_) => (4 to 6).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.3,_) => (6 to 8).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.5,_) => (8 to 10).map(x => FixedProperty(x.toString, true)).toList
     }
-    val fullAds: SortedMap[String,Property] = (1 to 15).map(x =>
+    val fullAds: SortedMap[String,Property] = (1 to 10).map(x =>
       if (ads.contains(x.toString)) {
         ads(x.toString)
       } else {
         FixedProperty(x.toString, false)
       }
-    ).toList ++ (16 to 20).map(x => FixedProperty(x.toString, Chooser.nextBoolean)).toList
+    ).toList //++ (16 to 20).map(x => FixedProperty(x.toString, Chooser.nextBoolean)).toList
     fullAds
   }
 
-  val observability = 0.25
+  val observability = 0.5
+  val subjectivity = 0.25
   def observations(agent: Truster): SortedMap[String,Property] = {
 //    val obs: SortedMap[String,Property] = Chooser.select(
 //      FixedProperty("1", true) :: FixedProperty("6", true) :: Nil,
@@ -144,7 +147,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
 ////    obs.filter(_.booleanValue).toList
 //    val samplesize = (obs.size*0.5).toInt
 //    Chooser.sample(obs, samplesize).toList
-    val obs = (1 to 10).map(x => FixedProperty(x.toString, true))
+    val obs = (1 to 10).map(x => FixedProperty(x.toString, Chooser.randomBoolean(subjectivity)))
     Chooser.sample(obs, (obs.size*observability).toInt).toList
 //    obs
   }
