@@ -25,7 +25,7 @@ class JasprStereotype(baseLearner: Classifier,
                       val discountOpinions: Boolean = false,
                       val witnessStereotypes: Boolean = true,
                       val weightStereotypes: Boolean = true,
-                      override val contractStereotypes: Boolean = false,
+                      override val ratingStereotype: Boolean = false,
                       override val explorationProbability: Double = 0.1
                      ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
 
@@ -38,7 +38,7 @@ class JasprStereotype(baseLearner: Classifier,
       (if (discountOpinions) "-discountOpinions" else "")+
       (if (witnessStereotypes) "-witnessStereotypes" else "")+
       (if (weightStereotypes) "-weightStereotypes" else "")+
-      (if (contractStereotypes) "-contractStereotypes" else "")
+      (if (ratingStereotype) "-contractStereotypes" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[JasprStereotypeInit]
@@ -106,10 +106,24 @@ class JasprStereotype(baseLearner: Classifier,
 
     val directStereotypeModel: Option[MlrModel] =
       if (directRecords.isEmpty) None
-      else Some(makeStereotypeModel(directRecords, Map[Provider,Double](), baseLearner, makeTrainRow))
+      else {
+        val labels =
+          if (ratingStereotype) Map[Provider,Double]()
+          else directBetas.mapValues(x => x.belief + prior * x.uncertainty)
+        Some(makeStereotypeModel(directRecords,labels,baseLearner,makeTrainRow))
+      }
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
-      if (witnessStereotypes) makeStereotypeModels(witnessRecords, Map[Provider,Double](), baseLearner, makeTrainRow)
+      if (witnessStereotypes) {
+        witnessRecords.groupBy(
+          _.service.request.client
+        ).map(wr => wr._1 -> {
+          val labels =
+            if (ratingStereotype) Map[Provider,Double]()
+            else witnessBetas.getOrElse(wr._1, Map()).mapValues(x => x.belief + prior * x.uncertainty)
+          makeStereotypeModel(wr._2,labels,baseLearner,makeTrainRow)
+        })
+      }
       else Map()
 
     val translationModels: Map[Client,MlrModel] =
@@ -150,14 +164,14 @@ class JasprStereotype(baseLearner: Classifier,
                             witnessRecords: Seq[BootRecord],
                             baseLearner: Classifier): Map[Client,MlrModel] = {
     val directStereotypeObs: Seq[BootRecord] =
-      if (contractStereotypes) directRecords
+      if (ratingStereotype) directRecords
       else distinctBy[BootRecord,Trustee](directRecords, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
     witnessRecords.groupBy(
       _.service.request.client
     ).mapValues(
       rs => {
         val witnessStereotypeObs: Seq[BootRecord] =
-          if (contractStereotypes) rs
+          if (ratingStereotype) rs
           else distinctBy[BootRecord,Trustee](rs, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
 
         val numClasses = makeRecordTranslation(rs.head).size

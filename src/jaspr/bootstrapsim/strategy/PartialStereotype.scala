@@ -24,13 +24,14 @@ class PartialStereotype(baseLearner: Classifier,
                         val discountOpinions: Boolean = false,
                         val witnessStereotypes: Boolean = true,
                         val weightStereotypes: Boolean = true,
+                        override val ratingStereotype: Boolean = false,
+                        val limitedObservations: Boolean = false,
                         override val explorationProbability: Double = 0.1
                        ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
 
   override val goodOpinionThreshold: Double = 0
   override val prior: Double = 0.5
   override val badOpinionThreshold: Double = 0
-  override val contractStereotypes = false
 
   override val name: String =
     this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
@@ -108,10 +109,24 @@ class PartialStereotype(baseLearner: Classifier,
 
     val directStereotypeModel: Option[MlrModel] =
       if (directRecords.isEmpty) None
-      else Some(makeStereotypeModel(directRecords, Map[Provider,Double](), baseLearner, makeTrainRow))
+      else {
+        val labels =
+          if (ratingStereotype) Map[Provider,Double]()
+          else directBetas.mapValues(x => x.belief + prior * x.uncertainty)
+        Some(makeStereotypeModel(directRecords,labels,baseLearner,makeTrainRow))
+      }
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
-      if (witnessStereotypes) makeStereotypeModels(witnessRecords, Map[Provider,Double](), baseLearner, makeTrainRow)
+      if (witnessStereotypes) {
+        witnessRecords.groupBy(
+          _.service.request.client
+        ).map(wr => wr._1 -> {
+          val labels =
+            if (ratingStereotype) Map[Provider,Double]()
+            else witnessBetas.getOrElse(wr._1, Map()).mapValues(x => x.belief + prior * x.uncertainty)
+          makeStereotypeModel(wr._2,labels,baseLearner,makeTrainRow)
+        })
+      }
       else Map()
 
     val translationModels: Map[Client,MlrModel] =
@@ -145,7 +160,9 @@ class PartialStereotype(baseLearner: Classifier,
       witnessStereotypeWeights,
       translationModels
     ) with Observations {
-      override val possibleRequests: Seq[ServiceRequest] = requests
+      override val possibleRequests: Seq[ServiceRequest] =
+        if (limitedObservations) Nil
+        else requests
     }
   }
   def makeTranslationModels(directRecords: Seq[BootRecord],
@@ -153,7 +170,9 @@ class PartialStereotype(baseLearner: Classifier,
                             witnessRecords: Seq[BootRecord],
                             baseLearner: Classifier): Map[Client,MlrModel] = {
 
-    val directStereotypeObs: Map[Trustee,List[Any]] = directRecords.flatMap(x => x.observations).toMap
+    val directStereotypeObs: Map[Trustee,List[Any]] =
+      (requests.map(x => x.provider.asInstanceOf[Trustee] -> makeRequestTranslation(x).toList) ++
+      directRecords.flatMap(x => x.observations)).toMap
 
     witnessRecords.groupBy(
       _.service.request.client

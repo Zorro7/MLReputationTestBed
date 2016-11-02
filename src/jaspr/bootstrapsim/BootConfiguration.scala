@@ -33,22 +33,21 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-//        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;0d)," +
+        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;0d)," +
+        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;true;0d)," +
 //        "jaspr.bootstrapsim.strategy.JasprStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0d)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0d)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;true;0d)," +
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false;0d)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false;0d)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;0d;false;false;false;false;0d)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;0d)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;true;false;0d)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false;false;0d)," +
 //        "jaspr.bootstrapsim.strategy.BRS(2d;true;0d)," +
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0d)," +
         "jaspr.bootstrapsim.strategy.BRS(0d;false;0d)," +
         "jaspr.strategy.NoStrategy," +
-        " --numSimulations 1 " +
-        "--numRounds 250 " +
+        " --numSimulations 5 " +
+        "--numRounds 10 " +
         "--memoryLimit 500 " +
         "--numTrustees 100 " +
-        "--numTrustors 20 " +
+        "--numTrustors 10 " +
         "--observability 0.5 " +
         "--subjectivity 0.25 "+
         "--trusteesAvailable 10 " +

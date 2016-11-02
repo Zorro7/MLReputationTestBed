@@ -18,7 +18,7 @@ import scala.collection.mutable
   */
 trait StereotypeCore extends MlrCore {
 
-  val contractStereotypes: Boolean
+  val ratingStereotype: Boolean
 
   def makeStereotypeModels(records: Seq[BootRecord],
                            labels: Map[Provider,Double],
@@ -40,7 +40,7 @@ trait StereotypeCore extends MlrCore {
                           makeTrainRow: (BootRecord,Map[Provider,Double]) => Seq[Any]
                          ): MlrModel = {
     val stereotypeObs: Seq[BootRecord] =
-      if (contractStereotypes) records
+      if (ratingStereotype) records
       else distinctBy[BootRecord,Trustee](records, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
     makeMlrsModel[BootRecord](stereotypeObs, baseLearner, makeTrainRow(_: BootRecord, labels))
   }

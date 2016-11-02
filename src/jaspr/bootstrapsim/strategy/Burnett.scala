@@ -23,20 +23,20 @@ class Burnett(baseLearner: Classifier,
               val witnessStereotypes: Boolean = true,
               val weightStereotypes: Boolean = true,
               val subjectiveStereotypes: Boolean = false,
+              val ratingStereotype: Boolean = false,
               override val explorationProbability: Double = 0.1
              ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
 
   val goodOpinionThreshold = 0.7
   val badOpinionThreshold = 0.3
   val prior = 0.5
-  override val contractStereotypes = false
 
   override val name: String =
     this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
       (if (discountOpinions) "-discountOpinions" else "")+
       (if (witnessStereotypes) "-witnessStereotypes" else "")+
       (if (weightStereotypes) "-weightStereotypes" else "")+
-      (if (contractStereotypes) "-contractStereotypes" else "")+
+      (if (ratingStereotype) "-ratingStereotype" else "")+
       (if (subjectiveStereotypes) "-subjectiveStereotypes" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
@@ -67,8 +67,6 @@ class Burnett(baseLearner: Classifier,
       val gtQuery = convertRowToInstance(gtRow, x._2.attVals, x._2.train)
       val res = makePrediction(query, x._2)
       val gtRes = makePrediction(gtQuery, x._2)
-//      println(row, gtRow, res, gtRes, Math.abs(gtRes-res))
-//      println(Math.abs(gtRes-res))
       res * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
     })
     val witnessPrior = witnessStereotypes.sum
@@ -96,10 +94,24 @@ class Burnett(baseLearner: Classifier,
 
     val directStereotypeModel: Option[MlrModel] =
       if (directRecords.isEmpty) None
-      else Some(makeMlrsModel(directRecords, baseLearner, makeTrainRow(_: BootRecord)))
+      else {
+        val labels =
+          if (ratingStereotype) Map[Provider,Double]()
+          else directBetas.mapValues(x => x.belief + prior * x.uncertainty)
+        Some(makeStereotypeModel(directRecords,labels,baseLearner,makeTrainRow))
+      }
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
-      if (witnessStereotypes) makeStereotypeModels(witnessRecords, Map(), baseLearner, makeTrainRow)
+      if (witnessStereotypes) {
+        witnessRecords.groupBy(
+          _.service.request.client
+        ).map(wr => wr._1 -> {
+          val labels =
+            if (ratingStereotype) Map[Provider,Double]()
+            else witnessBetas.getOrElse(wr._1, Map()).mapValues(x => x.belief + prior * x.uncertainty)
+          makeStereotypeModel(wr._2,labels,baseLearner,makeTrainRow)
+        })
+      }
       else Map()
 
     val directStereotypeWeight: Double =
