@@ -30,26 +30,38 @@ object BootMultiConfiguration extends App {
     opt[Double]("trustorLeaveLikelihood") required() action { (x, c) => c.copy(trustorLeaveLikelihood = x) }
   }
 
+//  val discountOpinions: Boolean = false,
+//  val witnessStereotypes: Boolean = true,
+//  val weightStereotypes: Boolean = true,
+//  val subjectiveStereotypes: Boolean = false,
+//  val ratingStereotype: Boolean = false,
+//  val limitedInfo: Boolean = false
+
+//  false;false;false;false;false
+//  false;true;false;false;false
+//  false;true;false;true;false
+
+
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;0d)," +
-        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;true;0d)," +
-//        "jaspr.bootstrapsim.strategy.JasprStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;0d)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;0d)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;true;false;0d)," +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false;false;0d)," +
-//        "jaspr.bootstrapsim.strategy.BRS(2d;true;0d)," +
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;0d)," + //ground truth
+        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;true;false;false;0d)," + //SubjectivePartial
+        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;false;0d)," + //ObjectivePartial
+        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;true;false;true;0d)," + //SubjectiveLimited
+        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;true;0d)," + //ObjectiveLimited
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;true;false;0d)," + //WitnessBRSWitnessStereotype
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false;false;0d)," + //WitnessBRSDirectStereotype
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0d)," +
         "jaspr.bootstrapsim.strategy.BRS(0d;false;0d)," +
         "jaspr.strategy.NoStrategy," +
         " --numSimulations 5 " +
-        "--numRounds 10 " +
+        "--numRounds 50 " +
         "--memoryLimit 500 " +
         "--numTrustees 100 " +
         "--numTrustors 10 " +
-        "--observability 0.5 " +
-        "--subjectivity 0.25 "+
+        "--observability 0.25 " +
+        "--subjectivity 0.0 "+
         "--trusteesAvailable 10 " +
         "--advisorsAvailable 10 " +
         "--trustorParticipation 1 " +
@@ -200,7 +212,6 @@ class BootConfiguration(val _strategy: Strategy,
 //    Chooser.sample(obs, samplesize).toList
     val obs = (1 to 10).map(x => FixedProperty(x.toString, Chooser.randomBoolean(subjectivity)))
     Chooser.sample(obs, (obs.size*observability).toInt).toList
-//    obs
   }
 
   def properties(agent: Agent): SortedMap[String,Property] = {

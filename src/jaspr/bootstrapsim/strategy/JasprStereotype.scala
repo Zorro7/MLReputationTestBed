@@ -50,7 +50,7 @@ class JasprStereotype(baseLearner: Classifier,
 
     val beta = getCombinedOpinions(direct, opinions, witnessWeight)
 
-    val row = makeTestRow(init, request)
+    val row = stereotypeTestRow(init, request)
 
     val directPrior: Double = init.directStereotypeModel match {
       case Some(model) =>
@@ -67,7 +67,7 @@ class JasprStereotype(baseLearner: Classifier,
       }
       val query = convertRowToInstance(translatedRow, x._2.attVals, x._2.train)
       val origQuery = convertRowToInstance(row, x._2.attVals, x._2.train)
-      val gtRow = 0d :: featureTest(x._1, request.provider)
+      val gtRow = 0d :: objectiveStereotypeRow(x._1, request.provider)
       val gtQuery = convertRowToInstance(gtRow, x._2.attVals, x._2.train)
 //      println(x._2.train)
       val origRes = makePrediction(origQuery, x._2)
@@ -110,7 +110,7 @@ class JasprStereotype(baseLearner: Classifier,
         val labels =
           if (ratingStereotype) Map[Provider,Double]()
           else directBetas.mapValues(x => x.belief + prior * x.uncertainty)
-        Some(makeStereotypeModel(directRecords,labels,baseLearner,makeTrainRow))
+        Some(makeStereotypeModel(directRecords,labels,baseLearner,stereotypeTrainRow))
       }
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
@@ -121,7 +121,7 @@ class JasprStereotype(baseLearner: Classifier,
           val labels =
             if (ratingStereotype) Map[Provider,Double]()
             else witnessBetas.getOrElse(wr._1, Map()).mapValues(x => x.belief + prior * x.uncertainty)
-          makeStereotypeModel(wr._2,labels,baseLearner,makeTrainRow)
+          makeStereotypeModel(wr._2,labels,baseLearner,stereotypeTrainRow)
         })
       }
       else Map()
@@ -235,11 +235,11 @@ class JasprStereotype(baseLearner: Classifier,
     adverts(request)
   }
 
-  def makeTrainRow(record: BootRecord, labels: Map[Provider,Double]): Seq[Any] = {
+  def stereotypeTrainRow(record: BootRecord, labels: Map[Provider,Double]): Seq[Any] = {
     record.rating :: adverts(record.service.request)
   }
 
-  def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+  def stereotypeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     0d :: adverts(request)
   }
 }

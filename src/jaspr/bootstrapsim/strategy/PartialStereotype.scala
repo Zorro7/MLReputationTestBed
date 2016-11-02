@@ -24,10 +24,12 @@ class PartialStereotype(baseLearner: Classifier,
                         val discountOpinions: Boolean = false,
                         val witnessStereotypes: Boolean = true,
                         val weightStereotypes: Boolean = true,
+                        val subjectiveStereotypes: Boolean = false,
                         override val ratingStereotype: Boolean = false,
                         val limitedObservations: Boolean = false,
                         override val explorationProbability: Double = 0.1
                        ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
+
 
   override val goodOpinionThreshold: Double = 0
   override val prior: Double = 0.5
@@ -37,7 +39,10 @@ class PartialStereotype(baseLearner: Classifier,
     this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
       (if (discountOpinions) "-discountOpinions" else "")+
       (if (witnessStereotypes) "-witnessStereotypes" else "")+
-      (if (weightStereotypes) "-weightStereotypes" else "")
+      (if (weightStereotypes) "-weightStereotypes" else "")+
+      (if (subjectiveStereotypes) "-subjectiveStereotypes" else "")+
+      (if (ratingStereotype) "-ratingStereotype" else "")+
+      (if (limitedObservations) "-limitedObservations" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[JasprStereotypeInit with Observations]
@@ -49,10 +54,9 @@ class PartialStereotype(baseLearner: Classifier,
 
     val beta = getCombinedOpinions(direct, opinions, witnessWeight)
 
-    val row = makeTestRow(init, request)
-
     val directPrior: Double = init.directStereotypeModel match {
       case Some(model) =>
+        val row = stereotypeTestRow(init, request)
         val query = convertRowToInstance(row, model.attVals, model.train)
         makePrediction(query, model)
       case None =>
@@ -60,22 +64,24 @@ class PartialStereotype(baseLearner: Classifier,
     }
 
     val witnessStereotypes = init.witnessStereotypeModels.map(x => {
+//      val translatedRow = if (subjectiveStereotypes) {
+//        val row = stereotypeTestRow(init, request)
+//        init.translationModels.get(x._1) match {
+//          case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList
+//          case None => row
+//        }
+//      } else {
+//        0 :: objectiveStereotypeRow(x._1, request.provider)
+//      }
+      val row =
+        if (subjectiveStereotypes) stereotypeTestRow(init, request)
+        else 0 :: objectiveStereotypeRow(x._1, request.provider)
       val translatedRow = init.translationModels.get(x._1) match {
         case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList
         case None => row
       }
       val query = convertRowToInstance(translatedRow, x._2.attVals, x._2.train)
-      val origQuery = convertRowToInstance(row, x._2.attVals, x._2.train)
-      val gtRow = 0d :: featureTest(x._1, request.provider)
-      val gtQuery = convertRowToInstance(gtRow, x._2.attVals, x._2.train)
-      //      println(x._2.train)
-      val origRes = makePrediction(origQuery, x._2)
       val transRes = makePrediction(query, x._2)
-      val gtRes = makePrediction(gtQuery, x._2)
-//            println("OQ ",origQuery, makePrediction(origQuery, x._2))
-//            println("TQ ",query, makePrediction(query, x._2))
-//            println("GTQ ", gtQuery, makePrediction(gtQuery, x._2), (gtRes - origRes), (gtRes - transRes))
-//      println(Math.abs(gtRes - transRes))
       transRes * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
     })
     val witnessPrior = witnessStereotypes.sum
@@ -113,7 +119,7 @@ class PartialStereotype(baseLearner: Classifier,
         val labels =
           if (ratingStereotype) Map[Provider,Double]()
           else directBetas.mapValues(x => x.belief + prior * x.uncertainty)
-        Some(makeStereotypeModel(directRecords,labels,baseLearner,makeTrainRow))
+        Some(makeStereotypeModel(directRecords,labels,baseLearner,stereotypeTrainRow))
       }
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
@@ -124,7 +130,7 @@ class PartialStereotype(baseLearner: Classifier,
           val labels =
             if (ratingStereotype) Map[Provider,Double]()
             else witnessBetas.getOrElse(wr._1, Map()).mapValues(x => x.belief + prior * x.uncertainty)
-          makeStereotypeModel(wr._2,labels,baseLearner,makeTrainRow)
+          makeStereotypeModel(wr._2,labels,baseLearner,stereotypeTrainRow)
         })
       }
       else Map()
@@ -233,11 +239,11 @@ class PartialStereotype(baseLearner: Classifier,
     adverts(request)
   }
 
-  def makeTrainRow(record: BootRecord, labels: Map[Provider, Double]): Seq[Any] = {
-    record.rating :: adverts(record.service.request)
+  def stereotypeTrainRow(record: BootRecord, labels: Map[Provider, Double]): Seq[Any] = {
+    labels.getOrElse(record.trustee, record.rating) :: adverts(record.service.request)
   }
 
-  def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+  def stereotypeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     0d :: adverts(request)
   }
 

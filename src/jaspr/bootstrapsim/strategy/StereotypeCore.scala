@@ -20,20 +20,6 @@ trait StereotypeCore extends MlrCore {
 
   val ratingStereotype: Boolean
 
-  def makeStereotypeModels(records: Seq[BootRecord],
-                           labels: Map[Provider,Double],
-                           baseLearner: Classifier,
-                           makeTrainRow: (BootRecord,Map[Provider,Double]) => Seq[Any]
-                          ): Map[Client, MlrModel] = {
-    records.groupBy(
-      _.service.request.client
-    ).mapValues(
-      rs => {
-        makeStereotypeModel(rs, labels, baseLearner, makeTrainRow)
-      }
-    )
-  }
-
   def makeStereotypeModel(records: Seq[BootRecord],
                           labels: Map[Provider,Double],
                           baseLearner: Classifier,
@@ -77,14 +63,13 @@ trait StereotypeCore extends MlrCore {
     1-Math.sqrt(sqrdiff / model.train.size.toDouble)
   }
 
-  def makeTrainRow(record: BootRecord, labels: Map[Provider,Double] = Map()): Seq[Any]
+  def stereotypeTrainRow(record: BootRecord, labels: Map[Provider,Double] = Map()): Seq[Any]
 
-  def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]
-
+  def stereotypeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]
 
   // Returns the features of provider from the perspective of client.
   // Used for testing only!!!
-  def featureTest(client: Client, provider: Provider) = {
+  def objectiveStereotypeRow(client: Client, provider: Provider): List[Any] = {
     val truster = client.asInstanceOf[Truster]
     val features: SortedMap[String,Property] = provider.generalAdverts.map(x => {
       if (truster.properties.contains(x._1) && truster.properties(x._1).booleanValue) {

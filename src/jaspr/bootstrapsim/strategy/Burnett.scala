@@ -51,7 +51,7 @@ class Burnett(baseLearner: Classifier,
 
     val directPrior: Double = init.directStereotypeModel match {
       case Some(model) =>
-        val row = makeTestRow(init, request)
+        val row = stereotypeTestRow(init, request)
         val query = convertRowToInstance(row, model.attVals, model.train)
         makePrediction(query, model)
       case None =>
@@ -60,13 +60,10 @@ class Burnett(baseLearner: Classifier,
 
     val witnessStereotypes = init.witnessStereotypeModels.map(x => {
       val row =
-        if (subjectiveStereotypes) makeTestRow(init, request)
-        else 0 :: featureTest(x._1, request.provider)
+        if (subjectiveStereotypes) stereotypeTestRow(init, request)
+        else 0 :: objectiveStereotypeRow(x._1, request.provider)
       val query = convertRowToInstance(row, x._2.attVals, x._2.train)
-      val gtRow = 0 :: featureTest(x._1, request.provider)
-      val gtQuery = convertRowToInstance(gtRow, x._2.attVals, x._2.train)
       val res = makePrediction(query, x._2)
-      val gtRes = makePrediction(gtQuery, x._2)
       res * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
     })
     val witnessPrior = witnessStereotypes.sum
@@ -98,7 +95,7 @@ class Burnett(baseLearner: Classifier,
         val labels =
           if (ratingStereotype) Map[Provider,Double]()
           else directBetas.mapValues(x => x.belief + prior * x.uncertainty)
-        Some(makeStereotypeModel(directRecords,labels,baseLearner,makeTrainRow))
+        Some(makeStereotypeModel(directRecords,labels,baseLearner,stereotypeTrainRow))
       }
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
@@ -109,7 +106,7 @@ class Burnett(baseLearner: Classifier,
           val labels =
             if (ratingStereotype) Map[Provider,Double]()
             else witnessBetas.getOrElse(wr._1, Map()).mapValues(x => x.belief + prior * x.uncertainty)
-          makeStereotypeModel(wr._2,labels,baseLearner,makeTrainRow)
+          makeStereotypeModel(wr._2,labels,baseLearner,stereotypeTrainRow)
         })
       }
       else Map()
@@ -142,11 +139,11 @@ class Burnett(baseLearner: Classifier,
     )
   }
 
-  def makeTrainRow(record: BootRecord, labels: Map[Provider,Double]): Seq[Any] = {
+  def stereotypeTrainRow(record: BootRecord, labels: Map[Provider,Double]): Seq[Any] = {
     labels.getOrElse(record.trustee, record.rating) :: adverts(record.service.request)
   }
 
-  def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+  def stereotypeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     0d :: adverts(request)
   }
 
