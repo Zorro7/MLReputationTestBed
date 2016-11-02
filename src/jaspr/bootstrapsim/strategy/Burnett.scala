@@ -96,7 +96,7 @@ class Burnett(baseLearner: Classifier,
 
     val directStereotypeModel: Option[MlrModel] =
       if (directRecords.isEmpty) None
-      else Some(makeMlrsModel(directRecords, baseLearner, makeTrainRow))
+      else Some(makeMlrsModel(directRecords, baseLearner, makeTrainRow(_: BootRecord)))
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
       if (witnessStereotypes) makeStereotypeModels(witnessRecords, baseLearner, makeTrainRow)

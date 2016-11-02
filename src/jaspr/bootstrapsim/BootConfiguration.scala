@@ -16,6 +16,18 @@ object BootMultiConfiguration extends App {
 
   val parser = new scopt.OptionParser[BootMultiConfiguration]("SellerConfiguration") {
     opt[Seq[String]]("strategy") required() action { (x, c) => c.copy(strategies = x) }
+    opt[Int]("numSimulations") required() action { (x, c) => c.copy(numSimulations = x) }
+    opt[Int]("numRounds") required() action { (x, c) => c.copy(numRounds = x) }
+    opt[Int]("memoryLimit") required() action { (x, c) => c.copy(memoryLimit = x) }
+    opt[Int]("numTrustees") required() action { (x, c) => c.copy(numTrustees = x) }
+    opt[Int]("numTrustors") required() action { (x, c) => c.copy(numTrustors = x) }
+    opt[Double]("observability") required() action { (x, c) => c.copy(observability = x) }
+    opt[Double]("subjectivity") required() action { (x, c) => c.copy(subjectivity = x) }
+    opt[Double]("trusteesAvailable") required() action { (x, c) => c.copy(trusteesAvailable = x) }
+    opt[Double]("advisorsAvailable") required() action { (x, c) => c.copy(advisorsAvailable = x) }
+    opt[Double]("trustorParticipation") required() action { (x, c) => c.copy(trustorParticipation = x) }
+    opt[Double]("trusteeLeaveLikelihood") required() action { (x, c) => c.copy(trusteeLeaveLikelihood = x) }
+    opt[Double]("trustorLeaveLikelihood") required() action { (x, c) => c.copy(trustorLeaveLikelihood = x) }
   }
 
   val argsplt =
@@ -32,6 +44,18 @@ object BootMultiConfiguration extends App {
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0d)," +
         "jaspr.bootstrapsim.strategy.BRS(0d;false;0d)," +
         "jaspr.strategy.NoStrategy," +
+        " --numSimulations 1 " +
+        "--numRounds 250 " +
+        "--memoryLimit 500 " +
+        "--numTrustees 100 " +
+        "--numTrustors 20 " +
+        "--observability 0.5 " +
+        "--subjectivity 0.25 "+
+        "--trusteesAvailable 10 " +
+        "--advisorsAvailable 10 " +
+        "--trustorParticipation 1 " +
+        "--trusteeLeaveLikelihood 0.05 " +
+        "--trustorLeaveLikelihood 0.05 "+
         "").split(" ")
     } else args
 
@@ -45,7 +69,20 @@ object BootMultiConfiguration extends App {
   }
 }
 
-case class BootMultiConfiguration(strategies: Seq[String] = Nil) extends MultiConfiguration {
+case class BootMultiConfiguration(strategies: Seq[String] = Nil,
+                                  numSimulations: Int = 1,
+                                  numRounds: Int = 50,
+                                  memoryLimit: Int = 50,
+                                  numTrustees: Int = 100,
+                                  numTrustors: Int = 10,
+                                  observability: Double = 0.5,
+                                  subjectivity: Double = 0.25,
+                                  trusteesAvailable: Double = 0.1,
+                                  advisorsAvailable: Double = 1,
+                                  trustorParticipation: Double = 1,
+                                  trusteeLeaveLikelihood: Double = 0.05,
+                                  trustorLeaveLikelihood: Double = 0.05
+                                 ) extends MultiConfiguration {
   override val directComparison = true
 
   override val resultStart: Int = 0
@@ -55,32 +92,48 @@ case class BootMultiConfiguration(strategies: Seq[String] = Nil) extends MultiCo
   override lazy val configs: Seq[Configuration] =
     strategies.map(x => {
       new BootConfiguration(
-        _strategy = Strategy.forName(x)
+        _strategy = Strategy.forName(x),
+        numSimulations = numSimulations,
+        numRounds = numRounds,
+        memoryLimit = memoryLimit,
+        numTrustees = numTrustees,
+        numTrustors = numTrustors,
+        observability = observability,
+        subjectivity = subjectivity,
+        trusteesAvailable = trusteesAvailable,
+        advisorsAvailable = advisorsAvailable,
+        trustorParticipation = trustorParticipation,
+        trusteeLeaveLikelihood = trusteeLeaveLikelihood,
+        trustorLeaveLikelihood = trustorLeaveLikelihood
       )
     })
 }
 
 
-class BootConfiguration(val _strategy: Strategy) extends Configuration {
+class BootConfiguration(val _strategy: Strategy,
+                        override val numSimulations: Int,
+                        override val numRounds: Int,
+                        val memoryLimit: Int,
+                        numTrustees: Int,
+                        numTrustors: Int,
+                        val observability: Double,
+                        val subjectivity: Double,
+                        val trusteesAvailable: Double,
+                        val advisorsAvailable: Double,
+                        val trustorParticipation: Double,
+                        val trusteeLeaveLikelihood: Double,
+                        val trustorLeaveLikelihood: Double
+                       ) extends Configuration {
   override def newSimulation(): Simulation = {
     new BootSimulation(this)
   }
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 5
-  val numClients = 5
-  val numProviders = 100
-
-  val trusteeLeaveLikelihood = 0.05
-  val trusterLeaveLikelihood = 0.05
-  val trusteeAvailableLikleihood = 0.1
-  val trusterParticipationLikelihood = 1
-  val witnessRequestLikelihood =  1
+  val numClients = numTrustors
+  val numProviders = numTrustees
 
   override val numAgents: Int = numClients + numProviders
-  override val numRounds: Int = 100
-  val memoryLimit: Int = 100
 
 
   def clientContext(client: Client with Preferences, round: Int): ClientContext = {
@@ -103,20 +156,20 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
   }
 
   def adverts(agent: Trustee): SortedMap[String, Property] = {
-//    val ads: SortedMap[String,Property] = agent.properties.head._2 match {
-//      case GaussianProperty(_,0.9,_) => FixedProperty("1", true) :: FixedProperty("5", true) :: Nil
-//      case GaussianProperty(_,0.6,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: Nil
-//      case GaussianProperty(_,0.4,_) => FixedProperty("3", true) :: FixedProperty("4", true) :: Nil
-//      case GaussianProperty(_,0.3,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: Nil
-//      case GaussianProperty(_,0.5,_) => FixedProperty("1", true) :: FixedProperty("2", true) :: Nil
-//    }
     val ads: SortedMap[String,Property] = agent.properties.head._2 match {
-      case GaussianProperty(_,0.9,_) => (1 to 2).map(x => FixedProperty(x.toString, true)).toList
-      case GaussianProperty(_,0.6,_) => (2 to 4).map(x => FixedProperty(x.toString, true)).toList
-      case GaussianProperty(_,0.4,_) => (4 to 6).map(x => FixedProperty(x.toString, true)).toList
-      case GaussianProperty(_,0.3,_) => (6 to 8).map(x => FixedProperty(x.toString, true)).toList
-      case GaussianProperty(_,0.5,_) => (8 to 10).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.9,_) => FixedProperty("1", true) :: FixedProperty("6", true) :: Nil
+      case GaussianProperty(_,0.6,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: Nil
+      case GaussianProperty(_,0.4,_) => FixedProperty("3", true) :: FixedProperty("4", true) :: Nil
+      case GaussianProperty(_,0.3,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil
+      case GaussianProperty(_,0.5,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
     }
+//    val ads: SortedMap[String,Property] = agent.properties.head._2 match {
+//      case GaussianProperty(_,0.9,_) => (1 to 2).map(x => FixedProperty(x.toString, true)).toList
+//      case GaussianProperty(_,0.6,_) => (2 to 4).map(x => FixedProperty(x.toString, true)).toList
+//      case GaussianProperty(_,0.4,_) => (4 to 6).map(x => FixedProperty(x.toString, true)).toList
+//      case GaussianProperty(_,0.3,_) => (6 to 8).map(x => FixedProperty(x.toString, true)).toList
+//      case GaussianProperty(_,0.5,_) => (8 to 10).map(x => FixedProperty(x.toString, true)).toList
+//    }
     val fullAds: SortedMap[String,Property] = (1 to 10).map(x =>
       if (ads.contains(x.toString)) {
         ads(x.toString)
@@ -127,8 +180,7 @@ class BootConfiguration(val _strategy: Strategy) extends Configuration {
     fullAds
   }
 
-  val observability = 0.5
-  val subjectivity = 0.25
+
   def observations(agent: Truster): SortedMap[String,Property] = {
 //    val obs: SortedMap[String,Property] = Chooser.select(
 //      FixedProperty("1", true) :: FixedProperty("6", true) :: Nil,

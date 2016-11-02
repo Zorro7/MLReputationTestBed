@@ -31,25 +31,33 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
   }
 
   override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
-    clients.withFilter(x =>
-      x != agent && Chooser.nextDouble() < simulation.config.witnessRequestLikelihood
-    ).flatMap(_.getProvenance[T](agent))
+    val availableAdvisors =
+      if (simulation.config.advisorsAvailable > 1d) {
+        Chooser.sample(clients.filter(_ != agent), simulation.config.advisorsAvailable.toInt)
+      } else {
+        clients.withFilter(_ != agent && Chooser.randomBoolean(simulation.config.trusteesAvailable))
+      }
+    availableAdvisors.flatMap(_.getProvenance[T](agent))
   }
 
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
-    val requests = providers.withFilter(x =>
-      x.capableOf(context.payload, 0) && Chooser.nextDouble() < simulation.config.trusteeAvailableLikleihood
-    ).map(x =>
-      simulation.config.request(context, x)
-    )
+    val availableProviders =
+      if (simulation.config.trusteesAvailable > 1d) {
+        Chooser.sample(providers.filter(_.capableOf(context.payload, 0)), simulation.config.trusteesAvailable.toInt)
+      } else {
+        providers.withFilter(_.capableOf(context.payload, 0) && Chooser.randomBoolean(simulation.config.trusteesAvailable))
+      }
+    val requests = availableProviders.map(x =>
+        simulation.config.request(context, x)
+      )
     if (requests.isEmpty) possibleRequests(context)
     else requests
   }
 
   override def tick(): Unit = {
     _clients = clients.map(x =>
-      Chooser.ifHappens(simulation.config.trusterLeaveLikelihood)({
+      Chooser.ifHappens(simulation.config.trustorLeaveLikelihood)({
         departedClients = x :: departedClients
         new Truster(simulation)
       })(

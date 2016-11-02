@@ -17,10 +17,14 @@ class BootSimulation(override val config: BootConfiguration) extends Simulation 
 
     network.tick()
 
-    for (client <- network.clients) {
-      Chooser.ifHappens(config.trusterParticipationLikelihood)(
-        client.tick()
-      )()
+    val participatingClients =
+      if (config.trustorParticipation > 1d) {
+        Chooser.sample(network.clients, config.trustorParticipation.toInt)
+      } else {
+        network.clients.filter(x => Chooser.randomBoolean(config.trustorParticipation))
+      }
+    for (client <- participatingClients) {
+      client.tick()
     }
 
     for (provider <- network.providers) {
