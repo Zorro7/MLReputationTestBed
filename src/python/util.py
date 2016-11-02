@@ -1,5 +1,12 @@
 import __builtin__
+import sys
 
+def justprint(s):
+    sys.stdout.write(s)
+    sys.stdout.flush()
+
+def tabout(s, maxlen):
+    return s+" "*(maxlen-len(s))
 
 def str(toprint, join='-'):
     if isinstance(toprint, tuple):
