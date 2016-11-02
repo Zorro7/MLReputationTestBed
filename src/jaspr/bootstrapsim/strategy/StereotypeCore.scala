@@ -21,19 +21,28 @@ trait StereotypeCore extends MlrCore {
   val contractStereotypes: Boolean
 
   def makeStereotypeModels(records: Seq[BootRecord],
+                           labels: Map[Provider,Double],
                            baseLearner: Classifier,
-                           makeTrainRow: BootRecord => Seq[Any]
+                           makeTrainRow: (BootRecord,Map[Provider,Double]) => Seq[Any]
                           ): Map[Client, MlrModel] = {
     records.groupBy(
       _.service.request.client
     ).mapValues(
       rs => {
-        val stereotypeObs: Seq[BootRecord] =
-          if (contractStereotypes) rs
-          else distinctBy[BootRecord,Trustee](rs, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
-        makeMlrsModel[BootRecord](stereotypeObs, baseLearner, makeTrainRow)
+        makeStereotypeModel(rs, labels, baseLearner, makeTrainRow)
       }
     )
+  }
+
+  def makeStereotypeModel(records: Seq[BootRecord],
+                          labels: Map[Provider,Double],
+                          baseLearner: Classifier,
+                          makeTrainRow: (BootRecord,Map[Provider,Double]) => Seq[Any]
+                         ): MlrModel = {
+    val stereotypeObs: Seq[BootRecord] =
+      if (contractStereotypes) records
+      else distinctBy[BootRecord,Trustee](records, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
+    makeMlrsModel[BootRecord](stereotypeObs, baseLearner, makeTrainRow(_: BootRecord, labels))
   }
 
   override def makeMlrsModel[T <: Record](records: Seq[T], baseModel: Classifier,
@@ -68,7 +77,7 @@ trait StereotypeCore extends MlrCore {
     1-Math.sqrt(sqrdiff / model.train.size.toDouble)
   }
 
-  def makeTrainRow(record: BootRecord): Seq[Any]
+  def makeTrainRow(record: BootRecord, labels: Map[Provider,Double] = Map()): Seq[Any]
 
   def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any]
 

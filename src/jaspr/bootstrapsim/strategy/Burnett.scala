@@ -99,7 +99,7 @@ class Burnett(baseLearner: Classifier,
       else Some(makeMlrsModel(directRecords, baseLearner, makeTrainRow(_: BootRecord)))
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
-      if (witnessStereotypes) makeStereotypeModels(witnessRecords, baseLearner, makeTrainRow)
+      if (witnessStereotypes) makeStereotypeModels(witnessRecords, Map(), baseLearner, makeTrainRow)
       else Map()
 
     val directStereotypeWeight: Double =
@@ -130,8 +130,8 @@ class Burnett(baseLearner: Classifier,
     )
   }
 
-  def makeTrainRow(record: BootRecord): Seq[Any] = {
-    record.rating :: adverts(record.service.request)
+  def makeTrainRow(record: BootRecord, labels: Map[Provider,Double]): Seq[Any] = {
+    labels.getOrElse(record.trustee, record.rating) :: adverts(record.service.request)
   }
 
   def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {

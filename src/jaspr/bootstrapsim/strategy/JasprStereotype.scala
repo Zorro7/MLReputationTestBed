@@ -106,10 +106,10 @@ class JasprStereotype(baseLearner: Classifier,
 
     val directStereotypeModel: Option[MlrModel] =
       if (directRecords.isEmpty) None
-      else Some(makeMlrsModel(directRecords, baseLearner, makeTrainRow))
+      else Some(makeStereotypeModel(directRecords, Map[Provider,Double](), baseLearner, makeTrainRow))
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
-      if (witnessStereotypes) makeStereotypeModels(witnessRecords, baseLearner, makeTrainRow)
+      if (witnessStereotypes) makeStereotypeModels(witnessRecords, Map[Provider,Double](), baseLearner, makeTrainRow)
       else Map()
 
     val translationModels: Map[Client,MlrModel] =
@@ -221,7 +221,7 @@ class JasprStereotype(baseLearner: Classifier,
     adverts(request)
   }
 
-  def makeTrainRow(record: BootRecord): Seq[Any] = {
+  def makeTrainRow(record: BootRecord, labels: Map[Provider,Double]): Seq[Any] = {
     record.rating :: adverts(record.service.request)
   }
 
