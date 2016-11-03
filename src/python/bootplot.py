@@ -78,7 +78,7 @@ if __name__ == "__main__":
 		title='-'.join([str(x) for x in index])
 	)
 
-	step = 10
+	step = 1
 	start = 0
 	for strategy in strategies:
 		if strategy not in expsplt:
