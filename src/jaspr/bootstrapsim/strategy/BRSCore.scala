@@ -21,8 +21,7 @@ trait BRSCore {
   }
 
   def getWitnessRecords(network: Network, context: ClientContext): Seq[BootRecord] = {
-    if (witnessWeight == 0) Nil
-    else network.gatherProvenance[BootRecord](context.client)
+    network.gatherProvenance[BootRecord](context.client)
   }
 
   def makeDirectBetas(directRecords: Seq[BootRecord]): Map[Provider,BetaDistribution] = {

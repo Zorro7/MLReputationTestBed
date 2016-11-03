@@ -21,7 +21,8 @@ class BurnettInit(context: ClientContext,
                   val directStereotypeModel: Option[MlrModel],
                   val witnessStereotypeModels: Map[Client,MlrModel],
                   val directStereotypeWeight: Double,
-                  val witnessStereotypeWeights: Map[Client,Double]
+                  val witnessStereotypeWeights: Map[Client,Double],
+                  val witnessStereotypeObs: Map[Client,Seq[Provider]]
                  ) extends BRSInit(context, directBetas, witnessBetas)
 
 class StageInit(context: ClientContext,
@@ -38,6 +39,7 @@ class JasprStereotypeInit(context: ClientContext,
                           val witnessStereotypeModels: Map[Client,MlrModel],
                           val directStereotypeWeight: Double,
                           val witnessStereotypeWeights: Map[Client,Double],
+                          val witnessStereotypeObs: Map[Client,Seq[Provider]],
                           val translationModels: Map[Client,MlrModel]
                           ) extends BRSInit(context, directBetas, witnessBetas)
 

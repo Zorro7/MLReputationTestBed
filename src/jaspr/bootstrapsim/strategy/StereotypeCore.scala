@@ -1,10 +1,11 @@
 package jaspr.bootstrapsim.strategy
 
-import jaspr.bootstrapsim.agent.{BootRecord, Trustee, Truster}
+import jaspr.bootstrapsim.agent.{BootRecord, Observations, Trustee, Truster}
 import jaspr.core.agent.{Client, FixedProperty, Property, Provider}
 import jaspr.core.provenance.Record
-import jaspr.core.service.ServiceRequest
-import jaspr.core.strategy.StrategyInit
+import jaspr.core.service.{ServiceRequest, TrustAssessment}
+import jaspr.core.strategy.{Strategy, StrategyInit}
+import jaspr.strategy.CompositionStrategy
 import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.utilities.BetaDistribution
 import weka.classifiers.{AbstractClassifier, Classifier}
@@ -16,9 +17,10 @@ import scala.collection.mutable
 /**
   * Created by phil on 06/10/16.
   */
-trait StereotypeCore extends MlrCore {
+trait StereotypeCore extends CompositionStrategy with MlrCore {
 
   val ratingStereotype: Boolean
+  val limitedObservations: Boolean
 
   def makeStereotypeModel(records: Seq[BootRecord],
                           labels: Map[Provider,Double],
@@ -88,5 +90,15 @@ trait StereotypeCore extends MlrCore {
 
   def adverts(request: ServiceRequest): List[Any] = {
     request.properties.values.map(_.value.toString).toList
+  }
+
+
+  override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
+    val requestScores: Seq[TrustAssessment] = request.flatten().map(x => compute(baseInit, request))
+    new TrustAssessment(baseInit.context, request, requestScores.map(_.trustValue).sum) with Observations {
+      override val possibleRequests: Seq[ServiceRequest] =
+        if (limitedObservations) request :: Nil
+        else baseInit.asInstanceOf[StrategyInit with Observations].possibleRequests
+    }
   }
 }

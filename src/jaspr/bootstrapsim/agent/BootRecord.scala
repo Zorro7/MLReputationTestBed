@@ -18,9 +18,10 @@ class BootRecord(override val assessment: TrustAssessment,
 
   val observations: Map[Trustee,List[Any]] = {
     assessment match {
-      case x: Observations => x.possibleRequests.map(x => {
-        x.provider.asInstanceOf[Trustee] -> x.properties.values.map(_.value.toString).toList
-      }).toMap
+      case x: Observations =>
+        (service.request :: x.possibleRequests.toList).map(x =>
+          x.provider.asInstanceOf[Trustee] -> x.properties.values.map(_.value.toString).toList
+        ).toMap
       case _ => Map(trustee -> service.request.properties.values.map(_.value.toString).toList)
     }
   }

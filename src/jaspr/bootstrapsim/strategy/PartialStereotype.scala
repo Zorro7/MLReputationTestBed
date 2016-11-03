@@ -20,28 +20,34 @@ import scala.collection.mutable
   */
 class PartialStereotype(baseLearner: Classifier,
                         override val numBins: Int,
-                        val witnessWeight: Double = 2d,
-                        val discountOpinions: Boolean = false,
+                        val _witnessWeight: Double = 2d,
                         val witnessStereotypes: Boolean = true,
-                        val weightStereotypes: Boolean = true,
                         val subjectiveStereotypes: Boolean = false,
-                        override val ratingStereotype: Boolean = false,
-                        val limitedObservations: Boolean = false,
-                        override val explorationProbability: Double = 0.1
+                        val hideTrusteeIDs: Boolean = false,
+                        override val limitedObservations: Boolean = false
                        ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
 
+
+  override val explorationProbability: Double = 0d
+  val discountOpinions: Boolean = false
+  val weightStereotypes: Boolean = false
+  val ratingStereotype: Boolean = false
 
   override val goodOpinionThreshold: Double = 0
   override val prior: Double = 0.5
   override val badOpinionThreshold: Double = 0
 
+  // If the trustee ids can't be broadcast, witnesses can't offer their witness-reputation assessments.
+  override val witnessWeight: Double = if (hideTrusteeIDs) 0d else _witnessWeight
+
   override val name: String =
-    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
+    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+"-"+explorationProbability+
       (if (discountOpinions) "-discountOpinions" else "")+
       (if (witnessStereotypes) "-witnessStereotypes" else "")+
       (if (weightStereotypes) "-weightStereotypes" else "")+
-      (if (subjectiveStereotypes) "-subjectiveStereotypes" else "")+
       (if (ratingStereotype) "-ratingStereotype" else "")+
+      (if (subjectiveStereotypes) "-subjectiveStereotypes" else "")+
+      (if (hideTrusteeIDs) "-hideTrusteeIDs" else "")+
       (if (limitedObservations) "-limitedObservations" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
@@ -74,8 +80,14 @@ class PartialStereotype(baseLearner: Classifier,
 //        0 :: objectiveStereotypeRow(x._1, request.provider)
 //      }
       val row =
-        if (subjectiveStereotypes) stereotypeTestRow(init, request)
-        else 0 :: objectiveStereotypeRow(x._1, request.provider)
+        if (subjectiveStereotypes && // doing subjectivity?
+          (hideTrusteeIDs || //can't broadcast trustee ids?
+            !init.witnessStereotypeObs.getOrElse(x._1, Nil).contains(request.provider) //witness never seen trustee?
+            )) {
+          stereotypeTestRow(init, request) //use truster-observed stereotype
+        } else {
+          0 :: objectiveStereotypeRow(x._1, request.provider) //use witness-observed stereotype
+        }
       val translatedRow = init.translationModels.get(x._1) match {
         case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList
         case None => row
@@ -93,13 +105,6 @@ class PartialStereotype(baseLearner: Classifier,
     val score = beta.belief + prior * beta.uncertainty
 
     new TrustAssessment(init.context, request, score)
-  }
-
-  override def computeAssessment(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    val requestScores: Seq[TrustAssessment] = request.flatten().map(x => compute(baseInit, request))
-    new TrustAssessment(baseInit.context, request, requestScores.map(_.trustValue).sum) with Observations {
-      override val possibleRequests: Seq[ServiceRequest] = baseInit.asInstanceOf[StrategyInit with Observations].possibleRequests
-    }
   }
 
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
@@ -122,11 +127,14 @@ class PartialStereotype(baseLearner: Classifier,
         Some(makeStereotypeModel(directRecords,labels,baseLearner,stereotypeTrainRow))
       }
 
+    val groupedWitnessRecords: Map[Client,Seq[BootRecord]] = witnessRecords.groupBy(_.service.request.client)
+
+    val witnessStereotypeObs: Map[Client,Seq[Provider]] =
+      groupedWitnessRecords.mapValues(_.flatMap(_.observations.keys))
+
     val witnessStereotypeModels: Map[Client,MlrModel] =
       if (witnessStereotypes) {
-        witnessRecords.groupBy(
-          _.service.request.client
-        ).map(wr => wr._1 -> {
+        groupedWitnessRecords.map(wr => wr._1 -> {
           val labels =
             if (ratingStereotype) Map[Provider,Double]()
             else witnessBetas.getOrElse(wr._1, Map()).mapValues(x => x.belief + prior * x.uncertainty)
@@ -164,6 +172,7 @@ class PartialStereotype(baseLearner: Classifier,
       witnessStereotypeModels,
       directStereotypeWeight,
       witnessStereotypeWeights,
+      witnessStereotypeObs,
       translationModels
     ) with Observations {
       override val possibleRequests: Seq[ServiceRequest] =

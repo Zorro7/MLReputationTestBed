@@ -1,13 +1,13 @@
 package jaspr.bootstrapsim.strategy
 
-import jaspr.bootstrapsim.agent.BootRecord
+import jaspr.bootstrapsim.agent.{BootRecord, Observations, Trustee, Truster}
 import jaspr.core.agent.{Client, Provider}
 import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
 import jaspr.strategy.betareputation.BetaCore
-import jaspr.strategy.mlr.{MlrModel, MlrCore}
+import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.strategy.{CompositionStrategy, RatingStrategy}
 import jaspr.utilities.BetaDistribution
 import jaspr.weka.classifiers.meta.MultiRegression
@@ -18,29 +18,38 @@ import weka.classifiers.Classifier
   */
 class Burnett(baseLearner: Classifier,
               override val numBins: Int,
-              val witnessWeight: Double = 2d,
-              val discountOpinions: Boolean = false,
+              _witnessWeight: Double = 2d,
               val witnessStereotypes: Boolean = true,
-              val weightStereotypes: Boolean = true,
               val subjectiveStereotypes: Boolean = false,
-              val ratingStereotype: Boolean = false,
-              override val explorationProbability: Double = 0.1
+              val hideTrusteeIDs: Boolean = false,
+              override val limitedObservations: Boolean = false
              ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
+
+
+  override val explorationProbability: Double = 0d
+  val discountOpinions: Boolean = false
+  val weightStereotypes: Boolean = false
+  val ratingStereotype: Boolean = false
+
+  // If the trustee ids can't be broadcast, witnesses can't offer their witness-reputation assessments.
+  override val witnessWeight: Double = if (hideTrusteeIDs) 0d else _witnessWeight
 
   val goodOpinionThreshold = 0.7
   val badOpinionThreshold = 0.3
   val prior = 0.5
 
   override val name: String =
-    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+
+    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+"-"+explorationProbability+
       (if (discountOpinions) "-discountOpinions" else "")+
       (if (witnessStereotypes) "-witnessStereotypes" else "")+
       (if (weightStereotypes) "-weightStereotypes" else "")+
       (if (ratingStereotype) "-ratingStereotype" else "")+
-      (if (subjectiveStereotypes) "-subjectiveStereotypes" else "")
+      (if (subjectiveStereotypes) "-subjectiveStereotypes" else "")+
+      (if (hideTrusteeIDs) "-hideTrusteeIDs" else "")+
+      (if (limitedObservations) "-limitedObservations" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    val init = baseInit.asInstanceOf[BurnettInit]
+    val init = baseInit.asInstanceOf[BurnettInit with Observations]
 
     val direct = init.directBetas.getOrElse(request.provider, new BetaDistribution(1,1)) // 1,1 for uniform
     val opinions = init.witnessBetas.values.map(
@@ -60,8 +69,14 @@ class Burnett(baseLearner: Classifier,
 
     val witnessStereotypes = init.witnessStereotypeModels.map(x => {
       val row =
-        if (subjectiveStereotypes) stereotypeTestRow(init, request)
-        else 0 :: objectiveStereotypeRow(x._1, request.provider)
+        if (subjectiveStereotypes && // doing subjectivity?
+          (hideTrusteeIDs || //can't broadcast trustee ids?
+          !init.witnessStereotypeObs.getOrElse(x._1, Nil).contains(request.provider) //witness never seen trustee?
+            )) {
+          stereotypeTestRow(init, request) //use truster-observed stereotype
+        } else {
+          0 :: objectiveStereotypeRow(x._1, request.provider) //use witness-observed stereotype
+        }
       val query = convertRowToInstance(row, x._2.attVals, x._2.train)
       val res = makePrediction(query, x._2)
       res * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
@@ -76,6 +91,7 @@ class Burnett(baseLearner: Classifier,
 
     new TrustAssessment(init.context, request, score)
   }
+
 
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
 
@@ -98,11 +114,14 @@ class Burnett(baseLearner: Classifier,
         Some(makeStereotypeModel(directRecords,labels,baseLearner,stereotypeTrainRow))
       }
 
+    val groupedWitnessRecords: Map[Client,Seq[BootRecord]] = witnessRecords.groupBy(_.service.request.client)
+
+    val witnessStereotypeObs: Map[Client,Seq[Provider]] =
+      groupedWitnessRecords.mapValues(_.flatMap(_.observations.keys))
+
     val witnessStereotypeModels: Map[Client,MlrModel] =
       if (witnessStereotypes) {
-        witnessRecords.groupBy(
-          _.service.request.client
-        ).map(wr => wr._1 -> {
+        groupedWitnessRecords.map(wr => wr._1 -> {
           val labels =
             if (ratingStereotype) Map[Provider,Double]()
             else witnessBetas.getOrElse(wr._1, Map()).mapValues(x => x.belief + prior * x.uncertainty)
@@ -135,8 +154,13 @@ class Burnett(baseLearner: Classifier,
       directStereotypeModel,
       witnessStereotypeModels,
       directStereotypeWeight,
-      witnessStereotypeWeights
-    )
+      witnessStereotypeWeights,
+      witnessStereotypeObs
+    ) with Observations {
+      override val possibleRequests: Seq[ServiceRequest] =
+        if (limitedObservations) Nil
+        else requests
+    }
   }
 
   def stereotypeTrainRow(record: BootRecord, labels: Map[Provider,Double]): Seq[Any] = {
