@@ -25,15 +25,19 @@ if __name__ == "__main__":
 	results = loadprocessed(filename)
 
 
-	strategies = [('DirectBRSDirectStereotype.res',),
-				('DirectBRS.res',),
-				('Random.res',),
-				('WitnessBRSDirectStereotype.res',),
-				('WitnessBRSObjectiveStereotype.res',),
-				('WitnessBRS.res',),
-				('WitnessBRSSubjectiveStereotype.res',),
-				('WitnessBRSWitnessStereotype1.res',),
-				('WitnessBRSWitnessStereotype2.res',),
+	strategies = [('Random.res',),
+				  ('DirectBRS.res',),
+				  ('DirectStereotype.res',),
+				  ('WitnessBRS.res',),
+				  ('WitnessStereotypeAssessObs.res',),
+				  ('WitnessStereotypeFullObs.res',),
+				  # ('WitnessStereotypeInteractObs.res',),
+				  ('WitnessStereotypePrivateIds.res',),
+				  ('TransWitnessStereotypeAssessObs.res',),
+				  # ('TransWitnessStereotypeFullObs.res',),
+				  # ('TransWitnessStereotypeInteractObs.res',),
+				  ('TransWitnessStereotypePrivateIdsAssessObs.res',),
+				  # ('TransWitnessStereotypePrivateIdsInteractObs.res',),
 				]
 
 	spltkeys = ['observability',
@@ -70,7 +74,8 @@ if __name__ == "__main__":
 		width="15cm",
 		height="10cm",
 		xlabel="\\textbf{Round}",
-		ylabel="\\textbf{Utility}"
+		ylabel="\\textbf{Utility}",
+		title='-'.join([str(x) for x in index])
 	)
 
 	step = 10
