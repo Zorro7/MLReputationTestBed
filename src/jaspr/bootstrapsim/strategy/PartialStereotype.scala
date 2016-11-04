@@ -130,7 +130,7 @@ class PartialStereotype(baseLearner: Classifier,
     val groupedWitnessRecords: Map[Client,Seq[BootRecord]] = witnessRecords.groupBy(_.service.request.client)
 
     val witnessStereotypeObs: Map[Client,Seq[Provider]] =
-      groupedWitnessRecords.mapValues(_.flatMap(_.observations.keys))
+      groupedWitnessRecords.mapValues(_.flatMap(_.observations.keys).distinct)
 
     val witnessStereotypeModels: Map[Client,MlrModel] =
       if (witnessStereotypes) {
