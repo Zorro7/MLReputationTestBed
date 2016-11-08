@@ -60,16 +60,16 @@ def coordline(x, y, xerr=None, yerr=None, df="{0:.2f}"):
     return line
 
 
-def coordinates(X, Y, Xerr=None, Yerr=None):
+def coordinates(X, Y, Xerr=None, Yerr=None, df="{0:.2f}"):
     lines = [coordinatesheader()]
     if Xerr is None and Yerr is None:
-        lines.extend([coordline(x, y) for x, y in zip(X, Y)])
+        lines.extend([coordline(x, y, df=df) for x, y in zip(X, Y)])
     elif Xerr is not None:
-        lines.extend([coordline(x, y, xerr=xerr) for x, y, xerr in zip(X, Y, Xerr)])
+        lines.extend([coordline(x, y, xerr=xerr, df=df) for x, y, xerr in zip(X, Y, Xerr)])
     elif Yerr is not None:
-        lines.extend([coordline(x, y, yerr=yerr) for x, y, yerr in zip(X, Y, Yerr)])
+        lines.extend([coordline(x, y, yerr=yerr, df=df) for x, y, yerr in zip(X, Y, Yerr)])
     else:
-        lines.extend([coordline(x, y, xerr=xerr, yerr=yerr) for x, y, xerr, yerr in zip(X, Y, Xerr, Yerr)])
+        lines.extend([coordline(x, y, xerr=xerr, yerr=yerr, df=df) for x, y, xerr, yerr in zip(X, Y, Xerr, Yerr)])
     lines.append(coordinatesfooter())
     return '\n'.join(lines)
 

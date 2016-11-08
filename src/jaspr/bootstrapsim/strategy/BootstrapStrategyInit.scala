@@ -43,3 +43,13 @@ class JasprStereotypeInit(context: ClientContext,
                           val translationModels: Map[Client,MlrModel]
                           ) extends BRSInit(context, directBetas, witnessBetas)
 
+
+class PosstrInit(context: ClientContext,
+                          directBetas: Map[Provider,BetaDistribution],
+                          witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
+                          val directStereotypeModel: Option[MlrModel],
+                          val witnessStereotypeModels: Map[Client,MlrModel],
+                          val witnessStereotypeObs: Map[Client,Seq[Provider]],
+                          val translationModels: Map[Client,MlrModel],
+                          val ratingTranslationModels: Map[Client,MlrModel]
+                         ) extends BRSInit(context, directBetas, witnessBetas)

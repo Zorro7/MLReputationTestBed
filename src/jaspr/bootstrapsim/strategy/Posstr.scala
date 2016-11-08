@@ -1,5 +1,7 @@
 package jaspr.bootstrapsim.strategy
 
+import java.util
+
 import jaspr.bootstrapsim.agent.{BootRecord, Observations, Trustee}
 import jaspr.core.agent.{Client, Provider}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
@@ -12,25 +14,26 @@ import meka.classifiers.multilabel.BR
 import weka.classifiers.{AbstractClassifier, Classifier, bayes}
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.trees.RandomForest
+import weka.core.Attribute
 
 import scala.collection.mutable
 
 /**
   * Created by phil on 27/10/16.
   */
-class PartialStereotype(baseLearner: Classifier,
-                        override val numBins: Int,
-                        val _witnessWeight: Double = 2d,
-                        val witnessStereotypes: Boolean = true,
-                        val subjectiveStereotypes: Boolean = false,
-                        val hideTrusteeIDs: Boolean = false,
-                        override val limitedObservations: Boolean = false
-                       ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
+class Posstr(baseLearner: Classifier,
+             ratingBaseLearner: Classifier,
+             override val numBins: Int,
+             val _witnessWeight: Double = 2d,
+             val witnessStereotypes: Boolean = true,
+             val subjectiveStereotypes: Boolean = false,
+             val hideTrusteeIDs: Boolean = false,
+             override val limitedObservations: Boolean = false,
+             val ratingTranslation: Boolean = false
+            ) extends CompositionStrategy with Exploration with BRSCore with StereotypeCore {
 
 
   override val explorationProbability: Double = 0d
-  val discountOpinions: Boolean = false
-  val weightStereotypes: Boolean = false
   val ratingStereotype: Boolean = false
 
   override val goodOpinionThreshold: Double = 0
@@ -42,21 +45,19 @@ class PartialStereotype(baseLearner: Classifier,
 
   override val name: String =
     this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName +"-"+witnessWeight+"-"+explorationProbability+
-      (if (discountOpinions) "-discountOpinions" else "")+
       (if (witnessStereotypes) "-witnessStereotypes" else "")+
-      (if (weightStereotypes) "-weightStereotypes" else "")+
       (if (ratingStereotype) "-ratingStereotype" else "")+
       (if (subjectiveStereotypes) "-subjectiveStereotypes" else "")+
       (if (hideTrusteeIDs) "-hideTrusteeIDs" else "")+
       (if (limitedObservations) "-limitedObservations" else "")
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
-    val init = baseInit.asInstanceOf[JasprStereotypeInit with Observations]
+    val init = baseInit.asInstanceOf[PosstrInit with Observations]
 
     val direct = init.directBetas.getOrElse(request.provider, new BetaDistribution(1,1)) // 1,1 for uniform
     val opinions = init.witnessBetas.values.map(
-      _.getOrElse(request.provider, new BetaDistribution(0,0)) // 0,0 if the witness had no information about provider
-    )
+        _.getOrElse(request.provider, new BetaDistribution(0,0)) // 0,0 if the witness had no information about provider
+      )
 
     val beta = getCombinedOpinions(direct, opinions, witnessWeight)
 
@@ -70,15 +71,6 @@ class PartialStereotype(baseLearner: Classifier,
     }
 
     val witnessStereotypes = init.witnessStereotypeModels.map(x => {
-//      val translatedRow = if (subjectiveStereotypes) {
-//        val row = stereotypeTestRow(init, request)
-//        init.translationModels.get(x._1) match {
-//          case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList
-//          case None => row
-//        }
-//      } else {
-//        0 :: objectiveStereotypeRow(x._1, request.provider)
-//      }
       val row =
         if (subjectiveStereotypes && // doing subjectivity?
           (hideTrusteeIDs || //can't broadcast trustee ids?
@@ -89,19 +81,22 @@ class PartialStereotype(baseLearner: Classifier,
           0 :: objectiveStereotypeRow(x._1, request.provider) //use witness-observed stereotype
         }
       val translatedRow = init.translationModels.get(x._1) match {
-//        case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList
         case Some(model) => 0d :: translate(row.drop(1), model).toList
         case None => row
       }
       val query = convertRowToInstance(translatedRow, x._2.attVals, x._2.train)
       val transRes = makePrediction(query, x._2)
-      transRes * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
+      init.ratingTranslationModels.get(x._1) match {
+        case None => transRes //only happens if directRecords is empty.
+        case Some(ratingTransModel) =>
+          val ratingTransQuery = convertRowToInstance(0d :: transRes :: Nil, ratingTransModel.attVals, ratingTransModel.train)
+//          println("translating", transRes, ratingTransModel.train.size, makePrediction(ratingTransQuery, ratingTransModel, discreteClass = false))
+          makePrediction(ratingTransQuery, ratingTransModel, discreteClass = false)
+      }
     })
     val witnessPrior = witnessStereotypes.sum
 
-    val witnessPriorWeight = if (weightStereotypes) init.witnessStereotypeWeights.values.sum else init.witnessStereotypeModels.size.toDouble
-
-    val prior = (directPrior + witnessPrior) / (init.directStereotypeWeight + witnessPriorWeight)
+    val prior = (directPrior + witnessPrior) / (1 + init.witnessStereotypeModels.size.toDouble)
 
     val score = beta.belief + prior * beta.uncertainty
 
@@ -114,10 +109,6 @@ class PartialStereotype(baseLearner: Classifier,
 
     val directBetas: Map[Provider,BetaDistribution] = makeDirectBetas(directRecords)
     val witnessBetas: Map[Client, Map[Provider, BetaDistribution]] = makeWitnessBetas(witnessRecords)
-
-    val weightedWitnessBetas: Map[Client, Map[Provider, BetaDistribution]] =
-      if (discountOpinions) weightWitnessBetas(witnessBetas, directBetas)
-      else witnessBetas
 
     val directStereotypeModel: Option[MlrModel] =
       if (directRecords.isEmpty) None
@@ -148,39 +139,98 @@ class PartialStereotype(baseLearner: Classifier,
       if (witnessStereotypes) makeTranslationModels(directRecords, requests, witnessRecords, baseLearner)
       else Map()
 
-    val directStereotypeWeight: Double =
-      if (weightStereotypes) directStereotypeModel match {
-        case Some(x) => computeStereotypeWeight(x, directBetas)
-        case None => 0d
-      } else {
-        1d
-      }
+    val ratingTranslationModels: Map[Client,MlrModel] =
+      if (ratingTranslation) makeRatingTranslationModels(
+        directRecords, requests, witnessRecords,
+        directStereotypeModel, witnessStereotypeModels, witnessStereotypeObs, translationModels,
+        ratingBaseLearner
+      )
+      else Map()
 
-    val witnessStereotypeWeights: Map[Client,Double] =
-      if (weightStereotypes) {
-        witnessStereotypeModels.map(sm => sm._1 ->
-          computeStereotypeWeight(sm._2,  witnessBetas(sm._1))
-        )
-      } else {
-        Map()
-      }
 
-    new JasprStereotypeInit(
+    new PosstrInit(
       context,
       directBetas,
-      weightedWitnessBetas,
+      witnessBetas,
       directStereotypeModel,
       witnessStereotypeModels,
-      directStereotypeWeight,
-      witnessStereotypeWeights,
       witnessStereotypeObs,
-      translationModels
+      translationModels,
+      ratingTranslationModels
     ) with Observations {
       override val possibleRequests: Seq[ServiceRequest] =
         if (limitedObservations) Nil
         else requests
     }
   }
+
+
+  def makeRatingTranslationModels(directRecords: Seq[BootRecord],
+                                  requests: Seq[ServiceRequest],
+                                  witnessRecords: Seq[BootRecord],
+                                  directStereotypeModel: Option[MlrModel],
+                                  witnessStereotypeModels: Map[Client,MlrModel],
+                                  witnessStereotypeObs: Map[Client,Seq[Provider]],
+                                  stereotypeTrandlationModels: Map[Client,MlrModel],
+                                  baseLearner: Classifier): Map[Client,MlrModel] = {
+    directStereotypeModel match {
+      case None => Map()
+      case Some(dirModel) =>
+        witnessStereotypeModels.map(wm => wm._1 -> {
+
+          val ratingTransTrainRows = distinctBy[BootRecord,Trustee](directRecords, _.trustee).map(drec => {
+            val directRow = stereotypeTrainRow(drec, Map()) //truster-observed stereotype
+            val witnessRow =
+              if (subjectiveStereotypes && // doing subjectivity?
+                (hideTrusteeIDs || //can't broadcast trustee ids?
+                  !witnessStereotypeObs.getOrElse(wm._1, Nil).contains(drec.trustee) //witness never seen trustee?
+                  )) {
+                directRow //use truster-observed stereotype
+              } else {
+                0 :: objectiveStereotypeRow(wm._1, drec.trustee) //use witness-observed stereotype
+              }
+            val translatedRow = stereotypeTrandlationModels.get(wm._1) match {
+              case Some(model) => 0d :: translate(witnessRow.drop(1), model).toList
+              case None => witnessRow
+            }
+            val dirQuery = convertRowToInstance(directRow, dirModel.attVals, dirModel.train)
+            val transQuery = convertRowToInstance(translatedRow, wm._2.attVals, wm._2.train)
+            val directRes = makePrediction(dirQuery, dirModel)
+            val transRes = makePrediction(transQuery, wm._2)
+            directRes :: transRes :: Nil
+          }) ++ requests.map(dreq => {
+            val directRow = 0d :: adverts(dreq) //truster-observed stereotype
+            val witnessRow =
+              if (subjectiveStereotypes && // doing subjectivity?
+                (hideTrusteeIDs || //can't broadcast trustee ids?
+                  !witnessStereotypeObs.getOrElse(wm._1, Nil).contains(dreq.provider) //witness never seen trustee?
+                  )) {
+                directRow //use truster-observed stereotype
+              } else {
+                0 :: objectiveStereotypeRow(wm._1, dreq.provider) //use witness-observed stereotype
+              }
+            val translatedRow = stereotypeTrandlationModels.get(wm._1) match {
+              case Some(model) => 0d :: translate(witnessRow.drop(1), model).toList
+              case None => directRow
+            }
+            val dirQuery = convertRowToInstance(directRow, dirModel.attVals, dirModel.train)
+            val transQuery = convertRowToInstance(translatedRow, wm._2.attVals, wm._2.train)
+            val directRes = makePrediction(dirQuery, dirModel)
+            val transRes = makePrediction(transQuery, wm._2)
+            directRes :: transRes :: Nil
+          })
+          val attVals = List.fill(ratingTransTrainRows.head.size)(mutable.Map[Any, Double]())
+          val atts = makeAtts(ratingTransTrainRows.head, attVals, classIndex = 0)
+          val train = makeInstances(atts, ratingTransTrainRows)
+          val ratingTransModel = AbstractClassifier.makeCopy(baseLearner)
+          ratingTransModel.buildClassifier(train)
+//          println(train)
+          new MlrModel(ratingTransModel, train, attVals)
+        })
+      }
+  }
+
+
   def makeTranslationModels(directRecords: Seq[BootRecord],
                             requests: Seq[ServiceRequest],
                             witnessRecords: Seq[BootRecord],
@@ -188,7 +238,7 @@ class PartialStereotype(baseLearner: Classifier,
 
     val directStereotypeObs: Map[Trustee,List[Any]] =
       (requests.map(x => x.provider.asInstanceOf[Trustee] -> makeRequestTranslation(x).toList) ++
-      directRecords.flatMap(x => x.observations)).toMap
+        directRecords.flatMap(x => x.observations)).toMap
 
     witnessRecords.groupBy(
       _.service.request.client
@@ -204,7 +254,7 @@ class PartialStereotype(baseLearner: Classifier,
 
         if (rows.isEmpty) None
         else {
-//          println("obssize: " + directStereotypeObs.size, witnessStereotypeObs.size, rows.size)
+          //          println("obssize: " + directStereotypeObs.size, witnessStereotypeObs.size, rows.size)
           val translateLearner: BR = new meka.classifiers.multilabel.BR
           translateLearner.setClassifier(new NaiveBayes())
           Some(makeTranslationModel(rows, numClasses, translateLearner))
@@ -223,10 +273,10 @@ class PartialStereotype(baseLearner: Classifier,
     val train = makeInstances(atts, doubleRows)
     train.setClassIndex(numClasses)
     val directModel = AbstractClassifier.makeCopy(baseModel)
-//    println(train)
+    //    println(train)
     //    println(directModel.getClass)
     directModel.buildClassifier(train)
-//        println(train)
+    //        println(train)
     new MlrModel(directModel, train, directAttVals)
   }
 

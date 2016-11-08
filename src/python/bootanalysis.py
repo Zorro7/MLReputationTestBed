@@ -18,18 +18,23 @@ if __name__ == "__main__":
 	results = loadprocessed(filename)
 
 
-	strategies = [('DirectBRSDirectStereotype.res',),
-				('DirectBRS.res',),
-				('Random.res',),
-				('WitnessBRSDirectStereotype.res',),
-				('WitnessBRSObjectiveStereotype.res',),
-				('WitnessBRS.res',),
-				('WitnessBRSSubjectiveStereotype.res',),
-				('WitnessBRSWitnessStereotype1.res',),
-				('WitnessBRSWitnessStereotype2.res',),
+	strategies = [('Random.res',),
+				  ('DirectBRS.res',),
+				  ('DirectStereotype.res',),
+				  ('WitnessBRS.res',),
+				  ('WitnessStereotypeAssessObs.res',),
+				  ('WitnessStereotypeFullObs.res',),
+				  ('WitnessStereotypeInteractObs.res',),
+				  ('WitnessStereotypePrivateIds.res',),
+				  ('TransWitnessStereotypeAssessObs.res',),
+				  ('TransWitnessStereotypeFullObs.res',),
+				  ('TransWitnessStereotypeInteractObs.res',),
+				  ('TransWitnessStereotypePrivateIdsAssessObs.res',),
+				  ('TransWitnessStereotypePrivateIdsInteractObs.res',),
 				]
 
-	spltkeys = ['observability',
+	spltkeys = [#'observability',
+				#'subjectivity',
 				'trustorLeaveLikelihood',
 				'trusteeLeaveLikelihood',
 				# 'numTrustees',			
@@ -42,7 +47,7 @@ if __name__ == "__main__":
 	splt = split(results, *spltkeys)
 
 	print splt.keys()
-	topspltkeys = ["subjectivity"]
+	topspltkeys = ["observability","subjectivity"]
 	topsplt = split(splt[index], *topspltkeys)
 	exps = sorted(topsplt.keys(), key=lambda x: x[0])
 	botspltkeys = ["resname"]
@@ -69,12 +74,13 @@ if __name__ == "__main__":
 		print tabout(str(strategies[topi]),40), "\t",
 		for boti in xrange(0, len(exps)):
 			if topi in meanis[boti]:
-				justprint(".")
+				justprint(" ")
 			else:
 				justprint(" ")
 			# sep = (stderrs[boti][topi]/means[boti][topi])*100
 			sep = stderrs[boti][topi]
-			print df.format(means[boti][topi]).zfill(6), "(" + df.format(sep).zfill(5) + ")",
+			# print df.format(means[boti][topi]).zfill(6), "(" + df.format(sep).zfill(5) + ")",
+			print df.format(means[boti][topi]).zfill(6),
 			if boti < len(exps) - 1:
 				print "\t",
 		print

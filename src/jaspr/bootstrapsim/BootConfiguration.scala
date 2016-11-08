@@ -38,22 +38,24 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;false)," + // all trustees observable
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false)," + // direct stereotypes
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false)," + // disclosed ids
-        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;true)," + // disclosed ids + limited obs
+        "jaspr.bootstrapsim.strategy.Posstr(weka.classifiers.trees.M5P;weka.classifiers.functions.LinearRegression;0;2d;true;true;true;false;true)," + // all trustees observable
+        "jaspr.bootstrapsim.strategy.Posstr(weka.classifiers.trees.M5P;weka.classifiers.functions.LinearRegression;0;2d;true;true;true;true;true)," + // all trustees observable
+        //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;false)," + // all trustees observable
+//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false)," + // direct stereotypes
+//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false)," + // disclosed ids
+//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;true)," + // disclosed ids + limited obs
         "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;true;false)," + // undisclosed ids
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;true;true)," + // undisclosed ids + limited obs
-        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;false;false;false)," + // all trustees observable
-        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;false;false)," + // disclosed ids
-        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;false;true)," + // disclosed ids + limited obs
+////        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;true;true)," + // undisclosed ids + limited obs
+//        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;false;false;false)," + // all trustees observable
+//        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;false;false)," + // disclosed ids
+//        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;false;true)," + // disclosed ids + limited obs
         "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;true;false)," + // undisclosed ids
         "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;true;true)," + // undisclosed ids + limited obs
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0d)," +
         "jaspr.bootstrapsim.strategy.BRS(0d;false;0d)," +
         "jaspr.strategy.NoStrategy," +
-        " --numSimulations 5 " +
-        "--numRounds 100 " +
+        " --numSimulations 3 " +
+        "--numRounds 25 " +
         "--memoryLimit 500 " +
         "--numTrustees 100 " +
         "--numTrustors 10 " +
@@ -222,8 +224,14 @@ class BootConfiguration(val _strategy: Strategy,
   }
 
   def preferences(agent: Agent): SortedMap[String,Property] = {
-    FixedProperty("a", 0.5) :: Nil
-//    Chooser.ifHappens(0.5)(FixedProperty("a", 0.1) :: Nil)(FixedProperty("a", 0.9) :: Nil)
+//    FixedProperty("a", 0.5) :: Nil
+    Chooser.select(
+      GaussianProperty("a", 0.9, 0.05) :: Nil,
+      GaussianProperty("a", 0.6, 0.15) :: Nil,
+      GaussianProperty("a", 0.4, 0.15) :: Nil,
+      GaussianProperty("a", 0.3, 0.05) :: Nil, //0.3,0
+      GaussianProperty("a", 0.5, 1) :: Nil //0.1 1
+    )
   }
 
 
