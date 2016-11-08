@@ -87,7 +87,7 @@ if __name__ == "__main__":
 		X = xrange(start, len(expsplt[strategy][0]["utilities_mean"]) + 1, step)
 		Y = expsplt[strategy][0]["utilities_mean"][start::step]
 		# start += step / len(strategies)
-		texstr += coordinates(X, Y)
+		texstr += coordinates(X, Y, df="{0:.4f}")
 	# print len(expsplt[strategy]), strategy, len(expsplt[strategy][0]["utilities_mean"])
 
 	texstr += legend([str(s[0]) for s in strategies if s in expsplt])
