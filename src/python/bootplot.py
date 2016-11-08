@@ -31,13 +31,13 @@ if __name__ == "__main__":
 				  ('WitnessBRS.res',),
 				  ('WitnessStereotypeAssessObs.res',),
 				  ('WitnessStereotypeFullObs.res',),
-				  # ('WitnessStereotypeInteractObs.res',),
+				  ('WitnessStereotypeInteractObs.res',),
 				  ('WitnessStereotypePrivateIds.res',),
 				  ('TransWitnessStereotypeAssessObs.res',),
 				  # ('TransWitnessStereotypeFullObs.res',),
-				  # ('TransWitnessStereotypeInteractObs.res',),
+				  ('TransWitnessStereotypeInteractObs.res',),
 				  ('TransWitnessStereotypePrivateIdsAssessObs.res',),
-				  # ('TransWitnessStereotypePrivateIdsInteractObs.res',),
+				  ('TransWitnessStereotypePrivateIdsInteractObs.res',),
 				]
 
 	spltkeys = ['observability',

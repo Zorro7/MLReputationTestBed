@@ -34,8 +34,8 @@ class Burnett(baseLearner: Classifier,
   // If the trustee ids can't be broadcast, witnesses can't offer their witness-reputation assessments.
   override val witnessWeight: Double = if (hideTrusteeIDs) 0d else _witnessWeight
 
-  val goodOpinionThreshold = 0.7
-  val badOpinionThreshold = 0.3
+  val goodOpinionThreshold = 0d
+  val badOpinionThreshold = 0d
   val prior = 0.5
 
   override val name: String =

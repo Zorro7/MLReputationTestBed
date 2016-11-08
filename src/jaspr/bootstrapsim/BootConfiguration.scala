@@ -49,13 +49,6 @@ object BootMultiConfiguration extends App {
         "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;false;true)," + // disclosed ids + limited obs
         "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;true;false)," + // undisclosed ids
         "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;true;true)," + // undisclosed ids + limited obs
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;0d)," + //ground truth
-//        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;true;false;false;0d)," + //SubjectivePartial
-//        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;false;0d)," + //ObjectivePartial
-//        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;true;false;true;0d)," + //SubjectiveLimited
-//        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;false;true;false;false;false;true;0d)," + //ObjectiveLimited
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;true;false;true;false;0d)," + //WitnessBRSWitnessStereotype
-//        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false;false;0d)," + //WitnessBRSDirectStereotype
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0d)," +
         "jaspr.bootstrapsim.strategy.BRS(0d;false;0d)," +
         "jaspr.strategy.NoStrategy," +
