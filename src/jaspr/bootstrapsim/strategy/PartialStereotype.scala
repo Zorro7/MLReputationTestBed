@@ -89,7 +89,8 @@ class PartialStereotype(baseLearner: Classifier,
           0 :: objectiveStereotypeRow(x._1, request.provider) //use witness-observed stereotype
         }
       val translatedRow = init.translationModels.get(x._1) match {
-        case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList
+//        case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList
+        case Some(model) => 0d :: translate(row.drop(1), model).toList
         case None => row
       }
       val query = convertRowToInstance(translatedRow, x._2.attVals, x._2.train)

@@ -12,7 +12,9 @@ class BootMarket extends Market {
     val requested = service.request.payload.asInstanceOf[BootPayload]
     val disparity = requested.quality.map(r =>
       delivered.quality.get(r._1) match {
-        case Some(d) => d.doubleValue - r._2.doubleValue
+        case Some(d) => {
+          d.doubleValue - r._2.doubleValue
+        }
         case None => 0
       }
     )
