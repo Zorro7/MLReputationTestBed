@@ -84,16 +84,15 @@ class PartialStereotype(baseLearner: Classifier,
           (hideTrusteeIDs || //can't broadcast trustee ids?
             !init.witnessStereotypeObs.getOrElse(x._1, Nil).contains(request.provider) //witness never seen trustee?
             )) {
-          stereotypeTestRow(init, request) //use truster-observed stereotype
+//          stereotypeTestRow(init, request) //use truster-observed stereotype
+          init.translationModels.get(x._1) match {
+            case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList  //translate trustor observations
+            case None => stereotypeTestRow(init, request) //no translation available? use those observed
+          }
         } else {
           0 :: objectiveStereotypeRow(x._1, request.provider) //use witness-observed stereotype
         }
-      val translatedRow = init.translationModels.get(x._1) match {
-//        case Some(model) => 0d :: translate(makeRequestTranslation(request), model).toList
-        case Some(model) => 0d :: translate(row.drop(1), model).toList
-        case None => row
-      }
-      val query = convertRowToInstance(translatedRow, x._2.attVals, x._2.train)
+      val query = convertRowToInstance(row, x._2.attVals, x._2.train)
       val transRes = makePrediction(query, x._2)
       transRes * init.witnessStereotypeWeights.getOrElse(x._1, 1d)
     })

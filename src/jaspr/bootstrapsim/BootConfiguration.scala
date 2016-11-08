@@ -38,9 +38,9 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.bootstrapsim.strategy.Posstr(weka.classifiers.trees.M5P;weka.classifiers.functions.LinearRegression;0;2d;true;true;true;false;true)," + // all trustees observable
-        "jaspr.bootstrapsim.strategy.Posstr(weka.classifiers.trees.M5P;weka.classifiers.functions.LinearRegression;0;2d;true;true;true;true;true)," + // all trustees observable
-        //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;false)," + // all trustees observable
+////        "jaspr.bootstrapsim.strategy.Posstr(weka.classifiers.trees.M5P;weka.classifiers.functions.LinearRegression;0;2d;true;true;true;false;true)," + // all trustees observable
+// //       "jaspr.bootstrapsim.strategy.Posstr(weka.classifiers.trees.M5P;weka.classifiers.functions.LinearRegression;0;2d;true;true;true;true;true)," + // all trustees observable
+        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;false)," + // all trustees observable
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false)," + // direct stereotypes
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false)," + // disclosed ids
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;true)," + // disclosed ids + limited obs
@@ -54,8 +54,8 @@ object BootMultiConfiguration extends App {
         "jaspr.bootstrapsim.strategy.BRS(2d;false;0d)," +
         "jaspr.bootstrapsim.strategy.BRS(0d;false;0d)," +
         "jaspr.strategy.NoStrategy," +
-        " --numSimulations 3 " +
-        "--numRounds 25 " +
+        " --numSimulations 5 " +
+        "--numRounds 50 " +
         "--memoryLimit 500 " +
         "--numTrustees 100 " +
         "--numTrustors 10 " +
@@ -180,7 +180,7 @@ class BootConfiguration(val _strategy: Strategy,
 //      case GaussianProperty(_,0.3,_) => (6 to 8).map(x => FixedProperty(x.toString, true)).toList
 //      case GaussianProperty(_,0.5,_) => (8 to 10).map(x => FixedProperty(x.toString, true)).toList
 //    }
-    val fullAds: SortedMap[String,Property] = (1 to 10).map(x =>
+    val fullAds: SortedMap[String,Property] = (1 to 6).map(x =>
       if (ads.contains(x.toString)) {
         ads(x.toString)
       } else {
@@ -209,7 +209,7 @@ class BootConfiguration(val _strategy: Strategy,
 ////    obs.filter(_.booleanValue).toList
 //    val samplesize = (obs.size*0.5).toInt
 //    Chooser.sample(obs, samplesize).toList
-    val obs = (1 to 10).map(x => FixedProperty(x.toString, Chooser.randomBoolean(subjectivity)))
+    val obs = (1 to 6).map(x => FixedProperty(x.toString, Chooser.randomBoolean(subjectivity)))
     Chooser.sample(obs, (obs.size*observability).toInt).toList
   }
 
@@ -224,14 +224,14 @@ class BootConfiguration(val _strategy: Strategy,
   }
 
   def preferences(agent: Agent): SortedMap[String,Property] = {
-//    FixedProperty("a", 0.5) :: Nil
-    Chooser.select(
-      GaussianProperty("a", 0.9, 0.05) :: Nil,
-      GaussianProperty("a", 0.6, 0.15) :: Nil,
-      GaussianProperty("a", 0.4, 0.15) :: Nil,
-      GaussianProperty("a", 0.3, 0.05) :: Nil, //0.3,0
-      GaussianProperty("a", 0.5, 1) :: Nil //0.1 1
-    )
+    FixedProperty("a", 0.5) :: Nil
+//    Chooser.select(
+//      GaussianProperty("a", 0.9, 0.05) :: Nil,
+//      GaussianProperty("a", 0.6, 0.15) :: Nil,
+//      GaussianProperty("a", 0.4, 0.15) :: Nil,
+//      GaussianProperty("a", 0.3, 0.05) :: Nil, //0.3,0
+//      GaussianProperty("a", 0.5, 1) :: Nil //0.1 1
+//    )
   }
 
 
