@@ -21,8 +21,8 @@ if __name__ == "__main__":
 	strategies = [('Random.res',),
 				  ('DirectBRS.res',),
   				  ('WitnessBRS.res',),
+  				  ('DirectStereotypePrivateIds.res',),
 				  ('DirectStereotype.res',),
-				  ('DirectStereotypePrivateIds.res',),
 				  ('WitnessStereotypeAssessObs.res',),
 				  ('WitnessStereotypeFullObs.res',),
 				  ('WitnessStereotypeInteractObs.res',),
@@ -34,10 +34,10 @@ if __name__ == "__main__":
 				  ('TransWitnessStereotypePrivateIdsInteractObs.res',),
 				]
 
-	spltkeys = [#'observability',
-				#'subjectivity',
+	spltkeys = [
 				'trustorLeaveLikelihood',
-				'trusteeLeaveLikelihood',
+				'trusteeLeaveLikelihood','observability',
+				'subjectivity',
 				# 'numTrustees',			
 				# 'numTrustors',
 				# 'memoryLimit',
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 	splt = split(results, *spltkeys)
 
 	print splt.keys()
-	topspltkeys = ["observability","subjectivity"]
+	topspltkeys = ["memoryLimit"]
 	topsplt = split(splt[index], *topspltkeys)
 	exps = sorted(topsplt.keys(), key=lambda x: '-'.join([str(z) for z in x]))
 	botspltkeys = ["resname"]
