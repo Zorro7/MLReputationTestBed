@@ -20,8 +20,9 @@ if __name__ == "__main__":
 
 	strategies = [('Random.res',),
 				  ('DirectBRS.res',),
+  				  ('WitnessBRS.res',),
 				  ('DirectStereotype.res',),
-				  ('WitnessBRS.res',),
+				  ('DirectStereotypePrivateIds.res',),
 				  ('WitnessStereotypeAssessObs.res',),
 				  ('WitnessStereotypeFullObs.res',),
 				  ('WitnessStereotypeInteractObs.res',),
@@ -49,7 +50,7 @@ if __name__ == "__main__":
 	print splt.keys()
 	topspltkeys = ["observability","subjectivity"]
 	topsplt = split(splt[index], *topspltkeys)
-	exps = sorted(topsplt.keys(), key=lambda x: x[0])
+	exps = sorted(topsplt.keys(), key=lambda x: '-'.join([str(z) for z in x]))
 	botspltkeys = ["resname"]
 
 	means = []
@@ -85,3 +86,34 @@ if __name__ == "__main__":
 				print "\t",
 		print
 	print
+	print
+	print "Standard deviations"
+
+	for topi in xrange(0, len(strategies)):
+		print tabout(str(strategies[topi]),40), "\t",
+		for boti in xrange(0, len(exps)):
+			if topi in meanis[boti]:
+				justprint(" ")
+			else:
+				justprint(" ")
+			# sep = (stderrs[boti][topi]/means[boti][topi])*100
+			sep = stderrs[boti][topi]
+			# print df.format(means[boti][topi]).zfill(6), "(" + df.format(sep).zfill(5) + ")",
+			print df.format(stds[boti][topi]).zfill(6),
+			if boti < len(exps) - 1:
+				print "\t",
+		print
+	print
+
+
+
+
+
+
+
+
+
+
+
+
+
