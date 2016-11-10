@@ -37,7 +37,7 @@ if __name__ == "__main__":
 				  # ('TransWitnessStereotypeAssessObs.res',),
 				  # ('TransWitnessStereotypeFullObs.res',),
 				  # ('TransWitnessStereotypeInteractObs.res',),
-				  # ('TransWitnessStereotypePrivateIdsAssessObs.res',),
+				  ('TransWitnessStereotypePrivateIdsAssessObs.res',),
 				  ('TransWitnessStereotypePrivateIdsInteractObs.res',),
 				]
 
@@ -45,17 +45,17 @@ if __name__ == "__main__":
 				'subjectivity',
 				'trustorLeaveLikelihood',
 				'trusteeLeaveLikelihood',
-				# 'numTrustees',			
+				# 'numTrustees',
 				# 'numTrustors',
 				# 'memoryLimit',
 				# 'trusteesAvailable',
 				# 'trustorParticipation',
-				# 'advisorsAvailable',			
+				# 'advisorsAvailable',
 				]
 	splt = split(results, *spltkeys)
 
 	expsplt = split(splt[index], "resname")
-	print "%", [len(expsplt[strategy]) for strategy in strategies if strategy in expsplt] 
+	print "%", [len(expsplt[strategy]) for strategy in strategies if strategy in expsplt]
 
 
 	texstr = latexheader([], [])
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 		title='-'.join([str(x) for x in index])
 	)
 
-	step = 1
+	step = 5
 	start = 0
 	for strategy in strategies:
 		if strategy not in expsplt:
