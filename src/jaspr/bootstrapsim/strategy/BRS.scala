@@ -13,9 +13,11 @@ import jaspr.utilities.BetaDistribution
   * Created by phil on 05/10/16.
   */
 class BRS(override val witnessWeight: Double = 2d,
-          discountOpinions: Boolean = false,
+
           override val explorationProbability: Double = 0.1
          ) extends CompositionStrategy with Exploration with BRSCore {
+
+  val discountOpinions: Boolean = false
 
   override val prior: Double = 0.5
 //  override val witnessWeight: Double = 3d
