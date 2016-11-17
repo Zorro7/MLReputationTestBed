@@ -21,6 +21,7 @@ object BootMultiConfiguration extends App {
     opt[Int]("memoryLimit") required() action { (x, c) => c.copy(memoryLimit = x) }
     opt[Int]("numTrustees") required() action { (x, c) => c.copy(numTrustees = x) }
     opt[Int]("numTrustors") required() action { (x, c) => c.copy(numTrustors = x) }
+    opt[Int]("numNoiseFeatures") required() action { (x, c) => c.copy(numNoiseFeatures = x) }
     opt[Double]("observability") required() action { (x, c) => c.copy(observability = x) }
     opt[Double]("subjectivity") required() action { (x, c) => c.copy(subjectivity = x) }
     opt[Double]("trusteesAvailable") required() action { (x, c) => c.copy(trusteesAvailable = x) }
@@ -38,8 +39,6 @@ object BootMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-////        "jaspr.bootstrapsim.strategy.Posstr(weka.classifiers.trees.M5P;weka.classifiers.functions.LinearRegression;0;2d;true;true;true;false;true)," + // all trustees observable
-// //       "jaspr.bootstrapsim.strategy.Posstr(weka.classifiers.trees.M5P;weka.classifiers.functions.LinearRegression;0;2d;true;true;true;true;true)," + // all trustees observable
         "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;false)," + // all trustees observable
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false)," + // direct stereotypes
 //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false)," + // disclosed ids
@@ -55,12 +54,13 @@ object BootMultiConfiguration extends App {
         "jaspr.bootstrapsim.strategy.BRS(0d;false;0d)," +
         "jaspr.strategy.NoStrategy," +
         " --numSimulations 5 " +
+        "--numNoiseFeatures 6 " +
         "--numRounds 50 " +
-        "--memoryLimit 500 " +
+        "--memoryLimit 10 " +
         "--numTrustees 100 " +
         "--numTrustors 10 " +
         "--observability 0.5 " +
-        "--subjectivity 0.25 "+
+        "--subjectivity 0.5 "+
         "--trusteesAvailable 10 " +
         "--advisorsAvailable 10 " +
         "--trustorParticipation 1 " +
@@ -85,6 +85,7 @@ case class BootMultiConfiguration(strategies: Seq[String] = Nil,
                                   memoryLimit: Int = 50,
                                   numTrustees: Int = 100,
                                   numTrustors: Int = 10,
+                                  numNoiseFeatures: Int = 0,
                                   observability: Double = 0.5,
                                   subjectivity: Double = 0.25,
                                   trusteesAvailable: Double = 0.1,
@@ -108,6 +109,7 @@ case class BootMultiConfiguration(strategies: Seq[String] = Nil,
         memoryLimit = memoryLimit,
         numTrustees = numTrustees,
         numTrustors = numTrustors,
+        numNoiseFeatures = numNoiseFeatures,
         observability = observability,
         subjectivity = subjectivity,
         trusteesAvailable = trusteesAvailable,
@@ -126,6 +128,7 @@ class BootConfiguration(val _strategy: Strategy,
                         val memoryLimit: Int,
                         numTrustees: Int,
                         numTrustors: Int,
+                        numNoiseFeatures: Int,
                         val observability: Double,
                         val subjectivity: Double,
                         val trusteesAvailable: Double,
@@ -165,6 +168,7 @@ class BootConfiguration(val _strategy: Strategy,
     )
   }
 
+
   def adverts(agent: Trustee): SortedMap[String, Property] = {
     val ads: SortedMap[String,Property] = agent.properties.head._2 match {
       case GaussianProperty(_,0.9,_) => FixedProperty("1", true) :: FixedProperty("6", true) :: Nil
@@ -186,7 +190,7 @@ class BootConfiguration(val _strategy: Strategy,
       } else {
         FixedProperty(x.toString, false)
       }
-    ).toList //++ (16 to 20).map(x => FixedProperty(x.toString, Chooser.nextBoolean)).toList
+    ).toList ++ (7 until 7+numNoiseFeatures).map(x => FixedProperty(x.toString, Chooser.nextBoolean)).toList
     fullAds
   }
 
@@ -209,7 +213,7 @@ class BootConfiguration(val _strategy: Strategy,
 ////    obs.filter(_.booleanValue).toList
 //    val samplesize = (obs.size*0.5).toInt
 //    Chooser.sample(obs, samplesize).toList
-    val obs = (1 to 6).map(x => FixedProperty(x.toString, Chooser.randomBoolean(subjectivity)))
+    val obs = (1 to 6+numNoiseFeatures).map(x => FixedProperty(x.toString, Chooser.randomBoolean(subjectivity)))
     Chooser.sample(obs, (obs.size*observability).toInt).toList
   }
 
