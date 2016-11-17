@@ -35,6 +35,7 @@ if __name__ == "__main__":
 				]
 
 	spltkeys = [
+				# 'numNoiseFeatures',
 				'advisorsAvailable',
 				'trustorLeaveLikelihood',
 				'trusteeLeaveLikelihood',
