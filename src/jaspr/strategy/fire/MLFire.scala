@@ -4,8 +4,8 @@ import jaspr.core.provenance.{RatingRecord, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.strategy.mlrs.MlrsCore
 import jaspr.strategy.CompositionStrategy
+import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.utilities.Dirichlet
 import weka.classifiers.rules.OneR
 
@@ -14,7 +14,7 @@ import scala.math._
 /**
   * Created by phil on 30/03/16.
   */
-class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with Exploration with MlrsCore {
+class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with Exploration with MlrCore {
 
   override val name = this.getClass.getSimpleName + "-" + witnessWeight
   override val numBins: Int = 10
@@ -29,11 +29,11 @@ class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with E
   val RecencyScalingFactor = -RecencyScalingPeriodToHalf / log(0.5)
 
   class MLFireInit(context: ClientContext,
-                   val directModel: MlrsModel,
-                   val witnessModel: MlrsModel
+                   val directModel: MlrModel,
+                   val witnessModel: MlrModel
                   ) extends StrategyInit(context)
 
-  override def initStrategy(network: Network, context: ClientContext) = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]) = {
     val direct = context.client.getProvenance(context.client)
     val directModel =
       if (direct.isEmpty) null

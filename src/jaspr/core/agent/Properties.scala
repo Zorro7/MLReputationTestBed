@@ -1,7 +1,7 @@
 package jaspr.core.agent
 
 import jaspr.core.service.Payload
-import jaspr.utilities.NamedEntity
+import jaspr.utilities.{Chooser, NamedEntity}
 
 import scala.collection.immutable.SortedMap
 
@@ -23,23 +23,23 @@ trait Properties {
 
 trait AdvertProperties extends Properties {
 
-  def advertProperties: SortedMap[String, Property]
+  def generalAdverts: SortedMap[String, Property]
 
-  def advert(key: String): Property = {
-    advertProperties(key)
+  def generalAdvert(key: String): Property = {
+    generalAdverts(key)
   }
 
   def payloadAdverts(payload: Payload): SortedMap[String,Property]
+
+  def payloadAdvert(payload: Payload, key: String): Property = {
+    payloadAdverts(payload)(key)
+  }
 }
 
-case class Property(override val name: String, value: AnyVal) extends NamedEntity {
+abstract class Property() extends NamedEntity {
 
-  // todo consider implementing float byte Value etc.
-  //  def floatValue: Float = value.asInstanceOf[Float]
-  //  def byteValue: Byte = value.asInstanceOf[Byte]
-  //  def shortValue: Short = value.asInstanceOf[Short]
-  //  def longValue: Long = value.asInstanceOf[Long]
-  //  def charValue: Char = value.asInstanceOf[Char]
+  def value: AnyVal
+
   def booleanValue: Boolean = {
     doubleValue > 0
   }
@@ -63,5 +63,15 @@ case class Property(override val name: String, value: AnyVal) extends NamedEntit
 
   override def toString: String = {
     super.toString + "-" + value
+  }
+}
+
+case class FixedProperty(override val name: String, override val value: AnyVal) extends Property
+
+
+case class GaussianProperty(override val name: String, mean: Double, std: Double) extends Property {
+
+  override def value: Double = {
+    Chooser.nextGaussian()*std + mean
   }
 }

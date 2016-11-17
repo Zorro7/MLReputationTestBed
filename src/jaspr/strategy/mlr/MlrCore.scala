@@ -1,4 +1,4 @@
-package jaspr.sellerssim.strategy.mlrs
+package jaspr.strategy.mlr
 
 import java.text.DecimalFormat
 import java.util
@@ -16,7 +16,7 @@ import scala.collection.mutable
 /**
   * Created by phil on 03/11/15.
   */
-trait MlrsCore extends Discretization {
+trait MlrCore extends Discretization {
 
   override val upper = 1d
   override val lower = -1d
@@ -24,14 +24,11 @@ trait MlrsCore extends Discretization {
   val classIndex: Int = 0
   lazy val discreteClass: Boolean = if (numBins <= 1) false else true
 
-  class MlrsModel(val model: Classifier,
-                  val train: Instances,
-                  val attVals: Iterable[mutable.Map[Any, Double]]
-                 )
+
 
   def makeMlrsModel[T <: Record](records: Seq[T], baseModel: Classifier,
                                  makeTrainRow: T => Seq[Any],
-                                 makeWeight: T => Double = null): MlrsModel = {
+                                 makeWeight: T => Double = null): MlrModel = {
     val rows = records.map(makeTrainRow)
     val weights = if (makeWeight == null) Nil else records.map(makeWeight)
     val directAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(rows.head.size)(mutable.Map[Any, Double]())
@@ -40,10 +37,10 @@ trait MlrsCore extends Discretization {
     val train = makeInstances(atts, doubleRows, weights)
     val directModel = AbstractClassifier.makeCopy(baseModel)
     directModel.buildClassifier(train)
-    new MlrsModel(directModel, train, directAttVals)
+    new MlrModel(directModel, train, directAttVals)
   }
 
-  def evaluateMlrsModel[T <: Record](records: Seq[T], mlrsModel: MlrsModel,
+  def evaluateMlrsModel[T <: Record](records: Seq[T], mlrsModel: MlrModel,
                                      makeTestRow: T => Seq[Any],
                                      makeWeight: T => Double = null): Iterable[Prediction] = {
     val rows = records.map(makeTestRow)
@@ -85,7 +82,7 @@ trait MlrsCore extends Discretization {
     }
   }
 
-  def makePrediction(query: Instance, model: MlrsModel, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Double = {
+  def makePrediction(query: Instance, model: MlrModel, discreteClass: Boolean = discreteClass, numBins: Int = numBins): Double = {
     if (discreteClass && numBins <= 2) {
       val dist = model.model.distributionForInstance(query)
       dist.zipWithIndex.map(x => x._1 * model.train.classAttribute().value(x._2).toDouble).sum

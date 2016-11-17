@@ -156,27 +156,29 @@ class ACMEConfiguration(val _strategy: Strategy,
     )
   }
 
-  def properties(agent: Agent): SortedMap[String, Property] = {
+  def properties(agent: Agent): SortedMap[String, FixedProperty] = {
     agent match {
       case _: Shipper =>
-        Property("Timeliness", Chooser.randomDouble(-1, 1)) ::
-          Property("Competence", Chooser.randomDouble(0, 1)) ::
-          Property("Capacity", Chooser.randomDouble(0, 1)) :: Nil
+        FixedProperty("Timeliness", Chooser.randomDouble(-1, 1)) ::
+          FixedProperty("Competence", Chooser.randomDouble(0, 1)) ::
+          FixedProperty("Capacity", Chooser.randomDouble(0, 1)) :: Nil
       case _: Refinery =>
-        Property("Rate", Chooser.randomDouble(-1, 1)) ::
-          Property("MetalPurity", Chooser.randomDouble(0, 1)) ::
-          Property("OrePurityReq", Chooser.randomDouble(0, 1)) :: Nil
+        FixedProperty("Rate", Chooser.randomDouble(-1, 1)) ::
+          FixedProperty("MetalPurity", Chooser.randomDouble(0, 1)) ::
+          FixedProperty("OrePurityReq", Chooser.randomDouble(0, 1)) :: Nil
       case _: Mine =>
-        Property("Rate", Chooser.randomDouble(-1, 1)) ::
-          Property("OreWetness", Chooser.randomDouble(0, 1)) ::
-          Property("OrePurity", Chooser.randomDouble(0, 1)) :: Nil
-      case _ => TreeMap[String, Property]()
+        FixedProperty("Rate", Chooser.randomDouble(-1, 1)) ::
+          FixedProperty("OreWetness", Chooser.randomDouble(0, 1)) ::
+          FixedProperty("OrePurity", Chooser.randomDouble(0, 1)) :: Nil
+      case _ => TreeMap[String, FixedProperty]()
     }
   }
 
-  def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
-    if (adverts) agent.properties.mapValues(x => Property(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2)))
-    else new Property("agentid", agent.id) :: Nil
+  def adverts(agent: Agent with Properties): SortedMap[String, FixedProperty] = {
+    if (adverts) agent.properties.mapValues(_ match {
+      case x: FixedProperty => FixedProperty(x.name, x.doubleValue * Chooser.randomDouble(0.5, 2))
+    })
+    else new FixedProperty("agentid", agent.id) :: Nil
     //    rawProperties.mapValues(x => x + Chooser.randomDouble(-1.5,1.5)) //todo make this more something.
 
   }

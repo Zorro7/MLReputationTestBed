@@ -4,6 +4,7 @@ import jaspr.core.agent._
 import jaspr.utilities.NamedEntity
 
 import scala.annotation.tailrec
+import scala.collection.immutable.SortedMap
 
 /**
   * Created by phil on 15/03/16.
@@ -16,8 +17,9 @@ class ServiceRequest(val client: Client,
                      val duration: Int,
                      val payload: Payload,
                      val market: Market,
+                     override val properties: SortedMap[String,Property] = Nil,
                      val dependencies: Seq[ServiceRequest] = Nil
-                    ) extends NamedEntity {
+                    ) extends NamedEntity with Properties{
 
   def flatten(): Seq[ServiceRequest] = {
     @tailrec

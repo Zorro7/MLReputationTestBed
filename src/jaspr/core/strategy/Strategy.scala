@@ -38,7 +38,7 @@ abstract class Strategy {
 
   override def toString = name
 
-  def initStrategy(network: Network, context: ClientContext): StrategyInit
+  def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit
 
   def computeAssessment(init: StrategyInit, request: ServiceRequest): TrustAssessment
 
@@ -47,7 +47,7 @@ abstract class Strategy {
   def assessReputation(network: Network, context: ClientContext): TrustAssessment = {
     val requests = network.possibleRequests(context)
     val initStart = System.currentTimeMillis()
-    val init = initStrategy(network, context)
+    val init = initStrategy(network, context, requests)
     val initEnd = System.currentTimeMillis()
     val computeStart = System.currentTimeMillis()
     val orderedProviders = rank(init, requests)

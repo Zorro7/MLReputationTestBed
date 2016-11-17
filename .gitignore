@@ -1,6 +1,9 @@
 #### JASPR stuff ####
 *.res
 results/**
+src/**/*tex
+*pdf
+**/plots/**
 
 #### EXTRA ####
 *.MF

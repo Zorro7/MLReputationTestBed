@@ -259,7 +259,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
     for (i <- 1 to numSimCapabilities) yield {
       new ProductPayload(i.toString, (1 to numTerms).map(x => {
         val y = Chooser.randomDouble(-1,1)
-        new Property(x.toString, y)
+        new FixedProperty(x.toString, y)
       }).toList)
     }
   }
@@ -286,24 +286,24 @@ class StaticSellerConfiguration(val _strategy: Strategy,
 
 
   // Properties of a provider agent
-  def properties(agent: Agent): SortedMap[String, Property] = {
-    (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1,1))).toList
+  def properties(agent: Agent): SortedMap[String, FixedProperty] = {
+    (1 to numTerms).map(x => new FixedProperty(x.toString, Chooser.randomDouble(-1,1))).toList
   }
 
   // Agent preferences - the qualities of a Payload that they want to have.
   // Rayings and Utility are computed relative to this (default to 0d if the property does not exist).
-  def preferences(agent: Client): SortedMap[String, Property] = {
-    if (usePreferences) (1 to numTerms).map(x => new Property(x.toString, Chooser.randomDouble(-1d, 1d))).toList
-    else (1 to numTerms).map(x => new Property(x.toString, 0.5)).toList
+  def preferences(agent: Client): SortedMap[String, FixedProperty] = {
+    if (usePreferences) (1 to numTerms).map(x => new FixedProperty(x.toString, Chooser.randomDouble(-1d, 1d))).toList
+    else (1 to numTerms).map(x => new FixedProperty(x.toString, 0.5)).toList
 //    else (1 to numTerms).map(x => new Property(x.toString, 0d)).toList
   }
 
-  def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
-    agent.properties.take(numAdverts).mapValues(x => Property(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d))
+  def adverts(agent: Agent with Properties): SortedMap[String, FixedProperty] = {
+    agent.properties.take(numAdverts).mapValues(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d))
   }
 
-  def adverts(payload: ProductPayload, agent: Agent with Properties): List[Property] = {
-    payload.quality.take(numAdverts).map(x => Property(x._1, (noiseRange*Chooser.randomDouble(-1,1)+x._2)/2d)).toList
+  def adverts(payload: ProductPayload, agent: Agent with Properties): List[FixedProperty] = {
+    payload.quality.take(numAdverts).map(x => FixedProperty(x._1, (noiseRange*Chooser.randomDouble(-1,1)+x._2)/2d)).toList
   }
 
 

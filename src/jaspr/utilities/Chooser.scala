@@ -10,6 +10,7 @@ object Chooser extends Random {
 
   // Selects a random value from a list (throws exception IndexOutOfBoundsException if the list is empty)
   def choose[V](items: Seq[V]): V = items(nextInt(items.size))
+  def select[V](items: V*): V = choose(items)
 
   def choose[V](items: Seq[V], likelihoods: Seq[Double]): V = {
     assert(items.size == likelihoods.size)
@@ -45,6 +46,10 @@ object Chooser extends Random {
   // Selects a random integer between a minimum (inclusive) and maximum (exclusive)
   def randomInt(minimum: Int, maximum: Int) =
   nextInt(maximum - minimum) + minimum
+
+  def randomBoolean(pTrue: Double): Boolean = {
+    nextDouble() < pTrue
+  }
 
   def bound(value: Double, lower: Double, upper: Double) = {
     Math.min(upper, Math.max(lower, value))

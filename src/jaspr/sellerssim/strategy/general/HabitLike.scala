@@ -5,21 +5,21 @@ import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord, TrustAssessme
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
-import jaspr.sellerssim.strategy.mlrs.MlrsCore
 import jaspr.strategy.CompositionStrategy
+import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.utilities.Dirichlet
 import weka.classifiers.Classifier
 
 /**
   * Created by phil on 30/06/16.
   */
-class HabitLike(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrsCore {
+class HabitLike(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrCore {
 
   override val explorationProbability: Double = 0.1
 
 
   class HabitLikeInit(context: ClientContext,
-                      val trustModel: Option[MlrsModel],
+                      val trustModel: Option[MlrModel],
                       val witnessRecords: Seq[ServiceRecord with TrustAssessmentRecord with RatingRecord],
                       val witnesses: Seq[(Client, Provider)]
                      ) extends StrategyInit(context)
@@ -28,7 +28,7 @@ class HabitLike(val baseLearner: Classifier, override val numBins: Int) extends 
     val opinions: Map[(Client, Provider), Dirichlet]
   }
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val directRecords: Seq[ServiceRecord with TrustAssessmentRecord with RatingRecord] = context.client.getProvenance(context.client)
     val witnessRecords: Seq[ServiceRecord with TrustAssessmentRecord with RatingRecord] = network.gatherProvenance(context.client)
 

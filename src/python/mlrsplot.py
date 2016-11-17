@@ -16,26 +16,26 @@ if __name__ == "__main__":
     df = "{0:.1f}"
     strategies = [
         # ('NoStrategy',),
-        # ('Fire-0.0-false',),
-        # ('Fire-0.5-false',), 
-        # ('BetaReputation-0.0',), 
-        # ('BetaReputation-0.5',),  
+        ('Fire-0.0-false',),
+        ('Fire-0.5-false',),
+        ('BetaReputation-0.0',),
+        ('BetaReputation-0.5',),
         ('Travos',),
-        ('Blade-2',), 
+        ('Blade-2',),
         ('Habit-2',),
-        ('Blade-3',), 
+        ('Blade-3',),
         ('Habit-3',),
-        ('Blade-5',), 
+        ('Blade-5',),
         ('Habit-5',),
-        ('Blade-10',), 
+        ('Blade-10',),
         ('Habit-10',),
         # ('Burnett',),
         # ('BasicML',),
         # ('FireLike',),
         # ('BasicContext-RandomForest-false',),
-        # # ('BasicContext-RandomForest-true',),
+        # ('BasicContext-RandomForest-true',),
         # ('FireLikeContext-RandomForest-false',),
-        # # ('FireLikeContext-RandomForest-true',),
+        # ('FireLikeContext-RandomForest-true',),
         # ('BasicStereotype',),
         # ('FireLikeStereotype',),
         # ('Mlrs-RandomForest-2.0-false-false-true-true',),
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         # ('Mlrs-RandomForest-0.0-false-false-true-true',),
         ('Mlrs-RandomForest-2.0-false-false-false-false',),
         # ('Mlrs-RandomForest-2.0-true-true-false-false',),
-         ('Mlrs-RandomForest-2.0-false-false-true-true',),
+         # ('Mlrs-RandomForest-2.0-false-false-true-true',),
         # ('Mlrs-RandomForest-2.0-true-false-false-false',),
         # ('Mlrs-RandomForest-2.0-false-true-false-false',),
         #  ('Mlrs-RandomForest-5.0-false-false-false-false',),
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     }
 
     splt = split(results, "memoryLimit", "numClients", "numProviders",
-                 "numTerms", "witnessRequestLikelihood", "noiseRange", 
+                 "numTerms", "witnessRequestLikelihood", "noiseRange",
                  "numPreferences", "numSimCapabilities", "providerAvailabilityLikelihood")
 
     print "%", splt.keys()
@@ -122,7 +122,7 @@ if __name__ == "__main__":
     # print index, len(splt)
 
     expsplt = split(splt, "exp")
-    print "%", [len(expsplt[strategy]) for strategy in strategies if strategy in expsplt] 
+    print "%", [len(expsplt[strategy]) for strategy in strategies if strategy in expsplt]
 
 
     texstr = latexheader([], ["spy"])
@@ -141,6 +141,8 @@ if __name__ == "__main__":
         "legend style={at={(0.1,0.9)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
         xmin="0", xmax="1000",
         ymin="-1000", ymax="2500",
+        xmin="0", xmax="250",
+        ymin="-200", ymax="1000",
         width="15cm",
         height="10cm",
         xlabel="\\textbf{Round}",
@@ -160,7 +162,7 @@ if __name__ == "__main__":
     # print len(expsplt[strategy]), strategy, len(expsplt[strategy][0]["utilities_mean"])
 
     # texstr += "\\begin{scope}"
-    # texstr += "\\spy[black,size=5.5cm] on (2.15,1.25) in node [fill=white] at (3.1,5.25);"   
+    # texstr += "\\spy[black,size=5.5cm] on (2.15,1.25) in node [fill=white] at (3.1,5.25);"
     # texstr += "\\end{scope}"
 
     texstr += legend([strategynamelookup[s[0]] for s in strategies if s in expsplt])

@@ -1,7 +1,7 @@
 package jaspr.strategy
 
 import jaspr.core.provenance.{RatingRecord, ServiceRecord}
-import jaspr.core.service.ClientContext
+import jaspr.core.service.{ServiceRequest, ClientContext}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Strategy, StrategyInit}
 
@@ -16,7 +16,7 @@ class RatingStrategyInit(context: ClientContext,
 
 trait RatingStrategy extends Strategy {
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val direct = toRatings(context.client.getProvenance(context.client))
     val witness = toRatings(network.gatherProvenance(context.client))
     new RatingStrategyInit(context, direct, witness)

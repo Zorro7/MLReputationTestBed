@@ -7,6 +7,7 @@ import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, Strategy, StrategyInit}
 import jaspr.strategy.CompositionStrategy
 import jaspr.strategy.betareputation.Travos
+import jaspr.strategy.mlr.{MlrCore, MlrModel}
 import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.bayes.NaiveBayes
@@ -26,14 +27,14 @@ class MlrsB(val baseLearner: Classifier,
             val witnessWeight: Double = 0.5d,
             val reinterpretationContext: Boolean = true,
             val useAdverts: Boolean = true
-           ) extends CompositionStrategy with Exploration with MlrsCore {
+           ) extends CompositionStrategy with Exploration with MlrCore {
 
   val numFolds: Int = 5
 
   class Mlrs2Init(
                    context: ClientContext,
-                   val trustModel: Option[MlrsModel],
-                   val reinterpretationModels: Option[Map[Client, MlrsModel]],
+                   val trustModel: Option[MlrModel],
+                   val reinterpretationModels: Option[Map[Client, MlrModel]],
                    val backupStrategyInit: Option[StrategyInit]
                  ) extends StrategyInit(context)
 
@@ -99,7 +100,7 @@ class MlrsB(val baseLearner: Classifier,
   }
 
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val directRecords: Seq[Record with ServiceRecord with RatingRecord] = context.client.getProvenance[Record with ServiceRecord with RatingRecord](context.client)
     val witnessRecords: Seq[Record with ServiceRecord with RatingRecord] = network.gatherProvenance[Record with ServiceRecord with RatingRecord](context.client)
     val witnesses = context.client :: witnessRecords.map(_.service.request.client).toSet.toList
@@ -119,7 +120,7 @@ class MlrsB(val baseLearner: Classifier,
     if (witnessRecords.isEmpty && directRecords.isEmpty) {
       new Mlrs2Init(context, None, None, None)
     } else if (useBackup) {
-      new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context)))
+      new Mlrs2Init(context, None, None, Some(backupStrategy.initStrategy(network, context, requests)))
     } else if (witnessRecords.isEmpty || directRecords.isEmpty) {
       val model = makeMlrsModel(records, baseTrustModel, makeTrainRow)
       new Mlrs2Init(context, Some(model), None, None)
@@ -135,7 +136,7 @@ class MlrsB(val baseLearner: Classifier,
   }
 
 
-  def makeReinterpretationModel(directRecords: Seq[Record with ServiceRecord with RatingRecord], witnessRecords: Seq[Record with ServiceRecord with RatingRecord], client: Client, witness: Client, model: MlrsModel): MlrsModel = {
+  def makeReinterpretationModel(directRecords: Seq[Record with ServiceRecord with RatingRecord], witnessRecords: Seq[Record with ServiceRecord with RatingRecord], client: Client, witness: Client, model: MlrModel): MlrModel = {
     val reinterpretationRows: Seq[Seq[Any]] =
     //      directRecords.map(record => makeReinterpretationRow(record, model, witness, client)) ++
     //        witnessRecords.withFilter(_.client == witness).map(record => makeReinterpretationRow(record, model, witness, client))
@@ -154,10 +155,10 @@ class MlrsB(val baseLearner: Classifier,
     val reinterpretationModel = AbstractClassifier.makeCopy(baseReinterpretationModel)
     reinterpretationModel.buildClassifier(reinterpretationTrain)
     //    println(client, witness, reinterpretationTrain, reinterpretationModel)
-    new MlrsModel(reinterpretationModel, reinterpretationTrain, reinterpretationAttVals)
+    new MlrModel(reinterpretationModel, reinterpretationTrain, reinterpretationAttVals)
   }
 
-  def makeClientReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client): Seq[Any] = {
+  def makeClientReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrModel, fromPOV: Client): Seq[Any] = {
     val row = makeTestRow(record, fromPOV)
     val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
     (if (discreteClass) discretizeDouble(record.rating) else record.rating) ::
@@ -165,7 +166,7 @@ class MlrsB(val baseLearner: Classifier,
       makeReinterpretationContext(record)
   }
 
-  def makeWitnessReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, toPOV: Client): Seq[Any] = {
+  def makeWitnessReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrModel, toPOV: Client): Seq[Any] = {
     val row = makeTestRow(record, toPOV)
     val query = convertRowToInstance(row, trustModel.attVals, trustModel.train)
     makePrediction(query, trustModel, false) ::
@@ -173,7 +174,7 @@ class MlrsB(val baseLearner: Classifier,
       makeReinterpretationContext(record)
   }
 
-  def makeReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrsModel, fromPOV: Client, toPOV: Client): Seq[Any] = {
+  def makeReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrModel, fromPOV: Client, toPOV: Client): Seq[Any] = {
     val fromRow = makeTestRow(record, fromPOV)
     val fromQuery = convertRowToInstance(fromRow, trustModel.attVals, trustModel.train)
     val toRow = makeTestRow(record, toPOV)
@@ -240,7 +241,7 @@ class MlrsB(val baseLearner: Classifier,
 
   def adverts(provider: Provider): List[Any] = {
     if (useAdverts) {
-      provider.name :: provider.advertProperties.values.map(_.value).toList
+      provider.name :: provider.generalAdverts.values.map(_.value).toList
     } else {
       provider.name :: Nil
     }

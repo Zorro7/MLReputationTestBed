@@ -32,8 +32,16 @@ class BetaDistribution(val alpha: Double = 0, val beta: Double = 0) {
     alpha / (alpha + beta)
   }
 
+  def belief(): Double = {
+    alpha / (alpha + beta + 2)
+  }
+
+  def disbelief(): Double = {
+    beta / (alpha + beta + 2)
+  }
+
   def uncertainty(): Double = {
-    1 / (alpha + beta)
+    2 / (alpha + beta + 2)
   }
 
   def numer(): Double = alpha
@@ -62,5 +70,5 @@ class BetaDistribution(val alpha: Double = 0, val beta: Double = 0) {
     )
   }
 
-  override def toString = "Beta[" + alpha + "," + beta + "]=" + expected
+  override def toString = "Beta[" + alpha + "," + beta + "]=" + belief
 }

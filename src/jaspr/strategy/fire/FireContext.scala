@@ -20,7 +20,7 @@ class FireContext(val witnessWeight: Double = 0.5, val weightRecency: Boolean = 
   val RecencyScalingFactor: Double = -RecencyScalingPeriodToHalf / log(0.5)
 
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
       val direct = toRatings(context.client.getProvenance[ServiceRecord with RatingRecord](context.client).filter(_.service.payload.name == context.payload.name))
       val witness = toRatings(network.gatherProvenance[ServiceRecord with RatingRecord](context.client).filter(_.service.payload.name == context.payload.name))
       new RatingStrategyInit(context, direct, witness)

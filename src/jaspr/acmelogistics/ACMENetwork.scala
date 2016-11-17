@@ -42,6 +42,7 @@ class ACMENetwork(val simulation: ACMESimulation) extends Network with NetworkEv
             simulation.config.defaultServiceDuration,
             context.payload,
             market,
+            Nil,
             acc
           ) :: Nil,
           depth + 1

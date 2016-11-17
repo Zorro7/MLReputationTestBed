@@ -2,7 +2,7 @@ package jaspr.acmelogistics.agent
 
 import jaspr.acmelogistics.ACMESimulation
 import jaspr.acmelogistics.service.{ACMEService, SubproviderRecord}
-import jaspr.core.agent.{Client, Property, Provider}
+import jaspr.core.agent.{Client, FixedProperty, Provider}
 import jaspr.core.service._
 
 import scala.collection.immutable.SortedMap
@@ -54,8 +54,8 @@ abstract class Subprovider(override val simulation: ACMESimulation) extends Clie
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 
-  override val properties: SortedMap[String, Property] = simulation.config.properties(this)
-  override val advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
-  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = advertProperties
+  override val properties: SortedMap[String, FixedProperty] = simulation.config.properties(this)
+  override val generalAdverts: SortedMap[String, FixedProperty] = simulation.config.adverts(this)
+  override def payloadAdverts(payload: Payload): SortedMap[String, FixedProperty] = generalAdverts
 
 }

@@ -1,6 +1,6 @@
 package jaspr.sellerssim.agent
 
-import jaspr.core.agent.{Property, Provider}
+import jaspr.core.agent.{FixedProperty, Provider}
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{Payload, Service, ServiceRequest}
 import jaspr.sellerssim.SellerSimulation
@@ -39,13 +39,13 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 
-  override val properties: SortedMap[String, Property] = simulation.config.properties(this)
-  override val advertProperties: SortedMap[String, Property] = simulation.config.adverts(this)
+  override val properties: SortedMap[String, FixedProperty] = simulation.config.properties(this)
+  override val generalAdverts: SortedMap[String, FixedProperty] = simulation.config.adverts(this)
 
   val capabilities: Map[String, ProductPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
 
-  val _payloadAdverts: Map[String,List[Property]] = capabilities.values.map(x => x.name -> simulation.config.adverts(x, this)).toMap
-  override def payloadAdverts(payload: Payload): SortedMap[String,Property] = {
+  val _payloadAdverts: Map[String,List[FixedProperty]] = capabilities.values.map(x => x.name -> simulation.config.adverts(x, this)).toMap
+  override def payloadAdverts(payload: Payload): SortedMap[String,FixedProperty] = {
     _payloadAdverts(payload.name).toList
   }
 

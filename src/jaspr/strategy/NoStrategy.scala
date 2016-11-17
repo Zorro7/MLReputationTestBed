@@ -10,7 +10,7 @@ import jaspr.utilities.Chooser
   */
 class NoStrategy extends Strategy with NoExploration {
 
-  override def initStrategy(network: Network, context: ClientContext): StrategyInit = {
+  override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     new StrategyInit(context)
   }
 
