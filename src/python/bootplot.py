@@ -62,21 +62,25 @@ if __name__ == "__main__":
 
 	texstr += tikzheader()
 	texstr += axisheader(
-		"cycle list name=color list",
+		# "cycle list name=color list",
 		# "cycle multi list={linestyles*\\nextlist red,blue,green}",
 		# "cycle multi list={red,green,black,blue \\nextlist linestyles}",
 		# "cycle list={{green,solid},{red,solid},{red,dashed},{red,dashed},{brown,solid},{brown,dashed},{brown,dotted},{black,solid},{black,dashed},{black,dotted}}",
 		# "cycle list={{red,dotted},{brown,dotted},{brown,dashed},{brown,solid},{brown,dashdotted},{red,dashed},{black,dotted},{black,dashdotted},{black,dashed},{black,solid}}",
 		# "cycle multi list={mark list\\nextlist solid,dashed}",
+		"cycle list={{red,loosely dotted},{blue,densely dotted},{green!60!black,loosely dashed},{teal,densely dashed},{violet,dashdotted},{orange,solid}}",
 		"legend columns=2",
-		"legend style={at={(0.0,0.1)},anchor=south west,/tikz/column 2/.style={column sep=5pt,}}",
-		xmin="0", xmax="250",
-		ymin="0", ymax="1",
-		width="15cm",
-		height="10cm",
-		xlabel="\\textbf{Round}",
-		ylabel="\\textbf{Utility}",
-		title='-'.join([str(x) for x in index])
+		"legend style={at={(0.9,0.15)},anchor=south east,/tikz/column 2/.style={column sep=5pt,}}",
+	#	"title=0.5-0.5-0.05-0.05",
+		"height=10cm",
+		"width=15cm",
+		"xlabel=\textbf{Round}",
+		"ylabel=\textbf{Utility}",
+		"ymax=1",
+		"xmax=250",
+		"xmin=0",
+		"ymin=0",
+		"legend columns=2"
 	)
 
 	step = 5
@@ -84,11 +88,12 @@ if __name__ == "__main__":
 	for strategy in strategies:
 		if strategy not in expsplt:
 			continue
-		texstr += plotheader("mark size=1.5")
+		texstr += plotheader("mark size=1.5","each nth point=4","error bars/.cd,y dir=both,y explicit")
 		X = xrange(start, len(expsplt[strategy][0]["utilities_mean"]) + 1, step)
 		Y = expsplt[strategy][0]["utilities_mean"][start::step]
+		Yerr = expsplt[strategy][0]["utilities_std"][start::step]
 		# start += step / len(strategies)
-		texstr += coordinates(X, Y, df="{0:.4f}")
+		texstr += coordinates(X, Y, Yerr=Yerr, df="{0:.4f}")
 	# print len(expsplt[strategy]), strategy, len(expsplt[strategy][0]["utilities_mean"])
 
 	texstr += legend([str(s[0]) for s in strategies if s in expsplt])
