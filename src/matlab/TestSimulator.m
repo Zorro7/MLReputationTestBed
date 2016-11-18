@@ -60,6 +60,8 @@ for trustee = 1:noTrustees
         % generate observations
         obs = sample(p.trustees{trustee},p.noDirectObs(truster,trustee));
         % inform truster
+        
+        %%%%%%%%%%%%% Need this function to return something like '[obs1,obs2,obs3,...]' for the truster
         p.trusters{truster} = directObserve(p.trusters{truster},trustee,obs);
     end
 end
@@ -80,6 +82,7 @@ for trustee = 1:noTrustees
         end
         % inform truster
         for truster = 1:noTrusters
+            %%%%%%%%%% Need this function to return something like 'dirichlet(a=[a,b,c,d,e,...],d=[1,2,3,4,5,...]'
             p.trusters{truster} = repReceive(p.trusters{truster},trustee,observer,reportedObs);
         end
     end
@@ -97,6 +100,4 @@ for truster = 1:noTrusters
 end
 
 [m;e]
-
-
 
