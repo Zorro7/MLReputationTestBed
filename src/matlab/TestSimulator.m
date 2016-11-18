@@ -40,17 +40,10 @@ p.trustees = trustees;
 p
 
 
-%% generate sources
-sources = cell(1,p.noSources);
-p.repSources{:} = deal(funch);
-
-p
-
-
 %% evaluate
 noTrustees   = numel(p.trustees);
 noTrusters   = numel(p.trusters);
-noRepSources = numel(p.repSources);
+noRepSources = p.noSources;
 
 
 
@@ -84,20 +77,14 @@ end
 for trustee = 1:noTrustees
     for observer = 1:noRepSources
         % generate observations
-%         dirObs = sample(p.trustees{trustee},p.noRepObs(observer,trustee))
-%         % transform observations for opinions
-%         if isa(p.repSources{observer},'function_handle')
-%             reportedObs = feval(p.repSources{observer},dirObs);
-%         else
-%             reportedObs = fheval(p.repSources{observer},dirObs);
-%         end
+        reportedObs = sample(p.trustees{trustee},p.noRepObs(observer,trustee))
         % inform truster
-        reportedObs = observations{observer+1,trustee}
+%         reportedObs = observations{observer+1,trustee}
         for truster = 1:noTrusters 
             %%%%%%%%%% Need this function to return something like 'dirichlet(a=[a,b,c,d,e,...],d=[1,2,3,4,5,...]'
             p.trusters{truster} = repReceive(p.trusters{truster},trustee,observer,reportedObs);
-            rm = p.trusters{truster}.repModels
-            rm{end}
+            rm = p.trusters{truster}.repModels;
+%             rm{end}
         end
     end
 end
