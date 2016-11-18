@@ -16,7 +16,8 @@ function t = repReceive(t,trustee,source,obs)
 %******************************************************************************
 %   Update truster's belief model for trustee/source pair.
 %******************************************************************************
-t.repModels{trustee,source} = observe(t.priorDist,obs);
+% t.repModels{trustee,source} = observe(t.priorDist,obs);
+t.repModels{trustee,source} = obs;
 
 
 

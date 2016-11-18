@@ -21,14 +21,12 @@ p
 
 
 %% truster generator
-trp.priorDist = dirichlet(5);
-trp.dirDims = 5;
-trp.repDims = 5;
-p.trusters = {dpTruster(trp)};
+p.priorDist = dirichlet(5);
+p.dirDims = 5;
+p.repDims = 5;
+p.trusters = {dpTruster(p)};
 
 p
-
-
 
 %% evaluate
 noTrustees   = p.noTrustees;
@@ -37,12 +35,24 @@ noRepSources = p.noSources;
 
 
 
-observations = cell(noRepSources + 1,noTrustees);
-observations{1,1} = [];
-observations{1,2} = [3,3,5];
-observations{1,3} = [3,1,5];
-observations{1,4} = [1,3,4];
-observations{1,5} = [4,3,4];
+% observations = cell(noRepSources + 1,noTrustees);
+% 
+% for te=1:noTrustees
+%     observations{1,te} = ceil(rand(1,p.noDirectObs(te))*5);
+%     for obs=1:noRepSources
+%         observations{obs+1,te} = ceil(rand(1,p.noRepObs(obs,te))*5);
+%     end
+% end
+% observations
+
+%%
+observations(1,1:noTrustees) = {[3,2,5,2],[5,4,1],[3,3,4],[1,3,3],[2,4,2]}
+observations(2:noRepSources+1,1:noTrustees) = ...
+            {dirichlet([2,1,1,2,2]), dirichlet([4,3,2,2,2]); ...
+            dirichlet([3,1,2,1,2]), dirichlet([4,1,1,1,2]); ...
+            dirichlet([2,1,4,1,1]), dirichlet([3,3,3,2,1]); ...
+            dirichlet([1,3,1,3,1]), dirichlet([1,1,1,1,1]); ...
+            dirichlet([2,3,1,2,1]), dirichlet([1,1,1,1,1])}'
 
 
 
@@ -66,15 +76,12 @@ end
 %% Generate trustee behaviour observations for each observer/trustee pair
 for trustee = 1:noTrustees
     for observer = 1:noRepSources
-        % generate observations
-        reportedObs = []%sample(p.trustees{trustee},p.noRepObs(observer,trustee));
+        % observe things
+        reportedObs = observations{observer+1,trustee}
         % inform truster
-%         reportedObs = observations{observer+1,trustee}
         for truster = 1:noTrusters 
             %%%%%%%%%% Need this function to return something like 'dirichlet(a=[a,b,c,d,e,...],d=[1,2,3,4,5,...]'
             p.trusters{truster} = repReceive(p.trusters{truster},trustee,observer,reportedObs);
-            rm = p.trusters{truster}.repModels;
-%             rm{end}
         end
     end
 end
@@ -84,10 +91,12 @@ end
 m = zeros(1,noTrusters);
 e = zeros(1,noTrusters); 
 
+trustee = 1;
 for truster = 1:noTrusters
-   [curM curE] = euEstimate(p.trusters{truster},1,p.utilFh);
+   [curM curE weights] = euEstimate(p.trusters{truster},trustee,p.utilFh, 1);
    m(truster) = curM;
    e(truster) = curE;
+   weights
 end
 
 [m;e]
