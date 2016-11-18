@@ -153,7 +153,7 @@ class Habit(override val numBins: Int) extends CompositionStrategy with RatingSt
     }
 
 
-    new TrustAssessment(baseInit.context, request, expval_broken)
+    new TrustAssessment(baseInit.context, request, expval)
   }
 
 }

@@ -60,13 +60,12 @@ object DynamicSellerMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-//        "jaspr.strategy.NoStrategy," +
-////        "jaspr.strategy.NoStrategy," +
+        "jaspr.strategy.NoStrategy," +
 //////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;false;false;false;false),"+
 //////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;false;false),"+
 //////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;false;false;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
-////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.RandomForest;2.0;true;true;false;false),"+
+//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;2.0;true;true;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;0.0;false;false;false;false),"+
 //////        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2),"+
 //////        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2),"+
@@ -101,17 +100,17 @@ object DynamicSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 20 --numProviders 100 " +
+        "--numClients 10 --numProviders 100 " +
         "--clientInvolvementLikelihood 1 --witnessRequestLikelihood 1 --providerAvailabilityLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 250 --networkTickInterval 1 " +
+        "--numRounds 250 --networkTickInterval 0 " +
         "--memoryLimit 250 " +
         "--numSimCapabilities 1 --numProviderCapabilities 5 " +
         "--noiseRange 2d " +
-        "--numTerms 3 --numAdverts 3 --numPreferences 0 " +
+        "--numTerms 3 --numAdverts 3 --numPreferences 3 " +
         "--providerAttrition 0.0 --clientAttrition 0").split(" ")
     } else args
-
+//  732403954
   println(argsplt.toList mkString("[", " ", "]"))
 
   parser.parse(argsplt, DynamicSellerMultiConfiguration()) match {
