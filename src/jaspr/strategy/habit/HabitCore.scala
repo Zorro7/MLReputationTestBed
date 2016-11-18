@@ -13,6 +13,7 @@ import jaspr.utilities.{Dirichlet, Discretization}
 trait HabitCore extends Discretization {
 
   class HabitInit(context: ClientContext,
+                  val witnesses: Seq[Client],
                   val trustees: Seq[Provider],
                   val priorDist: Dirichlet,
                   val directObs: Map[Provider, RowVector],

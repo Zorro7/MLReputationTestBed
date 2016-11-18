@@ -101,12 +101,12 @@ object DynamicSellerMultiConfiguration extends App {
         "--slanderWitnessLikelihood 0 " +
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
-        "--numClients 10 --numProviders 100 " +
+        "--numClients 20 --numProviders 100 " +
         "--clientInvolvementLikelihood 1 --witnessRequestLikelihood 1 --providerAvailabilityLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 250 --networkTickInterval 0 " +
+        "--numRounds 250 --networkTickInterval 1 " +
         "--memoryLimit 250 " +
-        "--numSimCapabilities 1 --numProviderCapabilities 1 " +
+        "--numSimCapabilities 1 --numProviderCapabilities 5 " +
         "--noiseRange 2d " +
         "--numTerms 3 --numAdverts 3 --numPreferences 0 " +
         "--providerAttrition 0.0 --clientAttrition 0").split(" ")
