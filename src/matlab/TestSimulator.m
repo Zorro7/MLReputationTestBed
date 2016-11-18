@@ -54,11 +54,22 @@ noRepSources = numel(p.repSources);
 
 
 
+observations = cell(noRepSources + 1,noTrustees);
+observations{1,1} = [];
+observations{1,2} = [3,3,5];
+observations{1,3} = [3,1,5];
+observations{1,4} = [1,3,4];
+observations{1,5} = [4,3,4];
+
+
+
+
 %% Generate direct observations for each tr/te pair
 for trustee = 1:noTrustees
     for truster = 1:noTrusters
         % generate observations
-        obs = sample(p.trustees{trustee},p.noDirectObs(truster,trustee));
+%         obs = sample(p.trustees{trustee},p.noDirectObs(truster,trustee))
+        obs = observations{truster,trustee}
         % inform truster
         
         %%%%%%%%%%%%% Need this function to return something like '[obs1,obs2,obs3,...]' for the truster
@@ -73,17 +84,20 @@ end
 for trustee = 1:noTrustees
     for observer = 1:noRepSources
         % generate observations
-        dirObs = sample(p.trustees{trustee},p.noRepObs(observer,trustee));
-        % transform observations for opinions
-        if isa(p.repSources{observer},'function_handle')
-            reportedObs = feval(p.repSources{observer},dirObs);
-        else
-            reportedObs = fheval(p.repSources{observer},dirObs);
-        end
+%         dirObs = sample(p.trustees{trustee},p.noRepObs(observer,trustee))
+%         % transform observations for opinions
+%         if isa(p.repSources{observer},'function_handle')
+%             reportedObs = feval(p.repSources{observer},dirObs);
+%         else
+%             reportedObs = fheval(p.repSources{observer},dirObs);
+%         end
         % inform truster
-        for truster = 1:noTrusters
+        reportedObs = observations{observer+1,trustee}
+        for truster = 1:noTrusters 
             %%%%%%%%%% Need this function to return something like 'dirichlet(a=[a,b,c,d,e,...],d=[1,2,3,4,5,...]'
             p.trusters{truster} = repReceive(p.trusters{truster},trustee,observer,reportedObs);
+            rm = p.trusters{truster}.repModels
+            rm{end}
         end
     end
 end
