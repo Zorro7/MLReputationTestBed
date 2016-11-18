@@ -28,20 +28,10 @@ p.trusters = {dpTruster(trp)};
 
 p
 
-%% trustee generator
-trustees = cell(1,p.noTrustees);
-trusteePopulation = dirichlet(5);
-for i=1:numel(trustees)   
-   params = sample(trusteePopulation);
-   trustees{i} = multinomial(params);
-end
-p.trustees = trustees;
-
-p
 
 
 %% evaluate
-noTrustees   = numel(p.trustees);
+noTrustees   = p.noTrustees;
 noTrusters   = numel(p.trusters);
 noRepSources = p.noSources;
 
@@ -77,7 +67,7 @@ end
 for trustee = 1:noTrustees
     for observer = 1:noRepSources
         % generate observations
-        reportedObs = sample(p.trustees{trustee},p.noRepObs(observer,trustee))
+        reportedObs = []%sample(p.trustees{trustee},p.noRepObs(observer,trustee));
         % inform truster
 %         reportedObs = observations{observer+1,trustee}
         for truster = 1:noTrusters 
