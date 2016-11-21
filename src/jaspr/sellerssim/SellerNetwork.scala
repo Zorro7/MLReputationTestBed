@@ -19,26 +19,6 @@ abstract class SellerNetwork extends Network with NetworkMarket {
   override def agents: Seq[Agent] = clients ++ providers
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
-//    if (simulation.config.limitClientsUntilRound > 0 && (context.client.id % simulation.config.numClients) < (simulation.config.numClients/2d)) {
-//      if (simulation.round < simulation.config.limitClientsUntilRound) {
-////        println("Specials.", context.client.name)
-//        providers.withFilter(x =>
-//          x.capableOf(context.payload, 0) && (x.id % simulation.config.numProviders) < (simulation.config.numProviders/2d)
-//        ).map(x =>
-//          new ServiceRequest(
-//            context.client, x, simulation.round, 0, context.payload, context.market
-//          )
-//        )
-//      } else {
-//        providers.withFilter(x =>
-//          x.capableOf(context.payload, 0) && (x.id % simulation.config.numProviders) >= (simulation.config.numProviders/2d)
-//        ).map(x =>
-//          new ServiceRequest(
-//            context.client, x, simulation.round, 0, context.payload, context.market
-//          )
-//        )
-//      }
-//    } else {
       providers.withFilter(
         _.capableOf(context.payload, 0)
       ).map(x =>
@@ -46,14 +26,16 @@ abstract class SellerNetwork extends Network with NetworkMarket {
           context.client, x, simulation.round, 0, context.payload, context.market
         )
       )
-//    }
   }
 
   override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
-    clients.withFilter(x =>
-//      x != agent && (x.id % simulation.config.numClients) >= (simulation.config.numClients / 2d)
-      x != agent && Chooser.nextDouble() < simulation.config.witnessRequestLikelihood
-    ).flatMap(_.getProvenance[T](agent))
+    val availableAdvisors =
+      if (simulation.config.witnessesAvailable >= 1d) {
+        Chooser.sample(clients.filter(_ != agent), simulation.config.witnessesAvailable.toInt)
+      } else {
+        clients.withFilter(_ != agent && Chooser.randomBoolean(simulation.config.witnessesAvailable))
+      }
+    availableAdvisors.flatMap(_.getProvenance[T](agent))
   }
 
   override def market: Market = new SellerMarket

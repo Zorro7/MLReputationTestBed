@@ -20,11 +20,6 @@ class SellerSimulation(val config: SellerConfiguration) extends Simulation {
     if (round % 100 == 0) println(".")
     else print(".")
 
-    network match {
-      case x: Tickable => x.tick()
-      case _ => // do nothing
-    }
-
     for (client <- network.clients) {
       Chooser.ifHappens(config.clientInvolvementLikelihood)(
         client.tick()

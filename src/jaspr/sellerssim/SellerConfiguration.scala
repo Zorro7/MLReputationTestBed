@@ -21,7 +21,7 @@ abstract class SellerConfiguration extends Configuration {
 
   override val numAgents = numClients + numProviders
 
-  def witnessRequestLikelihood: Double
+  def witnessesAvailable: Double
 
   val simcapabilities: Seq[ProductPayload]
 

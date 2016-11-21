@@ -30,7 +30,7 @@ object DynamicSellerMultiConfiguration extends App {
     opt[Int]("numRounds") required() action { (x, c) => c.copy(numRounds = x) }
     opt[Int]("numSimulations") required() action { (x, c) => c.copy(numSimulations = x) }
     opt[Double]("clientInvolvementLikelihood") required() action { (x, c) => c.copy(clientInvolvementLikelihood = x) }
-    opt[Double]("providerAvailabilityLikelihood") required() action { (x, c) => c.copy(providerAvailabilityLikelihood = x) }
+    opt[Double]("providersAvailable") required() action { (x, c) => c.copy(providersAvailable = x) }
     opt[Int]("memoryLimit") required() action { (x, c) => c.copy(memoryLimit = x) }
     opt[Int]("numClients") required() action { (x, c) => c.copy(numClients = x) }
     opt[Int]("numProviders") required() action { (x, c) => c.copy(numProviders = x) }
@@ -51,8 +51,7 @@ object DynamicSellerMultiConfiguration extends App {
     opt[Double]("slanderWitnessLikelihood") required() action { (x, c) => c.copy(slanderWitnessLikelihood = x) }
     opt[Double]("providersToPromote") required() action { (x, c) => c.copy(providersToPromote = x) }
     opt[Double]("providersToSlander") required() action { (x, c) => c.copy(providersToSlander = x) }
-    opt[Double]("witnessRequestLikelihood") required() action { (x, c) => c.copy(witnessRequestLikelihood = x) }
-    opt[Int]("networkTickInterval") required() action { (x, c) => c.copy(networkTickInterval = x) }
+    opt[Double]("witnessesAvailable") required() action { (x, c) => c.copy(witnessesAvailable = x) }
     opt[Double]("clientAttrition") required() action { (x, c) => c.copy(clientAttrition = x) }
     opt[Double]("providerAttrition") required() action { (x, c) => c.copy(providerAttrition = x) }
   }
@@ -101,9 +100,9 @@ object DynamicSellerMultiConfiguration extends App {
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
         "--numClients 10 --numProviders 100 " +
-        "--clientInvolvementLikelihood 1 --witnessRequestLikelihood 1 --providerAvailabilityLikelihood 0.1 " +
+        "--clientInvolvementLikelihood 1 --witnessesAvailable 1 --providersAvailable 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 25 --networkTickInterval 0 " +
+        "--numRounds 25 " +
         "--memoryLimit 250 " +
         "--numSimCapabilities 1 --numProviderCapabilities 5 " +
         "--noiseRange 2d " +
@@ -122,35 +121,34 @@ object DynamicSellerMultiConfiguration extends App {
 }
 
 case class DynamicSellerMultiConfiguration(
-                                           strategies: Seq[String] = Nil,
-                                           numRounds: Int = 250,
-                                           numSimulations: Int = 1,
-                                           clientInvolvementLikelihood: Double = 0.01,
-                                           providerAvailabilityLikelihood: Double = 0.1,
-                                           witnessRequestLikelihood: Double = 0.1,
-                                           memoryLimit: Int = 100,
-                                           numClients: Int = 10,
-                                           numProviders: Int = 25,
-                                           numSimCapabilities: Int = 10,
-                                           numProviderCapabilities: Int = 5,
-                                           noiseRange: Double = 1d,
-                                           numTerms: Int = 2,
-                                           numAdverts: Int = 2,
-                                           numPreferences: Int = 2,
-                                           networkTickInterval: Int = -1,
-                                           eventLikelihood: Double = 0,
-                                           eventEffects: Double = 0,
-                                           honestWitnessLikelihood: Double = 0.1,
-                                           pessimisticWitnessLikelihood: Double = 0.1,
-                                           optimisticWitnessLikelihood: Double = 0.1,
-                                           negationWitnessLikelihood: Double = 0.1,
-                                           randomWitnessLikelihood: Double = 0.1,
-                                           promotionWitnessLikelihood: Double = 0.1,
-                                           slanderWitnessLikelihood: Double = 0.1,
-                                           providersToPromote: Double = 0.1,
-                                           providersToSlander: Double = 0.1,
-                                           clientAttrition: Double = 0.0,
-                                           providerAttrition: Double = 1
+                                            strategies: Seq[String] = Nil,
+                                            numRounds: Int = 250,
+                                            numSimulations: Int = 1,
+                                            clientInvolvementLikelihood: Double = 0.01,
+                                            providersAvailable: Double = 0.1,
+                                            witnessesAvailable: Double = 0.1,
+                                            memoryLimit: Int = 100,
+                                            numClients: Int = 10,
+                                            numProviders: Int = 25,
+                                            numSimCapabilities: Int = 10,
+                                            numProviderCapabilities: Int = 5,
+                                            noiseRange: Double = 1d,
+                                            numTerms: Int = 2,
+                                            numAdverts: Int = 2,
+                                            numPreferences: Int = 2,
+                                            eventLikelihood: Double = 0,
+                                            eventEffects: Double = 0,
+                                            honestWitnessLikelihood: Double = 0.1,
+                                            pessimisticWitnessLikelihood: Double = 0.1,
+                                            optimisticWitnessLikelihood: Double = 0.1,
+                                            negationWitnessLikelihood: Double = 0.1,
+                                            randomWitnessLikelihood: Double = 0.1,
+                                            promotionWitnessLikelihood: Double = 0.1,
+                                            slanderWitnessLikelihood: Double = 0.1,
+                                            providersToPromote: Double = 0.1,
+                                            providersToSlander: Double = 0.1,
+                                            clientAttrition: Double = 0.0,
+                                            providerAttrition: Double = 1
                                          ) extends MultiConfiguration {
   override val directComparison = true
 
@@ -166,8 +164,8 @@ case class DynamicSellerMultiConfiguration(
         numRounds = numRounds,
         numSimulations = numSimulations,
         clientInvolvementLikelihood = clientInvolvementLikelihood,
-        providerAvailabilityLikelihood = providerAvailabilityLikelihood,
-        witnessRequestLikelihood = witnessRequestLikelihood,
+        providersAvailable = providersAvailable,
+        witnessesAvailable = witnessesAvailable,
         memoryLimit = memoryLimit,
         numClients = numClients,
         numProviders = numProviders,
@@ -177,7 +175,6 @@ case class DynamicSellerMultiConfiguration(
         numTerms = numTerms,
         numAdverts = numAdverts,
         numPreferences = numPreferences,
-        networkTickInterval = networkTickInterval,
         eventLikelihood = eventLikelihood,
         eventEffects = eventEffects,
         honestWitnessLikelihood = honestWitnessLikelihood,
@@ -197,34 +194,33 @@ case class DynamicSellerMultiConfiguration(
 
 
 class DynamicSellerConfiguration(val _strategy: Strategy,
-                                override val numRounds: Int,
-                                override val numSimulations: Int,
-                                override val clientInvolvementLikelihood: Double,
-                                val providerAvailabilityLikelihood: Double,
-                                override val witnessRequestLikelihood: Double,
-                                override val memoryLimit: Int,
-                                override val numClients: Int,
-                                override val numProviders: Int,
-                                val numSimCapabilities: Int,
-                                val numProviderCapabilities: Int,
-                                val noiseRange: Double,
-                                val numTerms: Int,
-                                val numAdverts: Int,
-                                val numPreferences: Int,
-                                val networkTickInterval: Int,
-                                override val eventLikelihood: Double,
-                                override val eventEffects: Double,
-                                val honestWitnessLikelihood: Double,
-                                val pessimisticWitnessLikelihood: Double,
-                                val optimisticWitnessLikelihood: Double,
-                                val negationWitnessLikelihood: Double,
-                                val randomWitnessLikelihood: Double,
-                                val promotionWitnessLikelihood: Double,
-                                val slanderWitnessLikelihood: Double,
-                                val providersToPromote: Double,
-                                val providersToSlander: Double,
-                                val clientAttrition: Double,
-                                val providerAttrition: Double
+                                 override val numRounds: Int,
+                                 override val numSimulations: Int,
+                                 override val clientInvolvementLikelihood: Double,
+                                 val providersAvailable: Double,
+                                 override val witnessesAvailable: Double,
+                                 override val memoryLimit: Int,
+                                 override val numClients: Int,
+                                 override val numProviders: Int,
+                                 val numSimCapabilities: Int,
+                                 val numProviderCapabilities: Int,
+                                 val noiseRange: Double,
+                                 val numTerms: Int,
+                                 val numAdverts: Int,
+                                 val numPreferences: Int,
+                                 override val eventLikelihood: Double,
+                                 override val eventEffects: Double,
+                                 val honestWitnessLikelihood: Double,
+                                 val pessimisticWitnessLikelihood: Double,
+                                 val optimisticWitnessLikelihood: Double,
+                                 val negationWitnessLikelihood: Double,
+                                 val randomWitnessLikelihood: Double,
+                                 val promotionWitnessLikelihood: Double,
+                                 val slanderWitnessLikelihood: Double,
+                                 val providersToPromote: Double,
+                                 val providersToSlander: Double,
+                                 val clientAttrition: Double,
+                                 val providerAttrition: Double
                                 ) extends SellerConfiguration {
 
   override def newSimulation(): Simulation = {
