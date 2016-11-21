@@ -1,6 +1,6 @@
 package jaspr.sellerssim.agent
 
-import jaspr.core.agent.{FixedProperty, Provider}
+import jaspr.core.agent.{FixedProperty, Property, Provider}
 import jaspr.core.provenance.{Provenance, Record}
 import jaspr.core.service.{Payload, Service, ServiceRequest}
 import jaspr.sellerssim.SellerSimulation
@@ -21,14 +21,16 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
   }
 
   override def affectService(service: Service): Unit = {
-    service.payload = capabilities(service.payload.name).copy()
+    val payload = capabilities(service.payload.name)
     if (Chooser.nextDouble() < simulation.config.eventLikelihood) {
-      jaspr.debug("EVENT:: Storm: ", properties.mapValues(_.doubleValue),
-        properties.mapValues(x => (x.doubleValue + simulation.config.eventEffects) / 2d))
+      jaspr.debug("EVENT:: Storm: ")
       service.serviceContext.addEvent(new SellerEvent("Storm"))
-      val payloadQuality = service.payload.asInstanceOf[ProductPayload].quality
-      service.payload = service.payload.asInstanceOf[ProductPayload].copy(
-        quality = payloadQuality.mapValues(x => FixedProperty(x.name, Chooser.bound((x.doubleValue + simulation.config.eventEffects) / 2d, -1d, 1d)))
+      service.payload = payload.copy(
+        quality = payload.quality.map(x => x._1 -> FixedProperty(x._1, Chooser.bound((x._2.doubleValue + simulation.config.eventEffects) / 2d, -1d, 1d)))
+      )
+    } else {
+      service.payload = payload.copy(
+        quality = payload.quality.map(x => x._1 -> x._2.sample)
       )
     }
   }
@@ -39,13 +41,13 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   override val memoryLimit: Int = simulation.config.memoryLimit
 
-  override val properties: SortedMap[String, FixedProperty] = simulation.config.properties(this)
-  override val generalAdverts: SortedMap[String, FixedProperty] = simulation.config.adverts(this)
+  override val properties: SortedMap[String,Property] = simulation.config.properties(this)
+  override val generalAdverts: SortedMap[String,Property] = simulation.config.adverts(this)
 
   val capabilities: Map[String, ProductPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
 
-  val _payloadAdverts: Map[String,SortedMap[String,FixedProperty]] = capabilities.values.map(x => x.name -> simulation.config.adverts(x, this)).toMap
-  override def payloadAdverts(payload: Payload): SortedMap[String,FixedProperty] = {
+  val _payloadAdverts: Map[String,SortedMap[String,Property]] = capabilities.values.map(x => x.name -> simulation.config.adverts(x, this)).toMap
+  override def payloadAdverts(payload: Payload): SortedMap[String,Property] = {
     _payloadAdverts(payload.name)
   }
 

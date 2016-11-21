@@ -33,14 +33,14 @@ abstract class SellerConfiguration extends Configuration {
 
   def memoryLimit: Int
 
-  def properties(agent: Agent): SortedMap[String, FixedProperty]
+  def properties(agent: Agent): SortedMap[String, Property]
 
-  def preferences(agent: Client): SortedMap[String, FixedProperty]
+  def preferences(agent: Client): SortedMap[String, Property]
 
   def capabilities(agent: Provider): Seq[ProductPayload]
 
-  def adverts(agent: Agent with Properties): SortedMap[String, FixedProperty]
-  def adverts(payload: ProductPayload, agent: Agent with Properties): SortedMap[String, FixedProperty]
+  def adverts(agent: Agent with Properties): SortedMap[String, Property]
+  def adverts(payload: ProductPayload, agent: Agent with Properties): SortedMap[String, Property]
 
   def clientContext(network: Network with NetworkMarket, agent: Client with Preferences, round: Int): ClientContext
 

@@ -29,13 +29,14 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
         x
       case None => throw new Exception("Request " + service.request + " not found.")
     }
-    recordProvenance(new BuyerRecord(service, assessment, rateService(service)))
+    recordProvenance(BuyerRecord(service, assessment, rateService(service)))
   }
 
 
   def rateService(service: Service): Map[String, Double] = {
     val received = service.payload.asInstanceOf[ProductPayload].quality
     val wanted = service.request.payload.asInstanceOf[ProductPayload].quality
+//    println(wanted.values, received.values)
     //    received.map(x => x._1 -> {
     //      wanted.get(x._1) match {
     //        case Some(req) => simulation.config.baseUtility - Math.abs(x._2 - req)
@@ -46,7 +47,7 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
 //      x._1 -> (simulation.config.baseUtility - Math.abs(x._2 - wanted(x._1)) + Chooser.randomDouble(-.5,.5))/2d
       x._1 -> (simulation.config.baseUtility - Math.abs(x._2.doubleValue - wanted(x._1).doubleValue))
     )
-//    println(x.values.sum/x.size, wanted, received, x)
+//    println(this, x.values.sum/x.size, wanted, received, x)
     x
   }
 

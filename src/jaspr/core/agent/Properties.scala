@@ -39,6 +39,7 @@ trait AdvertProperties extends Properties {
 abstract class Property() extends NamedEntity {
 
   def value: AnyVal
+  def sample: FixedProperty = FixedProperty(name, value)
 
   def booleanValue: Boolean = {
     doubleValue > 0
@@ -47,13 +48,13 @@ abstract class Property() extends NamedEntity {
   def doubleValue: Double = {
     value match {
       case x: Double => x.asInstanceOf[Double]
-      case x: Int => x.asInstanceOf[Int]
-      case x: Boolean => if (x.asInstanceOf[Boolean]) 1d else 0d
-      case x: Long => x.asInstanceOf[Long]
-      case x: Float => x.asInstanceOf[Float]
-      case x: Byte => x.asInstanceOf[Byte]
-      case x: Short => x.asInstanceOf[Short]
-      case x: Char => x.asInstanceOf[Char]
+      case x: Int => x
+      case x: Boolean => if (x) 1d else 0d
+      case x: Long => x
+      case x: Float => x
+      case x: Byte => x
+      case x: Short => x
+      case x: Char => x
     }
   }
 
@@ -67,7 +68,6 @@ abstract class Property() extends NamedEntity {
 }
 
 case class FixedProperty(override val name: String, override val value: AnyVal) extends Property
-
 
 case class GaussianProperty(override val name: String, mean: Double, std: Double) extends Property {
 

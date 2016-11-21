@@ -264,17 +264,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
     competency.map(c => c._1 -> {
       productProperty.get(c._1) match {
         case Some(x) =>
-          //          println(c._2.doubleValue, x.doubleValue, (c._2.doubleValue + x.doubleValue) / 2d)
-          //          (c._2.doubleValue + x.doubleValue) / 2d
-          //          addNoise((c._2.doubleValue + x.doubleValue) / 2d)
-          //          addNoise(c._2.doubleValue)
           FixedProperty(c._1, (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1))
-//                  Chooser.randomDouble(-1,1)
-        //            addNoise(x.doubleValue)
-        //          ((c._2.doubleValue+x.doubleValue) / 2d) * Chooser.randomDouble(-1,1)
-        //          (c._2.doubleValue + x.doubleValue + Chooser.randomDouble(-1,1))/3d
-        //         c._2.doubleValue
-        //        case None => c._2.doubleValue
       }
     })
   }
@@ -283,7 +273,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
   lazy override val simcapabilities: Seq[ProductPayload] = {
     for (i <- 1 to numSimCapabilities) yield {
       new ProductPayload(i.toString, (1 to numTerms).map(x => {
-        FixedProperty(x.toString, Chooser.randomDouble(-1,1))
+        GaussianProperty(x.toString, Chooser.randomDouble(-1,1), 0.1)
       }).toList)
     }
   }
@@ -299,21 +289,21 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
 
   override def clientContext(network: Network with NetworkMarket, client: Client with Preferences, round: Int) = {
     val cap = Chooser.choose(simcapabilities).copy(
-      quality = client.preferences
+      quality = client.preferences.map(x => x._1 -> x._2.sample)
     )
     new ClientContext(client, round, cap, network.market)
   }
 
-  override def properties(agent: Agent): SortedMap[String, FixedProperty] = {
-    (1 to numTerms).map(x => FixedProperty(x.toString, Chooser.randomDouble(-1d, 1d))).toList
+  override def properties(agent: Agent): SortedMap[String, Property] = {
+    (1 to numTerms).map(x => GaussianProperty(x.toString, Chooser.randomDouble(-1d, 1d), 0.1)).toList
   }
 
-  override def preferences(agent: Client): SortedMap[String, FixedProperty] = {
+  override def preferences(agent: Client): SortedMap[String, Property] = {
    if (numPreferences == 0) {
-      (1 to numTerms).map(x => FixedProperty(x.toString, 0.5)).toList
+      (1 to numTerms).map(x => GaussianProperty(x.toString, 0.5, 0.1)).toList
     } else {
       Chooser.sample(1 to numTerms, numPreferences).map(
-        x => FixedProperty(x.toString, Chooser.randomDouble(-1d, 1d))
+        x => GaussianProperty(x.toString, Chooser.randomDouble(-1d, 1d), 0.1)
       ).toList
     }
   }
@@ -323,12 +313,12 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
 //  }
 //
 //  override def adverts(payload: ProductPayload, agent: Agent with Properties): List[Property] = ???
-  def adverts(agent: Agent with Properties): SortedMap[String,FixedProperty] = {
-    agent.properties.take(numAdverts).mapValues(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d))
+  def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
+    agent.properties.take(numAdverts).values.map(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d)).toList
   }
 
-  def adverts(payload: ProductPayload, agent: Agent with Properties): SortedMap[String,FixedProperty] = {
-    payload.quality.take(numAdverts).mapValues(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d))
+  def adverts(payload: ProductPayload, agent: Agent with Properties): SortedMap[String,Property] = {
+    payload.quality.take(numAdverts).values.map(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d)).toList
   }
 
 
