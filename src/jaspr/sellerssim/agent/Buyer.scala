@@ -44,7 +44,7 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
     //    })
     val x = received.withFilter(x => wanted.contains(x._1)).map(x =>
 //      x._1 -> (simulation.config.baseUtility - Math.abs(x._2 - wanted(x._1)) + Chooser.randomDouble(-.5,.5))/2d
-      x._1 -> (simulation.config.baseUtility - Math.abs(x._2 - wanted(x._1)))
+      x._1 -> (simulation.config.baseUtility - Math.abs(x._2.doubleValue - wanted(x._1).doubleValue))
     )
 //    println(x.values.sum/x.size, wanted, received, x)
     x

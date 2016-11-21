@@ -28,7 +28,7 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
       service.serviceContext.addEvent(new SellerEvent("Storm"))
       val payloadQuality = service.payload.asInstanceOf[ProductPayload].quality
       service.payload = service.payload.asInstanceOf[ProductPayload].copy(
-        quality = payloadQuality.mapValues(x => Chooser.bound((x + simulation.config.eventEffects) / 2d, -1d, 1d))
+        quality = payloadQuality.mapValues(x => FixedProperty(x.name, Chooser.bound((x.doubleValue + simulation.config.eventEffects) / 2d, -1d, 1d)))
       )
     }
   }
@@ -44,9 +44,9 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
 
   val capabilities: Map[String, ProductPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
 
-  val _payloadAdverts: Map[String,List[FixedProperty]] = capabilities.values.map(x => x.name -> simulation.config.adverts(x, this)).toMap
+  val _payloadAdverts: Map[String,SortedMap[String,FixedProperty]] = capabilities.values.map(x => x.name -> simulation.config.adverts(x, this)).toMap
   override def payloadAdverts(payload: Payload): SortedMap[String,FixedProperty] = {
-    _payloadAdverts(payload.name).toList
+    _payloadAdverts(payload.name)
   }
 
   override def capableOf(payload: Payload, duration: Int): Boolean = {

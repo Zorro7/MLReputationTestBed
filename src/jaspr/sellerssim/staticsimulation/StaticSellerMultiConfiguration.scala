@@ -233,7 +233,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
     (x + Chooser.randomDouble(-1, 1)*noiseRange) / 2d
   }
 
-  def addNoise(competency: SortedMap[String,Property], productProperty: SortedMap[String,Property]): SortedMap[String,Double] = {
+  def addNoise(competency: SortedMap[String,Property], productProperty: SortedMap[String,Property]): SortedMap[String,Property] = {
     competency.map(c => c._1 -> {
       productProperty.get(c._1) match {
         case Some(x) =>
@@ -241,7 +241,7 @@ class StaticSellerConfiguration(val _strategy: Strategy,
 //          (c._2.doubleValue + x.doubleValue) / 2d
 //          addNoise((c._2.doubleValue + x.doubleValue) / 2d)
 //          addNoise(c._2.doubleValue)
-          (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1)
+          FixedProperty(c._1, (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1))
 //          Chooser.randomDouble(-1,1)
 //            addNoise(x.doubleValue)
 //          ((c._2.doubleValue+x.doubleValue) / 2d) * Chooser.randomDouble(-1,1)
@@ -270,16 +270,13 @@ class StaticSellerConfiguration(val _strategy: Strategy,
     caps = caps.map(c => c.copy(
       quality = addNoise(provider.properties, c.properties)
     ))
-//    println(caps)
     caps
   }
 
   // Context generation with required payload
   def clientContext(network: Network with NetworkMarket, client: Client with Preferences, round: Int) = {
     val cap = Chooser.choose(simcapabilities).copy(
-      quality = client.preferences.map(x =>
-        x._1 -> x._2.doubleValue
-      )
+      quality = client.preferences
     )
     new ClientContext(client, round, cap, network.market)
   }
@@ -302,8 +299,8 @@ class StaticSellerConfiguration(val _strategy: Strategy,
     agent.properties.take(numAdverts).mapValues(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d))
   }
 
-  def adverts(payload: ProductPayload, agent: Agent with Properties): List[FixedProperty] = {
-    payload.quality.take(numAdverts).map(x => FixedProperty(x._1, (noiseRange*Chooser.randomDouble(-1,1)+x._2)/2d)).toList
+  def adverts(payload: ProductPayload, agent: Agent with Properties): SortedMap[String, FixedProperty] = {
+    payload.quality.take(numAdverts).mapValues(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d))
   }
 
 
