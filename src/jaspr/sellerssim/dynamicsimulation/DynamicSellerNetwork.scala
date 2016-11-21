@@ -24,7 +24,7 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
   private var departedProviders: List[Seller] = Nil
 
   override def utility(): Double = {
-    (clients.map(_.utility).sum + departedClients.map(_.utility).sum) / (simulation.round * clients.size)
+    clients.map(_.utility).sum + departedClients.map(_.utility).sum
   }
 
   override def clients: Seq[Buyer] = _clients

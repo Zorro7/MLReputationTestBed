@@ -60,10 +60,7 @@ object DynamicSellerMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
         "jaspr.strategy.NoStrategy," +
-//////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;false;false;false;false),"+
-//////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;2.0;true;true;false;false),"+
-//////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0.0;false;false;false;false),"+
-//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
+        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;2.0;true;true;false;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;0.0;false;false;false;false),"+
 //////        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2),"+
@@ -74,21 +71,21 @@ object DynamicSellerMultiConfiguration extends App {
 //        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
 //        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
 //        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
-////        //        "jaspr.strategy.fire.Fire(0.0;true)," +
-////        ////        "jaspr.strategy.fire.FireContext(0.0;false)," +
-////        ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
-//        "jaspr.strategy.fire.Fire(0.5;false)," +
-//        "jaspr.strategy.fire.Fire(0.0;false)," +
+////                "jaspr.strategy.fire.Fire(0.0;true)," +
+//        ////        "jaspr.strategy.fire.FireContext(0.0;false)," +
+//        ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
+        "jaspr.strategy.fire.Fire(0.5;false)," +
+        "jaspr.strategy.fire.Fire(0.0;false)," +
 //////        //        "jaspr.strategy.fire.Fire(0.5;true)," +
-//                "jaspr.strategy.betareputation.BetaReputation(0.5)," +
-//        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
+        "jaspr.strategy.betareputation.BetaReputation(0.5)," +
+        "jaspr.strategy.betareputation.BetaReputation(0.0)," +
 //////        //                "jaspr.strategy.betareputation.BetaReputation(1d)," +
         "jaspr.strategy.habit.Habit(2),"+
         "jaspr.strategy.betareputation.Travos," +
 //        "jaspr.strategy.blade.Blade(2)," +
 //        "jaspr.strategy.stereotype.Burnett(false),"+
 //        "jaspr.strategy.stereotype.Burnett(true),"+
-        " --numSimulations 1 " +
+        " --numSimulations 5 " +
         "--eventLikelihood 0 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -102,12 +99,12 @@ object DynamicSellerMultiConfiguration extends App {
         "--numClients 10 --numProviders 100 " +
         "--clientInvolvementLikelihood 1 --witnessesAvailable 1 --providersAvailable 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 25 " +
+        "--numRounds 250 " +
         "--memoryLimit 250 " +
-        "--numSimCapabilities 1 --numProviderCapabilities 5 " +
-        "--noiseRange 2d " +
+        "--numSimCapabilities 5 --numProviderCapabilities 5 " +
+        "--noiseRange 1d " +
         "--numTerms 3 --numAdverts 3 --numPreferences 3 " +
-        "--providerAttrition 0.0 --clientAttrition 0").split(" ")
+        "--providerAttrition 0 --clientAttrition 0").split(" ")
     } else args
 //  732403954
   println(argsplt.toList mkString("[", " ", "]"))
@@ -256,15 +253,11 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
     )
   }
 
-//  def addNoise(x: Double): Double = {
-//    (x + noiseRange*Chooser.randomDouble(-1, 1)) / 2
-//  }
-
   def addNoise(competency: SortedMap[String,Property], productProperty: SortedMap[String,Property]): SortedMap[String,Property] = {
     competency.map(c => c._1 -> {
       productProperty.get(c._1) match {
         case Some(x) =>
-          FixedProperty(c._1, (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1))
+          GaussianProperty(c._1, (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1), 0.1)
       }
     })
   }
@@ -300,7 +293,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
 
   override def preferences(agent: Client): SortedMap[String, Property] = {
    if (numPreferences == 0) {
-      (1 to numTerms).map(x => GaussianProperty(x.toString, 0.5, 0.1)).toList
+      (1 to numTerms).map(x => FixedProperty(x.toString, 0.5)).toList
     } else {
       Chooser.sample(1 to numTerms, numPreferences).map(
         x => GaussianProperty(x.toString, Chooser.randomDouble(-1d, 1d), 0.1)
