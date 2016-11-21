@@ -32,7 +32,7 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
 
   override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
     val availableAdvisors =
-      if (simulation.config.advisorsAvailable > 1d) {
+      if (simulation.config.advisorsAvailable >= 1d) {
         Chooser.sample(clients.filter(_ != agent), simulation.config.advisorsAvailable.toInt)
       } else {
         clients.withFilter(_ != agent && Chooser.randomBoolean(simulation.config.advisorsAvailable))
@@ -43,7 +43,7 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     val availableProviders =
-      if (simulation.config.trusteesAvailable > 1d) {
+      if (simulation.config.trusteesAvailable >= 1d) {
         Chooser.sample(providers.filter(_.capableOf(context.payload, 0)), simulation.config.trusteesAvailable.toInt)
       } else {
         providers.withFilter(_.capableOf(context.payload, 0) && Chooser.randomBoolean(simulation.config.trusteesAvailable))

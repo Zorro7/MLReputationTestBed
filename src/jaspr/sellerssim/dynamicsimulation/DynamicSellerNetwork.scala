@@ -34,7 +34,7 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     val availableProviders =
-      if (simulation.config.providersAvailable > 1d) {
+      if (simulation.config.providersAvailable >= 1d) {
         Chooser.sample(providers.filter(_.capableOf(context.payload, 0)), simulation.config.providersAvailable.toInt)
       } else {
         providers.withFilter(_.capableOf(context.payload, 0) && Chooser.randomBoolean(simulation.config.providersAvailable))
