@@ -26,7 +26,10 @@ trait HabitCore extends Discretization {
   }
 
   def getDirectObs(directRatings: Seq[Rating]): Map[Provider, RowVector] = {
-    directRatings.groupBy(_.provider).mapValues(_.map(x => discretizeDouble(x.rating)))
+//    directRatings.groupBy(_.provider).mapValues(_.map(x => discretizeDouble(x.rating)))
+    directRatings.groupBy(_.provider).map(x => x._1 ->
+      new RowVector(x._2.map(r => discretizeDouble(r.rating)))
+    )
   }
 
   def getRepModels(witnessReports: Seq[Rating],

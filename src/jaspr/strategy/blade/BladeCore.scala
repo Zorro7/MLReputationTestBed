@@ -36,7 +36,10 @@ trait BladeCore extends Discretization {
     //    val provratings: Map[AbstractAgent,List[Rating]] = directRatings.groupBy(_.provider)
     //    val asdf: Map[AbstractAgent, Map[Double, Int]] = provratings.mapValues(x => x.groupBy(y => discretize(y.rating)).mapValues(_.size+1))
     //    val out = asdf.mapValues(x => new Dirichlet((0 until numbins).map(y => x.getOrElse(y, 1).toDouble)))
-    directRatings.groupBy(_.provider).mapValues(x => prior.observe(x.map(y => discretizeDouble(y.rating))))
+//    directRatings.groupBy(_.provider).mapValues(x => prior.observe(x.map(y => discretizeDouble(y.rating))))
+    directRatings.groupBy(_.provider).map(x => x._1 ->
+      prior.observe(x._2.map(y => discretizeDouble(y.rating)))
+    )
   }
 
   def getRepModels(witnessReports: Seq[Rating],

@@ -308,11 +308,6 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
     }
   }
 
-//  override def adverts(agent: Agent with Properties): SortedMap[String, Property] = {
-//    Chooser.sample(agent.properties, numAdverts).map(x => Property(x._2.name, addNoise(x._2.doubleValue))).toList
-//  }
-//
-//  override def adverts(payload: ProductPayload, agent: Agent with Properties): List[Property] = ???
   def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
     agent.properties.take(numAdverts).values.map(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(-1,1)+x.doubleValue)/2d)).toList
   }
