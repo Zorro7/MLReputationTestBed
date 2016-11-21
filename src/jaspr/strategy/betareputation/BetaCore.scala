@@ -15,8 +15,8 @@ trait BetaCore {
   def makeWitnessBetaDistribution(ratings: Iterable[Rating]): Map[Client, BetaDistribution] = {
     ratings.groupBy(x =>
       x.client // group by witness agent
-    ).mapValues[BetaDistribution](x =>
-      makeBetaDistribution(x.map(y => y.success))
+    ).map(x => x._1 ->
+      makeBetaDistribution(x._2.map(y => y.success))
     )
   }
 
