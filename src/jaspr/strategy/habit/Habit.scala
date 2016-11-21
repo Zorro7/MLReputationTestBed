@@ -84,7 +84,7 @@ class Habit(override val numBins: Int) extends CompositionStrategy with RatingSt
     def minusMax(weights: RowVector) = weights @- weights.max
     //weights = weights - log(sum(exp(weights)));
     def minusLogSumExp(weights: RowVector) = weights @- Math.log(weights.exp.sum)
-    def minusLogSumExp_broken(weights: RowVector) = weights @- weights.exp.log.sum
+//    def minusLogSumExp_broken(weights: RowVector) = weights @- weights.exp.log.sum
     //weights = exp(weights) ./ sum(exp(weights)); % too be sure
     def expDivSumExp(weights: RowVector) = weights.exp @/ weights.exp.sum
 
