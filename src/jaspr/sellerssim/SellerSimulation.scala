@@ -17,6 +17,9 @@ class SellerSimulation(val config: SellerConfiguration) extends Simulation {
   override val network: Network with NetworkMarket = config.network(this)
 
   override def act(): Result = {
+    if (round % 100 == 0) println(".")
+    else print(".")
+
     network match {
       case x: Tickable => x.tick()
       case _ => // do nothing

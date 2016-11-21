@@ -103,7 +103,7 @@ object DynamicSellerMultiConfiguration extends App {
         "--numClients 10 --numProviders 100 " +
         "--clientInvolvementLikelihood 1 --witnessRequestLikelihood 1 --providerAvailabilityLikelihood 0.1 " +
         "--eventEffects 0 " +
-        "--numRounds 250 --networkTickInterval 0 " +
+        "--numRounds 25 --networkTickInterval 0 " +
         "--memoryLimit 250 " +
         "--numSimCapabilities 1 --numProviderCapabilities 5 " +
         "--noiseRange 2d " +

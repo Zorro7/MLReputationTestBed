@@ -113,15 +113,15 @@ class Habit(override val numBins: Int) extends CompositionStrategy with RatingSt
 
 //    println("--")
     val normWeights = expDivSumExp(minusLogSumExp(minusMax(weights)))
-    val normWeights_broken = expDivSumExp(minusLogSumExp_broken(minusMax(weights)))
+//    val normWeights_broken = expDivSumExp(minusLogSumExp_broken(minusMax(weights)))
 
     // Calculate the expected utility and standard error according to each individual component.
     val expval = (normWeights @* mixComponents.map(x => x.expval())).sum
-    val expval_broken = (normWeights_broken @* mixComponents.map(x => x.expval())).sum
+//    val expval_broken = (normWeights_broken @* mixComponents.map(x => x.expval())).sum
     //    val stderr = (normWeights @* mixComponents.map(x => x.stderr())).sum
 
 
-    if (expval.isNaN && trustees.contains(request.provider)) {
+//    if (expval.isNaN && trustees.contains(request.provider)) {
 //      println(trustees)
 
 //      println("directWeights = "+directWeights)
@@ -130,27 +130,27 @@ class Habit(override val numBins: Int) extends CompositionStrategy with RatingSt
 
 //      println("repWeights = "+ repWeights)
 
-      println("weights = "+ weights)
+//      println("weights = "+ weights)
 
-      println("normWeights = "+ normWeights)
-      println("normWeights_broken = "+ normWeights_broken)
+//      println("normWeights = "+ normWeights)
+//      println("normWeights_broken = "+ normWeights_broken)
 
-      var str = "evalTrustee = "+(trustees.indexOf(request.provider)+1)+"\n"
-      str += trustees.map(p =>
-        flatObs.getOrElse(p, "[]")
-      ).mkString("observations(1,1:" + numProviders + ") = {", ",", "}\n")
-      str += "observations(2:" + numWitnesses + "+1,1:" + numProviders + ") = ...\n{"
-      init.witnesses.foreach(c => {
-        str += trustees.map(p =>
-          repModels.getOrElse((c, p), "[1,1],[0,1]")
-        ).mkString("\tdirichlet(", "),dirichlet(", "); ...\n")
-      })
-      str += "}\n"
-      println(str)
-
-      println("trustValue = "+expval)
-      println("----")
-    }
+//      var str = "evalTrustee = "+(trustees.indexOf(request.provider)+1)+"\n"
+//      str += trustees.map(p =>
+//        flatObs.getOrElse(p, "[]")
+//      ).mkString("observations(1,1:" + numProviders + ") = {", ",", "}\n")
+//      str += "observations(2:" + numWitnesses + "+1,1:" + numProviders + ") = ...\n{"
+//      init.witnesses.foreach(c => {
+//        str += trustees.map(p =>
+//          repModels.getOrElse((c, p), "[1,1],[0,1]")
+//        ).mkString("\tdirichlet(", "),dirichlet(", "); ...\n")
+//      })
+//      str += "}\n"
+//      println(str)
+//
+//      println("trustValue = "+expval)
+//      println("----")
+//    }
 
 
     new TrustAssessment(baseInit.context, request, expval)
