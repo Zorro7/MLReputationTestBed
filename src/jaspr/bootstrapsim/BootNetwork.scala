@@ -35,7 +35,7 @@ class BootNetwork(override val simulation: BootSimulation) extends Network with 
       if (simulation.config.advisorsAvailable > 1d) {
         Chooser.sample(clients.filter(_ != agent), simulation.config.advisorsAvailable.toInt)
       } else {
-        clients.withFilter(_ != agent && Chooser.randomBoolean(simulation.config.trusteesAvailable))
+        clients.withFilter(_ != agent && Chooser.randomBoolean(simulation.config.advisorsAvailable))
       }
     availableAdvisors.flatMap(_.getProvenance[T](agent))
   }
