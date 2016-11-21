@@ -15,103 +15,52 @@ if __name__ == "__main__":
 
     df = "{0:.1f}"
     strategies = [
-        # ('NoStrategy',),
-        ('Fire-0.0-false',),
-        ('Fire-0.5-false',),
-        ('BetaReputation-0.0',),
-        ('BetaReputation-0.5',),
-        ('Travos',),
-        ('Blade-2',),
-        ('Habit-2',),
-        ('Blade-3',),
-        ('Habit-3',),
-        ('Blade-5',),
-        ('Habit-5',),
-        ('Blade-10',),
-        ('Habit-10',),
-        # ('Burnett',),
-        # ('BasicML',),
-        # ('FireLike',),
-        # ('BasicContext-RandomForest-false',),
-        # ('BasicContext-RandomForest-true',),
-        # ('FireLikeContext-RandomForest-false',),
-        # ('FireLikeContext-RandomForest-true',),
-        # ('BasicStereotype',),
-        # ('FireLikeStereotype',),
-        # ('Mlrs-RandomForest-2.0-false-false-true-true',),
-        # ('Mlrs-RandomForest-2.0-true-false-true-true',),
-        # ('Mlrs-RandomForest-2.0-false-true-true-true',),
-        # ('Mlrs-RandomForest-0.0-false-false-false-false',),
-        # ('Mlrs-RandomForest-0.0-false-false-true-true',),
-        ('Mlrs-RandomForest-2.0-false-false-false-false',),
-        # ('Mlrs-RandomForest-2.0-true-true-false-false',),
-         # ('Mlrs-RandomForest-2.0-false-false-true-true',),
-        # ('Mlrs-RandomForest-2.0-true-false-false-false',),
-        # ('Mlrs-RandomForest-2.0-false-true-false-false',),
-        #  ('Mlrs-RandomForest-5.0-false-false-false-false',),
-        #  ('Mlrs-RandomForest-5.0-false-false-true-true',),
-        # ('Mlrs-RandomForest-10.0-false-false-false-false',),
-        #  ('Mlrs-RandomForest-10.0-false-false-true-true',),
-
-
-        # ('Mlrs-RandomForest-0.0-true-false-false-false',),
-        # ('Mlrs-RandomForest-0.0-false-true-false-false',),
-        #  ('Mlrs-RandomForest-0.0-true-true-false-false',),
-        # ('Mlrs2-NaiveBayes-2.0-false-false-false',),
-        # ('MlrsB2-NaiveBayes-round-25.0-2.0-true',),
-        # ('MlrsB2-NaiveBayes-round-50.0-2.0-true',),
-        # ('MlrsB2-NaiveBayes-round-100.0-2.0-true',),
-        # ('MlrsB2-NaiveBayes-round-250.0-2.0-true-true',),
-        # ('MlrsB2-NaiveBayes-round-500.0-2.0-true-true',),
-        # # # ('MlrsB2-NaiveBayes-round-750.0-2.0-true',),
-        # ('MlrsB2-NaiveBayes-round-1000.0-2.0-true-true',)
+        ('Random.res',),
+        ('DirectBRS.res',),
+        ('DirectFire.res',),
+        ('DirectML-RF-2.res',),
+        ('DirectMLContext-RF-2.res',),
+        ('DirectMLStereotype-RF-2.res',),
+        # ('DirectMLStereotypeContracts-RF-2.res',),
+        # ('MLRSDirect-2.res',),
+        # ('MLRSDirectAds-2.res',),
+        # ('MLRSDirectContracts-2.res',),
+        ('Fire.res',),
+        ('BRS.res',),
+        ('TRAVOS.res',),
+        ('BLADE-2.res',),
+        ('HABIT-2.res',),
+        # ('ML-RF-2.res',),
+        # ('MLContext-RF-2.res',),
+        # ('MLStereotype-RF-2.res',),
+        # ('MLStereotyeContract-RF-2.res',),
+        ('MLRS-2.res',),
+        ('MLRSAds-2.res',),
+        # ('MLRSContracts-2.res',),
+        # ('MLRS-10.res',),
+        # ('MLRS-3.res',),
+        # ('MLRS-5.res',),
+        # ('MLRSAds-10.res',),
+        # ('MLRSAds-3.res',),
+        # ('MLRSAds-5.res',),
+        # ('MLRSContracts-10.res',),
+        # ('MLRSContracts-3.res',),
+        # ('MLRSContracts-5.res',),
+        # ('MLRSDirect-10.res',),
+        # ('MLRSDirect-3.res',),
+        # ('MLRSDirect-5.res',),
+        # ('MLRSDirectAds-10.res',),
+        # ('MLRSDirectAds-3.res',),
+        # ('MLRSDirectAds-5.res',),
+        # ('MLRSDirectContracts-10.res',),
+        # ('MLRSDirectContracts-3.res',),
+        # ('MLRSDirectContracts-5.res',),
     ]
 
-    strategynamelookup = {
-        "NoStrategy": "RAND",
-        "Fire-0.0-false": "Basic",
-        "Fire-0.5-false": "FIRE",
-        "BetaReputation-0.0": "BasicBeta",
-        "BetaReputation-0.5": "BetaRep",
-        "Travos": "TRAVOS",
-        "Blade-2": "BLADE",
-        "Habit-2": "HABIT",
-        "Blade-3": "BLADE-3",
-        "Habit-3": "HABIT-3",
-        "Blade-5": "BLADE-5",
-        "Habit-5": "HABIT-5",
-        "Blade-10": "BLADE-10",
-        "Habit-10": "HABIT-10",
-        "BasicML": "Basic-ML",
-        "FireLike": "FIRE-ML",
-        "Burnett": "Burnett",
-        "BasicContext-RandomForest-false": "Context-ML",
-        "BasicContext-RandomForest-true": "PayloadContext-ML",
-        "BasicStereotype": "Stereotype-ML",
-        "FireLikeStereotype": "FIRE-Stereotype-ML",
-        "FireLikeContext-RandomForest-false": "FIRE-Context-ML",
-        "FireLikeContext-RandomForest-true": "FIRE-PayloadContext-ML",
-        "Mlrs-RandomForest-2.0-false-false-false-false": "MLRS",
-        "Mlrs-RandomForest-2.0-true-false-false-false": "MLRS-c",
-        "Mlrs-RandomForest-2.0-false-true-false-false": "MLRS-p",
-        "Mlrs-RandomForest-2.0-true-true-false-false": "MLRS-cp",
-        "Mlrs-RandomForest-0.0-false-false-false-false": "MLRS-0",
-        "Mlrs-RandomForest-0.0-true-false-false-false": "MLRS-0c",
-        "Mlrs-RandomForest-0.0-false-true-false-false": "MLRS-0p",
-        "Mlrs-RandomForest-0.0-true-true-false-false": "MLRS-0cp",
-        "Mlrs-RandomForest-2.0-false-false-true-true": "MLRS-a",
-        "Mlrs-RandomForest-2.0-true-false-true-true": "MLRS-ca",
-        "Mlrs-RandomForest-2.0-false-true-true-true": "MLRS-pa",
-        "Mlrs-RandomForest-2.0-true-true-true-true": "MLRS-cpa",
-        "Mlrs-RandomForest-0.0-false-false-true-true": "MLRS-0a",
-        "Mlrs-RandomForest-0.0-true-false-true-true": "MLRS-0ca",
-        "Mlrs-RandomForest-0.0-false-true-true-true": "MLRS-0pa",
-        "Mlrs-RandomForest-0.0-true-true-true-true": "MLRS-0cpa",
-    }
+    
 
-    splt = split(results, "memoryLimit", "numClients", "numProviders",
-                 "numTerms", "witnessRequestLikelihood", "noiseRange",
-                 "numPreferences", "numSimCapabilities", "providerAvailabilityLikelihood")
+    splt = split(results, "memoryLimit", "numTerms", "witnessRequestLikelihood", "noiseRange",
+                 "numPreferences", "numSimCapabilities", "providerAvailabilityLikelihood", "providerAttrition")
 
     print "%", splt.keys()
     # index = (0.1, 100, 20, 100, 10, 3, 3, "true", 1)
@@ -121,7 +70,7 @@ if __name__ == "__main__":
 
     # print index, len(splt)
 
-    expsplt = split(splt, "exp")
+    expsplt = split(splt, "resname")
     print "%", [len(expsplt[strategy]) for strategy in strategies if strategy in expsplt]
 
 
@@ -141,8 +90,6 @@ if __name__ == "__main__":
         "legend style={at={(0.1,0.9)},anchor=north west,/tikz/column 2/.style={column sep=5pt,}}",
         xmin="0", xmax="1000",
         ymin="-1000", ymax="2500",
-        xmin="0", xmax="250",
-        ymin="-200", ymax="1000",
         width="15cm",
         height="10cm",
         xlabel="\\textbf{Round}",
@@ -165,7 +112,7 @@ if __name__ == "__main__":
     # texstr += "\\spy[black,size=5.5cm] on (2.15,1.25) in node [fill=white] at (3.1,5.25);"
     # texstr += "\\end{scope}"
 
-    texstr += legend([strategynamelookup[s[0]] for s in strategies if s in expsplt])
+    texstr += legend([s[0] for s in strategies if s in expsplt])
 
     texstr += axisfooter()
     texstr += tikzfooter()
