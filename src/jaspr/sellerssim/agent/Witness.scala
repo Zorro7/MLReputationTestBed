@@ -43,7 +43,7 @@ class HonestWitnessModel extends WitnessModel {
 class PessimisticWitnessModel extends WitnessModel {
   def changeRecord(record: Record, agent: Provenance) = {
     record.asInstanceOf[BuyerRecord].copy(
-      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x - 1d) / 2d)
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x - 1d) / 2d).view.force
     )
   }
 
@@ -53,7 +53,7 @@ class PessimisticWitnessModel extends WitnessModel {
 class OptimisticWitnessModel extends WitnessModel {
   def changeRecord(record: Record, agent: Provenance) = {
     record.asInstanceOf[BuyerRecord].copy(
-      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x + 1d) / 2d)
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x + 1d) / 2d).view.force
     )
   }
 
@@ -63,7 +63,7 @@ class OptimisticWitnessModel extends WitnessModel {
 class NegationWitnessModel extends WitnessModel {
   def changeRecord(record: Record, agent: Provenance) = {
     record.asInstanceOf[BuyerRecord].copy(
-      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => -x)
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => -x).view.force
     )
   }
 
@@ -73,7 +73,7 @@ class NegationWitnessModel extends WitnessModel {
 class RandomWitnessModel extends WitnessModel {
   def changeRecord(record: Record, agent: Provenance) = {
     record.asInstanceOf[BuyerRecord].copy(
-      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => Chooser.randomDouble(-1d, 1d))
+      ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => Chooser.randomDouble(-1d, 1d)).view.force
     )
   }
 
@@ -84,7 +84,7 @@ class PromotionWitnessModel(val agentsToPromote: Seq[Provider]) extends WitnessM
   def changeRecord(record: Record, agent: Provenance) = {
     if (agentsToPromote.contains(record.asInstanceOf[BuyerRecord].provider)) {
       record.asInstanceOf[BuyerRecord].copy(
-        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x + 1d) / 2d)
+        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x + 1d) / 2d).view.force
       )
     }
     else record
@@ -97,7 +97,7 @@ class SlanderWitnessModel(val agentsToPromote: Seq[Provider]) extends WitnessMod
   def changeRecord(record: Record, agent: Provenance) = {
     if (agentsToPromote.contains(record.asInstanceOf[BuyerRecord].provider)) {
       record.asInstanceOf[BuyerRecord].copy(
-        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x - 1d) / 2d)
+        ratings = record.asInstanceOf[BuyerRecord].ratings.mapValues(x => (x - 1d) / 2d).view.force
       )
     }
     else record
