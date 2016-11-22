@@ -11,7 +11,6 @@ import scala.util.Random
 trait Configuration {
   def newSimulation(): Simulation
 
-  val numSimulations: Int
   val numRounds: Int
   val numAgents: Int
 
@@ -19,6 +18,8 @@ trait Configuration {
 }
 
 trait MultiConfiguration {
+
+  val numSimulations: Int
 
   val directComparison: Boolean = true
   val _seed: Int = Random.nextInt(Int.MaxValue)

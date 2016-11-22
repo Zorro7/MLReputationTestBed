@@ -122,7 +122,7 @@ object StaticSellerMultiConfiguration extends App {
 case class StaticSellerMultiConfiguration(
                                            strategies: Seq[String] = Nil,
                                            numRounds: Int = 250,
-                                           numSimulations: Int = 1,
+                                           override val numSimulations: Int = 1,
                                            clientInvolvementLikelihood: Double = 0.01,
                                            witnessRequestLikelihood: Double = 0.1,
                                            memoryLimit: Int = 100,
@@ -159,7 +159,6 @@ case class StaticSellerMultiConfiguration(
       new StaticSellerConfiguration(
         _strategy = Strategy.forName(x),
         numRounds = numRounds,
-        numSimulations = numSimulations,
         clientInvolvementLikelihood = clientInvolvementLikelihood,
         witnessesAvailable = witnessRequestLikelihood,
         memoryLimit = memoryLimit,
@@ -190,7 +189,6 @@ case class StaticSellerMultiConfiguration(
 
 class StaticSellerConfiguration(val _strategy: Strategy,
                                 override val numRounds: Int,
-                                override val numSimulations: Int,
                                 override val clientInvolvementLikelihood: Double,
                                 override val witnessesAvailable: Double,
                                 override val memoryLimit: Int,
@@ -216,6 +214,12 @@ class StaticSellerConfiguration(val _strategy: Strategy,
                                 val providersToSlander: Double
                                ) extends SellerConfiguration {
   override def newSimulation(): Simulation = {
+    _simcapabilities = for (i <- 1 to numSimCapabilities) yield {
+      new ProductPayload(i.toString, (1 to numTerms).map(x => {
+        val y = Chooser.randomDouble(-1,1)
+        new FixedProperty(x.toString, y)
+      }).toList)
+    }
     new SellerSimulation(this)
   }
 
@@ -255,14 +259,8 @@ class StaticSellerConfiguration(val _strategy: Strategy,
 
 
   // Services that exist in the simulation
-  lazy override val simcapabilities: Seq[ProductPayload] = {
-    for (i <- 1 to numSimCapabilities) yield {
-      new ProductPayload(i.toString, (1 to numTerms).map(x => {
-        val y = Chooser.randomDouble(-1,1)
-        new FixedProperty(x.toString, y)
-      }).toList)
-    }
-  }
+  private var _simcapabilities: Seq[ProductPayload] = Nil
+  override def simcapabilities: Seq[ProductPayload] = _simcapabilities
 
   // Services that a given provider is capable of providing - and with associated performance properties.
   def capabilities(provider: Provider): Seq[ProductPayload] = {

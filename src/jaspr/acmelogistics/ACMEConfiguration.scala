@@ -63,7 +63,7 @@ object ACMEMultiConfiguration extends App {
 
 case class ACMEMultiConfiguration(strategies: Seq[String] = Nil,
                                   numRounds: Int = 250,
-                                  numSimulations: Int = 1,
+                                  override val numSimulations: Int = 1,
                                   memoryLimit: Int = 100,
                                   numProviders: Int = 25,
                                   defaultServiceDuration: Int = 5,
@@ -80,7 +80,7 @@ case class ACMEMultiConfiguration(strategies: Seq[String] = Nil,
   override lazy val configs: Seq[Configuration] =
     strategies.map(x => {
       new ACMEConfiguration(
-        Strategy.forName(x), numRounds, numSimulations, memoryLimit,
+        Strategy.forName(x), numRounds, memoryLimit,
         numProviders, defaultServiceDuration, eventProportion,
         eventLikelihood, eventDelay, adverts
       )
@@ -90,7 +90,6 @@ case class ACMEMultiConfiguration(strategies: Seq[String] = Nil,
 
 class ACMEConfiguration(val _strategy: Strategy,
                         val numRounds: Int = 250,
-                        val numSimulations: Int = 1,
                         val memoryLimit: Int = 100,
                         val numProviders: Int = 50,
                         val defaultServiceDuration: Int = 5,
@@ -110,7 +109,6 @@ class ACMEConfiguration(val _strategy: Strategy,
       "memoryLimit" -> memoryLimit,
       "numProviders" -> numProviders,
       "defaultServiceDuration" -> defaultServiceDuration,
-      "numSimulations" -> numSimulations,
       "numRounds" -> numRounds
     ).map(x => x._1 + "=" + x._2).mkString(",").replace(" ", "")
   }

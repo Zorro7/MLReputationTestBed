@@ -80,7 +80,7 @@ object BootMultiConfiguration extends App {
 }
 
 case class BootMultiConfiguration(strategies: Seq[String] = Nil,
-                                  numSimulations: Int = 1,
+                                  override val numSimulations: Int = 1,
                                   numRounds: Int = 50,
                                   memoryLimit: Int = 50,
                                   numTrustees: Int = 100,
@@ -104,7 +104,6 @@ case class BootMultiConfiguration(strategies: Seq[String] = Nil,
     strategies.map(x => {
       new BootConfiguration(
         _strategy = Strategy.forName(x),
-        numSimulations = numSimulations,
         numRounds = numRounds,
         memoryLimit = memoryLimit,
         numTrustees = numTrustees,
@@ -123,7 +122,6 @@ case class BootMultiConfiguration(strategies: Seq[String] = Nil,
 
 
 class BootConfiguration(val _strategy: Strategy,
-                        override val numSimulations: Int,
                         override val numRounds: Int,
                         val memoryLimit: Int,
                         numTrustees: Int,

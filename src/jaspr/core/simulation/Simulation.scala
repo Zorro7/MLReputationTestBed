@@ -15,7 +15,7 @@ object Simulation {
 
     val iter = if (jaspr.parallel) multiConfig.configs.zipWithIndex.par else multiConfig.configs.zipWithIndex
     for ((config, configIndex) <- iter) {
-      for (simulationIndex <- 0 until config.numSimulations) {
+      for (simulationIndex <- 0 until multiConfig.numSimulations) {
         val simulationSeed = multiConfig.seed(configIndex, simulationIndex)
         Chooser.setSeed(simulationSeed)
         jaspr.debug(1000, "\n\n----- CONFIG " + configIndex + ", SIMULATION " + simulationIndex + ", seed: " + simulationSeed + " (" + config + ") -----")
