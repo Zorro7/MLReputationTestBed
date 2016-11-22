@@ -29,7 +29,7 @@ trait StereotypeCore extends CompositionStrategy with MlrCore {
                          ): MlrModel = {
     val stereotypeObs: Seq[BootRecord] =
       if (ratingStereotype) records
-      else distinctBy[BootRecord,Trustee](records, _.trustee)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
+      else distinctBy[BootRecord,Provider](records, _.provider)  // Get the distinct records cause here we assume observations are static for each truster/trustee pair.
     makeMlrsModel[BootRecord](stereotypeObs, baseLearner, makeTrainRow(_: BootRecord, labels))
   }
 

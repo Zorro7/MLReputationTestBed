@@ -185,7 +185,7 @@ class PartialStereotype(baseLearner: Classifier,
                             witnessRecords: Seq[BootRecord],
                             baseLearner: Classifier): Map[Client,MlrModel] = {
 
-    val directStereotypeObs: Map[Trustee,List[Any]] =
+    val directStereotypeObs: Map[Provider,List[Any]] =
       (requests.map(x => x.provider.asInstanceOf[Trustee] -> makeRequestTranslation(x).toList) ++
       directRecords.flatMap(x => x.observations)).toMap
 
@@ -193,7 +193,7 @@ class PartialStereotype(baseLearner: Classifier,
       _.service.request.client
     ).mapValues(
       wrs => {
-        val witnessStereotypeObs: Map[Trustee,List[Any]] = wrs.flatMap(x => x.observations).toMap
+        val witnessStereotypeObs: Map[Provider,List[Any]] = wrs.flatMap(x => x.observations).toMap
         val numClasses = makeRecordTranslation(wrs.head).size
         val rows: Iterable[Seq[Any]] = directStereotypeObs.filterKeys(te =>
           witnessStereotypeObs.contains(te)
@@ -249,7 +249,7 @@ class PartialStereotype(baseLearner: Classifier,
   }
 
   def stereotypeTrainRow(record: BootRecord, labels: Map[Provider, Double]): Seq[Any] = {
-    labels.getOrElse(record.trustee, record.rating) :: adverts(record.service.request)
+    labels.getOrElse(record.provider, record.rating) :: adverts(record.service.request)
   }
 
   def stereotypeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {

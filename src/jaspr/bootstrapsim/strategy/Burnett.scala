@@ -164,7 +164,7 @@ class Burnett(baseLearner: Classifier,
   }
 
   def stereotypeTrainRow(record: BootRecord, labels: Map[Provider,Double]): Seq[Any] = {
-    labels.getOrElse(record.trustee, record.rating) :: adverts(record.service.request)
+    labels.getOrElse(record.provider, record.rating) :: adverts(record.service.request)
   }
 
   def stereotypeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
