@@ -16,7 +16,7 @@ import weka.classifiers.Classifier
 class Burnett(val usePayloadAdverts: Boolean = false) extends CompositionStrategy with Exploration with BetaCore with RatingStrategy with SingleModelStrategy {
 
   override val numBins: Int = 0
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
   override val baseLearner: Classifier = new weka.classifiers.trees.M5P()
 
   override val name: String = this.getClass.getSimpleName+"-"+usePayloadAdverts

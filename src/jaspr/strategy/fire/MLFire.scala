@@ -21,7 +21,7 @@ class MLFire(val witnessWeight: Double = 0.5) extends CompositionStrategy with E
 
   val baseModel = new OneR
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   // In recency scaling, the number of rounds before an interaction rating should be half that of the current round
   val RecencyScalingPeriodToHalf = 5

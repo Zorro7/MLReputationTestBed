@@ -22,7 +22,7 @@ class MLTravos_provider extends CompositionStrategy with Exploration with MlrCor
 
   val baseModel: Classifier = new NaiveBayes
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   // In recency scaling, the number of rounds before an interaction rating should be half that of the current round
   val RecencyScalingPeriodToHalf = 5

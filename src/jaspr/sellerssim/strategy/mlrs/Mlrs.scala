@@ -47,7 +47,7 @@ class Mlrs(val baseLearner: Classifier,
       reinterpretationContext + "-" + reinterpretationProvider+"-"+useAdverts+"-"+usePayloadAdverts
   }
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)

@@ -14,7 +14,7 @@ import weka.classifiers.Classifier
   */
 class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Exploration with IpawCore {
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   val baseLearner = new MultiRegression()
   baseLearner.setClassifier(learner)

@@ -34,7 +34,7 @@ class MlrsEvents(val baseLearner: Classifier,
 
   override val name = this.getClass.getSimpleName + "2-" + baseLearner.getClass.getSimpleName + "-" + witnessWeight + "-" + reinterpretationContext
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)

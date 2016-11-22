@@ -13,7 +13,7 @@ import jaspr.utilities.BetaDistribution
   */
 class Travos(override val successThreshold: Double) extends RatingStrategy with CompositionStrategy with Exploration with BetaCore with TravosCore {
 
-  val explorationProbability = 0.1
+  val explorationProbability = 0d
   val numBins = 5
   val confidenceThreshold = 1
   val eps = 0.1

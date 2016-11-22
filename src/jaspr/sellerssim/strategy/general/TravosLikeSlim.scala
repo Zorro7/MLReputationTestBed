@@ -13,7 +13,7 @@ import weka.classifiers.Classifier
   */
 class TravosLikeSlim(baseLearner: Classifier, numBins: Int) extends TravosLike(baseLearner, numBins) {
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val directRecords: Seq[ServiceRecord with TrustAssessmentRecord with RatingRecord] = context.client.getProvenance(context.client)

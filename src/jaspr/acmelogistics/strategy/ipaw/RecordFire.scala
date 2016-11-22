@@ -77,5 +77,5 @@ class RecordFire extends Strategy with CompositionStrategy with Exploration {
     ).sum / (tmp.size + 1)
   }
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 }

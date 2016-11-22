@@ -9,7 +9,7 @@ import jaspr.strategy.{CompositionStrategy, RatingStrategy, RatingStrategyInit}
   */
 class BetaReputation(val witnessWeight: Double,
                      override val successThreshold: Double) extends RatingStrategy with CompositionStrategy with Exploration with BetaCore {
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
   val eps: Double = 0.1
   val confidenceThreshold: Double = 1d
 

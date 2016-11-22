@@ -17,7 +17,7 @@ class Habit(override val numBins: Int,
 
   override val name: String = this.getClass.getSimpleName + "-" + numBins
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
 
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {

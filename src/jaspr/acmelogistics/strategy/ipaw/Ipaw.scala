@@ -13,7 +13,7 @@ import weka.classifiers.Classifier
   */
 class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration with IpawCore {
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   val baseLearner = learner
   val discreteClass: Boolean = disc

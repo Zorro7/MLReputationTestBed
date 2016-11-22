@@ -19,7 +19,7 @@ import weka.filters.supervised.attribute.Discretize
   */
 trait SingleModelStrategy extends CompositionStrategy with Exploration with MlrCore {
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   val baseLearner: Classifier
 

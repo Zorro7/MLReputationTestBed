@@ -15,7 +15,7 @@ import weka.classifiers.Classifier
   */
 class TravosLike(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrCore {
 
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   class TravosLikeInit(context: ClientContext,
                        val trustModel: Option[MlrModel],

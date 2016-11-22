@@ -11,7 +11,7 @@ import scala.math._
 class Fire(val witnessWeight: Double = 0.5, val weightRecency: Boolean = true) extends RatingStrategy with CompositionStrategy with Exploration {
 
   override val name = this.getClass.getSimpleName + "-" + witnessWeight+"-"+weightRecency
-  override val explorationProbability: Double = 0.1
+  override val explorationProbability: Double = 0d
 
   // In recency scaling, the number of rounds before an interaction rating should be half that of the current round
   val RecencyScalingPeriodToHalf: Double = 5
