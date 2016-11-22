@@ -17,7 +17,6 @@ class SimpleConfiguration(val _strategy: Strategy) extends Configuration {
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  override val numSimulations: Int = 10
   override val numRounds: Int = 50
 
   override val numAgents = 25
@@ -27,6 +26,8 @@ class SimpleConfiguration(val _strategy: Strategy) extends Configuration {
 
 class SimpleMultiConfiguration extends MultiConfiguration {
   override val directComparison = true
+
+  override val numSimulations: Int = 10
 
   override lazy val configs: Seq[Configuration] =
     new SimpleConfiguration(new Fire) ::
