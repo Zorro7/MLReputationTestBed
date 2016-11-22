@@ -38,7 +38,7 @@ object DynamicSellerMultiConfiguration extends App {
     opt[Int]("numProviders") required() action { (x, c) => c.copy(numProviders = x) }
     opt[Int]("numSimCapabilities") required() action { (x, c) => c.copy(numSimCapabilities = x) }
     opt[Int]("numProviderCapabilities") required() action { (x, c) => c.copy(numProviderCapabilities = x) }
-    opt[Double]("noiseRange") required() action { (x, c) => c.copy(noiseRange = x) }
+    opt[Double]("sigma") required() action { (x, c) => c.copy(sigma = x) }
     opt[Int]("numTerms") required() action { (x, c) => c.copy(numTerms = x) }
     opt[Int]("numAdverts") required() action { (x, c) => c.copy(numAdverts = x) }
     opt[Int]("numPreferences") required() action { (x, c) => c.copy(numPreferences = x) }
@@ -75,12 +75,10 @@ object DynamicSellerMultiConfiguration extends App {
 ////        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2),"+
 ////        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
 ////        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;false),"+
-//////                "jaspr.strategy.fire.Fire(0.0;true)," +
 //        ////        "jaspr.strategy.fire.FireContext(0.0;false)," +
 ////        ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
 //        "jaspr.strategy.fire.Fire(0.5;false)," +
 //        "jaspr.strategy.fire.Fire(0.0;false)," +
-////////        //        "jaspr.strategy.fire.Fire(0.5;true)," +
 //        "jaspr.strategy.betareputation.BetaReputation(0.5;0.5)," +
 //        "jaspr.strategy.betareputation.BetaReputation(0.0;0.5)," +
 ////////        //                "jaspr.strategy.betareputation.BetaReputation(1d)," +
@@ -89,7 +87,7 @@ object DynamicSellerMultiConfiguration extends App {
 //        "jaspr.strategy.blade.Blade(2;0d;1d)," +
 //        "jaspr.strategy.stereotype.Burnett(false),"+
 //        "jaspr.strategy.stereotype.Burnett(true),"+
-        " --numSimulations 1000 " +
+        " --numSimulations 500 " +
         "--eventLikelihood 0 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -103,11 +101,11 @@ object DynamicSellerMultiConfiguration extends App {
         "--numClients 10 --numProviders 100 " +
         "--clientInvolvementLikelihood 1 --witnessesAvailable 3 --providersAvailable 10 " +
         "--eventEffects 0 " +
-        "--numRounds 5 " +
+        "--numRounds 20 " +
         "--memoryLimit 500 " +
         "--numSimCapabilities 1 --numProviderCapabilities 5 " +
-        "--noiseRange 0d " +
-        "--numTerms 1 --numAdverts 3 --numPreferences 0 " +
+        "--sigma 0.1d " +
+        "--numTerms 3 --numAdverts 3 --numPreferences 3 " +
         "--providerAttrition 0.0 --clientAttrition 0.0").split(" ")
     } else args
 
@@ -133,7 +131,7 @@ case class DynamicSellerMultiConfiguration(
                                             numProviders: Int = 25,
                                             numSimCapabilities: Int = 10,
                                             numProviderCapabilities: Int = 5,
-                                            noiseRange: Double = 1d,
+                                            sigma: Double = 1d,
                                             numTerms: Int = 2,
                                             numAdverts: Int = 2,
                                             numPreferences: Int = 2,
@@ -171,7 +169,7 @@ case class DynamicSellerMultiConfiguration(
         numProviders = numProviders,
         numSimCapabilities = numSimCapabilities,
         numProviderCapabilities = numProviderCapabilities,
-        noiseRange = noiseRange,
+        _sigma = sigma,
         numTerms = numTerms,
         numAdverts = numAdverts,
         numPreferences = numPreferences,
@@ -203,7 +201,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
                                  override val numProviders: Int,
                                  val numSimCapabilities: Int,
                                  val numProviderCapabilities: Int,
-                                 val noiseRange: Double,
+                                 _sigma: Double,
                                  val numTerms: Int,
                                  val numAdverts: Int,
                                  val numPreferences: Int,
@@ -224,17 +222,11 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
 
   val rand: Random = new Random();
   override def newSimulation(): Simulation = {
-//    val x = rand.nextDouble * (maxMean - minMean) + minMean
-//    val x = List.fill(5)(Chooser.randomDouble(minMean, maxMean))
-//    Chooser.randomDouble(minMean, maxMean)
-    val r = Chooser.randomDouble(minMean, maxMean)
-    println(minMean, maxMean, r)
     _simcapabilities =
       (1 to numSimCapabilities).map(x =>
-//        new ProductPayload(x.toString, randomProperties(Chooser.randomDouble(minMean, maxMean), sigma, numTerms).toList)
-        new ProductPayload(x.toString, FixedProperty("1", r) :: Nil)
+        new ProductPayload(x.toString, randomProperties(Chooser.randomDouble(minMean, maxMean), sigma, numTerms).toList)
+//        new ProductPayload(x.toString, FixedProperty("1", r) :: Nil)
       )
-    println(simcapabilities)
     new DynamicSellerSimulation(this)
   }
 
@@ -278,8 +270,8 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
       productProperty.get(c._1) match {
         case Some(x) =>
 //          GaussianProperty(c._1, (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1), 0.1)
-//          GaussianProperty(c._1, (c._2.doubleValue + x.doubleValue)/2d, sigma)
-          GaussianProperty(c._1, x.doubleValue, sigma)
+          GaussianProperty(c._1, (c._2.doubleValue + x.doubleValue)/2d, sigma)
+//          GaussianProperty(c._1, x.doubleValue, sigma)
       }
     })
   }
@@ -287,7 +279,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
   override val baseUtility: Double = 0.5
   val minMean: Double = 0
   val maxMean: Double = 1
-  val sigma = 0.1
+  val sigma = _sigma//0.1
   val fixedPreference = 0.5
 
   // Services that exist in the simulation
@@ -330,11 +322,13 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
 
 
   def adverts(agent: Agent with Properties): SortedMap[String,Property] = {
-    agent.properties.take(numAdverts).values.map(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(minMean, maxMean)+x.doubleValue)/2d)).toList
+    Nil
+//    agent.properties.take(numAdverts).values.map(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(minMean, maxMean)+x.doubleValue)/2d)).toList
   }
 
   def adverts(payload: ProductPayload, agent: Agent with Properties): SortedMap[String,Property] = {
-    payload.quality.take(numAdverts).values.map(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(minMean, maxMean)+x.doubleValue)/2d)).toList
+    Nil
+//    payload.quality.take(numAdverts).values.map(x => FixedProperty(x.name, (noiseRange*Chooser.randomDouble(minMean, maxMean)+x.doubleValue)/2d)).toList
   }
 
 
