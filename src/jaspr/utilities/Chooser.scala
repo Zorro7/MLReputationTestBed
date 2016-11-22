@@ -40,7 +40,7 @@ object Chooser extends Random {
   ifHappens[Option[V]](probability)(Some(ifMet))(None)
 
   // Selects a random double between a minimum and maximum
-  def randomDouble(minimum: Double, maximum: Double) =
+  def randomDouble(minimum: Double, maximum: Double): Double =
   nextDouble * (maximum - minimum) + minimum
 
   // Selects a random integer between a minimum (inclusive) and maximum (exclusive)
