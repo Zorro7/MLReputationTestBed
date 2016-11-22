@@ -23,8 +23,8 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
   private var departedClients: List[Buyer] = Nil
   private var departedProviders: List[Seller] = Nil
 
-  override def utility(): Double = {
-    clients.map(_.utility).sum + departedClients.map(_.utility).sum
+  override def utility: Double = {
+    (clients.map(_.utility).sum + departedClients.map(_.utility).sum) / (simulation.round * clients.size)
   }
 
   override def clients: Seq[Buyer] = _clients
@@ -33,7 +33,9 @@ class DynamicSellerNetwork(override val simulation: DynamicSellerSimulation) ext
 
   override def possibleRequests(context: ClientContext): Seq[ServiceRequest] = {
     val availableProviders =
-      if (simulation.config.providersAvailable >= 1d) {
+      if (simulation.config.providersAvailable < 0) {
+        providers.withFilter(_.capableOf(context.payload, 0))
+      } else if (simulation.config.providersAvailable >= 1d) {
         Chooser.sample(providers.filter(_.capableOf(context.payload, 0)), simulation.config.providersAvailable.toInt)
       } else {
         providers.withFilter(_.capableOf(context.payload, 0) && Chooser.randomBoolean(simulation.config.providersAvailable))

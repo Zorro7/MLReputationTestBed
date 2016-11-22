@@ -30,7 +30,9 @@ abstract class SellerNetwork extends Network with NetworkMarket {
 
   override def gatherProvenance[T <: Record](agent: Agent): Seq[T] = {
     val availableAdvisors =
-      if (simulation.config.witnessesAvailable >= 1d) {
+      if (simulation.config.witnessesAvailable < 0) {
+        clients.withFilter(_ != agent)
+      } else if (simulation.config.witnessesAvailable >= 1d) {
         Chooser.sample(clients.filter(_ != agent), simulation.config.witnessesAvailable.toInt)
       } else {
         clients.withFilter(_ != agent && Chooser.randomBoolean(simulation.config.witnessesAvailable))
