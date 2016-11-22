@@ -2,6 +2,7 @@ package jaspr.bootstrapsim.strategy
 
 import jaspr.bootstrapsim.agent.BootRecord
 import jaspr.core.agent.{Client, Provider}
+import jaspr.core.provenance.{ServiceRecord, RatingRecord}
 import jaspr.core.service.ClientContext
 import jaspr.core.simulation.Network
 import jaspr.utilities.BetaDistribution
@@ -16,20 +17,20 @@ trait BRSCore {
   val goodOpinionThreshold: Double
   val badOpinionThreshold: Double
 
-  def getDirectRecords(network: Network, context: ClientContext): Seq[BootRecord] = {
-    context.client.getProvenance[BootRecord](context.client)
+  def getDirectRecords(network: Network, context: ClientContext): Seq[ServiceRecord with RatingRecord] = {
+    context.client.getProvenance[ServiceRecord with RatingRecord](context.client)
   }
 
-  def getWitnessRecords(network: Network, context: ClientContext): Seq[BootRecord] = {
-    network.gatherProvenance[BootRecord](context.client)
+  def getWitnessRecords(network: Network, context: ClientContext): Seq[ServiceRecord with RatingRecord] = {
+    network.gatherProvenance[ServiceRecord with RatingRecord](context.client)
   }
 
-  def makeDirectBetas(directRecords: Seq[BootRecord]): Map[Provider,BetaDistribution] = {
+  def makeDirectBetas(directRecords: Seq[ServiceRecord with RatingRecord]): Map[Provider,BetaDistribution] = {
     if (witnessWeight != 1) makeOpinions(directRecords, r => r.service.request.provider)
     else Map()
   }
 
-  def makeWitnessBetas(witnessRecords: Seq[BootRecord]): Map[Client, Map[Provider, BetaDistribution]] = {
+  def makeWitnessBetas(witnessRecords: Seq[ServiceRecord with RatingRecord]): Map[Client, Map[Provider, BetaDistribution]] = {
       if (witnessWeight > 0) makeOpinions(witnessRecords, r => r.service.request.client, r => r.service.request.provider)
       else Map()
   }
@@ -78,7 +79,8 @@ trait BRSCore {
     else getCombinedOpinions(direct * (1-witnessWeight), opinions.map(_ * witnessWeight), witnessWeight = 2)
   }
 
-  def makeOpinions[K](records: Iterable[BootRecord], grouping: BootRecord => K): Map[K,BetaDistribution] = {
+  def makeOpinions[K](records: Iterable[ServiceRecord with RatingRecord],
+                      grouping: ServiceRecord with RatingRecord => K): Map[K,BetaDistribution] = {
     records.groupBy(
       grouping
     ).mapValues(
@@ -86,9 +88,9 @@ trait BRSCore {
     )
   }
 
-  def makeOpinions[K1,K2](records: Iterable[BootRecord],
-                          grouping1: BootRecord => K1,
-                          grouping2: BootRecord => K2): Map[K1,Map[K2,BetaDistribution]] = {
+  def makeOpinions[K1,K2](records: Iterable[ServiceRecord with RatingRecord],
+                          grouping1: ServiceRecord with RatingRecord => K1,
+                          grouping2: ServiceRecord with RatingRecord => K2): Map[K1,Map[K2,BetaDistribution]] = {
     records.groupBy(
       grouping1
     ).mapValues(

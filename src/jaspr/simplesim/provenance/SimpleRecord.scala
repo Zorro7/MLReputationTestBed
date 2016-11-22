@@ -9,4 +9,5 @@ import jaspr.core.service.Service
 class SimpleRecord(override val service: Service) extends ServiceRecord with RatingRecord {
 
   def rating: Double = service.utility()
+  def success: Boolean = rating > 0
 }

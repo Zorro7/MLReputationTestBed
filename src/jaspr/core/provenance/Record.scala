@@ -25,4 +25,5 @@ trait RatingRecord extends Record {
   def provider: Provider
 
   def rating: Double
+  def success: Boolean
 }

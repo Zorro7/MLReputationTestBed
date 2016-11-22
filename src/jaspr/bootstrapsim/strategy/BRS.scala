@@ -2,6 +2,7 @@ package jaspr.bootstrapsim.strategy
 
 import jaspr.bootstrapsim.agent.BootRecord
 import jaspr.core.agent.{Client, Provider}
+import jaspr.core.provenance.{ServiceRecord, RatingRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
@@ -42,8 +43,8 @@ class BRS(override val witnessWeight: Double = 2d,
   }
 
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
-    val directRecords: Seq[BootRecord] = getDirectRecords(network, context)
-    val witnessRecords: Seq[BootRecord] = getWitnessRecords(network, context)
+    val directRecords: Seq[ServiceRecord with RatingRecord] = getDirectRecords(network, context)
+    val witnessRecords: Seq[ServiceRecord with RatingRecord] = getWitnessRecords(network, context)
 
     val directBetas: Map[Provider,BetaDistribution] = makeDirectBetas(directRecords)
     val witnessBetas: Map[Client, Map[Provider, BetaDistribution]] = makeWitnessBetas(witnessRecords)

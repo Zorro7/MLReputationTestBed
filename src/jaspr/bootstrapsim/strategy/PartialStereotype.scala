@@ -107,6 +107,14 @@ class PartialStereotype(baseLearner: Classifier,
     new TrustAssessment(init.context, request, score)
   }
 
+  override def getDirectRecords(network: Network, context: ClientContext): Seq[BootRecord] = {
+    context.client.getProvenance[BootRecord](context.client)
+  }
+
+  override def getWitnessRecords(network: Network, context: ClientContext): Seq[BootRecord] = {
+    network.gatherProvenance[BootRecord](context.client)
+  }
+
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val directRecords: Seq[BootRecord] = getDirectRecords(network, context)
     val witnessRecords: Seq[BootRecord] = getWitnessRecords(network, context)
