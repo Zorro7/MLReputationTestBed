@@ -15,7 +15,7 @@ class Results {
   private[this] val lock = new Object()
 
   val results = new mutable.LinkedHashMap[Configuration, List[Seq[Result]]]()
-  val df = new DecimalFormat("000.00")
+  val df = new DecimalFormat("000.000")
 
   def record(config: Configuration, simResult: Seq[Result]) = lock.synchronized {
     results.put(config, simResult :: results.getOrElse(config, Nil))
