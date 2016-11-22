@@ -9,6 +9,8 @@ import jaspr.utilities.BetaDistribution
   * Created by phil on 19/03/16.
   */
 trait BetaCore {
+  val successThreshold: Double = 0d
+
   def makeBetaDistribution(ratings: Iterable[Boolean]): BetaDistribution =
     new BetaDistribution(ratings.count(x => x) + 1d, ratings.count(x => !x) + 1d)
 
@@ -16,7 +18,7 @@ trait BetaCore {
     ratings.groupBy(x =>
       x.client // group by witness agent
     ).map(x => x._1 ->
-      makeBetaDistribution(x._2.map(y => y.success))
+      makeBetaDistribution(x._2.map(y => y.rating > successThreshold))
     )
   }
 

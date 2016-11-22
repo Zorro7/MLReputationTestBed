@@ -7,7 +7,8 @@ import jaspr.strategy.{CompositionStrategy, RatingStrategy, RatingStrategyInit}
 /**
   * Created by phil on 19/03/16.
   */
-class BetaReputation(val witnessWeight: Double) extends RatingStrategy with CompositionStrategy with Exploration with BetaCore {
+class BetaReputation(val witnessWeight: Double,
+                     override val successThreshold: Double) extends RatingStrategy with CompositionStrategy with Exploration with BetaCore {
   override val explorationProbability: Double = 0.1
   val eps: Double = 0.1
   val confidenceThreshold: Double = 1d
@@ -17,7 +18,7 @@ class BetaReputation(val witnessWeight: Double) extends RatingStrategy with Comp
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[RatingStrategyInit]
 
-    val interactionTrust = makeBetaDistribution(init.directRecords.filter(_.provider == request.provider).map(_.success))
+    val interactionTrust = makeBetaDistribution(init.directRecords.filter(_.provider == request.provider).map(_.rating > successThreshold))
     val interactionConfidence: Double =
       interactionTrust.integrate(interactionTrust.expected - eps, interactionTrust.expected + eps)
 

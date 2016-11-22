@@ -11,14 +11,13 @@ import jaspr.utilities.matrix.{Matrix, RowVector}
 /**
   * Created by phil on 25/03/16.
   */
-class Blade(override val numBins: Int) extends CompositionStrategy with RatingStrategy with Exploration with BladeCore {
+class Blade(override val numBins: Int,
+            override val lower: Double,
+            override val upper: Double) extends CompositionStrategy with RatingStrategy with Exploration with BladeCore {
 
   override val name: String = this.getClass.getSimpleName + "-" + numBins
 
   override val explorationProbability: Double = 0.1
-
-  override val lower: Double = -1d
-  override val upper: Double = 1d
 
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val direct = toRatings(context.client.getProvenance(context.client))

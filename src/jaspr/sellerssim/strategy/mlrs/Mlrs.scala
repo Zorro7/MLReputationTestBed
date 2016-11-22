@@ -23,6 +23,8 @@ import scala.collection.mutable
   */
 class Mlrs(val baseLearner: Classifier,
            override val numBins: Int,
+           override val lower: Double,
+           override val upper: Double,
            val reinterpretationLearner: Classifier,
            val witnessWeight: Double = 0.5d,
            val reinterpretationContext: Boolean = true,

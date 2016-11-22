@@ -55,7 +55,7 @@ class MlrsB(val baseLearner: Classifier,
   baseTrustModel.setSplitAttIndex(1)
   val baseReinterpretationModel = AbstractClassifier.makeCopy(baseLearner)
 
-  val backupStrategy: Strategy = new Travos
+  val backupStrategy: Strategy = new Travos(lower+(upper-lower)/2d)
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[Mlrs2Init]

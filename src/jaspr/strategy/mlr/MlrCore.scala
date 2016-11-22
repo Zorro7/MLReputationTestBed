@@ -18,13 +18,11 @@ import scala.collection.mutable
   */
 trait MlrCore extends Discretization {
 
-  override val upper = 1d
-  override val lower = -1d
+  override val upper: Double = 1d
+  override val lower: Double = 0d
 
   val classIndex: Int = 0
   lazy val discreteClass: Boolean = if (numBins <= 1) false else true
-
-
 
   def makeMlrsModel[T <: Record](records: Seq[T], baseModel: Classifier,
                                  makeTrainRow: T => Seq[Any],
