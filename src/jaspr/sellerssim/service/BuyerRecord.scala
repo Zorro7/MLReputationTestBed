@@ -16,10 +16,6 @@ case class BuyerRecord(override val service: Service,
 
   override def rating: Double = ratings.values.sum / ratings.size.toDouble
 
-  def client: Client = service.request.client
-
-  def provider: Provider = service.request.provider
-
   def round: Int = service.end
 
   def payload: Payload = service.payload

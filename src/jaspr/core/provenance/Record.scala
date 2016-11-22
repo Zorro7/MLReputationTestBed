@@ -1,5 +1,6 @@
 package jaspr.core.provenance
 
+import jaspr.core.agent.{Provider, Client}
 import jaspr.core.service.{Service, TrustAssessment}
 import jaspr.utilities.NamedEntity
 
@@ -10,6 +11,9 @@ class Record extends NamedEntity
 
 trait ServiceRecord extends Record {
   val service: Service
+
+  def client: Client = service.request.client
+  def provider: Provider = service.request.provider
 }
 
 trait TrustAssessmentRecord extends Record {
@@ -17,5 +21,8 @@ trait TrustAssessmentRecord extends Record {
 }
 
 trait RatingRecord extends Record {
+  def client: Client
+  def provider: Provider
+
   def rating: Double
 }
