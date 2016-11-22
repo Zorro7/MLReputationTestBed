@@ -26,6 +26,7 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
         val gain = service.utility()
         jaspr.debug(10, "UTILITY: ", simulation.round, this, utility, gain)
         _utility += gain
+//        println(gain)
         x
       case None => throw new Exception("Request " + service.request + " not found.")
     }
