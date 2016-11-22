@@ -38,7 +38,10 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
     val received = service.payload.asInstanceOf[ProductPayload].quality
     val wanted = service.request.payload.asInstanceOf[ProductPayload].quality
     received.withFilter(x => wanted.contains(x._1)).map(x =>
-      x._1 -> (simulation.config.baseUtility - Math.abs(x._2.doubleValue - wanted(x._1).doubleValue))
+      x._1 -> {
+        simulation.config.baseUtility - Math.abs(x._2.doubleValue - wanted(x._1).doubleValue)
+//        if (Math.abs(x._2.doubleValue - wanted(x._1).doubleValue) < 0.5) simulation.config.baseUtility else 0d
+      }
     )
   }
 
