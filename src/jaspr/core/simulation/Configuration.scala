@@ -22,11 +22,12 @@ trait MultiConfiguration {
   val numSimulations: Int
 
   val directComparison: Boolean = true
-  val _seed: Int = Random.nextInt(Int.MaxValue)
+  private val _simSeeds: List[Int] = List.fill(numSimulations)(Random.nextInt(Int.MaxValue))
+  private val _configSeeds: List[Int] = List.fill(numSimulations)(Random.nextInt(Int.MaxValue))
 
   def seed(configIndex: Int, simulationIndex: Int) = {
-    if (directComparison) _seed + simulationIndex
-    else _seed + configIndex + simulationIndex * configs.size //looks random but unique and covers [seed,seed+numConfigs*numSimulations]
+    if (directComparison) _simSeeds(simulationIndex)
+    else _simSeeds(simulationIndex) + _configSeeds(configIndex)
   }
 
   val resultStart: Int = 0
