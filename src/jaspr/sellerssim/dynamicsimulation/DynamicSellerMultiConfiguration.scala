@@ -79,15 +79,15 @@ object DynamicSellerMultiConfiguration extends App {
 ////        ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
 //        "jaspr.strategy.fire.Fire(0.5;false)," +
 //        "jaspr.strategy.fire.Fire(0.0;false)," +
-//        "jaspr.strategy.betareputation.BetaReputation(0.5;0.5)," +
-//        "jaspr.strategy.betareputation.BetaReputation(0.0;0.5)," +
+        "jaspr.strategy.betareputation.BRS(0.5)," +
+        "jaspr.strategy.betareputation.BRS(0.0)," +
 ////////        //                "jaspr.strategy.betareputation.BetaReputation(1d)," +
 //        "jaspr.strategy.habit.Habit(2;0d;1d),"+
 //        "jaspr.strategy.betareputation.Travos(0.5)," +
 //        "jaspr.strategy.blade.Blade(2;0d;1d)," +
 //        "jaspr.strategy.stereotype.Burnett(false),"+
 //        "jaspr.strategy.stereotype.Burnett(true),"+
-        " --numSimulations 500 " +
+        " --numSimulations 10 " +
         "--eventLikelihood 0 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -101,7 +101,7 @@ object DynamicSellerMultiConfiguration extends App {
         "--numClients 10 --numProviders 100 " +
         "--clientInvolvementLikelihood 1 --witnessesAvailable 3 --providersAvailable 10 " +
         "--eventEffects 0 " +
-        "--numRounds 20 " +
+        "--numRounds 200 " +
         "--memoryLimit 500 " +
         "--numSimCapabilities 1 --numProviderCapabilities 5 " +
         "--sigma 0.1d " +
