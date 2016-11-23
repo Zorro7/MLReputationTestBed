@@ -13,7 +13,10 @@ import weka.classifiers.Classifier
 /**
   * Created by phil on 30/06/16.
   */
-class HabitLike(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrCore {
+class HabitLike(val baseLearner: Classifier,
+                override val numBins: Int,
+                override val lower: Double,
+                override val upper: Double) extends CompositionStrategy with Exploration with MlrCore {
 
   override val explorationProbability: Double = 0d
 

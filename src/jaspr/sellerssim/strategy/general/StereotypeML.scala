@@ -42,14 +42,14 @@ class BasicStereotype(override val baseLearner: Classifier,
                       override val numBins: Int,
                       override val payloadAdverts: Boolean
                      ) extends StereotypeML {
-  override val baseStrategy = new BasicML(baseLearner, numBins)
+  override val baseStrategy = new BasicML(baseLearner, numBins, lower, upper)
 }
 
 class FireLikeStereotype(override val baseLearner: Classifier,
                          override val numBins: Int,
                          override val payloadAdverts: Boolean
                         ) extends StereotypeML {
-  override val baseStrategy = new FireLike(baseLearner, numBins)
+  override val baseStrategy = new FireLike(baseLearner, numBins, lower, upper)
 }
 
 //class TravosLikeStereotype extends StereotypeML {

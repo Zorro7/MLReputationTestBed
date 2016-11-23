@@ -11,7 +11,10 @@ import weka.classifiers.Classifier
 /**
   * Created by phil on 30/06/16.
   */
-class TravosLikeSlim(baseLearner: Classifier, numBins: Int) extends TravosLike(baseLearner, numBins) {
+class TravosLikeSlim(baseLearner: Classifier,
+                     override val numBins: Int,
+                     override val lower: Double,
+                     override val upper: Double) extends TravosLike(baseLearner, numBins, lower, upper) {
 
   override val explorationProbability: Double = 0d
 

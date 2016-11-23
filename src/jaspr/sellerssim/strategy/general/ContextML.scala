@@ -48,12 +48,20 @@ trait ContextML extends SingleModelStrategy {
 
 }
 
-class BasicContext(override val baseLearner: Classifier, override val numBins: Int, override val usePayloadProperties: Boolean) extends ContextML {
-  override val baseStrategy = new BasicML(baseLearner, numBins)
+class BasicContext(override val baseLearner: Classifier,
+                   override val numBins: Int,
+                   override val lower: Double,
+                   override val upper: Double,
+                   override val usePayloadProperties: Boolean) extends ContextML {
+  override val baseStrategy = new BasicML(baseLearner, numBins, lower, upper)
 }
 
-class FireLikeContext(override val baseLearner: Classifier, override val numBins: Int, override val usePayloadProperties: Boolean) extends ContextML {
-  override val baseStrategy = new FireLike(baseLearner, numBins)
+class FireLikeContext(override val baseLearner: Classifier,
+                      override val numBins: Int,
+                      override val lower: Double,
+                      override val upper: Double,
+                      override val usePayloadProperties: Boolean) extends ContextML {
+  override val baseStrategy = new FireLike(baseLearner, numBins, lower, upper)
 }
 
 //class TravosLikeContext extends ContextML {

@@ -13,7 +13,10 @@ import weka.classifiers.Classifier
 /**
   * Created by phil on 29/06/16.
   */
-class TravosLike(val baseLearner: Classifier, override val numBins: Int) extends CompositionStrategy with Exploration with MlrCore {
+class TravosLike(val baseLearner: Classifier,
+                 override val numBins: Int,
+                 override val lower: Double,
+                 override val upper: Double) extends CompositionStrategy with Exploration with MlrCore {
 
   override val explorationProbability: Double = 0d
 
