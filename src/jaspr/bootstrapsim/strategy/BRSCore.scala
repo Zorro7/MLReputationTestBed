@@ -63,7 +63,7 @@ trait BRSCore {
   }
 
   def weightWitnessBetas(witnessBetas: Map[Client, Map[Provider, BetaDistribution]],
-                         directBetas: Map[Provider, BetaDistribution]) = {
+                         directBetas: Map[Provider, BetaDistribution]): Map[Client, Map[Provider, BetaDistribution]] = {
     applyWitnessWeightings(witnessBetas, makeWitnessWeightings(witnessBetas, directBetas))
   }
 
