@@ -7,12 +7,12 @@ propMin = 0;
 propMax = 1;
 capMin = 0;
 capMax = 1;
-prefMin = 0;
-prefMax = 1;
-sigma = 0.0;
+prefMin = 0.5;
+prefMax = 1.5;
+sigma = 0.1;
 
-fixedPreference = 0.5;
-baseUtility = 0.5;
+fixedPreference = 1;
+baseUtility = 1;
 
 results = zeros(1,rounds);
 for round = 1:rounds
@@ -22,13 +22,15 @@ for round = 1:rounds
     simCapabilities = sigma*randn(1,n)+capMean;
     properties = sigma*randn(1,n)+propMean;
 
-    preferences = ones(1,n)*fixedPreference;
+    preferences = sigma*randn(1,n)+fixedPreference;
     
     capabilities = (properties+simCapabilities)/2;
 
-    utilities = baseUtility - (preferences-capabilities);
-%     utilities = (preferences < capabilities);
-%     utilities = abs(capabilities-preferences) < 0.5;
+%      utilities = baseUtility - (preferences-capabilities);
+%     utilities = capabilities .* (preferences < capabilities);
+%     utilities = sqrt((capabilities-preferences).^2);
+     utilities = abs(capabilities-preferences);
+%     utilities = capabilities/preferences;
     
     results(round) = mean(utilities);
 end
@@ -49,9 +51,12 @@ for round = 1:rounds
         
     capabilities = (properties+simCapabilities)/2;
 
-    utilities = baseUtility - (preferences-capabilities);
-%     utilities = (preferences < capabilities);
-%     utilities = abs(preferences-capabilities) < 0.25;
+%      utilities = baseUtility - (preferences-capabilities);
+%     utilities = capabilities .* (preferences < capabilities);
+%     utilities = baseUtility .* -log(abs(capabilities-preferences));
+%     utilities = sqrt((capabilities-preferences).^2);
+
+    utilities = abs(capabilities-preferences);
     
     results(round) = mean(utilities);
 end
@@ -62,4 +67,11 @@ subplot(2,1,2),histogram(results)
 
 
 
+
+%%
+
+
+a = rand(1,10000);
+b = randn(1,10000)+a;
+histogram(abs(b))
 
