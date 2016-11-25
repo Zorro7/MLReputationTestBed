@@ -62,33 +62,24 @@ object DynamicSellerMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
         "jaspr.strategy.NoStrategy," +
-//          "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0d;1d;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
-//          "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.bayes.NaiveBayes;2;0d;1d;weka.classifiers.functions.LinearRegression;2.0;false;false;true;false),"+
-        //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0d;1d;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
-////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.M5P;0;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
-////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;2.0;true;true;false;false),"+
-////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;weka.classifiers.functions.LinearRegression;0.0;false;false;false;false),"+
-//        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d),"+
-//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2;0d;1d),"+
-//        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;2;0d;1d;false),"+
-//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;0d;1d;false),"+
-//        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2;0d;1d),"+
-        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;2;0d;1d),"+
-//        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;false),"+
-        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;0d;1d;false),"+
-//        ////        "jaspr.strategy.fire.FireContext(0.0;false)," +
-////        ////        "jaspr.strategy.fire.FireContext(0.0;true)," +
+//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0d;1d;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
+////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0d;1d;weka.classifiers.functions.LinearRegression;2.0;false;false;true;false),"+
+//        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.M5P;0;-1d;-1d;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
+////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.M5P;0;-1d;-1d;weka.classifiers.functions.LinearRegression;2.0;false;false;true;false),"+
+        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;0;-1d;-1d)," +
+        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.M5P;0;-1d;-1d)," +
+        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;0d;1d;false)," +
+        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;0d;1d;false)," +
+        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.M5P;0;-1d;-1d;false)," +
 //        "jaspr.strategy.fire.Fire(0.5;false)," +
 //        "jaspr.strategy.fire.Fire(0.0;false)," +
 //        "jaspr.strategy.betareputation.BRS(0.5)," +
 //        "jaspr.strategy.betareputation.BRS(0.0)," +
-////////        //                "jaspr.strategy.betareputation.BetaReputation(1d)," +
-//        "jaspr.strategy.habit.Habit(2;0d;1d),"+
 //        "jaspr.strategy.betareputation.Travos(0.5)," +
 //        "jaspr.strategy.blade.Blade(2;0d;1d)," +
-//        "jaspr.strategy.stereotype.Burnett(false),"+
-//        "jaspr.strategy.stereotype.Burnett(true),"+
-        " --numSimulations 3 " +
+//        "jaspr.strategy.habit.Habit(2;0d;1d),"+
+        " --numSimulations 10 " +
         "--eventLikelihood 0 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -100,13 +91,13 @@ object DynamicSellerMultiConfiguration extends App {
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
         "--numClients 10 --numProviders 100 " +
-        "--clientInvolvementLikelihood 1 --witnessesAvailable 3 --providersAvailable 10 " +
+        "--clientInvolvementLikelihood 5 --witnessesAvailable 3 --providersAvailable 10 " +
         "--eventEffects 0 " +
-        "--numRounds 200 " +
+        "--numRounds 100 " +
         "--memoryLimit 500 " +
         "--numSimCapabilities 5 --numProviderCapabilities 5 " +
         "--sigma 0.1d " +
-        "--numTerms 3 --numAdverts 3 --numPreferences 3 " +
+        "--numTerms 5 --numAdverts 5 --numPreferences 5 " +
         "--providerAttrition 0.0 --clientAttrition 0.0").split(" ")
     } else args
 
@@ -224,7 +215,7 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
   override def newSimulation(): Simulation = {
     _simcapabilities =
       (1 to numSimCapabilities).map(x =>
-        new ProductPayload(x.toString, randomProperties(Chooser.randomDouble(minMean, maxMean), sigma, numTerms).toList)
+        new ProductPayload(x.toString, randomProperties(Chooser.randomDouble(simCapMinMean, simCapMaxMean), sigma, numTerms).toList)
 //        new ProductPayload(x.toString, FixedProperty("1", r) :: Nil)
       )
     new DynamicSellerSimulation(this)
@@ -271,16 +262,24 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
         case Some(x) =>
 //          GaussianProperty(c._1, (c._2.doubleValue + noiseRange*Chooser.randomDouble(-1,1))/(noiseRange+1), 0.1)
           GaussianProperty(c._1, (c._2.doubleValue + x.doubleValue)/2d, sigma)
+//          GaussianProperty(c._1, (c._2.doubleValue+2d*Chooser.randomDouble(0,1))/3d, sigma)
 //          GaussianProperty(c._1, x.doubleValue, sigma)
       }
     })
   }
 
-  override val baseUtility: Double = 0.5
-  val minMean: Double = 0
-  val maxMean: Double = 1
+  override val baseUtility: Double = 1
+//  val minMean: Double = 0
+//  val maxMean: Double = 2
+  val provCapMinMean: Double = 0
+  val provCapMaxMean: Double = 1
+  val simCapMinMean: Double = 0
+  val simCapMaxMean: Double = 1
+  val prefMinMean: Double = 0.5
+  val prefMaxMean: Double = 1.5
+
   val sigma = _sigma//0.1
-  val fixedPreference = 0.5
+  val fixedPreference = 1
 
   // Services that exist in the simulation
   private var _simcapabilities: Seq[ProductPayload] = Nil //set above in newSimulation(..)
@@ -294,20 +293,21 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
   }
 
   override def properties(agent: Agent): SortedMap[String, Property] = {
-    randomProperties(Chooser.randomDouble(minMean, maxMean), sigma, numTerms).toList
+    randomProperties(Chooser.randomDouble(provCapMinMean, provCapMaxMean), sigma, numTerms).toList
   }
 
   override def preferences(agent: Client): SortedMap[String, Property] = {
     if (numPreferences == 0) {
       (1 to numTerms).map(x => FixedProperty(x.toString, fixedPreference)).toList
     } else {
-      Chooser.sample(randomProperties(Chooser.randomDouble(minMean, maxMean), sigma, numTerms), numPreferences).toList
+      Chooser.sample(randomProperties(Chooser.randomDouble(prefMinMean, prefMaxMean), sigma, numTerms), numPreferences).toList
     }
   }
 
   def randomProperties(mean: Double, sigma: Double, num: Int): Seq[Property] = {
     (1 to num).map(
       x => GaussianProperty(x.toString, Chooser.nextGaussian()*sigma + mean, sigma)
+//      x => FixedProperty(x.toString, Chooser.nextGaussian()*sigma + mean)
     )
   }
 

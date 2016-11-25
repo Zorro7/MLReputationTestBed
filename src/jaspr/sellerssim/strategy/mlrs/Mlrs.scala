@@ -12,7 +12,7 @@ import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.bayes.NaiveBayes
 import weka.classifiers.functions.LinearRegression
-import weka.classifiers.trees.RandomForest
+import weka.classifiers.trees.{M5P, RandomForest}
 import weka.classifiers.{AbstractClassifier, Classifier}
 
 import scala.collection.mutable
@@ -49,6 +49,10 @@ class Mlrs(val baseLearner: Classifier,
 
   override val explorationProbability: Double = 0d
 
+
+  val baseTrustModel = new MultiRegression
+  baseTrustModel.setSplitAttIndex(1)
+
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
     case x: RandomForest =>
@@ -58,6 +62,9 @@ class Mlrs(val baseLearner: Classifier,
     case _ => // do nothing
   }
 
+  baseTrustModel.setClassifier(AbstractClassifier.makeCopy(baseLearner))
+
+
   val reinterpretationDiscrete = reinterpretationLearner match {
     case x: NaiveBayes => true
     case x: RandomForest => true
@@ -65,9 +72,7 @@ class Mlrs(val baseLearner: Classifier,
   }
 
   //  val baseTrustModel = AbstractClassifier.makeCopy(baseLearner)
-  val baseTrustModel = new MultiRegression
-  baseTrustModel.setClassifier(AbstractClassifier.makeCopy(baseLearner))
-  baseTrustModel.setSplitAttIndex(1)
+
   val baseReinterpretationModel = AbstractClassifier.makeCopy(reinterpretationLearner)
 
 

@@ -71,6 +71,10 @@ case class FixedProperty(override val name: String, override val value: AnyVal) 
 
 case class GaussianProperty(override val name: String, mean: Double, std: Double) extends Property {
 
+  override def toString: String = {
+    super.toString + "-" + mean+","+std
+  }
+
   override def value: Double = {
     Chooser.nextGaussian()*std + mean
   }
