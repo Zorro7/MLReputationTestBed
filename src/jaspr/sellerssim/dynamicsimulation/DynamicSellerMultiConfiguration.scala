@@ -66,20 +66,21 @@ object DynamicSellerMultiConfiguration extends App {
 ////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.RandomForest;2;0d;1d;weka.classifiers.functions.LinearRegression;2.0;false;false;true;false),"+
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.M5P;0;-1d;-1d;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
 ////        "jaspr.sellerssim.strategy.mlrs.Mlrs(weka.classifiers.trees.M5P;0;-1d;-1d;weka.classifiers.functions.LinearRegression;2.0;false;false;true;false),"+
-        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;0;-1d;-1d)," +
-        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.M5P;0;-1d;-1d)," +
-        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;0d;1d;false)," +
-        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;0d;1d;false)," +
-        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.M5P;0;-1d;-1d;false)," +
-//        "jaspr.strategy.fire.Fire(0.5;false)," +
+//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.RandomForest;0;0d;1d)," +
+//        "jaspr.sellerssim.strategy.general.BasicML(weka.classifiers.trees.M5P;0;0d-1d)," +
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.bayes.NaiveBayes;2;0d;1d;false)," +
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.RandomForest;2;0d;1d;false)," +
+//        "jaspr.sellerssim.strategy.general.BasicContext(weka.classifiers.trees.M5P;0;0d;1d;false)," +
+//        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.bayes.NaiveBayes;5;0d;1d;false)," +
+        "jaspr.strategy.fire.Fire(0.5;false)," +
 //        "jaspr.strategy.fire.Fire(0.0;false)," +
 //        "jaspr.strategy.betareputation.BRS(0.5)," +
 //        "jaspr.strategy.betareputation.BRS(0.0)," +
 //        "jaspr.strategy.betareputation.Travos(0.5)," +
 //        "jaspr.strategy.blade.Blade(2;0d;1d)," +
 //        "jaspr.strategy.habit.Habit(2;0d;1d),"+
-        " --numSimulations 10 " +
+        " --numSimulations 3 " +
         "--eventLikelihood 0 " +
         "--honestWitnessLikelihood 1 " +
         "--pessimisticWitnessLikelihood 0 " +
@@ -91,13 +92,14 @@ object DynamicSellerMultiConfiguration extends App {
         "--providersToPromote 0.25 " +
         "--providersToSlander 0.25 " +
         "--numClients 10 --numProviders 100 " +
-        "--clientInvolvementLikelihood 5 --witnessesAvailable 3 --providersAvailable 10 " +
+        "--clientInvolvementLikelihood 1 --witnessesAvailable 5 --providersAvailable 20 " +
         "--eventEffects 0 " +
         "--numRounds 100 " +
         "--memoryLimit 500 " +
         "--numSimCapabilities 5 --numProviderCapabilities 5 " +
-        "--sigma 0.1d " +
-        "--numTerms 5 --numAdverts 5 --numPreferences 5 " +
+        "--sigma 0.05d " +
+        "--numTerms 3 --numPreferences 0 " +
+        "--numAdverts 5 " +
         "--providerAttrition 0.0 --clientAttrition 0.0").split(" ")
     } else args
 
@@ -269,16 +271,17 @@ class DynamicSellerConfiguration(val _strategy: Strategy,
   }
 
   override val baseUtility: Double = 1
+
 //  val minMean: Double = 0
 //  val maxMean: Double = 2
   val provCapMinMean: Double = 0
   val provCapMaxMean: Double = 1
-  val simCapMinMean: Double = 0
-  val simCapMaxMean: Double = 1
-  val prefMinMean: Double = 0.5
-  val prefMaxMean: Double = 1.5
+  val simCapMinMean: Double = 0.5
+  val simCapMaxMean: Double = 0.5
+  val prefMinMean: Double = 0
+  val prefMaxMean: Double = 1
 
-  val sigma = _sigma//0.1
+  val sigma = _sigma
   val fixedPreference = 1
 
   // Services that exist in the simulation

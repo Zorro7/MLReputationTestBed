@@ -39,16 +39,27 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
     val wanted = service.request.payload.asInstanceOf[ProductPayload].quality
     received.withFilter(x => wanted.contains(x._1)).map(x =>
       x._1 -> {
-        simulation.config.baseUtility - Math.abs(x._2.doubleValue - wanted(x._1).doubleValue)
+//        simulation.config.baseUtility - Math.abs(x._2.doubleValue - wanted(x._1).doubleValue)
+//        bound(simulation.config.baseUtility - Math.abs(x._2.doubleValue - wanted(x._1).doubleValue),0,1)
 //        wanted(x._1).doubleValue
 //        x._2.doubleValue
 //        simulation.config.baseUtility - (wanted(x._1).doubleValue - x._2.doubleValue)
 //        simulation.config.baseUtility * (x._2.doubleValue - wanted(x._1).doubleValue)
 //        simulation.config.baseUtility - (x._2.doubleValue - wanted(x._1).doubleValue)
-//        if (x._2.doubleValue > wanted(x._1).doubleValue) simulation.config.baseUtility-x._2.doubleValue else 0d
-//        if (Math.abs(x._2.doubleValue - wanted(x._1).doubleValue) < 0.5) simulation.config.baseUtility else 0d
+        val ut = if (Math.abs(x._2.doubleValue - wanted(x._1).doubleValue) > 0.5) {
+          x._2.doubleValue
+        } else {
+          bound(simulation.config.baseUtility - (wanted(x._1).doubleValue - x._2.doubleValue), 0, 1)
+          0d
+        }
+//        println(simulation.config.baseUtility, x._2.doubleValue, wanted(x._1).doubleValue, simulation.config.baseUtility - (x._2.doubleValue - wanted(x._1).doubleValue), ut)
+//        ut
       }
     )
+  }
+
+  def bound(x: Double, mn: Double, mx: Double): Double = {
+    Math.min(Math.max(x,mn),mx)
   }
 
   override def makeRequest(assessment: TrustAssessment): Unit = {
