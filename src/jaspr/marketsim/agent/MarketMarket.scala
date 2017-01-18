@@ -7,14 +7,14 @@ import jaspr.core.service.Service
   * Created by phil on 27/09/2016.
   */
 class MarketMarket extends Market {
+
   override def deliver(service: Service): Double = {
     val delivered = service.payload.asInstanceOf[MarketPayload]
     val requested = service.request.payload.asInstanceOf[MarketPayload]
+    println(delivered.quality, service.request.provider.properties, requested.quality)
     val disparity = requested.quality.map(r =>
       delivered.quality.get(r._1) match {
-        case Some(d) => {
-          d.doubleValue - r._2.doubleValue
-        }
+        case Some(d) => d.doubleValue - r._2.doubleValue
         case None => 0
       }
     )

@@ -10,10 +10,10 @@ import scala.collection.immutable.SortedMap
   */
 class MarketPayload(override val name: String, val quality: SortedMap[String, Property] = Nil) extends Payload {
 
-  override def toString: String = name + " " + quality.values.map(_.value)+"-"+quality.values
+  override def toString: String = name + " " + quality.values.map(_.value)
 
   def copy(name: String = this.name,
-           properties: SortedMap[String,Property] = this.quality) = {
-    new MarketPayload(name, quality = properties)
+           quality: SortedMap[String, Property] = this.quality) = {
+    new MarketPayload(name, quality = quality)
   }
 }

@@ -35,7 +35,7 @@ object MarketMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;false)," + // all trustees observable
+//          "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;false;false;false)," + // all trustees observable
         //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;false;false;false;false)," + // direct stereotypes
         //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;false)," + // disclosed ids
         //        "jaspr.bootstrapsim.strategy.Burnett(weka.classifiers.trees.M5P;0;2d;true;true;false;true)," + // disclosed ids + limited obs
@@ -47,10 +47,11 @@ object MarketMultiConfiguration extends App {
         //        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;true;false)," + // undisclosed ids
         //        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;true;true)," + // undisclosed ids + limited obs
         "jaspr.bootstrapsim.strategy.BRS(2d;0d)," +
-        //        "jaspr.bootstrapsim.strategy.BRS(0d;false;0d)," +
+        "jaspr.strategy.fire.Fire(0.5d;false)," +
+        "jaspr.strategy.fire.FireContext(0.5d;false)," +
         "jaspr.strategy.NoStrategy," +
         " --numSimulations 5 " +
-        "--numRounds 50 " +
+        "--numRounds 100 " +
         "--numTrustees 100 " +
         "--numTrustors 10 " +
         "--trusteesAvailable 10 " +
@@ -82,6 +83,7 @@ case class MarketMultiConfiguration(strategies: Seq[String] = Nil,
                                   trusteeLeaveLikelihood: Double = 0.05,
                                   trustorLeaveLikelihood: Double = 0.05
                                  ) extends MultiConfiguration {
+
   override val directComparison = true
 
   override val resultStart: Int = 0
@@ -118,6 +120,7 @@ class MarketConfiguration(val _strategy: Strategy,
   override def toString: String = _strategy.name
 
   override def newSimulation(): Simulation = {
+    resetSimCapabilities()
     new MarketSimulation(this)
   }
 
@@ -131,7 +134,7 @@ class MarketConfiguration(val _strategy: Strategy,
   override val numAgents: Int = numClients + numProviders
 
   def clientContext(client: Client with Preferences, round: Int): ClientContext = {
-    new ClientContext(client, round, new MarketPayload("stuff", quality = client.preferences), new MarketMarket)
+    new ClientContext(client, round, Chooser.choose(simCapabilities), new MarketMarket)
   }
 
   def request(context: ClientContext, trustee: Trustee): ServiceRequest = {
@@ -140,16 +143,64 @@ class MarketConfiguration(val _strategy: Strategy,
     )
   }
 
+  val numSimCapabilities: Int = 5
+  def simCapabilities: Seq[MarketPayload] = _simCapabilities
+  // Services that exist in the simulation
+  private var _simCapabilities: Seq[MarketPayload] = Nil //set in newSimulation(..)
+  private def resetSimCapabilities() = {
+    _simCapabilities =
+      (1 to numSimCapabilities).map(x =>
+        new MarketPayload(x.toString, FixedProperty("a", Chooser.randomDouble(0,1)) :: Nil)
+      )
+  }
+
+
   def adverts(agent: Trustee): SortedMap[String, Property] = {
-    Nil
+//    val ads: SortedMap[String,Property] = agent.properties.head._2 match {
+//      case GaussianProperty(_,0.9,_) => FixedProperty("1", true) :: FixedProperty("6", true) :: Nil
+//      case GaussianProperty(_,0.6,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: Nil
+//      case GaussianProperty(_,0.4,_) => FixedProperty("3", true) :: FixedProperty("4", true) :: Nil
+//      case GaussianProperty(_,0.3,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil
+//      case GaussianProperty(_,0.5,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
+//    }
+    //    val ads: SortedMap[String,Property] = agent.properties.head._2 match {
+    //      case GaussianProperty(_,0.9,_) => (1 to 2).map(x => FixedProperty(x.toString, true)).toList
+    //      case GaussianProperty(_,0.6,_) => (2 to 4).map(x => FixedProperty(x.toString, true)).toList
+    //      case GaussianProperty(_,0.4,_) => (4 to 6).map(x => FixedProperty(x.toString, true)).toList
+    //      case GaussianProperty(_,0.3,_) => (6 to 8).map(x => FixedProperty(x.toString, true)).toList
+    //      case GaussianProperty(_,0.5,_) => (8 to 10).map(x => FixedProperty(x.toString, true)).toList
+    //    }
+    val ads: SortedMap[String,Property] = Nil
+    val fullAds: SortedMap[String,Property] = (1 to 6).map(x =>
+      if (ads.contains(x.toString)) {
+        ads(x.toString)
+      } else {
+        FixedProperty(x.toString, false)
+      }
+    ).toList
+    fullAds
   }
 
   def properties(agent: Trustee): SortedMap[String, Property] = {
-    GaussianProperty("a", Chooser.randomDouble(0,1), 0.1) :: Nil
+//    Chooser.select(
+//      GaussianProperty("a", 0.9, 0.05) :: Nil,
+//      GaussianProperty("a", 0.6, 0.15) :: Nil,
+//      GaussianProperty("a", 0.4, 0.15) :: Nil,
+//      GaussianProperty("a", 0.3, 0.05) :: Nil, //0.3,0
+//      GaussianProperty("a", 0.5, 1) :: Nil //0.1 1
+//    )
+//    Chooser.select(
+//      FixedProperty("a", 0.9) :: Nil,
+//      FixedProperty("a", 0.6) :: Nil,
+//      FixedProperty("a", 0.4) :: Nil,
+//      FixedProperty("a", 0.3) :: Nil, //0.3,0
+//      FixedProperty("a", 0.5) :: Nil //0.1 1
+//    )
+    FixedProperty("a", Chooser.randomDouble(0,1)) :: Nil
   }
 
   def preferences(agent: Trustor): SortedMap[String, Property] = {
-    GaussianProperty("a", 0.5, 0.1) :: Nil
+    FixedProperty("a", 0.5) :: Nil
   }
 
 
