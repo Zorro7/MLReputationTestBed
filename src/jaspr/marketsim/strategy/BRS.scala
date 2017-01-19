@@ -12,12 +12,8 @@ import jaspr.utilities.BetaDistribution
   */
 class BRS(override val witnessWeight: Double = 2d) extends StrategyCore with BRSCore {
 
-  val discountOpinions: Boolean = false
-
   override val prior: Double = 0.5
   //  override val witnessWeight: Double = 3d
-  override val goodOpinionThreshold: Double = 0.7
-  override val badOpinionThreshold: Double = 0.3
 
   override val name: String =
     this.getClass.getSimpleName+"-"+witnessWeight+

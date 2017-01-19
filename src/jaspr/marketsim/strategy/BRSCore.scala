@@ -13,8 +13,10 @@ trait BRSCore {
 
   val prior: Double
   val witnessWeight: Double
-  val goodOpinionThreshold: Double
-  val badOpinionThreshold: Double
+
+  val discountOpinions: Boolean = false
+  val goodOpinionThreshold: Double = 0.7
+  val badOpinionThreshold: Double = 0.3
 
   def makeDirectBetas(directRecords: Seq[ServiceRecord with RatingRecord]): Map[Provider,BetaDistribution] = {
     if (witnessWeight != 1) makeOpinions(directRecords, r => r.service.request.provider)

@@ -30,12 +30,13 @@ object MarketMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.marketsim.strategy.BRSContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.Burnett(2d;weka.classifiers.trees.M5P;false)," +
+//        "jaspr.marketsim.strategy.BRSContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
         "jaspr.marketsim.strategy.BRSLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.strategy.habit.Habit(2;0d;1d)," +
-        "jaspr.strategy.blade.Blade(2;0d;1d)," +
+//        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.strategy.habit.Habit(2;0d;1d)," +
+//        "jaspr.strategy.blade.Blade(2;0d;1d)," +
         "jaspr.marketsim.strategy.BRS(2d)," +
         "jaspr.marketsim.strategy.Fire(0.5d)," +
         "jaspr.strategy.NoStrategy," +
@@ -45,8 +46,8 @@ object MarketMultiConfiguration extends App {
         "--numTrustors 10 " +
         "--trusteesAvailable 10 " +
         "--advisorsAvailable 10 " +
-        "--trusteeLeaveLikelihood 0.01 " +
-        "--trustorLeaveLikelihood 0.01 "+
+        "--trusteeLeaveLikelihood 0.05 " +
+        "--trustorLeaveLikelihood 0.05 "+
         "").split(" ")
     } else args
 
@@ -135,7 +136,7 @@ class MarketConfiguration(val _strategy: Strategy,
     )
   }
 
-  val numSimCapabilities: Int = 5
+  val numSimCapabilities: Int = 1
   def simCapabilities: Seq[MarketPayload] = _simCapabilities
   // Services that exist in the simulation
   private var _simCapabilities: Seq[MarketPayload] = Nil //set in newSimulation(..)
@@ -143,14 +144,30 @@ class MarketConfiguration(val _strategy: Strategy,
     _simCapabilities =
       (1 to numSimCapabilities).map(x =>
         new MarketPayload(x.toString, FixedProperty("a",
-          Chooser.randomGaussian(0,0.5)
+          Chooser.randomGaussian(0,0.0)
         ) :: Nil)
       )
   }
 
 
   def adverts(agent: Trustee): SortedMap[String, Property] = {
-    Nil
+    val ads: SortedMap[String,Property] = agent.properties.head._2 match {
+      case GaussianProperty(_,0.9,_) => (1 to 2).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.8,_) => (2 to 4).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.6,_) => (4 to 6).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.4,_) => (6 to 8).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.3,_) => (8 to 10).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.2,_) => (10 to 12).map(x => FixedProperty(x.toString, true)).toList
+      case GaussianProperty(_,0.5,_) => (12 to 14).map(x => FixedProperty(x.toString, true)).toList
+    }
+    val fullAds: SortedMap[String,Property] = (1 to 14).map(x =>
+      if (ads.contains(x.toString)) {
+        ads(x.toString)
+      } else {
+        FixedProperty(x.toString, false)
+      }
+    ).toList
+    fullAds
   }
 
   def properties(agent: Trustee): SortedMap[String, Property] = {

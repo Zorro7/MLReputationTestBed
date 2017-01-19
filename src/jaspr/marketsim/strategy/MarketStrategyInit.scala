@@ -29,3 +29,12 @@ class FireLikeInit(context: ClientContext,
                    val directModel: Option[MlrModel],
                    val witnessModels: Option[Map[Client,MlrModel]]
                   ) extends StrategyInit(context)
+
+class BurnettInit(context: ClientContext,
+                  directBetas: Map[Provider,BetaDistribution],
+                  witnessBetas: Map[Client,Map[Provider,BetaDistribution]],
+                  val directStereotypeModel: Option[MlrModel],
+                  val witnessStereotypeModels: Map[Client,MlrModel],
+                  val directStereotypeWeight: Double,
+                  val witnessStereotypeWeights: Map[Client,Double]
+                 ) extends BRSInit(context, directBetas, witnessBetas)

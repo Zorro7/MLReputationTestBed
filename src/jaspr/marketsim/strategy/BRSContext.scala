@@ -1,7 +1,6 @@
 package jaspr.marketsim.strategy
 
-import jaspr.bootstrapsim.strategy.BRS
-import jaspr.core.provenance.{RatingRecord, ServiceRecord}
+import jaspr.core.provenance.{RatingRecord, ServiceRecord, TrustAssessmentRecord}
 import jaspr.core.service.ClientContext
 import jaspr.core.simulation.Network
 
@@ -10,12 +9,12 @@ import jaspr.core.simulation.Network
   */
 class BRSContext(override val witnessWeight: Double = 2d) extends BRS {
 
-  override def getDirectRecords(network: Network, context: ClientContext): Seq[ServiceRecord with RatingRecord] = {
-    context.client.getProvenance[ServiceRecord with RatingRecord](context.client).filter(_.service.payload.name == context.payload.name)
+  override def getDirectRecords(network: Network, context: ClientContext): Seq[ServiceRecord with RatingRecord with TrustAssessmentRecord] = {
+    context.client.getProvenance[ServiceRecord with RatingRecord with TrustAssessmentRecord](context.client).filter(_.service.payload.name == context.payload.name)
   }
 
-  override def getWitnessRecords(network: Network, context: ClientContext): Seq[ServiceRecord with RatingRecord] = {
-    network.gatherProvenance[ServiceRecord with RatingRecord](context.client).filter(_.service.payload.name == context.payload.name)
+  override def getWitnessRecords(network: Network, context: ClientContext): Seq[ServiceRecord with RatingRecord with TrustAssessmentRecord] = {
+    network.gatherProvenance[ServiceRecord with RatingRecord with TrustAssessmentRecord](context.client).filter(_.service.payload.name == context.payload.name)
   }
 
 }
