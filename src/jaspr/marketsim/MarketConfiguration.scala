@@ -130,7 +130,7 @@ class MarketConfiguration(val _strategy: Strategy,
 
   def clientContext(client: Trustor, round: Int) = {
     val cap = Chooser.choose(simCapabilities).copy(
-      quality = client.preferences.map(x => x._1 -> x._2.sample)
+      properties = client.preferences.map(x => x._1 -> x._2.sample)
     )
     new ClientContext(client, round, cap, new MarketMarket)
   }
@@ -198,9 +198,9 @@ class MarketConfiguration(val _strategy: Strategy,
 
   def capabilities(agent: Trustee): Seq[MarketPayload] = {
     val caps = simCapabilities.map(cap =>
-      cap.copy(quality = agent.properties.map(x => {
+      cap.copy(properties = agent.properties.map(x => {
         val prop: GaussianProperty = x._2.asInstanceOf[GaussianProperty]
-        prop.name -> GaussianProperty(prop.name, prop.mean + cap.quality(x._1).doubleValue, prop.std)
+        prop.name -> GaussianProperty(prop.name, prop.mean + cap.properties(x._1).doubleValue, prop.std)
       }))
     )
 //    println(simCapabilities)
