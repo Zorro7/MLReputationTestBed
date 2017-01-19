@@ -50,6 +50,7 @@ class Fire(val witnessWeight: Double = 2d) extends StrategyCore {
     else if (witnessWeight == 2) opinions.foldLeft(direct)(_ + _)
     else getCombinedOpinions(direct * (1-witnessWeight), opinions.map(_ * witnessWeight), witnessWeight = 2)
   }
+
   def makeDirectAggregate(directRecords: Seq[ServiceRecord with RatingRecord]): Map[Provider,Aggregate] = {
     if (witnessWeight != 1) makeOpinions(directRecords, r => r.service.request.provider)
     else Map()

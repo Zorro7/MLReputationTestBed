@@ -49,15 +49,7 @@ trait SingleModelStrategy extends CompositionStrategy with Exploration with MlrC
     if (records.isEmpty) {
       new BasicInit(context, None)
     } else {
-//      val learner = new FilteredClassifier
-//      learner.setClassifier(baseLearner)
-//      val sd: Discretize = new Discretize
-//      sd.setAttributeIndices("first-last")
-//      learner.setFilter(sd)
       val trustModel = makeMlrsModel(records, baseLearner, makeTrainRow)
-//      println(tmp.count(_ > 0), tmp.size)
-//      println(trustModel.train)
-//      println(trustModel.model)
       new BasicInit(context, Some(trustModel))
     }
   }
