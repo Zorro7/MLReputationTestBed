@@ -12,15 +12,14 @@ import weka.classifiers.Classifier
 /**
   * Created by phil on 19/01/17.
   */
-class BRSLike(val witnessWeight: Double = 2d,
-              val baseLearner: Classifier,
+class BRSLike(val baseLearner: Classifier,
               override val numBins: Int,
               override val lower: Double,
               override val upper: Double) extends StrategyCore with MlrCore {
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init: BRSLikeInit = baseInit.asInstanceOf[BRSLikeInit]
-    (init.trustModel) match {
+    init.trustModel match {
       case None => new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0,1))
       case Some(trustModel) =>
         val row = makeTestRow(init, request)
@@ -58,11 +57,10 @@ class BRSLike(val witnessWeight: Double = 2d,
 }
 
 
-class BRSContextLike(witnessWeight: Double = 2d,
-                     baseLearner: Classifier,
+class BRSContextLike(baseLearner: Classifier,
                      numBins: Int,
                      lower: Double,
-                     upper: Double) extends BRSLike(witnessWeight, baseLearner, numBins, lower, upper) {
+                     upper: Double) extends BRSLike(baseLearner, numBins, lower, upper) {
 
   override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
     super.makeTrainRow(record) :+ record.service.request.payload.name
@@ -70,5 +68,37 @@ class BRSContextLike(witnessWeight: Double = 2d,
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     super.makeTestRow(init, request) :+ request.payload.name
+  }
+}
+
+class BRSStereotypeLike(baseLearner: Classifier,
+                         numBins: Int,
+                         lower: Double,
+                         upper: Double) extends BRSLike(baseLearner, numBins, lower, upper) {
+
+  override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
+    super.makeTrainRow(record) ++ record.service.request.provider.generalAdverts.values.map(_.value.toString).toList
+  }
+
+  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+    super.makeTestRow(init, request) ++ request.provider.generalAdverts.values.map(_.value.toString).toList
+  }
+}
+
+class BRSStereotypeContextLike(baseLearner: Classifier,
+                                numBins: Int,
+                                lower: Double,
+                                upper: Double) extends BRSLike(baseLearner, numBins, lower, upper) {
+
+  override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
+    super.makeTrainRow(record) ++
+      record.service.request.provider.generalAdverts.values.map(_.value.toString).toList :+
+      record.service.request.payload.name
+  }
+
+  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+    super.makeTestRow(init, request) ++
+      request.provider.generalAdverts.values.map(_.value.toString).toList :+
+      request.payload.name
   }
 }

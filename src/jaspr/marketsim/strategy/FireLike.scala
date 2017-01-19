@@ -112,3 +112,37 @@ class FireContextLike(witnessWeight: Double = 2d,
     super.makeTestRow(init, request) :+ request.payload.name
   }
 }
+
+class FireStereotypeLike(witnessWeight: Double = 2d,
+                      baseLearner: Classifier,
+                      numBins: Int,
+                      lower: Double,
+                      upper: Double) extends FireLike(witnessWeight, baseLearner, numBins, lower, upper) {
+
+  override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
+    super.makeTrainRow(record) ++ record.service.request.provider.generalAdverts.values.map(_.value.toString).toList
+  }
+
+  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+    super.makeTestRow(init, request) ++ request.provider.generalAdverts.values.map(_.value.toString).toList
+  }
+}
+
+class FireStereotypeContextLike(witnessWeight: Double = 2d,
+                         baseLearner: Classifier,
+                         numBins: Int,
+                         lower: Double,
+                         upper: Double) extends FireLike(witnessWeight, baseLearner, numBins, lower, upper) {
+
+  override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
+    super.makeTrainRow(record) ++
+      record.service.request.provider.generalAdverts.values.map(_.value.toString).toList :+
+      record.service.request.payload.name
+  }
+
+  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+    super.makeTestRow(init, request) ++
+      request.provider.generalAdverts.values.map(_.value.toString).toList :+
+      request.payload.name
+  }
+}

@@ -130,7 +130,7 @@ trait MlrCore extends Discretization {
           else inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue))
         case x: Double => inst.setValue(i, x)
         case x: String => inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue))
-        case whatever => throw new Exception("Unknown type to build attrbute from.")
+        case whatever => throw new Exception("Unknown type to build attrbute from. "+item.getClass+":"+item)
       }
     }
     inst
@@ -144,7 +144,7 @@ trait MlrCore extends Discretization {
           case x: Double => new Attribute(i.toString)
           case x: Int => new Attribute(i.toString, vals.toList.sortBy(_._2).map(_._1.toString))
           case x: String => new Attribute(i.toString, vals.toList.sortBy(_._2).map(_._1.toString))
-          case whatever => throw new Exception("Unknown type to build attrbute from.")
+          case whatever => throw new Exception("Unknown type to build attrbute from. "+item.getClass+":"+item)
         }
       }
     }

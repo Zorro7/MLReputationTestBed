@@ -30,11 +30,16 @@ object MarketMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.marketsim.strategy.Burnett(2d;weka.classifiers.trees.M5P;false)," +
-//        "jaspr.marketsim.strategy.BRSContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-//        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.BRSLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-//        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.FireStereotypeLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.BRSStereotypeLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.BRSContextLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.BRSStereotypeContextLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.BRSLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.Burnett(2d;false)," +
+        //        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
 //        "jaspr.strategy.habit.Habit(2;0d;1d)," +
 //        "jaspr.strategy.blade.Blade(2;0d;1d)," +
         "jaspr.marketsim.strategy.BRS(2d)," +
@@ -136,7 +141,7 @@ class MarketConfiguration(val _strategy: Strategy,
     )
   }
 
-  val numSimCapabilities: Int = 1
+  val numSimCapabilities: Int = 5
   def simCapabilities: Seq[MarketPayload] = _simCapabilities
   // Services that exist in the simulation
   private var _simCapabilities: Seq[MarketPayload] = Nil //set in newSimulation(..)
@@ -144,7 +149,7 @@ class MarketConfiguration(val _strategy: Strategy,
     _simCapabilities =
       (1 to numSimCapabilities).map(x =>
         new MarketPayload(x.toString, FixedProperty("a",
-          Chooser.randomGaussian(0,0.0)
+          Chooser.randomGaussian(0,0.15)
         ) :: Nil)
       )
   }
