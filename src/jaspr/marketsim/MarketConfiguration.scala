@@ -148,9 +148,11 @@ class MarketConfiguration(val _strategy: Strategy,
   private def resetSimCapabilities() = {
     _simCapabilities =
       (1 to numSimCapabilities).map(x =>
-        new MarketPayload(x.toString, FixedProperty("a",
-          Chooser.randomGaussian(0,0.15)
-        ) :: Nil)
+        new MarketPayload(
+          x.toString,
+          FixedProperty("a", Chooser.randomGaussian(0,0.15)) :: Nil,
+          FixedProperty("1", x) :: Nil
+        )
       )
   }
 

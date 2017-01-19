@@ -19,7 +19,7 @@ import scala.collection.mutable
   */
 class Burnett(_witnessWeight: Double = 2d,
               val witnessStereotypes: Boolean = true
-             ) extends StrategyCore with BRSCore with MlrCore {
+             ) extends StrategyCore with BRSCore with MlrCore with StereotypeCore {
 
   val baseLearner: Classifier = new M5P
   override val numBins: Int = 0
@@ -131,20 +131,14 @@ class Burnett(_witnessWeight: Double = 2d,
   }
 
   def stereotypeTrainRow(record: ServiceRecord with RatingRecord, labels: Map[Provider,Double]): Seq[Any] = {
-    labels.getOrElse(record.provider, record.rating) :: adverts(record.service.request)
+    labels.getOrElse(record.provider, record.rating) :: adverts(record.provider)
   }
 
   def stereotypeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
-    0d :: adverts(request)
+    0d :: adverts(request.provider)
   }
 
-  def adverts(provider: Provider): List[Any] = {
-    provider.adverts.values.map(_.value.toString).toList
-  }
 
-  def adverts(request: ServiceRequest): List[Any] = {
-    request.provider.adverts.values.map(_.value.toString).toList
-  }
 
 
 

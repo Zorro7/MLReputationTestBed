@@ -102,14 +102,16 @@ class FireContextLike(witnessWeight: Double = 2d,
                       baseLearner: Classifier,
                       numBins: Int,
                       lower: Double,
-                      upper: Double) extends FireLike(witnessWeight, baseLearner, numBins, lower, upper) {
+                      upper: Double) extends FireLike(witnessWeight, baseLearner, numBins, lower, upper) with ContextCore {
 
   override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
-    super.makeTrainRow(record) :+ record.service.request.payload.name
+    super.makeTrainRow(record) ++
+      context(record.service.request.payload)
   }
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
-    super.makeTestRow(init, request) :+ request.payload.name
+    super.makeTestRow(init, request) ++
+    context(request.payload)
   }
 }
 
@@ -117,14 +119,16 @@ class FireStereotypeLike(witnessWeight: Double = 2d,
                       baseLearner: Classifier,
                       numBins: Int,
                       lower: Double,
-                      upper: Double) extends FireLike(witnessWeight, baseLearner, numBins, lower, upper) {
+                      upper: Double) extends FireLike(witnessWeight, baseLearner, numBins, lower, upper) with StereotypeCore {
 
   override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
-    super.makeTrainRow(record) ++ record.service.request.provider.adverts.values.map(_.value.toString).toList
+    super.makeTrainRow(record) ++
+      adverts(record.provider)
   }
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
-    super.makeTestRow(init, request) ++ request.provider.adverts.values.map(_.value.toString).toList
+    super.makeTestRow(init, request) ++
+      adverts(request.provider)
   }
 }
 
@@ -132,17 +136,17 @@ class FireStereotypeContextLike(witnessWeight: Double = 2d,
                          baseLearner: Classifier,
                          numBins: Int,
                          lower: Double,
-                         upper: Double) extends FireLike(witnessWeight, baseLearner, numBins, lower, upper) {
+                         upper: Double) extends FireLike(witnessWeight, baseLearner, numBins, lower, upper) with StereotypeCore with ContextCore {
 
   override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
     super.makeTrainRow(record) ++
-      record.service.request.provider.adverts.values.map(_.value.toString).toList :+
-      record.service.request.payload.name
+      adverts(record.provider) ++
+      context(record.service.request.payload)
   }
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     super.makeTestRow(init, request) ++
-      request.provider.adverts.values.map(_.value.toString).toList :+
-      request.payload.name
+      adverts(request.provider) ++
+      context(request.payload)
   }
 }

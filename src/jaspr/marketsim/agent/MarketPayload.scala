@@ -12,7 +12,7 @@ class MarketPayload(override val name: String,
                     override val properties: SortedMap[String, Property] = Nil,
                     override val adverts: SortedMap[String, Property] = Nil) extends Payload with AdvertProperties {
 
-  override def toString: String = name + " " + properties.values.map(_.value)
+  override def toString: String = name + " " + properties.values.map(_.value)+"-"+adverts.values.map(_.value)
 
   def copy(name: String = this.name,
            properties: SortedMap[String, Property] = this.properties,
