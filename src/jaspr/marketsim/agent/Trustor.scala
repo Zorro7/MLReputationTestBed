@@ -10,7 +10,7 @@ import scala.collection.immutable.SortedMap
 /**
   * Created by phil on 18/01/17.
   */
-class Trustor(override val simulation: MarketSimulation) extends Client with Preferences {
+class Trustor(override val simulation: MarketSimulation) extends Client with Preferences with Witness {
 
   override def generateContext(): ClientContext = {
     simulation.config.clientContext(this, simulation.round)

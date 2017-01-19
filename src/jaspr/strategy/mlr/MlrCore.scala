@@ -108,6 +108,7 @@ trait MlrCore extends Discretization {
     for (((item, vals), i) <- row.zip(attVals).zipWithIndex) yield {
       item match {
         case x: Int => if (i == classIndex) x else lookup(vals, x)
+        case x: Boolean => if (x && i == classIndex) 1 else if (i == classIndex) 0 else lookup(vals, x)
         case x: Double => x
         case x: String => if (i == classIndex) vals(x) else lookup(vals, x)
         case whatever => throw new Exception("Unknown type to build attrbute from. "+whatever)

@@ -1,6 +1,6 @@
 package jaspr.marketsim
 
-import jaspr.marketsim.agent.{MarketMarket, MarketPayload, Trustee, Trustor}
+import jaspr.marketsim.agent._
 import jaspr.core.agent._
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.simulation._
@@ -30,16 +30,16 @@ object MarketMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.marketsim.strategy.FireStereotypeLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.BRSStereotypeLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.marketsim.strategy.FireStereotypeLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.marketsim.strategy.BRSStereotypeLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
         "jaspr.marketsim.strategy.BRSContextLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.BRSStereotypeContextLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.marketsim.strategy.BRSStereotypeContextLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
         "jaspr.marketsim.strategy.BRSLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.Burnett(2d;false)," +
-        //        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+//        "jaspr.marketsim.strategy.Burnett(2d;false)," +
+//        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
 //        "jaspr.strategy.habit.Habit(2;0d;1d)," +
 //        "jaspr.strategy.blade.Blade(2;0d;1d)," +
         "jaspr.marketsim.strategy.BRS(2d)," +
@@ -139,6 +139,32 @@ class MarketConfiguration(val _strategy: Strategy,
     new ServiceRequest(
       context.client, trustee, context.round, 0, context.payload, context.market
     )
+  }
+
+  def witnessModel(witness: Witness, network: Network): WitnessModel = {
+    Chooser.select(
+      new ObjectiveWitnessModel,
+      new asdfWitnessModel
+    )
+
+//    Chooser.choose(
+//      new HonestWitnessModel ::
+//        new PessimisticWitnessModel ::
+//        new OptimisticWitnessModel ::
+//        new NegationWitnessModel ::
+//        new RandomWitnessModel ::
+//        new PromotionWitnessModel(Chooser.sample(network.providers, (providersToPromote * numProviders).toInt)) ::
+//        new SlanderWitnessModel(Chooser.sample(network.providers, (providersToSlander * numProviders).toInt)) ::
+//        Nil,
+//      honestWitnessLikelihood ::
+//        pessimisticWitnessLikelihood ::
+//        optimisticWitnessLikelihood ::
+//        negationWitnessLikelihood ::
+//        randomWitnessLikelihood ::
+//        promotionWitnessLikelihood ::
+//        slanderWitnessLikelihood ::
+//        Nil
+//    )
   }
 
   val numSimCapabilities: Int = 5

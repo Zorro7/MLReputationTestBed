@@ -91,9 +91,15 @@ class FireLike(val witnessWeight: Double = 2d,
   }
 
   def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
-    record.rating ::
+    label(record) ::
       record.service.request.provider.name ::
       Nil
+  }
+
+  def label(record: RatingRecord): Any = {
+    if (numBins < 1) record.rating
+    else if (numBins == 2) record.success
+    else discretizeInt(record.rating)
   }
 }
 

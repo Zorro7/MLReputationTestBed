@@ -10,7 +10,19 @@ class MarketRecord(override val assessment: TrustAssessment,
                    override val service: Service
                   ) extends Record with TrustAssessmentRecord with ServiceRecord with RatingRecord {
 
-  override def rating: Double = service.utility()
+  val delivered = service.payload.asInstanceOf[MarketPayload]
 
-  def success: Boolean = rating > 0.5
+  override val rating: Double = {
+    val requested = service.request.payload.asInstanceOf[MarketPayload]
+//    println(delivered.quality, service.request.provider.properties, requested.quality)
+    val disparity = requested.properties.map(r =>
+      delivered.properties.get(r._1) match {
+        case Some(d) => d.doubleValue - r._2.doubleValue
+        case None => 0
+      }
+    )
+    disparity.sum / disparity.size.toDouble
+  }
+
+  def success: Boolean = rating > 0
 }
