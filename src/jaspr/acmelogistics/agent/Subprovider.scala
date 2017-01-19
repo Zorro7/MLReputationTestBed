@@ -55,7 +55,6 @@ abstract class Subprovider(override val simulation: ACMESimulation) extends Clie
   override val memoryLimit: Int = simulation.config.memoryLimit
 
   override val properties: SortedMap[String, FixedProperty] = simulation.config.properties(this)
-  override val generalAdverts: SortedMap[String, FixedProperty] = simulation.config.adverts(this)
-  override def payloadAdverts(payload: Payload): SortedMap[String, FixedProperty] = generalAdverts
+  override val adverts: SortedMap[String, FixedProperty] = simulation.config.adverts(this)
 
 }

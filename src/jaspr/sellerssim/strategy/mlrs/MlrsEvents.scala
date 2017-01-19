@@ -226,6 +226,6 @@ class MlrsEvents(val baseLearner: Classifier,
   }
 
   def adverts(provider: Provider): List[Any] = {
-    provider.name :: provider.generalAdverts.values.map(_.value).toList
+    provider.name :: provider.adverts.values.map(_.value).toList
   }
 }

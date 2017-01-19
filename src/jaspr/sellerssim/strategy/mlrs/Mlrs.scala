@@ -5,6 +5,7 @@ import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, Payload, ServiceRequest, TrustAssessment}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.{Exploration, StrategyInit}
+import jaspr.sellerssim.agent.Seller
 import jaspr.sellerssim.service.ProductPayload
 import jaspr.strategy.CompositionStrategy
 import jaspr.strategy.mlr.{MlrCore, MlrModel}
@@ -239,9 +240,9 @@ class Mlrs(val baseLearner: Classifier,
 
   def adverts(request: ServiceRequest): List[Any] = {
     if (useAdverts && usePayloadAdverts) {
-      request.provider.name :: request.provider.payloadAdverts(request.payload).values.map(_.value).toList
+      request.provider.name :: request.provider.asInstanceOf[Seller].payloadAdverts(request.payload).values.map(_.value).toList
     } else if (useAdverts) {
-      request.provider.name :: request.provider.generalAdverts.values.map(_.value).toList
+      request.provider.name :: request.provider.adverts.values.map(_.value).toList
     } else {
       request.provider.name :: Nil
     }

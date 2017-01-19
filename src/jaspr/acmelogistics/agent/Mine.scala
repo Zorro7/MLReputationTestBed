@@ -33,8 +33,7 @@ class Mine(val simulation: ACMESimulation) extends Provider {
   override def utility: Double = ???
 
   override val properties: SortedMap[String, FixedProperty] = simulation.config.properties(this)
-  override val generalAdverts: SortedMap[String, FixedProperty] = simulation.config.adverts(this)
-  override def payloadAdverts(payload: Payload): SortedMap[String, FixedProperty] = generalAdverts
+  override val adverts: SortedMap[String, FixedProperty] = simulation.config.adverts(this)
 
   override def getProvenance[T <: Record](agent: Provenance): Seq[T] = provenance.map(_.asInstanceOf[T])
 

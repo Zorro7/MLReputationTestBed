@@ -42,12 +42,12 @@ class Seller(override val simulation: SellerSimulation) extends Provider {
   override val memoryLimit: Int = simulation.config.memoryLimit
 
   override val properties: SortedMap[String,Property] = simulation.config.properties(this)
-  override val generalAdverts: SortedMap[String,Property] = simulation.config.adverts(this)
+  override val adverts: SortedMap[String,Property] = simulation.config.adverts(this)
 
   val capabilities: Map[String, ProductPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
 
   val _payloadAdverts: Map[String,SortedMap[String,Property]] = capabilities.values.map(x => x.name -> simulation.config.adverts(x, this)).toMap
-  override def payloadAdverts(payload: Payload): SortedMap[String,Property] = {
+  def payloadAdverts(payload: Payload): SortedMap[String,Property] = {
     _payloadAdverts(payload.name)
   }
 

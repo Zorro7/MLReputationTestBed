@@ -77,11 +77,11 @@ class BRSStereotypeLike(baseLearner: Classifier,
                          upper: Double) extends BRSLike(baseLearner, numBins, lower, upper) {
 
   override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
-    super.makeTrainRow(record) ++ record.service.request.provider.generalAdverts.values.map(_.value.toString).toList
+    super.makeTrainRow(record) ++ record.service.request.provider.adverts.values.map(_.value.toString).toList
   }
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
-    super.makeTestRow(init, request) ++ request.provider.generalAdverts.values.map(_.value.toString).toList
+    super.makeTestRow(init, request) ++ request.provider.adverts.values.map(_.value.toString).toList
   }
 }
 
@@ -92,13 +92,13 @@ class BRSStereotypeContextLike(baseLearner: Classifier,
 
   override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
     super.makeTrainRow(record) ++
-      record.service.request.provider.generalAdverts.values.map(_.value.toString).toList :+
+      record.service.request.provider.adverts.values.map(_.value.toString).toList :+
       record.service.request.payload.name
   }
 
   override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
     super.makeTestRow(init, request) ++
-      request.provider.generalAdverts.values.map(_.value.toString).toList :+
+      request.provider.adverts.values.map(_.value.toString).toList :+
       request.payload.name
   }
 }

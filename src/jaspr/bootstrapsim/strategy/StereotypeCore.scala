@@ -73,7 +73,7 @@ trait StereotypeCore extends CompositionStrategy with MlrCore {
   // Used for testing only!!!
   def objectiveStereotypeRow(client: Client, provider: Provider): List[Any] = {
     val truster = client.asInstanceOf[Truster]
-    val features: SortedMap[String,Property] = provider.generalAdverts.map(x => {
+    val features: SortedMap[String,Property] = provider.adverts.map(x => {
       if (truster.properties.contains(x._1) && truster.properties(x._1).booleanValue) {
         x._2
       } else if (truster.properties.contains(x._1) && !truster.properties(x._1).booleanValue) {
@@ -85,7 +85,7 @@ trait StereotypeCore extends CompositionStrategy with MlrCore {
 
 
   def adverts(provider: Provider): List[Any] = {
-    provider.generalAdverts.values.map(_.value.toString).toList
+    provider.adverts.values.map(_.value.toString).toList
   }
 
   def adverts(request: ServiceRequest): List[Any] = {

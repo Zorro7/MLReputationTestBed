@@ -153,7 +153,7 @@ class BootConfiguration(val _strategy: Strategy,
 
   def request(context: ClientContext, provider: Provider): ServiceRequest = {
     val truster = context.client.asInstanceOf[Truster]
-    val features: SortedMap[String,Property] = provider.generalAdverts.map(x => {
+    val features: SortedMap[String,Property] = provider.adverts.map(x => {
       if (truster.properties.contains(x._1) && truster.properties(x._1).booleanValue) { //if it is observed and is objective
         x._2
       } else if (truster.properties.contains(x._1) && !truster.properties(x._1).booleanValue) { //if it is observed and is subjective

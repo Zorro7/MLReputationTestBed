@@ -73,7 +73,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
       if (init.models.head.forall(_ != null)) {
         val test = events.map(event =>
           makeBaseRow(requests.head, event) ++
-            requests.head.provider.asInstanceOf[Provider].generalAdverts.values.map(_.value).toList
+            requests.head.provider.asInstanceOf[Provider].adverts.values.map(_.value).toList
         )
         init.models.head.map(predicts(_, test, init.eventLikelihoods))
       } else {
@@ -88,7 +88,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
           val test = events.map(event =>
             makeBaseRow(request, event) ++
               currentPreds ++
-              request.provider.asInstanceOf[Provider].generalAdverts.values.map(_.value).toList
+              request.provider.asInstanceOf[Provider].adverts.values.map(_.value).toList
           )
           model.map(predicts(_, test, init.eventLikelihoods))
         } else {
@@ -128,7 +128,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
           x.service.request.duration.toDouble,
           x.service.request.payload.asInstanceOf[GoodPayload].quality,
           x.service.request.payload.asInstanceOf[GoodPayload].quantity
-        ) ++ x.service.request.provider.generalAdverts.values.map(_.value).toList
+        ) ++ x.service.request.provider.adverts.values.map(_.value).toList
       })
     build(train)
   }
@@ -154,7 +154,7 @@ class IpawEvents(learner: Classifier, disc: Boolean) extends Strategy with Explo
           , endFunch(dependency)
           , qualityFunch(dependency),
           quantityFunch(dependency)
-        ) ++ x.service.request.provider.generalAdverts.values.map(_.value).toList
+        ) ++ x.service.request.provider.adverts.values.map(_.value).toList
       })
     build(train)
   }

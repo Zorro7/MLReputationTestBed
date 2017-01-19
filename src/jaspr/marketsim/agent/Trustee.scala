@@ -35,8 +35,7 @@ class Trustee(override val simulation: MarketSimulation) extends Provider {
   override val properties: SortedMap[String, Property] = simulation.config.properties(this)
   val capabilities: Map[String, MarketPayload] = simulation.config.capabilities(this).map(x => x.name -> x).toMap
 
-  override val generalAdverts: SortedMap[String, Property] = simulation.config.adverts(this)
-  override def payloadAdverts(payload: Payload): SortedMap[String, Property] = generalAdverts
+  override val adverts: SortedMap[String, Property] = simulation.config.adverts(this)
 
   override def utility: Double = ???
 }

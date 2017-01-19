@@ -19,7 +19,7 @@ class ServiceRequest(val client: Client,
                      val market: Market,
                      override val properties: SortedMap[String,Property] = Nil,
                      val dependencies: Seq[ServiceRequest] = Nil
-                    ) extends NamedEntity with Properties{
+                    ) extends NamedEntity with Properties {
 
   def flatten(): Seq[ServiceRequest] = {
     @tailrec

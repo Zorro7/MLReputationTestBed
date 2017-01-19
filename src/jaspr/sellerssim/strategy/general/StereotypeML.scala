@@ -5,6 +5,7 @@ import jaspr.core.provenance.{RatingRecord, Record, ServiceRecord}
 import jaspr.core.service.{ClientContext, ServiceRequest}
 import jaspr.core.simulation.Network
 import jaspr.core.strategy.StrategyInit
+import jaspr.sellerssim.agent.{Buyer, Seller}
 import weka.classifiers.Classifier
 
 /**
@@ -33,8 +34,8 @@ trait StereotypeML extends SingleModelStrategy {
   }
 
   def adverts(request: ServiceRequest): List[Any] = {
-    if (payloadAdverts) request.provider.payloadAdverts(request.payload).values.map(_.value).toList
-    else request.provider.generalAdverts.values.map(_.value).toList
+    if (payloadAdverts) request.provider.asInstanceOf[Seller].payloadAdverts(request.payload).values.map(_.value).toList
+    else request.provider.adverts.values.map(_.value).toList
   }
 }
 

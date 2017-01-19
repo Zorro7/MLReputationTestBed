@@ -23,16 +23,10 @@ trait Properties {
 
 trait AdvertProperties extends Properties {
 
-  def generalAdverts: SortedMap[String, Property]
+  def adverts: SortedMap[String, Property]
 
-  def generalAdvert(key: String): Property = {
-    generalAdverts(key)
-  }
-
-  def payloadAdverts(payload: Payload): SortedMap[String,Property]
-
-  def payloadAdvert(payload: Payload, key: String): Property = {
-    payloadAdverts(payload)(key)
+  def advert(key: String): Property = {
+    adverts(key)
   }
 }
 

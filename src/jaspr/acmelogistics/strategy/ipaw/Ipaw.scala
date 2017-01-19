@@ -59,7 +59,7 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
       if (init.models.head.forall(_ != null)) {
         val test =
           makeBaseRow(requests.head) ++
-            requests.head.provider.asInstanceOf[Provider].generalAdverts.values.map(_.value).toList
+            requests.head.provider.asInstanceOf[Provider].adverts.values.map(_.value).toList
         init.models.head.map(predict(_, test))
       } else {
         init.models.head.map(x => Double.NaN)
@@ -73,7 +73,7 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
           val test =
             makeBaseRow(request) ++
               currentPreds ++
-              request.provider.asInstanceOf[Provider].generalAdverts.values.map(_.value).toList
+              request.provider.asInstanceOf[Provider].adverts.values.map(_.value).toList
           model.map(predict(_, test))
         } else {
           model.map(x => Double.NaN)
@@ -108,7 +108,7 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
           x.service.request.duration.toDouble,
           x.service.request.payload.asInstanceOf[GoodPayload].quality,
           x.service.request.payload.asInstanceOf[GoodPayload].quantity
-        ) ++ x.service.request.provider.generalAdverts.values.map(_.value).toList
+        ) ++ x.service.request.provider.adverts.values.map(_.value).toList
       })
     build(train)
   }
@@ -131,7 +131,7 @@ class Ipaw(learner: Classifier, disc: Boolean) extends Strategy with Exploration
           , endFunch(dependency)
           , qualityFunch(dependency),
           quantityFunch(dependency)
-        ) ++ x.service.request.provider.generalAdverts.values.map(_.value).toList
+        ) ++ x.service.request.provider.adverts.values.map(_.value).toList
       })
     build(train)
   }

@@ -54,7 +54,7 @@ class IpawSimple(learner: Classifier, disc: Boolean) extends Strategy with Explo
         if (model.forall(_ != null)) {
           val test =
             makeBaseRow(request) ++
-              request.provider.asInstanceOf[Provider].generalAdverts.values.map(_.value).toList
+              request.provider.asInstanceOf[Provider].adverts.values.map(_.value).toList
           model.map(predict(_, test))
         } else {
           model.map(x => Double.NaN)
@@ -85,7 +85,7 @@ class IpawSimple(learner: Classifier, disc: Boolean) extends Strategy with Explo
           x.service.request.duration.toDouble,
           x.service.request.payload.asInstanceOf[GoodPayload].quality,
           x.service.request.payload.asInstanceOf[GoodPayload].quantity
-        ) ++ x.service.request.provider.generalAdverts.values.map(_.value).toList
+        ) ++ x.service.request.provider.adverts.values.map(_.value).toList
       })
     build(train)
   }

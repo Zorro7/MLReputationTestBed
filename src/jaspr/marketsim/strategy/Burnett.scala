@@ -139,11 +139,11 @@ class Burnett(_witnessWeight: Double = 2d,
   }
 
   def adverts(provider: Provider): List[Any] = {
-    provider.generalAdverts.values.map(_.value.toString).toList
+    provider.adverts.values.map(_.value.toString).toList
   }
 
   def adverts(request: ServiceRequest): List[Any] = {
-    request.provider.generalAdverts.values.map(_.value.toString).toList
+    request.provider.adverts.values.map(_.value.toString).toList
   }
 
 
