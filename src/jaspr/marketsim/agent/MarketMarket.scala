@@ -11,7 +11,7 @@ class MarketMarket extends Market {
   override def deliver(service: Service): Double = {
     val delivered = service.payload.asInstanceOf[MarketPayload]
     val requested = service.request.payload.asInstanceOf[MarketPayload]
-    println(delivered.quality, service.request.provider.properties, requested.quality)
+//    println(delivered.quality, service.request.provider.properties, requested.quality)
     val disparity = requested.quality.map(r =>
       delivered.quality.get(r._1) match {
         case Some(d) => d.doubleValue - r._2.doubleValue

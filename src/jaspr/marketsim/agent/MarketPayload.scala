@@ -14,6 +14,6 @@ class MarketPayload(override val name: String, val quality: SortedMap[String, Pr
 
   def copy(name: String = this.name,
            quality: SortedMap[String, Property] = this.quality) = {
-    new MarketPayload(name, quality = quality)
+    new MarketPayload(name, quality)
   }
 }

@@ -51,6 +51,10 @@ object Chooser extends Random {
     nextDouble() < pTrue
   }
 
+  def randomGaussian(mu: Double, sigma: Double) = {
+    mu + nextGaussian()*sigma
+  }
+
   def bound(value: Double, lower: Double, upper: Double) = {
     Math.min(upper, Math.max(lower, value))
   }

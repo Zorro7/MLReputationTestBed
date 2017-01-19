@@ -3,7 +3,7 @@ package jaspr.marketsim
 import jaspr.marketsim.agent.{MarketMarket, MarketPayload, Trustee, Trustor}
 import jaspr.core.agent._
 import jaspr.core.service.{ClientContext, ServiceRequest}
-import jaspr.core.simulation.{Configuration, MultiConfiguration, Simulation}
+import jaspr.core.simulation._
 import jaspr.core.strategy.Strategy
 import jaspr.utilities.Chooser
 
@@ -27,11 +27,6 @@ object MarketMultiConfiguration extends App {
     opt[Double]("trustorLeaveLikelihood") required() action { (x, c) => c.copy(trustorLeaveLikelihood = x) }
   }
 
-  //  val witnessStereotypes: Boolean = true,
-  //  val subjectiveStereotypes: Boolean = false,
-  //  val hideTrusteeIDs: Boolean = false,
-  //  val limitedObservations: Boolean = false
-
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
@@ -46,14 +41,17 @@ object MarketMultiConfiguration extends App {
         //        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;false;true)," + // disclosed ids + limited obs
         //        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;true;false)," + // undisclosed ids
         //        "jaspr.bootstrapsim.strategy.PartialStereotype(weka.classifiers.trees.M5P;0;2d;true;true;true;true)," + // undisclosed ids + limited obs
-        "jaspr.bootstrapsim.strategy.BRS(2d;0d)," +
-        "jaspr.strategy.fire.Fire(0.5d;false)," +
-        "jaspr.strategy.fire.FireContext(0.5d;false)," +
+        "jaspr.marketsim.strategy.BRS(2d)," +
+        "jaspr.marketsim.strategy.Fire(0.5d)," +
+        "jaspr.marketsim.strategy.BRSContext(2d)," +
+        "jaspr.marketsim.strategy.FireContext(0.5d)," +
+        "jaspr.sellerssim.strategy.general.FireLike(weka.classifiers.trees.RandomForest;2;0d;1d)," +
+        "jaspr.sellerssim.strategy.general.FireLikeContext(weka.classifiers.trees.RandomForest;2;0d;1d;false)," +
         "jaspr.strategy.NoStrategy," +
         " --numSimulations 5 " +
-        "--numRounds 100 " +
+        "--numRounds 200 " +
         "--numTrustees 100 " +
-        "--numTrustors 10 " +
+        "--numTrustors 20 " +
         "--trusteesAvailable 10 " +
         "--advisorsAvailable 10 " +
         "--trusteeLeaveLikelihood 0.05 " +
@@ -133,8 +131,11 @@ class MarketConfiguration(val _strategy: Strategy,
 
   override val numAgents: Int = numClients + numProviders
 
-  def clientContext(client: Client with Preferences, round: Int): ClientContext = {
-    new ClientContext(client, round, Chooser.choose(simCapabilities), new MarketMarket)
+  def clientContext(client: Trustor, round: Int) = {
+    val cap = Chooser.choose(simCapabilities).copy(
+      quality = client.preferences.map(x => x._1 -> x._2.sample)
+    )
+    new ClientContext(client, round, cap, new MarketMarket)
   }
 
   def request(context: ClientContext, trustee: Trustee): ServiceRequest = {
@@ -150,45 +151,23 @@ class MarketConfiguration(val _strategy: Strategy,
   private def resetSimCapabilities() = {
     _simCapabilities =
       (1 to numSimCapabilities).map(x =>
-        new MarketPayload(x.toString, FixedProperty("a", Chooser.randomDouble(0,1)) :: Nil)
+        new MarketPayload(x.toString, FixedProperty("a", Chooser.randomGaussian(0,0.15)) :: Nil)
       )
   }
 
 
   def adverts(agent: Trustee): SortedMap[String, Property] = {
-//    val ads: SortedMap[String,Property] = agent.properties.head._2 match {
-//      case GaussianProperty(_,0.9,_) => FixedProperty("1", true) :: FixedProperty("6", true) :: Nil
-//      case GaussianProperty(_,0.6,_) => FixedProperty("2", true) :: FixedProperty("4", true) :: Nil
-//      case GaussianProperty(_,0.4,_) => FixedProperty("3", true) :: FixedProperty("4", true) :: Nil
-//      case GaussianProperty(_,0.3,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("5", true) :: Nil
-//      case GaussianProperty(_,0.5,_) => FixedProperty("2", true) :: FixedProperty("3", true) :: FixedProperty("6", true) :: Nil
-//    }
-    //    val ads: SortedMap[String,Property] = agent.properties.head._2 match {
-    //      case GaussianProperty(_,0.9,_) => (1 to 2).map(x => FixedProperty(x.toString, true)).toList
-    //      case GaussianProperty(_,0.6,_) => (2 to 4).map(x => FixedProperty(x.toString, true)).toList
-    //      case GaussianProperty(_,0.4,_) => (4 to 6).map(x => FixedProperty(x.toString, true)).toList
-    //      case GaussianProperty(_,0.3,_) => (6 to 8).map(x => FixedProperty(x.toString, true)).toList
-    //      case GaussianProperty(_,0.5,_) => (8 to 10).map(x => FixedProperty(x.toString, true)).toList
-    //    }
-    val ads: SortedMap[String,Property] = Nil
-    val fullAds: SortedMap[String,Property] = (1 to 6).map(x =>
-      if (ads.contains(x.toString)) {
-        ads(x.toString)
-      } else {
-        FixedProperty(x.toString, false)
-      }
-    ).toList
-    fullAds
+    Nil
   }
 
   def properties(agent: Trustee): SortedMap[String, Property] = {
-//    Chooser.select(
-//      GaussianProperty("a", 0.9, 0.05) :: Nil,
-//      GaussianProperty("a", 0.6, 0.15) :: Nil,
-//      GaussianProperty("a", 0.4, 0.15) :: Nil,
-//      GaussianProperty("a", 0.3, 0.05) :: Nil, //0.3,0
-//      GaussianProperty("a", 0.5, 1) :: Nil //0.1 1
-//    )
+    Chooser.select(
+      GaussianProperty("a", 0.9, 0.05),
+      GaussianProperty("a", 0.6, 0.15),
+      GaussianProperty("a", 0.4, 0.15),
+      GaussianProperty("a", 0.3, 0.05), //0.3,0
+      GaussianProperty("a", 0.5, 1) //0.1 1
+    ) :: Nil
 //    Chooser.select(
 //      FixedProperty("a", 0.9) :: Nil,
 //      FixedProperty("a", 0.6) :: Nil,
@@ -196,12 +175,17 @@ class MarketConfiguration(val _strategy: Strategy,
 //      FixedProperty("a", 0.3) :: Nil, //0.3,0
 //      FixedProperty("a", 0.5) :: Nil //0.1 1
 //    )
-    FixedProperty("a", Chooser.randomDouble(0,1)) :: Nil
+//    GaussianProperty("a", Chooser.randomDouble(0,1), 0.1) :: Nil
+  }
+
+  def capabilities(agent: Trustee): Seq[MarketPayload] = {
+    simCapabilities.map(cap =>
+      cap.copy(quality = agent.properties.map(x => x._1 -> GaussianProperty(x._1, x._2.doubleValue + cap.quality(x._1).doubleValue, 0.05)))
+    )
   }
 
   def preferences(agent: Trustor): SortedMap[String, Property] = {
     FixedProperty("a", 0.5) :: Nil
   }
-
 
 }
