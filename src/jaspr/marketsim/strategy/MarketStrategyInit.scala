@@ -27,7 +27,7 @@ class BRSLikeInit(context: ClientContext,
 
 class FireLikeInit(context: ClientContext,
                    val directModel: Option[MlrModel],
-                   val witnessModels: Option[Map[Client,MlrModel]]
+                   val witnessModels: Map[Client,MlrModel]
                   ) extends StrategyInit(context)
 
 class BurnettInit(context: ClientContext,
@@ -41,6 +41,6 @@ class BurnettInit(context: ClientContext,
 
 class HabitLikeInit(context: ClientContext,
                    val directModel: Option[MlrModel],
-                   val witnessModels: Option[Map[Client,MlrModel]],
-                   val translationModels: Option[Map[Client,MlrModel]]
+                   val witnessModels: Map[Client,MlrModel],
+                   val translationModels: Map[Client,MlrModel]
                   ) extends StrategyInit(context)

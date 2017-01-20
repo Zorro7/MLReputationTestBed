@@ -38,23 +38,22 @@ class FireLike(val witnessWeight: Double = 2d,
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init: FireLikeInit = baseInit.asInstanceOf[FireLikeInit]
 
-    init.witnessModels match
-
-    (init.directModel,init.witnessModels) match {
-      case (None,None) => new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0,1))
-
-      case (Some(directModel),Some(witnessModels)) =>
+    val directResult = init.directModel match {
+      case None =>
+        0
+      case Some(directModel) =>
         val directRow = makeTestRow(init, request)
         val directQuery = convertRowToInstance(directRow, directModel.attVals, directModel.train)
-        val directResult = makePrediction(directQuery, directModel)
-
-        val witnessResults = witnessModels.values.map(m => {
-          val witnessRow = makeTestRow(init, request)
-          val witnessQuery = convertRowToInstance(witnessRow, m.attVals, m.train)
-          makePrediction(witnessQuery, m)
-        })
-        new TrustAssessment(baseInit.context, request, getCombinedOpinions(directResult, witnessResults, witnessWeight))
+        makePrediction(directQuery, directModel)
     }
+
+    val witnessResults = init.witnessModels.values.map(m => {
+      val witnessRow = makeTestRow(init, request)
+      val witnessQuery = convertRowToInstance(witnessRow, m.attVals, m.train)
+      makePrediction(witnessQuery, m)
+    })
+
+    new TrustAssessment(baseInit.context, request, getCombinedOpinions(directResult, witnessResults, witnessWeight))
   }
 
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
@@ -63,11 +62,11 @@ class FireLike(val witnessWeight: Double = 2d,
 
     if (directRecords.isEmpty) {
       val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.service.request.client)
-      new FireLikeInit(context, None, Some(witnessModels))
+      new FireLikeInit(context, None, witnessModels)
     } else {
       val directModel: MlrModel = makeMlrsModel(directRecords, baseLearner, makeTrainRow)
       val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.service.request.client)
-      new FireLikeInit(context, Some(directModel), Some(witnessModels))
+      new FireLikeInit(context, Some(directModel), witnessModels)
     }
   }
 

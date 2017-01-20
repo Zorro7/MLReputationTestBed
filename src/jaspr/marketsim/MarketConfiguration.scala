@@ -121,8 +121,8 @@ class MarketConfiguration(val _strategy: Strategy,
 
   override def strategy(agent: Client): Strategy = _strategy
 
-  val numClients = numTrustors
-  val numProviders = numTrustees
+  val numClients: Int = numTrustors
+  val numProviders: Int = numTrustees
   val trustorParticipation: Double = 1
   val memoryLimit: Int = numRounds
 

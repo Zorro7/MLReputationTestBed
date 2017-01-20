@@ -41,75 +41,46 @@ class HabitLike(val witnessWeight: Double = 2d,
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[HabitLikeInit]
 
-    (init.directModel, init.witnessModels, init.translationModels) match {
-      case (None, None, None) =>
-        new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0d, 1d))
-
-      case (Some(directModel), None, None) =>
-        val row = makeTestRow(init, request)
-        val query = convertRowToInstance(row, directModel.attVals, directModel.train)
-
-        val directResult = makePrediction(query, directModel)
-        new TrustAssessment(baseInit.context, request, directResult)
-
-      case (None, Some(witnessModels), None) =>
-        val witnessResults = witnessModels.values.map(m => {
-          val witnessRow = makeTestRow(init, request)
-          val witnessQuery = convertRowToInstance(witnessRow, m.attVals, m.train)
-          makePrediction(witnessQuery, m)
-        })
-        new TrustAssessment(baseInit.context, request, getCombinedOpinions(0, witnessResults, 1)) // witnessWeight=1 because there is no direct information
-
-      case (Some(directModel), Some(witnessModels), None) => // This code assumes that this case applies when witnessWeight == 0
+    val directResult = init.directModel match {
+      case None =>
+        0
+      case Some(directModel) =>
         val directRow = makeTestRow(init, request)
         val directQuery = convertRowToInstance(directRow, directModel.attVals, directModel.train)
-        val directResult = makePrediction(directQuery, directModel)
-
-        val witnessResults = witnessModels.values.map(m => {
-          val witnessRow = makeTestRow(init, request)
-          val witnessQuery = convertRowToInstance(witnessRow, m.attVals, m.train)
-          makePrediction(witnessQuery, m)
-        })
-        new TrustAssessment(baseInit.context, request, getCombinedOpinions(directResult, witnessResults, witnessWeight))
-
-      case (Some(directModel), Some(witnessModels), Some(translationModels)) =>
-        val directRow = makeTestRow(init, request)
-        val directQuery = convertRowToInstance(directRow, directModel.attVals, directModel.train)
-        val directResult = makePrediction(directQuery, directModel)
-
-        val witnessResults = witnessModels.map(wm => {
-          val witnessRow = makeTestRow(init, request)
-          val witnessQuery = convertRowToInstance(witnessRow, wm._2.attVals, wm._2.train)
-          val raw = makePrediction(witnessQuery, wm._2)
-          val translationRow = 0 :: raw :: Nil
-          val translationModel = translationModels(wm._1)
-          val inst = convertRowToInstance(translationRow, translationModel.attVals, translationModel.train)
-          makePrediction(inst, translationModel, discreteClass = translationDiscrete)
-          raw
-        })
-
-        new TrustAssessment(baseInit.context, request, getCombinedOpinions(directResult, witnessResults, witnessWeight))
+        makePrediction(directQuery, directModel)
     }
+
+    val witnessResults = init.witnessModels.map(wm => {
+      val witnessRow = makeTestRow(init, request)
+      val witnessQuery = convertRowToInstance(witnessRow, wm._2.attVals, wm._2.train)
+      val raw = makePrediction(witnessQuery, wm._2)
+      val translationRow = 0 :: raw :: Nil
+      init.translationModels.get(wm._1) match {
+        case None =>
+          raw
+        case Some(tm) =>
+          val inst = convertRowToInstance(translationRow, tm.attVals, tm.train)
+          makePrediction(inst, tm, discreteClass = translationDiscrete)
+      }
+    })
+
+    new TrustAssessment(baseInit.context, request, getCombinedOpinions(directResult, witnessResults, witnessWeight))
   }
 
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
     val directRecords = getDirectRecords(network, context)
     val witnessRecords = getWitnessRecords(network, context)
 
-    if (witnessRecords.isEmpty && directRecords.isEmpty) new HabitLikeInit(context, None, None, None)
-    else if (directRecords.nonEmpty) {
-      val directModel: MlrModel = makeMlrsModel(directRecords, baseLearner, makeTrainRow)
-//      new HabitLikeInit(context, Some(directModel), None, None)
-//    } else if (witnessRecords.nonEmpty) {
+    if (directRecords.isEmpty) {
       val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.service.request.client)
-      new HabitLikeInit(context, Some(directModel), Some(witnessModels), None)
+      new HabitLikeInit(context, None, witnessModels, Map())
     } else {
       val directModel: MlrModel = makeMlrsModel(directRecords, baseLearner, makeTrainRow)
       val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.service.request.client)
       val reinterpretationModels: Map[Client, MlrModel] =
         makeTranslationModels(directRecords, witnessRecords, directModel, witnessModels, r => r.service.request.client)
 
-      new HabitLikeInit(context, Some(directModel), Some(witnessModels), Some(reinterpretationModels))
+      new HabitLikeInit(context, Some(directModel), witnessModels, reinterpretationModels)
     }
   }
 
