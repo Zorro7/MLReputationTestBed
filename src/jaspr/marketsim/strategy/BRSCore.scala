@@ -76,8 +76,8 @@ trait BRSCore {
                       grouping: ServiceRecord with RatingRecord => K): Map[K,BetaDistribution] = {
     records.groupBy(
       grouping
-    ).mapValues(
-      rs => makeBetaDistribution(rs.map(_.success))
+    ).map(
+      rs => rs._1 -> makeBetaDistribution(rs._2.map(_.success))
     )
   }
 
@@ -86,8 +86,8 @@ trait BRSCore {
                           grouping2: ServiceRecord with RatingRecord => K2): Map[K1,Map[K2,BetaDistribution]] = {
     records.groupBy(
       grouping1
-    ).mapValues(
-      rs => makeOpinions(rs, grouping2)
+    ).map(
+      rs => rs._1 -> makeOpinions(rs._2, grouping2)
     )
   }
 }

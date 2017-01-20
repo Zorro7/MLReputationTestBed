@@ -65,8 +65,8 @@ class Fire(val witnessWeight: Double = 2d) extends StrategyCore {
                       grouping: ServiceRecord with RatingRecord => K): Map[K,Aggregate] = {
     records.groupBy(
       grouping
-    ).mapValues(
-      rs => new Aggregate(rs.map(_.rating).sum,rs.size)
+    ).map(
+      rs => rs._1 -> new Aggregate(rs._2.map(_.rating).sum,rs._2.size)
     )
   }
 
@@ -75,8 +75,8 @@ class Fire(val witnessWeight: Double = 2d) extends StrategyCore {
                           grouping2: ServiceRecord with RatingRecord => K2): Map[K1,Map[K2,Aggregate]] = {
     records.groupBy(
       grouping1
-    ).mapValues(
-      rs => makeOpinions(rs, grouping2)
+    ).map(
+      rs => rs._1 -> makeOpinions(rs._2, grouping2)
     )
   }
 

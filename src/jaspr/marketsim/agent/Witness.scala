@@ -1,9 +1,7 @@
 package jaspr.marketsim.agent
 
-import jaspr.core.agent.Provider
-import jaspr.core.provenance.{Provenance, RatingRecord, Record}
+import jaspr.core.provenance.{Provenance, Record}
 import jaspr.marketsim.MarketSimulation
-import jaspr.utilities.Chooser
 
 /**
   * Created by phil on 03/06/16.
@@ -35,15 +33,6 @@ trait WitnessModel {
 
 class ObjectiveWitnessModel extends WitnessModel {
   def changeRecord(record: MarketRecord, agent: Provenance) = record
-
-  def omitRecord(record: MarketRecord, agent: Provenance) = false
-}
-
-class asdfWitnessModel extends WitnessModel {
-  def changeRecord(record: MarketRecord, agent: Provenance) = {
-//    record.copy(service = service.)
-    record
-  }
 
   def omitRecord(record: MarketRecord, agent: Provenance) = false
 }

@@ -38,3 +38,9 @@ class BurnettInit(context: ClientContext,
                   val directStereotypeWeight: Double,
                   val witnessStereotypeWeights: Map[Client,Double]
                  ) extends BRSInit(context, directBetas, witnessBetas)
+
+class HabitLikeInit(context: ClientContext,
+                   val directModel: Option[MlrModel],
+                   val witnessModels: Option[Map[Client,MlrModel]],
+                   val translationModels: Option[Map[Client,MlrModel]]
+                  ) extends StrategyInit(context)

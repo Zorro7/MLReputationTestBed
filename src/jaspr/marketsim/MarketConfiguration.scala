@@ -30,18 +30,18 @@ object MarketMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-//        "jaspr.marketsim.strategy.FireStereotypeLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-//        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-//        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-//        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-//        "jaspr.marketsim.strategy.BRSStereotypeLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.BRSContextLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-//        "jaspr.marketsim.strategy.BRSStereotypeContextLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-        "jaspr.marketsim.strategy.BRSLike(weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
+        "jaspr.marketsim.strategy.HabitLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+//        "jaspr.marketsim.strategy.FireStereotypeLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+//        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+//        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+//        "jaspr.marketsim.strategy.BRSStereotypeLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+//        "jaspr.marketsim.strategy.BRSContextLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+//        "jaspr.marketsim.strategy.BRSStereotypeContextLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+        "jaspr.marketsim.strategy.BRSLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
 //        "jaspr.marketsim.strategy.Burnett(2d;false)," +
-//        "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;0d;1d)," +
-//        "jaspr.strategy.habit.Habit(2;0d;1d)," +
-//        "jaspr.strategy.blade.Blade(2;0d;1d)," +
+//        "jaspr.strategy.habit.Habit(5;-1d;1d)," +
+//        "jaspr.strategy.blade.Blade(5;-1d;1d)," +
         "jaspr.marketsim.strategy.BRS(2d)," +
         "jaspr.marketsim.strategy.Fire(0.5d)," +
         "jaspr.strategy.NoStrategy," +
@@ -143,31 +143,11 @@ class MarketConfiguration(val _strategy: Strategy,
 
   def witnessModel(witness: Witness, network: Network): WitnessModel = {
     Chooser.select(
-      new ObjectiveWitnessModel,
-      new asdfWitnessModel
+      new ObjectiveWitnessModel
     )
-
-//    Chooser.choose(
-//      new HonestWitnessModel ::
-//        new PessimisticWitnessModel ::
-//        new OptimisticWitnessModel ::
-//        new NegationWitnessModel ::
-//        new RandomWitnessModel ::
-//        new PromotionWitnessModel(Chooser.sample(network.providers, (providersToPromote * numProviders).toInt)) ::
-//        new SlanderWitnessModel(Chooser.sample(network.providers, (providersToSlander * numProviders).toInt)) ::
-//        Nil,
-//      honestWitnessLikelihood ::
-//        pessimisticWitnessLikelihood ::
-//        optimisticWitnessLikelihood ::
-//        negationWitnessLikelihood ::
-//        randomWitnessLikelihood ::
-//        promotionWitnessLikelihood ::
-//        slanderWitnessLikelihood ::
-//        Nil
-//    )
   }
 
-  val numSimCapabilities: Int = 5
+  val numSimCapabilities: Int = 1
   def simCapabilities: Seq[MarketPayload] = _simCapabilities
   // Services that exist in the simulation
   private var _simCapabilities: Seq[MarketPayload] = Nil //set in newSimulation(..)
@@ -206,11 +186,11 @@ class MarketConfiguration(val _strategy: Strategy,
   def properties(agent: Trustee): SortedMap[String, Property] = {
     Chooser.select(
       GaussianProperty("a", 0.9, 0.05),
-      GaussianProperty("a", 0.8, 0.5), //asdf
+//      GaussianProperty("a", 0.8, 0.5), //asdf
       GaussianProperty("a", 0.6, 0.15),
       GaussianProperty("a", 0.4, 0.15),
       GaussianProperty("a", 0.3, 0.05), //0.3,0
-      GaussianProperty("a", 0.2, 0.5), //asdf
+//      GaussianProperty("a", 0.2, 0.5), //asdf
       GaussianProperty("a", 0.5, 1) //0.1 1
     ) :: Nil
 //    Nil
@@ -239,7 +219,8 @@ class MarketConfiguration(val _strategy: Strategy,
   }
 
   def preferences(agent: Trustor): SortedMap[String, Property] = {
-    FixedProperty("a", 0.5) :: Nil
+//    FixedProperty("a", 0.5) :: Nil
+    FixedProperty("a", Chooser.randomInt(0,11)/10d) :: Nil
   }
 
 }

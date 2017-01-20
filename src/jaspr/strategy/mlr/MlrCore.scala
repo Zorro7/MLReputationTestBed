@@ -129,6 +129,10 @@ trait MlrCore extends Discretization {
         case x: Int =>
           if (i == classIndex) inst.setValue(i, x.toDouble)
           else inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue))
+        case x: Boolean =>
+          if (x && i == classIndex) inst.setValue(i, 1)
+          else if (i ==  classIndex) inst.setValue(i, 0)
+          else inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue))
         case x: Double => inst.setValue(i, x)
         case x: String => inst.setValue(i, vals.getOrElse(x, weka.core.Utils.missingValue))
         case whatever => throw new Exception("Unknown type to build attrbute from. "+item.getClass+":"+item)

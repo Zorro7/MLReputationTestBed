@@ -37,8 +37,12 @@ class FireLike(val witnessWeight: Double = 2d,
 
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init: FireLikeInit = baseInit.asInstanceOf[FireLikeInit]
+
+    init.witnessModels match
+
     (init.directModel,init.witnessModels) match {
       case (None,None) => new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0,1))
+
       case (Some(directModel),Some(witnessModels)) =>
         val directRow = makeTestRow(init, request)
         val directQuery = convertRowToInstance(directRow, directModel.attVals, directModel.train)
@@ -58,7 +62,8 @@ class FireLike(val witnessWeight: Double = 2d,
     val witnessRecords = getWitnessRecords(network, context)
 
     if (directRecords.isEmpty) {
-      new FireLikeInit(context, None, None)
+      val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.service.request.client)
+      new FireLikeInit(context, None, Some(witnessModels))
     } else {
       val directModel: MlrModel = makeMlrsModel(directRecords, baseLearner, makeTrainRow)
       val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.service.request.client)
@@ -75,12 +80,12 @@ class FireLike(val witnessWeight: Double = 2d,
     else getCombinedOpinions(direct * (1-witnessWeight), opinions.map(_ * witnessWeight), witnessWeight = 2)
   }
 
-  def makeOpinions[K1,K2](records: Seq[ServiceRecord with RatingRecord],
+  def makeOpinions[K1](records: Seq[ServiceRecord with RatingRecord],
                           grouping1: ServiceRecord with RatingRecord => K1): Map[K1,MlrModel] = {
     records.groupBy(
       grouping1
-    ).mapValues(
-      rs => makeMlrsModel(rs, baseLearner, makeTrainRow)
+    ).map(
+      rs => rs._1 -> makeMlrsModel(rs._2, baseLearner, makeTrainRow)
     )
   }
 

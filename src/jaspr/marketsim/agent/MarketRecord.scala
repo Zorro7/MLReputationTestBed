@@ -14,7 +14,6 @@ class MarketRecord(override val assessment: TrustAssessment,
 
   override val rating: Double = {
     val requested = service.request.payload.asInstanceOf[MarketPayload]
-//    println(delivered.quality, service.request.provider.properties, requested.quality)
     val disparity = requested.properties.map(r =>
       delivered.properties.get(r._1) match {
         case Some(d) => d.doubleValue - r._2.doubleValue
