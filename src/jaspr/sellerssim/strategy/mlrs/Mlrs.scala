@@ -160,15 +160,6 @@ class Mlrs(val baseLearner: Classifier,
     new MlrModel(reinterpretationModel, reinterpretationTrain, reinterpretationAttVals)
   }
 
-  def makeReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrModel, fromPOV: Client): Seq[Any] = {
-    val fromRow = makeTestRow(record, fromPOV)
-    val fromQuery = convertRowToInstance(fromRow, trustModel.attVals, trustModel.train)
-//    (if (discreteClass) discretizeInt(record.rating) else record.rating) :: // target rating
-    record.rating ::
-      makePrediction(fromQuery, trustModel) ::
-      makeReinterpretationContext(record)
-  }
-
   def makeReinterpretationRow(record: Record with ServiceRecord with RatingRecord, trustModel: MlrModel, fromPOV: Client, toPOV: Client): Seq[Any] = {
     val fromRow = makeTestRow(record, fromPOV)
     val fromQuery = convertRowToInstance(fromRow, trustModel.attVals, trustModel.train)

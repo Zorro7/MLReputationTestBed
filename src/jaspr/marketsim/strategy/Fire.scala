@@ -21,13 +21,13 @@ class Fire(val witnessWeight: Double = 2d) extends StrategyCore {
   override def compute(baseInit: StrategyInit, request: ServiceRequest): TrustAssessment = {
     val init = baseInit.asInstanceOf[FireInit]
 
-    val direct = init.directAggregate.getOrElse(request.provider, new Aggregate(1,1)) // 1,1 for uniform
+    val direct = init.directAggregate.getOrElse(request.provider, new Aggregate(0,0)) // 0,0 for no information
     val opinions = init.witnessAggregate.values.map(
       _.getOrElse(request.provider, new Aggregate(0,0)) // 0,0 if the witness had no information about provider
     )
 
     val aggregate = getCombinedOpinions(direct, opinions, witnessWeight)
-    val score = aggregate.result / aggregate.size
+    val score = aggregate.result / (aggregate.size+1)
 
     new TrustAssessment(init.context, request, score)
   }

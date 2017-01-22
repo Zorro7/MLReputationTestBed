@@ -14,6 +14,6 @@ class Aggregate(val result: Double = 0, val size: Double = 0) {
   }
 
   def *(that: Double): Aggregate = {
-    new Aggregate(result * that, size * that)
+    new Aggregate(result * that, size)
   }
 }

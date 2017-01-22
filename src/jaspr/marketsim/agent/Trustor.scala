@@ -37,10 +37,6 @@ class Trustor(override val simulation: MarketSimulation) extends Client with Pre
   private var _utility = 0d
   override def utility: Double = _utility
 
-  override def getProvenance[T <: Record](agent: Provenance): Seq[T] = {
-    provenance.map(_.asInstanceOf[T])
-  }
-
   override val memoryLimit: Int = simulation.config.memoryLimit
 
   override val preferences: SortedMap[String,Property] = simulation.config.preferences(this)

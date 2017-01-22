@@ -30,27 +30,36 @@ object MarketMultiConfiguration extends App {
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
-        "jaspr.marketsim.strategy.HabitLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
-//        "jaspr.marketsim.strategy.FireStereotypeLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
-//        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
-//        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+//        "jaspr.marketsim.strategy.HabitStereotypeLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+//        "jaspr.marketsim.strategy.HabitContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+//        "jaspr.marketsim.strategy.HabitStereotypeContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+        "jaspr.marketsim.strategy.HabitLike(2d;weka.classifiers.trees.M5P;0;-1d;1d)," +
+        "jaspr.marketsim.strategy.FireStereotypeLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+////        "jaspr.marketsim.strategy.FireContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+////        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
         "jaspr.marketsim.strategy.FireLike(2d;weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
-//        "jaspr.marketsim.strategy.BRSStereotypeLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
-//        "jaspr.marketsim.strategy.BRSContextLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
-//        "jaspr.marketsim.strategy.BRSStereotypeContextLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+        "jaspr.marketsim.strategy.BRSStereotypeLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+////        "jaspr.marketsim.strategy.BRSContextLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
+////        "jaspr.marketsim.strategy.BRSStereotypeContextLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
         "jaspr.marketsim.strategy.BRSLike(weka.classifiers.bayes.NaiveBayes;2;-1d;1d)," +
-//        "jaspr.marketsim.strategy.Burnett(2d;false)," +
-//        "jaspr.strategy.habit.Habit(5;-1d;1d)," +
-//        "jaspr.strategy.blade.Blade(5;-1d;1d)," +
+////        "jaspr.marketsim.strategy.Burnett(2d;false)," +
+//        "jaspr.strategy.habit.Habit(2;-1d;1d)," +
+//        "jaspr.strategy.blade.Blade(2;-1d;1d)," +
+        "jaspr.marketsim.strategy.BRS(0d)," +
+//        "jaspr.marketsim.strategy.BRS(0.5d)," +
+//        "jaspr.marketsim.strategy.BRS(1d)," +
         "jaspr.marketsim.strategy.BRS(2d)," +
+        "jaspr.marketsim.strategy.Fire(0d)," +
         "jaspr.marketsim.strategy.Fire(0.5d)," +
+//        "jaspr.marketsim.strategy.Fire(1d)," +
+//        "jaspr.marketsim.strategy.Fire(2d)," +
         "jaspr.strategy.NoStrategy," +
         " --numSimulations 5 " +
-        "--numRounds 100 " +
+        "--numRounds 250 " +
         "--numTrustees 100 " +
         "--numTrustors 10 " +
         "--trusteesAvailable 10 " +
-        "--advisorsAvailable 10 " +
+        "--advisorsAvailable 5 " +
         "--trusteeLeaveLikelihood 0.05 " +
         "--trustorLeaveLikelihood 0.05 "+
         "").split(" ")
@@ -142,8 +151,11 @@ class MarketConfiguration(val _strategy: Strategy,
   }
 
   def witnessModel(witness: Witness, network: Network): WitnessModel = {
-    Chooser.select(
-      new ObjectiveWitnessModel
+    Chooser.choose(
+      new ObjectiveWitnessModel ::
+      new NegativeWitnessModel ::
+      Nil,
+      0.9 :: 0.1 :: Nil
     )
   }
 

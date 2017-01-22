@@ -10,6 +10,7 @@ import jaspr.utilities.Chooser
 import jaspr.weka.classifiers.meta.MultiRegression
 import weka.classifiers.{AbstractClassifier, Classifier}
 import weka.classifiers.bayes.NaiveBayes
+import weka.classifiers.functions.LinearRegression
 import weka.classifiers.trees.{J48, RandomForest}
 
 import scala.collection.mutable
@@ -22,6 +23,9 @@ class HabitLike(val witnessWeight: Double = 2d,
                 override val numBins: Int,
                 override val lower: Double,
                 override val upper: Double) extends StrategyCore with MlrCore with StereotypeCore with ContextCore {
+
+  override val name: String =
+    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+":"+numBins+"-"+witnessWeight
 
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
@@ -95,8 +99,8 @@ class HabitLike(val witnessWeight: Double = 2d,
 
 
 
-  val translationDiscrete: Boolean = true
-  val baseTranslationLearner = baseLearner
+  val translationDiscrete: Boolean = false
+  val baseTranslationLearner = new LinearRegression
   def makeTranslationModel[T <: Record](directRecords: Seq[T],
                                         witnessRecords: Seq[T],
                                         directModel: MlrModel,
@@ -122,17 +126,16 @@ class HabitLike(val witnessWeight: Double = 2d,
     val fromQuery = convertRowToInstance(fromRow, fromModel.attVals, fromModel.train)
     val toRow = makeTrainRow(record)
     val toQuery = convertRowToInstance(toRow, toModel.attVals, toModel.train)
-    (if (translationDiscrete) makePrediction(toQuery, toModel, discreteClass = false)
-    else makePrediction(toQuery, toModel)) ::
+    makePrediction(toQuery, toModel) ::
       makePrediction(fromQuery, fromModel) ::
       Nil
   }
 
   def makeTranslationModels[K1](directRecords: Seq[ServiceRecord with RatingRecord],
-                                   witnessRecords: Seq[ServiceRecord with RatingRecord],
-                                   directModel: MlrModel,
-                                   witnessModels: Map[K1,MlrModel],
-                                   grouping1: ServiceRecord with RatingRecord => K1): Map[K1,MlrModel] = {
+                                witnessRecords: Seq[ServiceRecord with RatingRecord],
+                                directModel: MlrModel,
+                                witnessModels: Map[K1,MlrModel],
+                                grouping1: ServiceRecord with RatingRecord => K1): Map[K1,MlrModel] = {
     witnessRecords.groupBy(
       grouping1
     ).map(
@@ -170,3 +173,55 @@ class HabitLike(val witnessWeight: Double = 2d,
 }
 
 
+class HabitContextLike(witnessWeight: Double = 2d,
+                      baseLearner: Classifier,
+                      numBins: Int,
+                      lower: Double,
+                      upper: Double) extends HabitLike(witnessWeight, baseLearner, numBins, lower, upper) with ContextCore {
+
+  override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
+    super.makeTrainRow(record) ++
+      context(record.service.request.payload)
+  }
+
+  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+    super.makeTestRow(init, request) ++
+      context(request.payload)
+  }
+}
+
+class HabitStereotypeLike(witnessWeight: Double = 2d,
+                         baseLearner: Classifier,
+                         numBins: Int,
+                         lower: Double,
+                         upper: Double) extends HabitLike(witnessWeight, baseLearner, numBins, lower, upper) with StereotypeCore {
+
+  override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
+    super.makeTrainRow(record) ++
+      adverts(record.provider)
+  }
+
+  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+    super.makeTestRow(init, request) ++
+      adverts(request.provider)
+  }
+}
+
+class HabitStereotypeContextLike(witnessWeight: Double = 2d,
+                                baseLearner: Classifier,
+                                numBins: Int,
+                                lower: Double,
+                                upper: Double) extends HabitLike(witnessWeight, baseLearner, numBins, lower, upper) with StereotypeCore with ContextCore {
+
+  override def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
+    super.makeTrainRow(record) ++
+      adverts(record.provider) ++
+      context(record.service.request.payload)
+  }
+
+  override def makeTestRow(init: StrategyInit, request: ServiceRequest): Seq[Any] = {
+    super.makeTestRow(init, request) ++
+      adverts(request.provider) ++
+      context(request.payload)
+  }
+}

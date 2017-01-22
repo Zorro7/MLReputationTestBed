@@ -36,3 +36,11 @@ class ObjectiveWitnessModel extends WitnessModel {
 
   def omitRecord(record: MarketRecord, agent: Provenance) = false
 }
+
+class NegativeWitnessModel extends WitnessModel {
+  def changeRecord(record: MarketRecord, agent: Provenance) = {
+    record.copy(rating = -record.rating)
+  }
+
+  def omitRecord(record: MarketRecord, agent: Provenance) = false
+}
