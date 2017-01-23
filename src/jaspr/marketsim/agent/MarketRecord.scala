@@ -32,7 +32,7 @@ class MarketRecord(override val assessment: TrustAssessment,
     }
   }
 
-  val success: Boolean = rating > 0
+  val success: Boolean = rating > 0.0
 
   def copy(assessment: TrustAssessment = assessment,
            service: Service = service,

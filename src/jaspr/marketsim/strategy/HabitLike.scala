@@ -47,7 +47,7 @@ class HabitLike(val witnessWeight: Double = 2d,
 
     val directResult = init.directModel match {
       case None =>
-        0
+        0d
       case Some(directModel) =>
         val directRow = makeTestRow(init, request)
         val directQuery = convertRowToInstance(directRow, directModel.attVals, directModel.train)
@@ -68,7 +68,11 @@ class HabitLike(val witnessWeight: Double = 2d,
       }
     })
 
-    new TrustAssessment(baseInit.context, request, getCombinedOpinions(directResult, witnessResults, witnessWeight))
+    if (init.directModel.isEmpty && witnessResults.isEmpty) {
+      new TrustAssessment(baseInit.context, request, Chooser.randomDouble(0,1))
+    } else {
+      new TrustAssessment(baseInit.context, request, getCombinedOpinions(directResult, witnessResults, witnessWeight))
+    }
   }
 
   override def initStrategy(network: Network, context: ClientContext, requests: Seq[ServiceRequest]): StrategyInit = {
@@ -76,13 +80,13 @@ class HabitLike(val witnessWeight: Double = 2d,
     val witnessRecords = getWitnessRecords(network, context)
 
     if (directRecords.isEmpty) {
-      val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.service.request.client)
+      val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.client)
       new HabitLikeInit(context, None, witnessModels, Map())
     } else {
       val directModel: MlrModel = makeMlrsModel(directRecords, baseLearner, makeTrainRow)
-      val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.service.request.client)
+      val witnessModels: Map[Client, MlrModel] = makeOpinions(witnessRecords, r => r.client)
       val reinterpretationModels: Map[Client, MlrModel] =
-        makeTranslationModels(directRecords, witnessRecords, directModel, witnessModels, r => r.service.request.client)
+        makeTranslationModels(directRecords, witnessRecords, directModel, witnessModels, r => r.client)
 
       new HabitLikeInit(context, Some(directModel), witnessModels, reinterpretationModels)
     }
@@ -92,8 +96,8 @@ class HabitLike(val witnessWeight: Double = 2d,
                           opinions: Iterable[Double],
                           witnessWeight: Double): Double = {
     if (witnessWeight == 0) direct
-    else if (witnessWeight == 1) opinions.sum
-    else if (witnessWeight == 2) direct + opinions.sum
+    else if (witnessWeight == 1) opinions.sum/(opinions.size+1)
+    else if (witnessWeight == 2) (direct + opinions.sum)/(opinions.size+1)
     else getCombinedOpinions(direct * (1-witnessWeight), opinions.map(_ * witnessWeight), witnessWeight = 2)
   }
 
@@ -126,7 +130,8 @@ class HabitLike(val witnessWeight: Double = 2d,
     val fromQuery = convertRowToInstance(fromRow, fromModel.attVals, fromModel.train)
     val toRow = makeTrainRow(record)
     val toQuery = convertRowToInstance(toRow, toModel.attVals, toModel.train)
-    makePrediction(toQuery, toModel) ::
+    (if (translationDiscrete) makePrediction(toQuery, toModel, discreteClass = false) // So we translate to a full discrete value (not the probability distribution inferred one.
+    else makePrediction(toQuery, toModel)) ::
       makePrediction(fromQuery, fromModel) ::
       Nil
   }
@@ -160,7 +165,7 @@ class HabitLike(val witnessWeight: Double = 2d,
 
   def makeTrainRow(record: ServiceRecord with RatingRecord): Seq[Any] = {
     label(record) ::
-      record.service.request.provider.name ::
+      record.provider.name ::
       Nil
   }
 

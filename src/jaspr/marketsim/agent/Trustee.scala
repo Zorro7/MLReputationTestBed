@@ -22,6 +22,8 @@ class Trustee(override val simulation: MarketSimulation) extends Provider {
 
   override def affectService(service: Service): Unit = {
     val payload = capabilities(service.payload.name)
+//    println(this, service.payload)
+//    println("\t",payload)
     service.payload = payload.copy(
       properties = payload.properties.map(x => x._1 -> x._2.sample)
     )
