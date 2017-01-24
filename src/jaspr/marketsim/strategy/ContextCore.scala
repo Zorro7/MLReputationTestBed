@@ -9,9 +9,13 @@ import jaspr.core.service.Payload
 trait ContextCore {
 
   def context(payload: Payload): List[Any] = {
-    payload match {
-      case p: AdvertProperties => p.adverts.values.map(_.value.toString).toList
+    val x =payload match {
+      case p: AdvertProperties =>
+        if (p.adverts.isEmpty) p.name :: Nil
+        else p.adverts.values.map(_.value.toString).toList
       case p => p.name :: Nil
     }
+//    println(x)
+    x
   }
 }
