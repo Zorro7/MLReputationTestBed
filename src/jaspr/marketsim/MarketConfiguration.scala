@@ -28,11 +28,12 @@ object MarketMultiConfiguration extends App {
     opt[Double]("stereotypeFeatureNoise") required() action { (x, c) => c.copy(stereotypeFeatureNoise = x) }
     opt[Double]("contextFeatureNoise") required() action { (x, c) => c.copy(contextFeatureNoise = x) }
     opt[Int]("numPreferences") required() action { (x, c) => c.copy(numPreferences = x) }
+    opt[Int]("numContexts") required() action { (x, c) => c.copy(numContexts = x) }
   }
 
-//  val classifierStr = "weka.classifiers.bayes.NaiveBayes;2"
+  val classifierStr = "weka.classifiers.bayes.NaiveBayes;2"
 //  val classifierStr = "weka.classifiers.trees.RandomForest;2"
-  val classifierStr = "weka.classifiers.trees.M5P;0"
+//  val classifierStr = "weka.classifiers.trees.M5P;0"
   val argsplt =
     if (args.length == 0) {
       ("--strategy " +
@@ -40,40 +41,41 @@ object MarketMultiConfiguration extends App {
 //        "jaspr.marketsim.strategy.HabitStereotypeContextLike(2d;"+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.HabitStereotypeLike(2d;"+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.HabitContextLike(2d;"+classifierStr+";-1d;1d)," +
-//        "jaspr.marketsim.strategy.HabitLike(2d;"+classifierStr+";-1d;1d)," +
+        "jaspr.marketsim.strategy.HabitLike(2d;"+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;"+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.FireStereotypeLike(2d;"+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.FireContextLike(2d;"+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.FireLike(2d;"+classifierStr+";-1d;1d)," +
-        "jaspr.marketsim.strategy.BRSStereotypeContextLike("+classifierStr+";-1d;1d)," +
-        "jaspr.marketsim.strategy.BRSStereotypeLike("+classifierStr+";-1d;1d)," +
-        "jaspr.marketsim.strategy.BRSContextLike("+classifierStr+";-1d;1d)," +
-        "jaspr.marketsim.strategy.BRSLike("+classifierStr+";-1d;1d)," +
+//        "jaspr.marketsim.strategy.BRSStereotypeContextLike("+classifierStr+";-1d;1d)," +
+//        "jaspr.marketsim.strategy.BRSStereotypeLike("+classifierStr+";-1d;1d)," +
+//        "jaspr.marketsim.strategy.BRSContextLike("+classifierStr+";-1d;1d)," +
+//        "jaspr.marketsim.strategy.BRSLike("+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.Burnett(2d;true)," +
-//        "jaspr.strategy.habit.Habit(2;-1d;1d)," +
-//        "jaspr.strategy.blade.Blade(2;-1d;1d)," +
-//        "jaspr.marketsim.strategy.BRS(0d)," +
+        "jaspr.strategy.habit.Habit(2;-1d;1d)," +
+        "jaspr.strategy.blade.Blade(2;-1d;1d)," +
+        "jaspr.marketsim.strategy.BRS(0d)," +
 //        "jaspr.marketsim.strategy.BRS(0.5d)," +
 //        "jaspr.marketsim.strategy.BRS(1d)," +
-        "jaspr.marketsim.strategy.BRSContext(2d)," +
+//        "jaspr.marketsim.strategy.BRSContext(2d)," +
         "jaspr.marketsim.strategy.BRS(2d)," +
-//        "jaspr.marketsim.strategy.Fire(0d)," +
-        "jaspr.marketsim.strategy.FireContext(0.5d)," +
+        "jaspr.marketsim.strategy.Fire(0d)," +
+//        "jaspr.marketsim.strategy.FireContext(0.5d)," +
         "jaspr.marketsim.strategy.Fire(0.5d)," +
 //        "jaspr.marketsim.strategy.Fire(1d)," +
 //        "jaspr.marketsim.strategy.Fire(2d)," +
         "jaspr.strategy.NoStrategy," +
-        " --numSimulations 5 " +
-        "--numRounds 100 " +
+        " --numSimulations 10 " +
+        "--numRounds 250 " +
         "--numTrustees 100 " +
         "--numTrustors 10 " +
         "--trusteesAvailable 10 " +
         "--advisorsAvailable 5 " +
-        "--trusteeLeaveLikelihood 0.01 " +
-        "--trustorLeaveLikelihood 0.01 "+
-        "--stereotypeFeatureNoise 0.0 "+
-        "--contextFeatureNoise 0.0 "+
-        "--numPreferences 1 " +
+        "--trusteeLeaveLikelihood 0.05 " +
+        "--trustorLeaveLikelihood 0.05 " +
+        "--stereotypeFeatureNoise 0.0 " +
+        "--contextFeatureNoise 0.0 " +
+        "--numContexts 1 " +
+        "--numPreferences 10 " +
         "").split(" ")
     } else args
 
@@ -100,7 +102,8 @@ case class MarketMultiConfiguration(strategies: Seq[String] = Nil,
                                   trustorLeaveLikelihood: Double = 0.05,
                                   stereotypeFeatureNoise: Double = 0d,
                                   contextFeatureNoise: Double = 0d,
-                                  numPreferences: Int = 1
+                                  numPreferences: Int = 1,
+                                  numContexts: Int = 1
                                  ) extends MultiConfiguration {
 
   override val directComparison = true
@@ -122,7 +125,8 @@ case class MarketMultiConfiguration(strategies: Seq[String] = Nil,
         trustorLeaveLikelihood = trustorLeaveLikelihood,
         stereotypeFeatureNoise = stereotypeFeatureNoise,
         contextFeatureNoise = contextFeatureNoise,
-        numPreferences = numPreferences
+        numPreferences = numPreferences,
+        numContexts = numContexts
       )
     })
 }
@@ -139,7 +143,8 @@ class MarketConfiguration(val _strategy: Strategy,
                           val trustorLeaveLikelihood: Double,
                           val stereotypeFeatureNoise: Double,
                           val contextFeatureNoise: Double,
-                          val numPreferences: Double
+                          val numPreferences: Double,
+                          val numContexts: Int
                           ) extends Configuration {
 
   override def toString: String = _strategy.name
@@ -181,14 +186,13 @@ class MarketConfiguration(val _strategy: Strategy,
     )
   }
 
-  val numSimCapabilities: Int = 5
   def simCapabilities: Seq[MarketPayload] = _simCapabilities
   // Services that exist in the simulation
   private var _simCapabilities: Seq[MarketPayload] = Nil //set in newSimulation(..)
   private def resetSimCapabilities() = {
 
     _simCapabilities =
-      (1 to numSimCapabilities).map(x => {
+      (1 to numContexts).map(x => {
 //        val properties = Chooser.select(
 //          GaussianProperty("a", 0.4, 0.05),
 //          GaussianProperty("a", 0.3, 0.5), //asdf

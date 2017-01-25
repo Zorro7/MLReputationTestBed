@@ -21,6 +21,11 @@ class Results {
     results.put(config, simResult :: results.getOrElse(config, Nil))
   }
 
+  def printIndividual(config: Configuration, simResults: List[Result], funch: Result => Double) = lock.synchronized {
+    val x = simResults.map(funch).reverse.mkString(",")
+    println("INTERIM: "+x)
+  }
+
   def printAll(funch: Result => Double) = lock.synchronized {
     val x = (for ((config, results) <- results) yield {
       results.map(_.map(funch).reverse.mkString(",")).mkString(config.toString + ": ", "\n" + config.toString + ": ", "")

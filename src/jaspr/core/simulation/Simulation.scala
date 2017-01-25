@@ -20,7 +20,10 @@ object Simulation {
         Chooser.setSeed(simulationSeed)
         jaspr.debug(1000, "\n\n----- CONFIG " + configIndex + ", SIMULATION " + simulationIndex + ", seed: " + simulationSeed + " (" + config + ") -----")
         val simulation = config.newSimulation()
-        results.record(config, simulation.run())
+        val simResults: List[Result] = simulation.run()
+        results.record(config, simResults)
+        println()
+        results.printIndividual(config, simResults, _.totalUtility)
       }
     }
 

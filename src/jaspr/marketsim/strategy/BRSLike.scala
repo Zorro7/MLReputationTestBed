@@ -21,7 +21,7 @@ class BRSLike(val baseLearner: Classifier,
               override val upper: Double) extends StrategyCore with MlrCore {
 
   override val name: String =
-    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+":"+numBins
+    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+"-"+numBins
 
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)

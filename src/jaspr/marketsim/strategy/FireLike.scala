@@ -22,7 +22,7 @@ class FireLike(val witnessWeight: Double = 2d,
                override val upper: Double) extends StrategyCore with MlrCore {
 
   override val name: String =
-    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+":"+numBins+"-"+witnessWeight
+    this.getClass.getSimpleName+"-"+baseLearner.getClass.getSimpleName+"-"+numBins+"-"+witnessWeight
 
   baseLearner match {
     case x: NaiveBayes => x.setUseSupervisedDiscretization(true)
