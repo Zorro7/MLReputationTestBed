@@ -34,7 +34,19 @@ trait WitnessModel {
 }
 
 class HonestWitnessModel extends WitnessModel {
-  def changeRecord(record: MarketRecord, agent: Provenance) = record
+  def changeRecord(record: MarketRecord, agent: Provenance) = {
+    record
+  }
+
+  def omitRecord(record: MarketRecord, agent: Provenance) = false
+}
+
+class NegationWitnessModel extends WitnessModel {
+  def changeRecord(record: MarketRecord, agent: Provenance) = {
+    record.copy(
+      rating = -record.rating
+    )
+  }
 
   def omitRecord(record: MarketRecord, agent: Provenance) = false
 }
@@ -59,15 +71,7 @@ class OptimisticWitnessModel extends WitnessModel {
   def omitRecord(record: MarketRecord, agent: Provenance) = false
 }
 
-class NegationWitnessModel extends WitnessModel {
-  def changeRecord(record: MarketRecord, agent: Provenance) = {
-    record.copy(
-      rating = -record.rating
-    )
-  }
 
-  def omitRecord(record: MarketRecord, agent: Provenance) = false
-}
 
 class RandomWitnessModel extends WitnessModel {
   def changeRecord(record: MarketRecord, agent: Provenance) = {

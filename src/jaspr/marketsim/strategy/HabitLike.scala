@@ -59,13 +59,15 @@ class HabitLike(val witnessWeight: Double = 2d,
       val witnessQuery = convertRowToInstance(witnessRow, wm._2.attVals, wm._2.train)
       val raw = makePrediction(witnessQuery, wm._2)
       val translationRow = 0 :: raw :: Nil
-      init.translationModels.get(wm._1) match {
+      val x = init.translationModels.get(wm._1) match {
         case None =>
           raw
         case Some(tm) =>
           val inst = convertRowToInstance(translationRow, tm.attVals, tm.train)
           makePrediction(inst, tm, discreteClass = translationDiscrete)
       }
+//      println(directResult, raw, x)
+      x
     })
 
     if (init.directModel.isEmpty && witnessResults.isEmpty) {
@@ -109,10 +111,17 @@ class HabitLike(val witnessWeight: Double = 2d,
                                         witnessRecords: Seq[T],
                                         directModel: MlrModel,
                                         witnessModel: MlrModel,
+                                        otherWitnessModels: Iterable[MlrModel],
                                         makeTranslationRow: (T,MlrModel,MlrModel) => Seq[Any]): MlrModel = {
     val reinterpretationRows: Seq[Seq[Any]] =
       directRecords.map(record => makeTranslationRow(record, witnessModel, directModel)) ++
-        witnessRecords.map(record => makeTranslationRow(record, witnessModel, directModel))
+        witnessRecords.map(record => makeTranslationRow(record, witnessModel, directModel)) ++
+        directRecords.flatMap(record =>
+          otherWitnessModels.map(owm => makeTranslationRow(record, witnessModel, owm))
+        ) ++
+        witnessRecords.flatMap(record =>
+          otherWitnessModels.map(owm => makeTranslationRow(record, witnessModel, owm))
+        )
     val reinterpretationAttVals: Iterable[mutable.Map[Any, Double]] = List.fill(reinterpretationRows.head.size)(mutable.Map[Any, Double]())
     val doubleRows = convertRowsToDouble(reinterpretationRows, reinterpretationAttVals, classIndex, discreteClass = translationDiscrete)
     val atts = makeAtts(reinterpretationRows.head, reinterpretationAttVals, classIndex, discreteClass = translationDiscrete)
@@ -144,7 +153,9 @@ class HabitLike(val witnessWeight: Double = 2d,
     witnessRecords.groupBy(
       grouping1
     ).map(
-      wrs => wrs._1 -> makeTranslationModel(directRecords, wrs._2, directModel, witnessModels(wrs._1), makeTranslationRow)
+      wrs => wrs._1 -> makeTranslationModel(
+        directRecords, witnessRecords, directModel, witnessModels(wrs._1), witnessModels.filterNot(_._1 == wrs._1).values, makeTranslationRow
+      )
     )
   }
 

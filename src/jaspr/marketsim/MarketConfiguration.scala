@@ -38,14 +38,15 @@ object MarketMultiConfiguration extends App {
     if (args.length == 0) {
       ("--strategy " +
 //        "jaspr.sellerssim.strategy.mlrs.Mlrs("+classifierStr+";-1d;1d;weka.classifiers.functions.LinearRegression;2.0;false;false;false;false),"+
-//        "jaspr.marketsim.strategy.HabitStereotypeContextLike(2d;"+classifierStr+";-1d;1d)," +
-//        "jaspr.marketsim.strategy.HabitStereotypeLike(2d;"+classifierStr+";-1d;1d)," +
-//        "jaspr.marketsim.strategy.HabitContextLike(2d;"+classifierStr+";-1d;1d)," +
+        "jaspr.marketsim.strategy.HabitStereotypeContextLike(2d;"+classifierStr+";-1d;1d)," +
+        "jaspr.marketsim.strategy.HabitStereotypeLike(2d;"+classifierStr+";-1d;1d)," +
+        "jaspr.marketsim.strategy.HabitContextLike(2d;"+classifierStr+";-1d;1d)," +
         "jaspr.marketsim.strategy.HabitLike(2d;"+classifierStr+";-1d;1d)," +
-//        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;"+classifierStr+";-1d;1d)," +
-//        "jaspr.marketsim.strategy.FireStereotypeLike(2d;"+classifierStr+";-1d;1d)," +
-//        "jaspr.marketsim.strategy.FireContextLike(2d;"+classifierStr+";-1d;1d)," +
-//        "jaspr.marketsim.strategy.FireLike(2d;"+classifierStr+";-1d;1d)," +
+        "jaspr.marketsim.strategy.HabitLike(0.5d;"+classifierStr+";-1d;1d)," +
+        "jaspr.marketsim.strategy.FireStereotypeContextLike(2d;"+classifierStr+";-1d;1d)," +
+        "jaspr.marketsim.strategy.FireStereotypeLike(2d;"+classifierStr+";-1d;1d)," +
+        "jaspr.marketsim.strategy.FireContextLike(2d;"+classifierStr+";-1d;1d)," +
+        "jaspr.marketsim.strategy.FireLike(2d;"+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.BRSStereotypeContextLike("+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.BRSStereotypeLike("+classifierStr+";-1d;1d)," +
 //        "jaspr.marketsim.strategy.BRSContextLike("+classifierStr+";-1d;1d)," +
@@ -53,28 +54,30 @@ object MarketMultiConfiguration extends App {
 //        "jaspr.marketsim.strategy.Burnett(2d;true)," +
         "jaspr.strategy.habit.Habit(2;-1d;1d)," +
         "jaspr.strategy.blade.Blade(2;-1d;1d)," +
+        "jaspr.marketsim.strategy.BRSContext(0d)," +
         "jaspr.marketsim.strategy.BRS(0d)," +
 //        "jaspr.marketsim.strategy.BRS(0.5d)," +
 //        "jaspr.marketsim.strategy.BRS(1d)," +
-//        "jaspr.marketsim.strategy.BRSContext(2d)," +
+        "jaspr.marketsim.strategy.BRSContext(2d)," +
         "jaspr.marketsim.strategy.BRS(2d)," +
+        "jaspr.marketsim.strategy.FireContext(0d)," +
         "jaspr.marketsim.strategy.Fire(0d)," +
-//        "jaspr.marketsim.strategy.FireContext(0.5d)," +
+        "jaspr.marketsim.strategy.FireContext(0.5d)," +
         "jaspr.marketsim.strategy.Fire(0.5d)," +
 //        "jaspr.marketsim.strategy.Fire(1d)," +
 //        "jaspr.marketsim.strategy.Fire(2d)," +
         "jaspr.strategy.NoStrategy," +
-        " --numSimulations 10 " +
-        "--numRounds 250 " +
+        " --numSimulations 5 " +
+        "--numRounds 100 " +
         "--numTrustees 100 " +
         "--numTrustors 10 " +
         "--trusteesAvailable 10 " +
         "--advisorsAvailable 5 " +
-        "--trusteeLeaveLikelihood 0.05 " +
-        "--trustorLeaveLikelihood 0.05 " +
+        "--trusteeLeaveLikelihood 0.01 " +
+        "--trustorLeaveLikelihood 0.01 " +
         "--stereotypeFeatureNoise 0.0 " +
         "--contextFeatureNoise 0.0 " +
-        "--numContexts 1 " +
+        "--numContexts 5 " +
         "--numPreferences 10 " +
         "").split(" ")
     } else args
@@ -177,13 +180,13 @@ class MarketConfiguration(val _strategy: Strategy,
   }
 
   def witnessModel(witness: Witness, network: Network): WitnessModel = {
-//    new ObjectiveWitnessModel
-    Chooser.choose(
-      new HonestWitnessModel ::
-      new NegationWitnessModel ::
-      Nil,
-      1d :: 0d :: Nil
-    )
+    new HonestWitnessModel
+//    Chooser.choose(
+//      new HonestWitnessModel ::
+//      new NegationWitnessModel ::
+//      Nil,
+//      0.5d :: 0.5d :: Nil
+//    )
   }
 
   def simCapabilities: Seq[MarketPayload] = _simCapabilities
