@@ -23,7 +23,7 @@ class Results {
 
   def printIndividual(config: Configuration, simResults: List[Result], funch: Result => Double) = lock.synchronized {
     val x = simResults.map(funch).reverse.mkString(",")
-    println("INTERIM: "+x)
+    println("INTERIM:"+config.toString+": "+x)
   }
 
   def printAll(funch: Result => Double) = lock.synchronized {
