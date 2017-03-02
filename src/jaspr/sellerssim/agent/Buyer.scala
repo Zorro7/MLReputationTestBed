@@ -53,7 +53,7 @@ class Buyer(override val simulation: SellerSimulation) extends Client with Prefe
           0d
         }
 //        println(simulation.config.baseUtility, x._2.doubleValue, wanted(x._1).doubleValue, simulation.config.baseUtility - (x._2.doubleValue - wanted(x._1).doubleValue), ut)
-//        ut
+        ut
       }
     )
   }
